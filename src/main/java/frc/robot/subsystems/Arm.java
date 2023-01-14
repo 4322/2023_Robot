@@ -11,7 +11,7 @@ public class Arm {
 
   private Arm() { 
     if (Constants.armEnabled) {
-        
+        armMotor1 = new CANSparkMax(0, null);
     }
   }
 }
