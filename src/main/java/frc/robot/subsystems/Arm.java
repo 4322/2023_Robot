@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -11,52 +12,34 @@ public class Arm {
   private CANSparkMax leftMotor;
   private SparkMaxPIDController armPID;
 
+
   private enum rotationDir {
-    forward,
-    backward,
-    none
-}
+    forward, backward, none
+  }
 
-  private Arm() { 
+  public Arm() {
     if (Constants.armEnabled) {
-        leftMotor = new CANSparkMax(Constants.ArmConstants.motorID, MotorType.kBrushless);
+      leftMotor = new CANSparkMax(Constants.ArmConstants.motorID, MotorType.kBrushless);
     }
-    
-    public void init() {
-        if (Constants.armEnabled) {
-            leftMotor.restoreFactoryDefaults();
-            leftMotor.setIdleMode(IdleMode.kCoast);
-            leftMotor.setOpenLoopRampRate(Constants.ArmConstants.rampRate);
-            armEncoder = armEncoder.getEncoder();
-        }
+  }
+
+  public void init() {
+    if (Constants.armEnabled) {
+      leftMotor.restoreFactoryDefaults();
+      leftMotor.setIdleMode(IdleMode.kCoast);
+      leftMotor.setOpenLoopRampRate(Constants.ArmConstants.rampRate);
     }
+  }
 
-    
-
-    public void rotateToPos(double targetPos) {
-
+  public void setCoastMode() {
+    if (Constants.armEnabled) {
+      leftMotor.setIdleMode(IdleMode.kCoast);
     }
+  }
 
-    public void rotate() {
-        if (Constants.armEnabled) {
-            
-        }
-    }
-
-    public void setCurrentPosition(double pos) {
-        leftMotor.set
-    }
-
-    public void setCoastMode() {
-        if (Constants.armEnabled) {
-            leftMotor.setIdleMode(IdleMode.kCoast);
-        }
-    }
-
-    public void setBreakMode() {
-        if (Constants.armEnabled) {
-            leftMotor.setIdleMode(IdleMode.kBrake);
-        }
+  public void setBrakeMode() {
+    if (Constants.armEnabled) {
+      leftMotor.setIdleMode(IdleMode.kBrake);
     }
   }
 }
