@@ -10,12 +10,6 @@ import frc.robot.Constants;
 
 public class Arm {
   private CANSparkMax leftMotor;
-  private SparkMaxPIDController armPID;
-
-
-  private enum rotationDir {
-    forward, backward, none
-  }
 
   public Arm() {
     if (Constants.armEnabled) {
@@ -29,6 +23,14 @@ public class Arm {
       leftMotor.setIdleMode(IdleMode.kCoast);
       leftMotor.setOpenLoopRampRate(Constants.ArmConstants.rampRate);
     }
+  }
+
+  public void rotateForward() {
+    leftMotor.set(Constants.ArmConstants.forward);
+  }
+
+  public void rotateBackward() {
+    leftMotor.set(Constants.ArmConstants.backward);
   }
 
   public void setCoastMode() {
