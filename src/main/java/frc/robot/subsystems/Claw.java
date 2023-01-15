@@ -1,4 +1,5 @@
 package frc.robot.subsystems;
+
 import frc.robot.Constants;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -10,21 +11,26 @@ import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 public class Claw {
   private CANSparkMax clawMotor;
   private SparkMaxPIDController clawPID;
-  public Claw() 
-  {
+
+  public Claw() {
     if (Constants.clawEnabled) {
-      clawMotor = new CANSparkMax(Constants.ClawConstants.motorID, MotorType.kBrushless);
+      clawMotor = new CANSparkMax(Constants.ClawConstants.motorID, MotorType.kBrushed);
     }
   }
-  public void init()
-  {
-    
+
+  public void init() {
+    if (Constants.clawEnabled) {
+      clawMotor.restoreFactoryDefaults();
+      clawMotor.setOpenLoopRampRate(Constants.ClawConstants.rampRate);
+    }
   }
+
   public void setCoastMode() {
     if (Constants.clawEnabled) {
       clawMotor.setIdleMode(IdleMode.kCoast);
     }
   }
+
   public void setBrakeMode() {
     if (Constants.clawEnabled) {
       clawMotor.setIdleMode(IdleMode.kBrake);
