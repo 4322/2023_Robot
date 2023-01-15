@@ -2,6 +2,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Claw;
+import frc.robot.commands.*;
 
 public class RobotContainer {
 
@@ -11,9 +13,12 @@ public class RobotContainer {
 
   // The robot's subsystems and commands are defined here...
   private final Arm arm = new Arm();
+  private final Claw claw = new Claw();
 
   // Arm commands
-
+  // Claw commands
+  private final ClawIntakeIn clawIntakeIn = new ClawIntakeIn(claw);
+  private final ClawIntakeOut clawIntakeOut = new ClawIntakeOut(claw);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
 
   public RobotContainer() {
@@ -28,5 +33,6 @@ public class RobotContainer {
 
   public void disableSubsystems() {
     arm.setCoastMode();
+    claw.setCoastMode();
   }
 }
