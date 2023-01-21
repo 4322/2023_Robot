@@ -17,8 +17,7 @@ public class ClawOuttake extends CommandBase {
   }
 
   @Override
-  public void execute(){
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
