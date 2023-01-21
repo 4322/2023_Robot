@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
+import frc.robot.Constants.ClawConstants;
 import frc.robot.Constants.ClawConstants.IntakeMode;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -32,16 +33,14 @@ public class Claw extends SubsystemBase {
 
   public void intake() {
     if (Constants.clawEnabled) {
-      clawPID.setReference(Constants.ClawConstants.IntakeVelocity,
-          CANSparkMax.ControlType.kVelocity);
+      clawMotor.set(ClawConstants.IntakeVelocity);
       intakeMode = IntakeMode.intaking;
     }
   }
 
   public void outtake() {
     if (Constants.clawEnabled) {
-      clawPID.setReference(Constants.ClawConstants.EjectionVelocity,
-          CANSparkMax.ControlType.kVelocity);
+      clawMotor.set(ClawConstants.EjectionVelocity);
       intakeMode = IntakeMode.ejecting;
     }
   }

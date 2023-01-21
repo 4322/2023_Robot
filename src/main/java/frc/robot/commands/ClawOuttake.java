@@ -16,6 +16,10 @@ public class ClawOuttake extends CommandBase {
     claw.outtake();
   }
 
+  @Override
+  public void execute(){
+  }
+
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
