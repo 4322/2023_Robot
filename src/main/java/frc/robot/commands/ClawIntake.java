@@ -13,7 +13,7 @@ public class ClawIntake extends CommandBase {
 
   @Override
   public void initialize() {
-    claw.Intake();
+    claw.intake();
   }
 
   // Called once the command ends or is interrupted.

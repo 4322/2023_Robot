@@ -30,7 +30,7 @@ public class Claw extends SubsystemBase {
   }
 
 
-  public void Intake() {
+  public void intake() {
     if (Constants.clawEnabled) {
       clawPID.setReference(Constants.ClawConstants.IntakeVelocity,
           CANSparkMax.ControlType.kVelocity);
@@ -38,7 +38,7 @@ public class Claw extends SubsystemBase {
     }
   }
 
-  public void IntakeOut() {
+  public void outtake() {
     if (Constants.clawEnabled) {
       clawPID.setReference(Constants.ClawConstants.EjectionVelocity,
           CANSparkMax.ControlType.kVelocity);
