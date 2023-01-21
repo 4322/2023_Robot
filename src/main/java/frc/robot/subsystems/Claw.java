@@ -10,10 +10,11 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Claw extends SubsystemBase{
+public class Claw extends SubsystemBase {
   private CANSparkMax clawMotor;
   private SparkMaxPIDController clawPID;
   public IntakeMode intakeMode;
+
   public Claw() {
     if (Constants.clawEnabled) {
       clawMotor = new CANSparkMax(Constants.ClawConstants.motorID, MotorType.kBrushless);
@@ -27,30 +28,31 @@ public class Claw extends SubsystemBase{
       clawMotor.setOpenLoopRampRate(Constants.ClawConstants.rampRate);
     }
   }
-  
 
-  public void Intake()
-  {
-    if(Constants.clawEnabled)
-    {
-      clawPID.setReference(Constants.ClawConstants.IntakeVelocity, CANSparkMax.ControlType.kVelocity);
+
+  public void Intake() {
+    if (Constants.clawEnabled) {
+      clawPID.setReference(Constants.ClawConstants.IntakeVelocity,
+          CANSparkMax.ControlType.kVelocity);
       intakeMode = IntakeMode.intaking;
     }
   }
-  public void IntakeOut()
-  {
-    if(Constants.clawEnabled)
-    {
-      clawPID.setReference(Constants.ClawConstants.EjectionVelocity, CANSparkMax.ControlType.kVelocity);
+
+  public void IntakeOut() {
+    if (Constants.clawEnabled) {
+      clawPID.setReference(Constants.ClawConstants.EjectionVelocity,
+          CANSparkMax.ControlType.kVelocity);
       intakeMode = IntakeMode.ejecting;
     }
   }
+
   public void stop() {
     if (Constants.clawEnabled) {
-        clawMotor.stopMotor();
-        intakeMode = IntakeMode.stationary;
+      clawMotor.stopMotor();
+      intakeMode = IntakeMode.stationary;
     }
   }
+
   public void setCoastMode() {
     if (Constants.clawEnabled) {
       clawMotor.setIdleMode(IdleMode.kCoast);

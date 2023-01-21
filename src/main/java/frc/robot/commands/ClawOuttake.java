@@ -2,17 +2,18 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Claw;
-public class ClawOuttake extends CommandBase{
+
+public class ClawOuttake extends CommandBase {
   private Claw claw;
-  public ClawOuttake(Claw clawSubsystem)
-  {
+
+  public ClawOuttake(Claw clawSubsystem) {
     claw = clawSubsystem;
     addRequirements(claw);
   }
 
   @Override
   public void initialize() {
-    claw.IntakeOut(); 
+    claw.IntakeOut();
   }
 
   // Called once the command ends or is interrupted.
@@ -20,8 +21,9 @@ public class ClawOuttake extends CommandBase{
   public void end(boolean interrupted) {
     claw.stop();
   }
-  @Override 
+
+  @Override
   public boolean isFinished() {
-   return false;
+    return false;
   }
 }
