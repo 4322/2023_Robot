@@ -10,6 +10,7 @@ public class Constants {
     public static final double rampRate = 0.0;
     public static final double forward = 1;
     public static final double backward = -1;
+    public static final int positionTolerance = 100;
   }
     
   public static final class ClawConstants {
