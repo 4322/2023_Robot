@@ -17,8 +17,8 @@ public class RobotContainer {
 
   // Arm commands
   // Claw commands
-  private final ClawIntakeIn clawIntakeIn = new ClawIntakeIn(claw);
-  private final ClawIntakeOut clawIntakeOut = new ClawIntakeOut(claw);
+  private final ClawIntake clawIntakeIn = new ClawIntake(claw);
+  private final ClawOuttake clawIntakeOut = new ClawOuttake(claw);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
 
   public RobotContainer() {

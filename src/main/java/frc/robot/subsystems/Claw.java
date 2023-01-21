@@ -16,7 +16,7 @@ public class Claw extends SubsystemBase{
   public IntakeMode intakeMode;
   public Claw() {
     if (Constants.clawEnabled) {
-      clawMotor = new CANSparkMax(Constants.ClawConstants.motorID, MotorType.kBrushed);
+      clawMotor = new CANSparkMax(Constants.ClawConstants.motorID, MotorType.kBrushless);
     }
   }
 
