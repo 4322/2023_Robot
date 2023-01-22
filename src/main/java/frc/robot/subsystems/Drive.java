@@ -26,14 +26,17 @@ public class Drive extends SubsystemBase {
   private double latestVelocity;
   private double latestAcceleration;
 
-  private final Translation2d frontLeftLocation = new Translation2d(Constants.DriveConstants.distWheelMetersX, Constants.DriveConstants.distWheelMetersY);
-  private final Translation2d frontRightLocation = new Translation2d(Constants.DriveConstants.distWheelMetersX, -Constants.DriveConstants.distWheelMetersY);
-  private final Translation2d backLeftLocation = new Translation2d(-Constants.DriveConstants.distWheelMetersX, Constants.DriveConstants.distWheelMetersY);
-  private final Translation2d backRightLocation = new Translation2d(-Constants.DriveConstants.distWheelMetersX, -Constants.DriveConstants.distWheelMetersY);
-  
-  private final SwerveDriveKinematics kinematics = 
-        new SwerveDriveKinematics(
-          frontRightLocation, frontLeftLocation, backLeftLocation, backRightLocation);
+  private final Translation2d frontLeftLocation = new Translation2d(
+      Constants.DriveConstants.distWheelMetersX, Constants.DriveConstants.distWheelMetersY);
+  private final Translation2d frontRightLocation = new Translation2d(
+      Constants.DriveConstants.distWheelMetersX, -Constants.DriveConstants.distWheelMetersY);
+  private final Translation2d backLeftLocation = new Translation2d(
+      -Constants.DriveConstants.distWheelMetersX, Constants.DriveConstants.distWheelMetersY);
+  private final Translation2d backRightLocation = new Translation2d(
+      -Constants.DriveConstants.distWheelMetersX, -Constants.DriveConstants.distWheelMetersY);
+
+  private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontRightLocation,
+      frontLeftLocation, backLeftLocation, backRightLocation);
 
   private ShuffleboardTab tab;
   private NetworkTableEntry botVelocityMag;
@@ -53,8 +56,7 @@ public class Drive extends SubsystemBase {
   }
 
   public enum DriveMode {
-    fieldCentric(0),
-    robotCentric(1); 
+    fieldCentric(0), robotCentric(1);
 
     private int value;
 
@@ -100,7 +102,7 @@ public class Drive extends SubsystemBase {
 
   public void drive(double driveX, double driveY, double rotate) {
     if (Constants.driveEnabled) {
-      double clock = runTime.get();  // cache value to reduce CPU usage
+      double clock = runTime.get(); // cache value to reduce CPU usage
       double[] currentAngle = new double[4];
       for (int i = 0; i < swerveModule.length; i++) {
         currentAngle[i] = swerveModule[i].getInternalRotationDegrees();
@@ -113,17 +115,15 @@ public class Drive extends SubsystemBase {
       // sum wheel velocity and acceleration vectors
       for (int i = 0; i < swerveModule.length; i++) {
         double wheelAngleDegrees = currentAngle[i];
-        velocityXY.plus(new Translation2d(
-            swerveModule[i].getVelocity(),
+        velocityXY.plus(new Translation2d(swerveModule[i].getVelocity(),
             Rotation2d.fromDegrees(wheelAngleDegrees)));
-        accelerationXY.plus(new Translation2d(
-            swerveModule[i].getAcceleration(),
+        accelerationXY.plus(new Translation2d(swerveModule[i].getAcceleration(),
             Rotation2d.fromDegrees(wheelAngleDegrees)));
       }
       latestVelocity = velocityXY.getNorm() / 4;
       latestAcceleration = accelerationXY.getNorm() / 4;
-      velocityHistory.removeIf(n -> 
-        (n.getTime() < clock - DriveConstants.Tip.velocityHistorySeconds));
+      velocityHistory
+          .removeIf(n -> (n.getTime() < clock - DriveConstants.Tip.velocityHistorySeconds));
       velocityHistory.add(new SnapshotVectorXY(velocityXY, clock));
 
       if (Constants.debug) {
