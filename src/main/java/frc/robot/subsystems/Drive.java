@@ -4,7 +4,9 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.SwerveDrive.SwerveModule;
+import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.Vector;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
@@ -87,22 +89,22 @@ public class Drive extends SubsystemBase {
         currentAngle[i] = swerveModule[i].getInternalRotationDegrees();
       }
 
-      VectorXY velocityXY = new VectorXY();
-      VectorXY accelerationXY = new VectorXY();
-      VectorXY driveXY = new VectorXY(driveX, driveY);
+      Translation2d velocityXY = new Translation2d();
+      Translation2d accelerationXY = new Translation2d();
+      Translation2d driveXY = new Translation2d(driveX, driveY);
 
       // sum wheel velocity and acceleration vectors
       for (int i = 0; i < swerveModule.length; i++) {
         double wheelAngleDegrees = currentAngle[i];
-        velocityXY.add(new VectorPolarDegrees(
+        velocityXY.plus(new Translation2d(
             swerveModule[i].getVelocity(),
-            wheelAngleDegrees));
-        accelerationXY.add(new VectorPolarDegrees(
+            Rotation2d.fromDegrees(wheelAngleDegrees)));
+        accelerationXY.plus(new Translation2d(
             swerveModule[i].getAcceleration(),
-            wheelAngleDegrees));
+            Rotation2d.fromDegrees(wheelAngleDegrees)));
       }
-      latestVelocity = velocityXY.norm() / 4;
-      latestAcceleration = accelerationXY.norm() / 4;
+      double latestVelocity = velocityXY.getNorm() / 4;
+      double latestAcceleration = accelerationXY.getNorm() / 4;
       velocityHistory.removeIf(n -> 
         (n.getTime() < clock - DriveConstants.Tip.velocityHistorySeconds));
       velocityHistory.add(new SnapshotVectorXY(velocityXY, clock));
@@ -116,6 +118,7 @@ public class Drive extends SubsystemBase {
         driveYTab.setDouble(driveY);
         rotateTab.setDouble(rotate);
       }
+    }
   }
 
   public boolean isAtTarget() {
@@ -165,60 +168,4 @@ public class Drive extends SubsystemBase {
   public static double boundDegrees(double angleDegrees) {
     return 0;
   }
-}
-
-public class VectorXY extends Vector<N2> {
-
-  public VectorXY() {
-    super();
-  }
-
-  public VectorXY(double x, double y) {
-    super(x, y);
-  }
-
-  public void add(Vector<N2> vec) {
-    x += vec.x;
-    y += vec.y;
-  }
-
-  public double degrees() {
-    return Math.toDegrees(Math.atan2(y, x));
-  }
-}
-
-public class VectorPolarDegrees extends VectorXY {
-
-  public VectorPolarDegrees(double r, double theta) {
-    x = r * Math.cos(Math.toRadians(theta));
-    y = r * Math.sin(Math.toRadians(theta));
-  }
-}
-
-private class SnapshotVectorXY {
-    private VectorXY vectorXY;
-    private double time;
-
-    public SnapshotVectorXY(VectorXY vectorXY, double time) {
-      this.vectorXY = vectorXY;
-      this.time = time;
-    }
-
-    public VectorXY getVectorXY() {
-      return vectorXY;
-    }
-
-    public double getTime() {
-      return time;
-    }
-  }
-
-	// convert angle to range of +/- 180 degrees
-	public static double boundDegrees(double angleDegrees) {
-		double x = ((angleDegrees + 180) % 360) - 180;
-		if (x < -180) {
-			x += 360;
-		}
-		return x;
-	}
 }
