@@ -186,3 +186,64 @@ public class Drive extends SubsystemBase {
     return 0;
   }
 }
+
+
+// change vector --> translation2D since vector2d isn't library anymore
+public class VectorXY extends Vector2d {
+
+  public VectorXY() {
+    super();
+  }
+
+  public VectorXY(double x, double y) {
+    super(x, y);
+  }
+
+  public void add(Vector2d vec) {
+    x += vec.x;
+    y += vec.y;
+  }
+
+  public double degrees() {
+    return Math.toDegrees(Math.atan2(y, x));
+  }
+}
+
+
+public class VectorPolarDegrees extends VectorXY {
+
+  public VectorPolarDegrees(double r, double theta) {
+    x = r * Math.cos(Math.toRadians(theta));
+    y = r * Math.sin(Math.toRadians(theta));
+  }
+}
+
+
+private class SnapshotVectorXY {
+  private VectorXY vectorXY;
+  private double time;
+
+  public SnapshotVectorXY(VectorXY vectorXY, double time) {
+    this.vectorXY = vectorXY;
+    this.time = time;
+  }
+
+  public VectorXY getVectorXY() {
+    return vectorXY;
+  }
+
+  public double getTime() {
+    return time;
+  }
+
+}
+
+  // convert angle to range of +/- 180 degrees
+  public static double boundDegrees(double angleDegrees) {
+    double x = ((angleDegrees + 180) % 360) - 180;
+    if (x < -180) {
+      x += 360;
+    }
+    return x;
+  }
+}
