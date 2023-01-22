@@ -2,6 +2,7 @@ package frc.robot.subsystems.SwerveDrive;
 
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Encoder;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -28,14 +29,18 @@ public class ControlModule {
     position = pos;
   }
 
-  //*********************PID Helper Methods******************//
+  protected ControlModule(WheelPosition pos) {
+    position = pos;
+  }
 
-  public void resetSpeedmodule() {
+
+  public void resetSpeedModule() {
+
     if (speedEncoder != null)
       this.speedEncoder.reset();
   }
 
-  //************** Pos/Vel/Acc Helper Methods **************//
+  // ************** Pos/Vel/Acc Helper Methods **************//
 
   public double getAngle() {
     if (rotationEncoder != null)
@@ -56,7 +61,7 @@ public class ControlModule {
   }
 
   public double snapshotAcceleration() {
-    
+
     double currentRate = this.getVelocity();
     double currentTime = Timer.getFPGATimestamp();
 
@@ -65,12 +70,16 @@ public class ControlModule {
     previousRate = currentRate;
     previousTime = currentTime;
 
-    filteredAccel = acceleration * 0.5 + filteredAccel * 0.5; // dampens random spikes due to the fact that we are deriving this value
+
+    filteredAccel = acceleration * 0.5 + filteredAccel * 0.5; // dampens random spikes due to the
+                                                              // fact that we are deriving this
+                                                              // value
 
     return filteredAccel;
   }
 
   public double getAcceleration() {
+
     return filteredAccel; // feet per sec per sec
   }
 
@@ -86,6 +95,7 @@ public class ControlModule {
     return null;
   }
 
+
   public void debug() {
     String name = position.toString() + " ControlModule/";
 
@@ -96,6 +106,7 @@ public class ControlModule {
 
   public enum WheelPosition{
   // construction of SwerveDriveKinematics is dependent on this enum 
+
     FRONT_RIGHT(0), FRONT_LEFT(1), BACK_LEFT(2), BACK_RIGHT(3);
 
     public int wheelNumber;
@@ -105,6 +116,7 @@ public class ControlModule {
     }
 
     public String toString() {
+
       switch(wheelNumber) {
         case 0: return "FRONT_RIGHT";
         case 1: return "RONT_LEFT";
