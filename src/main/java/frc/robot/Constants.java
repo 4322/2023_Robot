@@ -6,6 +6,7 @@ public class Constants {
   public static final boolean armEnabled = false;
   public static final boolean clawEnabled = false;
   public static final boolean driveEnabled = false;
+  public static final boolean gyroEnabled = false;
 
   public static final double inchesToMeters = 0.0254;
   public static final double feetToMeters = inchesToMeters * 12;
@@ -33,7 +34,7 @@ public class Constants {
     public static final int encoderResolution = 0;
 
     public static final double distWheelMetersX = 0;
-    public static final double disWheelMetersY = 0;
+    public static final double distWheelMetersY = 0;
 
     public static final double wheelBaseLengthFeet = 0;
     public static final double wheelBaseWidthFeet = 0;
