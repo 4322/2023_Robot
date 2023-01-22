@@ -1,5 +1,10 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -18,6 +23,9 @@ public class Drive extends SubsystemBase {
 
   private Timer runTime = new Timer();
 
+  private double latestVelocity;
+  private double latestAcceleration;
+
   private final Translation2d frontLeftLocation = new Translation2d(Constants.DriveConstants.distWheelMetersX, Constants.DriveConstants.distWheelMetersY);
   private final Translation2d frontRightLocation = new Translation2d(Constants.DriveConstants.distWheelMetersX, -Constants.DriveConstants.distWheelMetersY);
   private final Translation2d backLeftLocation = new Translation2d(-Constants.DriveConstants.distWheelMetersX, Constants.DriveConstants.distWheelMetersY);
@@ -26,6 +34,15 @@ public class Drive extends SubsystemBase {
   private final SwerveDriveKinematics kinematics = 
         new SwerveDriveKinematics(
           frontRightLocation, frontLeftLocation, backLeftLocation, backRightLocation);
+
+  private ShuffleboardTab tab;
+  private NetworkTableEntry botVelocityMag;
+  private NetworkTableEntry botAccelerationMag;
+  private NetworkTableEntry botVelocityAngle;
+  private NetworkTableEntry botAccelerationAngle;
+  private NetworkTableEntry driveXTab;
+  private NetworkTableEntry driveYTab;
+  private NetworkTableEntry rotateTab;
 
   public Drive() {
 
@@ -103,8 +120,8 @@ public class Drive extends SubsystemBase {
             swerveModule[i].getAcceleration(),
             Rotation2d.fromDegrees(wheelAngleDegrees)));
       }
-      double latestVelocity = velocityXY.getNorm() / 4;
-      double latestAcceleration = accelerationXY.getNorm() / 4;
+      latestVelocity = velocityXY.getNorm() / 4;
+      latestAcceleration = accelerationXY.getNorm() / 4;
       velocityHistory.removeIf(n -> 
         (n.getTime() < clock - DriveConstants.Tip.velocityHistorySeconds));
       velocityHistory.add(new SnapshotVectorXY(velocityXY, clock));
