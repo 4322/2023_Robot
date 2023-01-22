@@ -101,8 +101,8 @@ public class Drive extends SubsystemBase{
             swerveModule[i].getAcceleration(),
             wheelAngleDegrees));
       }
-      latestVelocity = velocityXY.magnitude() / 4;
-      latestAcceleration = accelerationXY.magnitude() / 4;
+      latestVelocity = velocityXY.norm() / 4;
+      latestAcceleration = accelerationXY.norm() / 4;
       velocityHistory.removeIf(n -> 
         (n.getTime() < clock - DriveConstants.Tip.velocityHistorySeconds));
       velocityHistory.add(new SnapshotVectorXY(velocityXY, clock));
@@ -193,4 +193,32 @@ public class VectorPolarDegrees extends VectorXY {
     x = r * Math.cos(Math.toRadians(theta));
     y = r * Math.sin(Math.toRadians(theta));
   }
+}
+
+private class SnapshotVectorXY {
+    private VectorXY vectorXY;
+    private double time;
+
+    public SnapshotVectorXY(VectorXY vectorXY, double time) {
+      this.vectorXY = vectorXY;
+      this.time = time;
+    }
+
+    public VectorXY getVectorXY() {
+      return vectorXY;
+    }
+
+    public double getTime() {
+      return time;
+    }
+  }
+
+	// convert angle to range of +/- 180 degrees
+	public static double boundDegrees(double angleDegrees) {
+		double x = ((angleDegrees + 180) % 360) - 180;
+		if (x < -180) {
+			x += 360;
+		}
+		return x;
+	}
 }
