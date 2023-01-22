@@ -29,11 +29,6 @@ public class ControlModule {
     position = pos;
   }
 
-  protected ControlModule(WheelPosition pos) {
-    position = pos;
-  }
-
-
   public void resetSpeedModule() {
 
     if (speedEncoder != null)
