@@ -4,7 +4,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.SwerveDrive.SwerveModule;
 
-public class Drive extends SubsystemBase{
+public class Drive extends SubsystemBase {
 
   private SwerveModule[] swerveModule = new SwerveModule[4];
 
@@ -39,7 +39,7 @@ public class Drive extends SubsystemBase{
   public void setDriveMode() {
 
   }
-  
+
   public double getAngle() {
     return 0;
   }
@@ -97,7 +97,7 @@ public class Drive extends SubsystemBase{
 
   }
 
-  public void setBrakemMode() {
+  public void setBrakeMode() {
 
   }
 
@@ -108,8 +108,8 @@ public class Drive extends SubsystemBase{
   public void setModuleStates() {
 
   }
-  
-  public static double boundDegrees() {
+
+  public static double boundDegrees(double angleDegrees) {
     return 0;
   }
 }
