@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.subsystems.Arm;
 
 public class RobotContainer {
@@ -8,6 +9,7 @@ public class RobotContainer {
   private Timer disableTimer = new Timer();
 
   // Define controllers
+  private final XboxController xbox = new XboxController(2);
 
   // The robot's subsystems and commands are defined here...
   private final Arm arm = new Arm();
