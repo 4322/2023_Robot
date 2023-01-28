@@ -19,6 +19,7 @@ import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -263,7 +264,7 @@ public class Drive extends SubsystemBase {
   }
 
   public boolean isAtTarget() {
-    return false;
+    return ram.atReference();
   }
 
   public void driveAutoRotate() {
