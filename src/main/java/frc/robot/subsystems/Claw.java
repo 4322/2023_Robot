@@ -46,4 +46,10 @@ public class Claw extends SubsystemBase {
       clawMotor.setIdleMode(IdleMode.kBrake);
     }
   }
+
+  public void manualStop() {
+    if (Constants.clawEnabled) {
+      clawMotor.stopMotor();
+    }
+  }
 }
