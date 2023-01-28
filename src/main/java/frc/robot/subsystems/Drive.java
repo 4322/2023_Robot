@@ -1,10 +1,7 @@
 package frc.robot.subsystems;
 
 import java.util.ArrayList;
-import java.lang.Object;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -14,15 +11,11 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.SwerveDrive.SwerveModule;
 import frc.robot.subsystems.SwerveDrive.ControlModule.WheelPosition;
 import frc.utility.SnapshotTranslation2D;
-import edu.wpi.first.math.Nat;
-import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -122,7 +115,7 @@ public class Drive extends SubsystemBase {
         swerveModules[WheelPosition.BACK_LEFT.wheelNumber] =
             new SwerveModule(DriveConstants.rearLeftRotationID, DriveConstants.rearLeftDriveID,
                 WheelPosition.BACK_LEFT, DriveConstants.rearLeftEncoderID);
-        odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2d());
+        odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2d(), getModulePostitions());
 
         for (SwerveModule module : swerveModules) {
           module.init();
@@ -205,7 +198,7 @@ public class Drive extends SubsystemBase {
   }
 
   public void setDriveMode(DriveMode mode) {
-    if (Constants.demo.inDemoMode) {
+    if (Constants.inDemoMode) {
       if (mode != DriveMode.fieldCentric) {
         return;
       }
@@ -344,7 +337,7 @@ public class Drive extends SubsystemBase {
 
   public void resetodometry(Pose2d pose) {
     if (Constants.gyroEnabled) {
-      odometry.resetPosition(pose, gyro.getRotation2d());
+      odometry.resetPosition(gyro.getRotation2d(), getModulePostitions(), pose);
     }
   }
 
