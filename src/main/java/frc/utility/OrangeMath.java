@@ -10,6 +10,6 @@ public class OrangeMath {
   }
 
   public static double falconEncoderToMeters(double encUnits, double wheelCircumferenceMeters) {
-    return (encUnits * wheelCircumferenceMeters)/Constants.falconEncoderUnits;
+    return (encUnits * wheelCircumferenceMeters) / Constants.falconEncoderUnits;
   }
 }
