@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.ArrayList;
+
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -13,9 +15,12 @@ import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Pose2d;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj.Timer;
+
+import 
 
 public class Drive extends SubsystemBase {
 
@@ -25,6 +30,8 @@ public class Drive extends SubsystemBase {
 
   private double latestVelocity;
   private double latestAcceleration;
+
+  private ArrayList<SnapshotVectorXY> velocityHistory = new ArrayList<SnapshotVectorXY>();
 
   private final Translation2d frontLeftLocation = new Translation2d(
       Constants.DriveConstants.distWheelMetersX, Constants.DriveConstants.distWheelMetersY);
@@ -108,9 +115,9 @@ public class Drive extends SubsystemBase {
         currentAngle[i] = swerveModule[i].getInternalRotationDegrees();
       }
 
-      Translation2d velocityXY = new Translation2d();
-      Translation2d accelerationXY = new Translation2d();
-      Translation2d driveXY = new Translation2d(driveX, driveY);
+      Translation2d velocityXY = new VectorXY();
+      Translation2d accelerationXY = new VectorXY();
+      Translation2d driveXY = new VectorXY(driveX, driveY);
 
       // sum wheel velocity and acceleration vectors
       for (int i = 0; i < swerveModule.length; i++) {
@@ -122,8 +129,8 @@ public class Drive extends SubsystemBase {
       }
       latestVelocity = velocityXY.getNorm() / 4;
       latestAcceleration = accelerationXY.getNorm() / 4;
-      velocityHistory
-          .removeIf(n -> (n.getTime() < clock - DriveConstants.Tip.velocityHistorySeconds));
+      velocityHistory.removeIf(n -> 
+        (n.getTime() < clock - DriveConstants.Tip.velocityHistorySeconds));
       velocityHistory.add(new SnapshotVectorXY(velocityXY, clock));
 
       if (Constants.debug) {
@@ -189,54 +196,7 @@ public class Drive extends SubsystemBase {
 
 
 // change vector --> translation2D since vector2d isn't library anymore
-public class VectorXY extends Vector2d {
 
-  public VectorXY() {
-    super();
-  }
-
-  public VectorXY(double x, double y) {
-    super(x, y);
-  }
-
-  public void add(Vector2d vec) {
-    x += vec.x;
-    y += vec.y;
-  }
-
-  public double degrees() {
-    return Math.toDegrees(Math.atan2(y, x));
-  }
-}
-
-
-public class VectorPolarDegrees extends VectorXY {
-
-  public VectorPolarDegrees(double r, double theta) {
-    x = r * Math.cos(Math.toRadians(theta));
-    y = r * Math.sin(Math.toRadians(theta));
-  }
-}
-
-
-private class SnapshotVectorXY {
-  private VectorXY vectorXY;
-  private double time;
-
-  public SnapshotVectorXY(VectorXY vectorXY, double time) {
-    this.vectorXY = vectorXY;
-    this.time = time;
-  }
-
-  public VectorXY getVectorXY() {
-    return vectorXY;
-  }
-
-  public double getTime() {
-    return time;
-  }
-
-}
 
   // convert angle to range of +/- 180 degrees
   public static double boundDegrees(double angleDegrees) {
