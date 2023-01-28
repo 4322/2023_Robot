@@ -272,7 +272,7 @@ public class Drive extends SubsystemBase {
   }
 
   public void resetRotatePID() {
-
+    rotPID.reset();
   }
 
   public void updateOdometry() {
