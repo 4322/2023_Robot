@@ -53,6 +53,9 @@ public class Constants {
 
     public static final double minAutoRotateSpeed = 0.0;
     public static final double maxAutoRotateSpeed = 0.0;
+
+    // 1 degree
+    public static final Pose2d poseError = new Pose2d(new Translation2d(0.1, 0.1), new Rotation2d(0.0174533));
     
     public final static class Tip {
       public static final double highVelocityFtPerSec = 6.0; 
