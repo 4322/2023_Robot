@@ -48,9 +48,11 @@ public class Constants {
     public static final double maxRotationSpeedRadSecond = 0;
     public static final double autoRotkP = 0;
     public static final double autoRotkD = 0;
-    
+
     public static final double minAutoRotateSpeed = 0.0;
     public static final double maxAutoRotateSpeed = 0.0;
+
+    public static final double autoMaxSpeedMetersPerSecond = 3.5;
 
     public static final double movingVelocityThresholdFtPerSec = 0.2;
 
