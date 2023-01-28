@@ -60,7 +60,7 @@ public class Constants {
       public static final double highSpeedSteeringChangeMaxDegrees = 20;
       public static final double velocityHistorySeconds = 0.1;
     
-      public static final class Rotation {
+    public static final class Rotation {
 
     public static final double minAutoRotateSpeed = 0.0;
     public static final double maxAutoRotateSpeed = 0.0;
@@ -72,7 +72,6 @@ public class Constants {
     public static final Pose2d poseError =
         new Pose2d(new Translation2d(0.1, 0.1), new Rotation2d(0.0174533));
 
-    public static final class Rotation {
       public static final double kP = 1.2;
       public static final double kD = 6.0;
 
@@ -157,6 +156,5 @@ public class Constants {
   public static final class demo {
     public static final boolean inDemoMode = false;
   }
-
 
 }
