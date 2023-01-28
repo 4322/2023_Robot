@@ -221,7 +221,7 @@ public class Drive extends SubsystemBase {
   }
 
   public boolean isRobotMoving() {
-    return false;
+    return latestVelocity >= DriveConstants.movingVelocityThresholdFtPerSec;
   }
 
   public void resetFieldCentric(int i) {
@@ -348,11 +348,6 @@ public class Drive extends SubsystemBase {
   public void setModuleStates() {
 
   }
-
-  public static double boundDegrees(double angleDegrees) {
-    return 0;
-  }
-
 }
 
 
