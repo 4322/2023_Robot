@@ -80,7 +80,7 @@ public class Drive extends SubsystemBase {
   private GenericEntry odometryDegrees;
 
   public Drive() {
-
+    runTime.start();
   }
 
   public void init() {
