@@ -26,10 +26,10 @@ public class Constants {
     public static final int rearLeftDriveID = 0;
     public static final int rearLeftRotationID = 0;
 
-    public static final int frontRightEncoder = 0;
-    public static final int rearRightEncoder = 0;
-    public static final int frontLeftEncoder = 0;
-    public static final int rearLeftEncoder = 0;
+    public static final int frontRightEncoderID = 10;
+    public static final int rearRightEncoderID = 11;
+    public static final int frontLeftEncoderID = 12;
+    public static final int rearLeftEncoderID = 13;
 
     public static final int encoderResolution = 0;
 
@@ -41,6 +41,8 @@ public class Constants {
 
     public static final double maxSpeedMetersSecond = 0;
     public static final double maxRotationSpeedRadSecond = 0;
+    public static final double autoRotkP = 0;
+    public static final double autoRotkD = 0;
 
     public static final class Rotation {
       public static final double kP = 1.2;
@@ -118,6 +120,10 @@ public class Constants {
       public static final double rampRate = 0.0;
       public static final double forward = 1;
       public static final double backward = -1;
+  }
+
+  public static final class demo{
+    public static final boolean inDemoMode = false;
   }
 
 
