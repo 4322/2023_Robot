@@ -12,6 +12,7 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -337,14 +338,7 @@ public class Drive extends SubsystemBase {
 
   public void updateOdometry() {
     if (Constants.gyroEnabled) {
-      odometry.update(
-        gyro.getRotation2d(),
-        // wheel locations must be in the same order as the WheelPosition enum values
-        swerveModules[WheelPosition.FRONT_RIGHT.wheelNumber].getState(),
-        swerveModules[WheelPosition.FRONT_LEFT.wheelNumber].getState(),
-        swerveModules[WheelPosition.BACK_LEFT.wheelNumber].getState(),
-        swerveModules[WheelPosition.BACK_RIGHT.wheelNumber].getState()
-      );
+      odometry.update(gyro.getRotation2d(), getModulePostitions());
     }
   }
 
@@ -399,6 +393,15 @@ public class Drive extends SubsystemBase {
       swerveModules[i].setDesiredState(s);
       i++;
     }
+  }
+
+  public SwerveModulePosition[] getModulePostitions() {
+    // wheel locations must be in the same order as the WheelPosition enum values
+    return new SwerveModulePosition[] {
+        swerveModules[WheelPosition.FRONT_RIGHT.wheelNumber].getPosition(),
+        swerveModules[WheelPosition.FRONT_LEFT.wheelNumber].getPosition(),
+        swerveModules[WheelPosition.BACK_LEFT.wheelNumber].getPosition(),
+        swerveModules[WheelPosition.BACK_RIGHT.wheelNumber].getPosition()};
   }
 
   // convert angle to range of +/- 180 degrees
