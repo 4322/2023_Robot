@@ -9,7 +9,18 @@ public class OrangeMath {
     return Math.abs(num1 - num2) < epsilon;
   }
 
-  public static double falconEncoderToMeters(double encUnits, double wheelCircumferenceMeters) {
-    return (encUnits * wheelCircumferenceMeters) / Constants.falconEncoderUnits;
+  public static double falconEncoderToMeters(double encUnits, double wheelCircumferenceMeters,
+      double gearRatioWheelToMotor) {
+    return (encUnits * wheelCircumferenceMeters * gearRatioWheelToMotor)
+        / Constants.falconEncoderUnits;
   }
+
+  public static double feetToMeters(double feet) {
+    return feet / 3.281;
+  }
+
+  public static double metersToFeet(double meters) {
+    return meters * 3.281;
+  }
+
 }
