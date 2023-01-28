@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
+import frc.robot.Constants.ClawConstants;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
@@ -23,6 +24,14 @@ public class Claw {
       clawMotor.restoreFactoryDefaults();
       clawMotor.setOpenLoopRampRate(Constants.ClawConstants.rampRate);
     }
+  }
+
+  private void manualIntake() {
+    clawMotor.set(ClawConstants.clawSpeed);
+  }
+
+  private void manualOuttake() {
+    clawMotor.set(-ClawConstants.clawSpeed);
   }
 
   public void setCoastMode() {
