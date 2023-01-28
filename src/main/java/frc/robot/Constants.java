@@ -7,11 +7,14 @@ import edu.wpi.first.math.geometry.Translation2d;
 
 public class Constants {
   public static final boolean debug = false;
+  public static final boolean inDemoMode = false;
 
   public static final boolean armEnabled = false;
   public static final boolean clawEnabled = false;
   public static final boolean driveEnabled = false;
   public static final boolean gyroEnabled = false;
+
+  public static final int falconEncoderUnits = 2048;
 
   public static final double inchesToMeters = 0.0254;
   public static final double feetToMeters = inchesToMeters * 12;
@@ -147,11 +150,6 @@ public class Constants {
     public static final int minPosition = -1000;
   }
 
-  public static final class ClawConstants {
-    public static final int motorID = 1; // temp value
-    public static final double rampRate = 0.8; // temp value
-  }
-
   public static final class ArmConstants {
     public static final int motorID = 0;
     public static final double rampRate = 0.0;
@@ -159,8 +157,9 @@ public class Constants {
     public static final double backward = -1;
   }
 
-  public static final class demo {
-    public static final boolean inDemoMode = false;
+  public static final class ClawConstants {
+    public static final int motorID = 1; // temp value
+    public static final double rampRate = 0.8; // temp value
   }
 
 }
