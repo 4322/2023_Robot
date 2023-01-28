@@ -8,8 +8,9 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Claw {
+public class Claw extends SubsystemBase {
   private CANSparkMax clawMotor;
   private SparkMaxPIDController clawPID;
 
@@ -26,11 +27,11 @@ public class Claw {
     }
   }
 
-  private void manualIntake() {
+  public void manualIntake() {
     clawMotor.set(ClawConstants.clawSpeed);
   }
 
-  private void manualOuttake() {
+  public void manualOuttake() {
     clawMotor.set(-ClawConstants.clawSpeed);
   }
 
