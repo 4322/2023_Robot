@@ -225,7 +225,7 @@ public class Drive extends SubsystemBase {
       updateOdometry();
     }
 
-    if (Constants.debug) {  // don't combine if statements to avoid dead code warning
+    if (Constants.debug) { // don't combine if statements to avoid dead code warning
       if (Constants.gyroEnabled) {
         roll.setDouble(gyro.getRoll());
         pitch.setDouble(gyro.getPitch());
@@ -250,7 +250,7 @@ public class Drive extends SubsystemBase {
   public void resetFieldCentric(double offset) {
     if (gyro != null) {
       gyro.setAngleAdjustment(0);
-      gyro.setAngleAdjustment(-gyro.getAngle() + offset); 
+      gyro.setAngleAdjustment(-gyro.getAngle() + offset);
     }
     setDriveMode(DriveMode.fieldCentric);
   }
@@ -292,8 +292,8 @@ public class Drive extends SubsystemBase {
       }
       // convert to proper units
       rotate = rotate * DriveConstants.maxRotationSpeedRadSecond;
-      driveX = driveX * DriveConstants.maxSpeedMetersSecond;
-      driveY = driveY * DriveConstants.maxSpeedMetersSecond;
+      driveX = driveX * DriveConstants.maxSpeedMetersPerSecond;
+      driveY = driveY * DriveConstants.maxSpeedMetersPerSecond;
 
       // ready to drive!
       if ((driveX == 0) && (driveY == 0) && (rotate == 0)) {
@@ -307,12 +307,12 @@ public class Drive extends SubsystemBase {
           robotAngle = Rotation2d.fromDegrees(-robotCentricOffsetDegrees);
         }
         // create SwerveModuleStates inversely from the kinematics
-        var swerveModuleStates =
-            kinematics.toSwerveModuleStates(
-              ChassisSpeeds.fromFieldRelativeSpeeds(driveX, driveY, rotate, robotAngle));
-        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.DriveConstants.maxSpeedMetersSecond);
-        for (int i = 0; i < swerveModule.length; i++) {
-          swerveModule[i].setDesiredState(swerveModuleStates[i]);
+        var swerveModuleStates = kinematics.toSwerveModuleStates(
+            ChassisSpeeds.fromFieldRelativeSpeeds(driveX, driveY, rotate, robotAngle));
+        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates,
+            Constants.DriveConstants.maxSpeedMetersPerSecond);
+        for (int i = 0; i < swerveModules.length; i++) {
+          swerveModules[i].setDesiredState(swerveModuleStates[i]);
         }
       }
     }
