@@ -55,6 +55,8 @@ public class Drive extends SubsystemBase {
 
   private RamseteController ram = new RamseteController();
   private SwerveDriveOdometry odometry;
+  private double robotCentricOffsetDegrees;
+  private boolean fieldRelative;
 
   private ShuffleboardTab tab;
   private GenericEntry rotErrorTab;
@@ -284,11 +286,13 @@ public class Drive extends SubsystemBase {
   }
 
   public void setToFieldCentric() {
-
+    fieldRelative = true;
+    robotCentricOffsetDegrees = 0;
   }
 
-  public void setToBotCentric() {
-
+  public void setToBotCentric(double offsetDeg) {
+    fieldRelative = false;
+    robotCentricOffsetDegrees = offsetDeg;
   }
 
   public void setCoastMode() {
