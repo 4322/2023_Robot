@@ -11,6 +11,7 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.SwerveDrive.SwerveModule;
@@ -345,15 +346,14 @@ public class Drive extends SubsystemBase {
     }
   }
 
-  public void setModuleStates() {
-
+  public void setModuleStates(SwerveModuleState[] states) {
+    SwerveDriveKinematics.desaturateWheelSpeeds(states, DriveConstants.autoMaxSpeedMetersPerSecond);
+    int i = 0;
+    for (SwerveModuleState s : states) {
+      swerveModule[i].setDesiredState(s);
+      i++;
+    }
   }
-
-  public static double boundDegrees(double angleDegrees) {
-    return 0;
-  }
-
-}
 
 
   // change vector --> translation2D since vector2d isn't library anymore
