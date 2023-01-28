@@ -28,6 +28,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Pose2d;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 
 public class Drive extends SubsystemBase {
@@ -388,7 +389,7 @@ public class Drive extends SubsystemBase {
   }
 
   public void setModuleStates(SwerveModuleState[] states) {
-    SwerveDriveKinematics.desaturateWheelSpeeds(states, DriveConstants.autoMaxSpeedMetersPerSecond);
+    SwerveDriveKinematics.desaturateWheelSpeeds(states, DriveConstants.maxSpeedMetersPerSecond);
     int i = 0;
     for (SwerveModuleState s : states) {
       swerveModules[i].setDesiredState(s);
