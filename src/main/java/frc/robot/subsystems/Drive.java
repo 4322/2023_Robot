@@ -348,7 +348,7 @@ public class Drive extends SubsystemBase {
     }
   }
 
-  public void resetodometry() {
+  public void resetodometry(Pose2d pose) {
     if (Constants.gyroEnabled) {
       odometry.resetPosition(pose, gyro.getRotation2d());
     }
@@ -386,6 +386,10 @@ public class Drive extends SubsystemBase {
         module.stop();
       }
     }
+  }
+
+  public Pose2d getPose2d() {
+    return odometry.getPoseMeters();
   }
 
   public void setModuleStates(SwerveModuleState[] states) {
