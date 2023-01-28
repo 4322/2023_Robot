@@ -16,6 +16,7 @@ import frc.robot.subsystems.SwerveDrive.ControlModule.WheelPosition;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -48,6 +49,8 @@ public class Drive extends SubsystemBase {
 
   private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontRightLocation,
       frontLeftLocation, backLeftLocation, backRightLocation);
+
+  private RamseteController ram = new RamseteController();
 
   private SwerveDriveOdometry odometry;
 
@@ -305,7 +308,7 @@ public class Drive extends SubsystemBase {
   }
 
   public boolean isAtTarget() {
-    return false;
+    return ram.atReference();
   }
 
   public void driveAutoRotate() {
