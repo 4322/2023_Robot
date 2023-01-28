@@ -16,6 +16,7 @@ import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.Drive;
+import frc.utility.OrangeMath;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -176,7 +177,7 @@ public class SwerveModule extends ControlModule{
   }
 
   public SwerveModulePosition getPosition() {
-    return new SwerveModulePosition(driveMotor.getSelectedSensorPosition()/, null)
+    return new SwerveModulePosition(getDistance(), Rotation2d.fromDegrees(getAngle()));
 
   }
 
