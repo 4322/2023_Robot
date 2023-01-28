@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -237,9 +238,9 @@ public class Drive extends SubsystemBase {
         currentAngle[i] = swerveModule[i].getInternalRotationDegrees();
       }
 
-      Translation2d velocityXY = new VectorXY();
-      Translation2d accelerationXY = new VectorXY();
-      Translation2d driveXY = new VectorXY(driveX, driveY);
+      Translation2d velocityXY = new Translation2d();
+      Translation2d accelerationXY = new Translation2d();
+      Translation2d driveXY = new Translation2d(driveX, driveY);
 
       // sum wheel velocity and acceleration vectors
       for (int i = 0; i < swerveModule.length; i++) {
@@ -263,6 +264,31 @@ public class Drive extends SubsystemBase {
         driveXTab.setDouble(driveX);
         driveYTab.setDouble(driveY);
         rotateTab.setDouble(rotate);
+      }
+      // convert to proper units
+      rotate = rotate * DriveConstants.maxRotationSpeedRadSecond;
+      driveX = driveX * DriveConstants.maxSpeedMetersSecond;
+      driveY = driveY * DriveConstants.maxSpeedMetersSecond;
+
+      // ready to drive!
+      if ((driveX == 0) && (driveY == 0) && (rotate == 0)) {
+        // don't rotate wheels such that we trip over them when decelerating
+        stop();
+      } else {
+        Rotation2d robotAngle;
+        if (fieldRelative && Constants.gyroEnabled) {
+          robotAngle = gyro.getRotation2d();
+        } else {
+          robotAngle = Rotation2d.fromDegrees(-robotCentricOffsetDegrees);
+        }
+        // create SwerveModuleStates inversely from the kinematics
+        var swerveModuleStates =
+            kinematics.toSwerveModuleStates(
+              ChassisSpeeds.fromFieldRelativeSpeeds(driveX, driveY, rotate, robotAngle));
+        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.DriveConstants.maxSpeedMetersSecond);
+        for (int i = 0; i < swerveModule.length; i++) {
+          swerveModule[i].setDesiredState(swerveModuleStates[i]);
+        }
       }
     }
   }
