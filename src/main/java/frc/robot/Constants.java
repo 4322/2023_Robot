@@ -1,11 +1,13 @@
 package frc.robot;
 
 public class Constants {
-  
+
 public static final boolean debug = false;
 
   public static final boolean armEnabled = true;
   public static final boolean clawEnabled = true;
+
+  public static final int falconEncoderUnits = 2048;
 
   public static final class ArmConstants {
     public static final int motorID = 0;
