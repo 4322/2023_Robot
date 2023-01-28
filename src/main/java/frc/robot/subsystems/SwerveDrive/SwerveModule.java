@@ -17,6 +17,7 @@ import frc.robot.RobotContainer;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.Drive;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 public class SwerveModule extends ControlModule{
@@ -171,6 +172,11 @@ public class SwerveModule extends ControlModule{
   public SwerveModuleState getState() {
     return new SwerveModuleState(getVelocity() * Constants.feetToMeters, Rotation2d.fromDegrees(
             turningMotor.getSelectedSensorPosition() * DriveConstants.Rotation.countToDegrees));
+
+  }
+
+  public SwerveModulePosition getPosition() {
+    return new SwerveModulePosition(driveMotor.getSelectedSensorPosition()/, null)
 
   }
 
