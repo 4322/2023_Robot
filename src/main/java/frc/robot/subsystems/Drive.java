@@ -2,10 +2,12 @@ package frc.robot.subsystems;
 
 import java.util.ArrayList;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -16,6 +18,7 @@ import frc.robot.subsystems.SwerveDrive.ControlModule.WheelPosition;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -51,21 +54,29 @@ public class Drive extends SubsystemBase {
       frontLeftLocation, backLeftLocation, backRightLocation);
 
   private RamseteController ram = new RamseteController();
-
   private SwerveDriveOdometry odometry;
 
   private ShuffleboardTab tab;
-  private NetworkTableEntry rotErrorTab;
-  private NetworkTableEntry rotSpeedTab;
-  private NetworkTableEntry rotkP;
-  private NetworkTableEntry rotkD;
-  private NetworkTableEntry botVelocityMag;
-  private NetworkTableEntry botAccelerationMag;
-  private NetworkTableEntry botVelocityAngle;
-  private NetworkTableEntry botAccelerationAngle;
-  private NetworkTableEntry driveXTab;
-  private NetworkTableEntry driveYTab;
-  private NetworkTableEntry rotateTab;
+
+  private GenericEntry rotErrorTab;
+  private GenericEntry rotSpeedTab;
+  private GenericEntry rotkP;
+  private GenericEntry rotkD;
+  private GenericEntry roll;
+  private GenericEntry pitch;
+  private GenericEntry botVelocityMag;
+  private GenericEntry botAccelerationMag;
+  private GenericEntry botVelocityAngle;
+  private GenericEntry botAccelerationAngle;
+  private GenericEntry tipDecelerationAtiveTab;
+  private GenericEntry tipSmallStickAtiveTab;
+  private GenericEntry tipBigStickAtiveTab;
+  private GenericEntry driveXTab;
+  private GenericEntry driveYTab;
+  private GenericEntry rotateTab;
+  private GenericEntry odometryX;
+  private GenericEntry odometryY;
+  private GenericEntry odometryDegrees;
 
   public Drive() {
 
@@ -78,7 +89,7 @@ public class Drive extends SubsystemBase {
 
       if (Constants.gyroEnabled) {
         gyro = new AHRS(SPI.Port.kMXP);
-    
+
 
         // wait for first gyro reading to be received
         try {
@@ -92,18 +103,18 @@ public class Drive extends SubsystemBase {
       }
 
       if (Constants.driveEnabled) {
-        swerveModule[WheelPosition.FRONT_RIGHT.wheelNumber] = new SwerveModule(
-            DriveConstants.frontRightRotationID, DriveConstants.frontRightDriveID,
-            WheelPosition.FRONT_RIGHT, DriveConstants.frontRightEncoderID);
-        swerveModule[WheelPosition.FRONT_LEFT.wheelNumber] = new SwerveModule(DriveConstants.frontLeftRotationID,
-            DriveConstants.frontLeftDriveID,
-            WheelPosition.FRONT_LEFT, DriveConstants.frontLeftEncoderID);
-        swerveModule[WheelPosition.BACK_RIGHT.wheelNumber] = new SwerveModule(DriveConstants.rearRightRotationID,
-            DriveConstants.rearRightDriveID,
-            WheelPosition.BACK_RIGHT, DriveConstants.rearRightEncoderID);
-        swerveModule[WheelPosition.BACK_LEFT.wheelNumber] = new SwerveModule(DriveConstants.rearLeftRotationID,
-            DriveConstants.rearLeftDriveID,
-            WheelPosition.BACK_LEFT, DriveConstants.rearLeftEncoderID);
+        swerveModule[WheelPosition.FRONT_RIGHT.wheelNumber] =
+            new SwerveModule(DriveConstants.frontRightRotationID, DriveConstants.frontRightDriveID,
+                WheelPosition.FRONT_RIGHT, DriveConstants.frontRightEncoderID);
+        swerveModule[WheelPosition.FRONT_LEFT.wheelNumber] =
+            new SwerveModule(DriveConstants.frontLeftRotationID, DriveConstants.frontLeftDriveID,
+                WheelPosition.FRONT_LEFT, DriveConstants.frontLeftEncoderID);
+        swerveModule[WheelPosition.BACK_RIGHT.wheelNumber] =
+            new SwerveModule(DriveConstants.rearRightRotationID, DriveConstants.rearRightDriveID,
+                WheelPosition.BACK_RIGHT, DriveConstants.rearRightEncoderID);
+        swerveModule[WheelPosition.BACK_LEFT.wheelNumber] =
+            new SwerveModule(DriveConstants.rearLeftRotationID, DriveConstants.rearLeftDriveID,
+                WheelPosition.BACK_LEFT, DriveConstants.rearLeftEncoderID);
         odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2d());
 
         for (SwerveModule module : swerveModule) {
@@ -116,115 +127,57 @@ public class Drive extends SubsystemBase {
       if (Constants.debug) {
         tab = Shuffleboard.getTab("Drivebase");
 
-        rotErrorTab = tab.add("Rot Error", 0)
-            .withPosition(0, 0)
-            .withSize(1, 1)
+        rotErrorTab = tab.add("Rot Error", 0).withPosition(0, 0).withSize(1, 1).getEntry();
+
+        rotSpeedTab = tab.add("Rotation Speed", 0).withPosition(0, 1).withSize(1, 1).getEntry();
+
+        rotkP = tab.add("Rotation kP", DriveConstants.autoRotkP).withPosition(1, 0).withSize(1, 1)
             .getEntry();
 
-        rotSpeedTab = tab.add("Rotation Speed", 0)
-            .withPosition(0, 1)
-            .withSize(1, 1)
+        rotkD = tab.add("Rotation kD", DriveConstants.autoRotkD).withPosition(2, 0).withSize(1, 1)
             .getEntry();
 
-        rotkP = tab.add("Rotation kP", DriveConstants.autoRotkP)
-            .withPosition(1, 0)
-            .withSize(1, 1)
-            .getEntry();
+        roll = tab.add("Roll", 0).withPosition(1, 1).withSize(1, 1).getEntry();
 
-        rotkD = tab.add("Rotation kD", DriveConstants.autoRotkD)
-            .withPosition(2, 0)
-            .withSize(1, 1)
-            .getEntry();
+        pitch = tab.add("Pitch", 0).withPosition(2, 1).withSize(1, 1).getEntry();
 
-        roll = tab.add("Roll", 0)
-            .withPosition(1, 1)
-            .withSize(1, 1)
-            .getEntry();
+        botVelocityMag = tab.add("Bot Vel Mag", 0).withPosition(3, 0).withSize(1, 1).getEntry();
 
-        pitch = tab.add("Pitch", 0)
-            .withPosition(2, 1)
-            .withSize(1, 1)
-            .getEntry();
+        botAccelerationMag = tab.add("Bot Acc Mag", 0).withPosition(3, 1).withSize(1, 1).getEntry();
 
-        botVelocityMag = tab.add("Bot Vel Mag", 0)
-            .withPosition(3, 0)
-            .withSize(1, 1)
-            .getEntry();
+        botVelocityAngle = tab.add("Bot Vel Angle", 0).withPosition(4, 0).withSize(1, 1).getEntry();
 
-        botAccelerationMag = tab.add("Bot Acc Mag", 0)
-            .withPosition(3, 1)
-            .withSize(1, 1)
-            .getEntry();
-
-        botVelocityAngle = tab.add("Bot Vel Angle", 0)
-            .withPosition(4, 0)
-            .withSize(1, 1)
-            .getEntry();
-
-        botAccelerationAngle = tab.add("Bot Acc Angle", 0)
-            .withPosition(4, 1)
-            .withSize(1, 1)
-            .getEntry();
+        botAccelerationAngle =
+            tab.add("Bot Acc Angle", 0).withPosition(4, 1).withSize(1, 1).getEntry();
 
         tipDecelerationAtiveTab = tab.add("Tip Deceleration", true)
-            .withWidget(BuiltInWidgets.kBooleanBox)
-            .withPosition(5, 0)
-            .withSize(1, 1)
-            .getEntry();
+            .withWidget(BuiltInWidgets.kBooleanBox).withPosition(5, 0).withSize(1, 1).getEntry();
 
         tipSmallStickAtiveTab = tab.add("Tip Small Stick", true)
-            .withWidget(BuiltInWidgets.kBooleanBox)
-            .withPosition(5, 1)
-            .withSize(1, 1)
-            .getEntry();
+            .withWidget(BuiltInWidgets.kBooleanBox).withPosition(5, 1).withSize(1, 1).getEntry();
 
-        tipBigStickAtiveTab = tab.add("Tip Big Stick", true)
-            .withWidget(BuiltInWidgets.kBooleanBox)
-            .withPosition(5, 2)
-            .withSize(1, 1)
-            .getEntry();
+        tipBigStickAtiveTab = tab.add("Tip Big Stick", true).withWidget(BuiltInWidgets.kBooleanBox)
+            .withPosition(5, 2).withSize(1, 1).getEntry();
 
-        driveXTab = tab.add("Drive X", 0)
-        .withPosition(0, 2)
-        .withSize(1, 1)
-        .getEntry();
+        driveXTab = tab.add("Drive X", 0).withPosition(0, 2).withSize(1, 1).getEntry();
 
-        driveYTab = tab.add("Drive Y", 0)
-        .withPosition(1, 2)
-        .withSize(1, 1)
-        .getEntry();
+        driveYTab = tab.add("Drive Y", 0).withPosition(1, 2).withSize(1, 1).getEntry();
 
-        rotateTab = tab.add("Rotate", 0)
-        .withPosition(1, 3)
-        .withSize(1, 1)
-        .getEntry();
+        rotateTab = tab.add("Rotate", 0).withPosition(1, 3).withSize(1, 1).getEntry();
 
-        odometryX = tab.add("Odometry X", 0)
-        .withPosition(3, 2)
-        .withSize(1, 1)
-        .getEntry();
+        odometryX = tab.add("Odometry X", 0).withPosition(3, 2).withSize(1, 1).getEntry();
 
-        odometryY = tab.add("Odometry Y", 0)
-        .withPosition(4, 2)
-        .withSize(1, 1)
-        .getEntry();
+        odometryY = tab.add("Odometry Y", 0).withPosition(4, 2).withSize(1, 1).getEntry();
 
-        odometryDegrees = tab.add("Odometry Degrees", 0)
-        .withPosition(2, 2)
-        .withSize(1, 1)
-        .getEntry();
+        odometryDegrees =
+            tab.add("Odometry Degrees", 0).withPosition(2, 2).withSize(1, 1).getEntry();
       }
     }
   }
 
   public enum DriveMode {
-    fieldCentric(0),
-    frontCamCentric(1),
-    leftCamCentric(2),
-    rightCamCentric(3),
-    limelightFieldCentric(4),
-    killFieldCentric(5),
-    sideKillFieldCentric(6);
+    fieldCentric(0), frontCamCentric(1), leftCamCentric(2), rightCamCentric(
+        3), limelightFieldCentric(4), killFieldCentric(5), sideKillFieldCentric(6);
 
     private int value;
 
@@ -345,7 +298,7 @@ public class Drive extends SubsystemBase {
   }
 
   public void resetRotatePID() {
-
+    rotPID.reset();
   }
 
   public void updateOdometry() {
