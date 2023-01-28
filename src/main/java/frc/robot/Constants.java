@@ -43,8 +43,19 @@ public class Constants {
     public static final double maxRotationSpeedRadSecond = 0;
     public static final double autoRotkP = 0;
     public static final double autoRotkD = 0;
-
-    public static final class Rotation {
+    
+    public final static class Tip {
+      public static final double highVelocityFtPerSec = 6.0; 
+      public static final double lowVelocityFtPerSec = 3.0; 
+      public static final double highAccFtPerSec2 = 8.0;
+      public static final double lowAccFtPerSec2 = 4.0;
+      public static final double velAccDiffMaxDeg = 30;
+      public static final double highPowerOff = 0.4;
+      public static final double lowPowerOff = 0.19;
+      public static final double highSpeedSteeringChangeMaxDegrees = 20;
+      public static final double velocityHistorySeconds = 0.1;
+    
+      public static final class Rotation {
       public static final double kP = 1.2;
       public static final double kD = 6.0;
 

@@ -13,6 +13,7 @@ import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.SwerveDrive.SwerveModule;
 import frc.robot.subsystems.SwerveDrive.ControlModule.WheelPosition;
+import frc.utility.SnapshotTranslation2D;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.controller.PIDController;
@@ -35,7 +36,7 @@ public class Drive extends SubsystemBase {
   private double latestVelocity;
   private double latestAcceleration;
 
-  private ArrayList<SnapshotVectorXY> velocityHistory = new ArrayList<SnapshotVectorXY>();
+  private ArrayList<SnapshotTranslation2D> velocityHistory = new ArrayList<SnapshotTranslation2D>();
 
   private final Translation2d frontLeftLocation = new Translation2d(
       Constants.DriveConstants.distWheelMetersX, Constants.DriveConstants.distWheelMetersY);
@@ -274,9 +275,9 @@ public class Drive extends SubsystemBase {
         currentAngle[i] = swerveModule[i].getInternalRotationDegrees();
       }
 
-      Translation2d velocityXY = new VectorXY();
-      Translation2d accelerationXY = new VectorXY();
-      Translation2d driveXY = new VectorXY(driveX, driveY);
+      Translation2d velocityXY = new Translation2d();
+      Translation2d accelerationXY = new Translation2d();
+      Translation2d driveXY = new Translation2d(driveX, driveY);
 
       // sum wheel velocity and acceleration vectors
       for (int i = 0; i < swerveModule.length; i++) {
@@ -290,13 +291,13 @@ public class Drive extends SubsystemBase {
       latestAcceleration = accelerationXY.getNorm() / 4;
       velocityHistory
           .removeIf(n -> (n.getTime() < clock - DriveConstants.Tip.velocityHistorySeconds));
-      velocityHistory.add(new SnapshotVectorXY(velocityXY, clock));
+      velocityHistory.add(new SnapshotTranslation2D(velocityXY, clock));
 
       if (Constants.debug) {
         botVelocityMag.setDouble(latestVelocity);
         botAccelerationMag.setDouble(latestAcceleration);
-        botVelocityAngle.setDouble(velocityXY.degrees());
-        botAccelerationAngle.setDouble(accelerationXY.degrees());
+        botVelocityAngle.setDouble(velocityXY.getAngle().getDegrees());
+        botAccelerationAngle.setDouble(accelerationXY.getAngle().getDegrees());
         driveXTab.setDouble(driveX);
         driveYTab.setDouble(driveY);
         rotateTab.setDouble(rotate);
@@ -359,16 +360,6 @@ public class Drive extends SubsystemBase {
   public void setModuleStates() {
 
   }
-
-  public static double boundDegrees(double angleDegrees) {
-    return 0;
-  }
-
-}
-
-
-  // change vector --> translation2D since vector2d isn't library anymore
-
 
   // convert angle to range of +/- 180 degrees
   public static double boundDegrees(double angleDegrees) {
