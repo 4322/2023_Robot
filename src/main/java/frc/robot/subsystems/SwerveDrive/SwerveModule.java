@@ -177,7 +177,7 @@ public class SwerveModule extends ControlModule{
   }
 
   public SwerveModulePosition getPosition() {
-    return new SwerveModulePosition(getDistance(), Rotation2d.fromDegrees(getAngle()));
+    return new SwerveModulePosition(OrangeMath.feetToMeters(getDistance()), Rotation2d.fromDegrees(getAngle()));
 
   }
 
