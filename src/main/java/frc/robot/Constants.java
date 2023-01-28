@@ -1,8 +1,13 @@
 package frc.robot;
 
 import frc.robot.subsystems.SwerveDrive.ControlModule.WheelPosition;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 
 public class Constants {
+  public static final boolean debug = false;
+
   public static final boolean armEnabled = false;
   public static final boolean clawEnabled = false;
   public static final boolean driveEnabled = false;
@@ -16,7 +21,7 @@ public class Constants {
   public static final int slowStatusPeriodMaxMs = 255;
   public static final int controllerConfigTimeoutMs = 50;
 
-  public static final class DriveConstants{
+  public static final class DriveConstants {
     public static final int frontRightDriveID = 0;
     public static final int frontRightRotationID = 0;
     public static final int rearRightDriveID = 0;
@@ -56,6 +61,18 @@ public class Constants {
       public static final double velocityHistorySeconds = 0.1;
     
       public static final class Rotation {
+
+    public static final double minAutoRotateSpeed = 0.0;
+    public static final double maxAutoRotateSpeed = 0.0;
+
+    public static final double autoMaxSpeedMetersPerSecond = 3.5;
+
+    public static final double movingVelocityThresholdFtPerSec = 0.2;
+
+    public static final Pose2d poseError =
+        new Pose2d(new Translation2d(0.1, 0.1), new Rotation2d(0.0174533));
+
+    public static final class Rotation {
       public static final double kP = 1.2;
       public static final double kD = 6.0;
 
@@ -83,16 +100,16 @@ public class Constants {
       // positive angles are CCW rotation from forward
       public static final double[] CANCoderOffsetDegrees;
       static {
-          CANCoderOffsetDegrees = new double[4];
-          CANCoderOffsetDegrees[WheelPosition.FRONT_RIGHT.wheelNumber] = -78.311;
-          CANCoderOffsetDegrees[WheelPosition.FRONT_LEFT.wheelNumber] = -169.365;
-          CANCoderOffsetDegrees[WheelPosition.BACK_RIGHT.wheelNumber] = -106.787;
-          CANCoderOffsetDegrees[WheelPosition.BACK_LEFT.wheelNumber] = 104.678;
+        CANCoderOffsetDegrees = new double[4];
+        CANCoderOffsetDegrees[WheelPosition.FRONT_RIGHT.wheelNumber] = -78.311;
+        CANCoderOffsetDegrees[WheelPosition.FRONT_LEFT.wheelNumber] = -169.365;
+        CANCoderOffsetDegrees[WheelPosition.BACK_RIGHT.wheelNumber] = -106.787;
+        CANCoderOffsetDegrees[WheelPosition.BACK_LEFT.wheelNumber] = 104.678;
       }
-  }
+    }
 
     public static final class Drive {
-     
+
       // TODO: Needs tuning
       public static final double configClosedLoopRamp = 0.08;
 
@@ -119,24 +136,25 @@ public class Constants {
       public static final double kIz = 500;
       public static final double kFF = 0.05;
     }
+
     public static final double logIntervalSeconds = 1;
     public static final int maxPosition = 1000;
     public static final int minPosition = -1000;
   }
 
   public static final class ClawConstants {
-    public static final int motorID = 1; //temp value
-    public static final double rampRate = 0.8; //temp value
-  }
-  
-  public static final class ArmConstants {
-      public static final int motorID = 0;
-      public static final double rampRate = 0.0;
-      public static final double forward = 1;
-      public static final double backward = -1;
+    public static final int motorID = 1; // temp value
+    public static final double rampRate = 0.8; // temp value
   }
 
-  public static final class demo{
+  public static final class ArmConstants {
+    public static final int motorID = 0;
+    public static final double rampRate = 0.0;
+    public static final double forward = 1;
+    public static final double backward = -1;
+  }
+
+  public static final class demo {
     public static final boolean inDemoMode = false;
   }
 
