@@ -48,6 +48,19 @@ public class Constants {
     public static final double maxRotationSpeedRadSecond = 0;
     public static final double autoRotkP = 0;
     public static final double autoRotkD = 0;
+    
+    public final static class Tip {
+      public static final double highVelocityFtPerSec = 6.0; 
+      public static final double lowVelocityFtPerSec = 3.0; 
+      public static final double highAccFtPerSec2 = 8.0;
+      public static final double lowAccFtPerSec2 = 4.0;
+      public static final double velAccDiffMaxDeg = 30;
+      public static final double highPowerOff = 0.4;
+      public static final double lowPowerOff = 0.19;
+      public static final double highSpeedSteeringChangeMaxDegrees = 20;
+      public static final double velocityHistorySeconds = 0.1;
+    
+    public static final class Rotation {
 
     public static final double minAutoRotateSpeed = 0.0;
     public static final double maxAutoRotateSpeed = 0.0;
@@ -59,7 +72,6 @@ public class Constants {
     public static final Pose2d poseError =
         new Pose2d(new Translation2d(0.1, 0.1), new Rotation2d(0.0174533));
 
-    public static final class Rotation {
       public static final double kP = 1.2;
       public static final double kD = 6.0;
 
@@ -144,6 +156,5 @@ public class Constants {
   public static final class demo {
     public static final boolean inDemoMode = false;
   }
-
 
 }
