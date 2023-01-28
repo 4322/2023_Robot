@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import java.util.ArrayList;
+import java.lang.Object;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -30,7 +31,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class Drive extends SubsystemBase {
 
-  private SwerveModule[] swerveModule = new SwerveModule[4];
+  private SwerveModule[] swerveModules = new SwerveModule[4];
 
   private AHRS gyro;
   private PIDController rotPID;
@@ -106,21 +107,21 @@ public class Drive extends SubsystemBase {
       }
 
       if (Constants.driveEnabled) {
-        swerveModule[WheelPosition.FRONT_RIGHT.wheelNumber] =
+        swerveModules[WheelPosition.FRONT_RIGHT.wheelNumber] =
             new SwerveModule(DriveConstants.frontRightRotationID, DriveConstants.frontRightDriveID,
                 WheelPosition.FRONT_RIGHT, DriveConstants.frontRightEncoderID);
-        swerveModule[WheelPosition.FRONT_LEFT.wheelNumber] =
+        swerveModules[WheelPosition.FRONT_LEFT.wheelNumber] =
             new SwerveModule(DriveConstants.frontLeftRotationID, DriveConstants.frontLeftDriveID,
                 WheelPosition.FRONT_LEFT, DriveConstants.frontLeftEncoderID);
-        swerveModule[WheelPosition.BACK_RIGHT.wheelNumber] =
+        swerveModules[WheelPosition.BACK_RIGHT.wheelNumber] =
             new SwerveModule(DriveConstants.rearRightRotationID, DriveConstants.rearRightDriveID,
                 WheelPosition.BACK_RIGHT, DriveConstants.rearRightEncoderID);
-        swerveModule[WheelPosition.BACK_LEFT.wheelNumber] =
+        swerveModules[WheelPosition.BACK_LEFT.wheelNumber] =
             new SwerveModule(DriveConstants.rearLeftRotationID, DriveConstants.rearLeftDriveID,
                 WheelPosition.BACK_LEFT, DriveConstants.rearLeftEncoderID);
         odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2d());
 
-        for (SwerveModule module : swerveModule) {
+        for (SwerveModule module : swerveModules) {
           module.init();
         }
       }
@@ -209,32 +210,60 @@ public class Drive extends SubsystemBase {
   }
 
   public double getAngle() {
-    return 0;
+    if (gyro != null && gyro.isConnected() && !gyro.isCalibrated()) {
+      return -gyro.getAngle();
+    } else {
+      return 0;
+    }
   }
 
   @Override
   public void periodic() {
+    if (Constants.driveEnabled) {
+      // acceleration must be calculated once and only once per periodic interval
+      for (SwerveModule module : swerveModules) {
+        module.snapshotAcceleration();
+      }
 
+      updateOdometry();
+    }
+
+    if (Constants.debug) {  // don't combine if statements to avoid dead code warning
+      if (Constants.gyroEnabled) {
+        roll.setDouble(gyro.getRoll());
+        pitch.setDouble(gyro.getPitch());
+        odometryX.setDouble(getPose2d().getX());
+        odometryY.setDouble(getPose2d().getY());
+        odometryDegrees.setDouble(getPose2d().getRotation().getDegrees());
+      }
+    }
   }
 
   public void resetDisplacement() {
-
+    if (Constants.gyroEnabled) {
+      gyro.resetDisplacement();
+    }
   }
 
+  // rotation isn't considered to be movement
   public boolean isRobotMoving() {
     return latestVelocity >= DriveConstants.movingVelocityThresholdFtPerSec;
   }
 
-  public void resetFieldCentric(int i) {
-
+  public void resetFieldCentric(double offset) {
+    if (gyro != null) {
+      gyro.setAngleAdjustment(0);
+      gyro.setAngleAdjustment(-gyro.getAngle() + offset); 
+    }
+    setDriveMode(DriveMode.fieldCentric);
   }
 
   public void drive(double driveX, double driveY, double rotate) {
     if (Constants.driveEnabled) {
       double clock = runTime.get(); // cache value to reduce CPU usage
       double[] currentAngle = new double[4];
-      for (int i = 0; i < swerveModule.length; i++) {
-        currentAngle[i] = swerveModule[i].getInternalRotationDegrees();
+      for (int i = 0; i < swerveModules.length; i++) {
+        currentAngle[i] = swerveModules[i].getInternalRotationDegrees();
       }
 
       Translation2d velocityXY = new VectorXY();
@@ -242,11 +271,11 @@ public class Drive extends SubsystemBase {
       Translation2d driveXY = new VectorXY(driveX, driveY);
 
       // sum wheel velocity and acceleration vectors
-      for (int i = 0; i < swerveModule.length; i++) {
+      for (int i = 0; i < swerveModules.length; i++) {
         double wheelAngleDegrees = currentAngle[i];
-        velocityXY.plus(new Translation2d(swerveModule[i].getVelocity(),
+        velocityXY.plus(new Translation2d(swerveModules[i].getVelocity(),
             Rotation2d.fromDegrees(wheelAngleDegrees)));
-        accelerationXY.plus(new Translation2d(swerveModule[i].getAcceleration(),
+        accelerationXY.plus(new Translation2d(swerveModules[i].getAcceleration(),
             Rotation2d.fromDegrees(wheelAngleDegrees)));
       }
       latestVelocity = velocityXY.getNorm() / 4;
@@ -305,11 +334,22 @@ public class Drive extends SubsystemBase {
   }
 
   public void updateOdometry() {
-
+    if (Constants.gyroEnabled) {
+      odometry.update(
+        gyro.getRotation2d(),
+        // wheel locations must be in the same order as the WheelPosition enum values
+        swerveModules[WheelPosition.FRONT_RIGHT.wheelNumber].getState(),
+        swerveModules[WheelPosition.FRONT_LEFT.wheelNumber].getState(),
+        swerveModules[WheelPosition.BACK_LEFT.wheelNumber].getState(),
+        swerveModules[WheelPosition.BACK_RIGHT.wheelNumber].getState()
+      );
+    }
   }
 
   public void resetodometry() {
-
+    if (Constants.gyroEnabled) {
+      odometry.resetPosition(pose, gyro.getRotation2d());
+    }
   }
 
   public void setToFieldCentric() {
@@ -324,7 +364,7 @@ public class Drive extends SubsystemBase {
 
   public void setCoastMode() {
     if (Constants.driveEnabled) {
-      for (SwerveModule module : swerveModule) {
+      for (SwerveModule module : swerveModules) {
         module.setCoastmode();
       }
     }
@@ -332,7 +372,7 @@ public class Drive extends SubsystemBase {
 
   public void setBrakeMode() {
     if (Constants.driveEnabled) {
-      for (SwerveModule module : swerveModule) {
+      for (SwerveModule module : swerveModules) {
         module.setBrakeMode();
       }
     }
@@ -340,7 +380,7 @@ public class Drive extends SubsystemBase {
 
   public void stop() {
     if (Constants.driveEnabled) {
-      for (SwerveModule module : swerveModule) {
+      for (SwerveModule module : swerveModules) {
         module.stop();
       }
     }
@@ -350,7 +390,7 @@ public class Drive extends SubsystemBase {
     SwerveDriveKinematics.desaturateWheelSpeeds(states, DriveConstants.autoMaxSpeedMetersPerSecond);
     int i = 0;
     for (SwerveModuleState s : states) {
-      swerveModule[i].setDesiredState(s);
+      swerveModules[i].setDesiredState(s);
       i++;
     }
   }
