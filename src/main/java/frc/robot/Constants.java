@@ -43,6 +43,9 @@ public class Constants {
     public static final double maxRotationSpeedRadSecond = 0;
     public static final double autoRotkP = 0;
     public static final double autoRotkD = 0;
+    
+    public static final double minAutoRotateSpeed = 0.0;
+    public static final double maxAutoRotateSpeed = 0.0;
 
     public static final class Rotation {
       public static final double kP = 1.2;

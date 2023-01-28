@@ -55,6 +55,10 @@ public class Drive extends SubsystemBase {
   private SwerveDriveOdometry odometry;
 
   private ShuffleboardTab tab;
+  private NetworkTableEntry rotErrorTab;
+  private NetworkTableEntry rotSpeedTab;
+  private NetworkTableEntry rotkP;
+  private NetworkTableEntry rotkD;
   private NetworkTableEntry botVelocityMag;
   private NetworkTableEntry botAccelerationMag;
   private NetworkTableEntry botVelocityAngle;
@@ -311,8 +315,33 @@ public class Drive extends SubsystemBase {
     return ram.atReference();
   }
 
-  public void driveAutoRotate() {
+  // Uses a PID Controller to rotate the robot to a certain degree
+  // Must be periodically updated to work
+  public void driveAutoRotate(double driveX, double driveY, double rotateDeg, double toleranceDeg) {
 
+    if (Constants.debug) {
+      rotPID.setP(rotkP.getDouble(DriveConstants.autoRotkP));
+      rotPID.setD(rotkD.getDouble(DriveConstants.autoRotkD));
+    }
+
+    double rotPIDSpeed = rotPID.calculate(0, rotateDeg);
+
+    if (Math.abs(rotateDeg) <= toleranceDeg) {
+      rotPIDSpeed = 0;
+    } else if (Math.abs(rotPIDSpeed) < DriveConstants.minAutoRotateSpeed) {
+      rotPIDSpeed = Math.copySign(DriveConstants.minAutoRotateSpeed, rotPIDSpeed);
+    } else if (rotPIDSpeed > DriveConstants.maxAutoRotateSpeed) {
+      rotPIDSpeed = DriveConstants.maxAutoRotateSpeed;
+    } else if (rotPIDSpeed < -DriveConstants.maxAutoRotateSpeed) {
+      rotPIDSpeed = -DriveConstants.maxAutoRotateSpeed;
+    }
+
+    drive(driveX, driveY, rotPIDSpeed);
+
+    if (Constants.debug) {
+      rotErrorTab.setDouble(rotateDeg);
+      rotSpeedTab.setDouble(rotPIDSpeed);
+    }
   }
 
   public void resetRotatePID() {
