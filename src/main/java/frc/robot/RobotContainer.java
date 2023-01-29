@@ -31,8 +31,23 @@ public class RobotContainer {
   // constructors lower CAN bus utilization to make configuration reliable.
 
   // Configure the button bindings
+  
+  // stagger status frame periods to reduce peak CAN bus utilization
+  private static int nextFastStatusPeriodMs = Constants.fastStatusPeriodBaseMs;
+  private static int nextSlowStatusPeriodMs = Constants.slowStatusPeriodBaseMs;
 
-
+  public static int nextFastStatusPeriodMs() {
+    if (nextFastStatusPeriodMs > Constants.fastStatusPeriodMaxMs) {
+      nextFastStatusPeriodMs = Constants.fastStatusPeriodBaseMs;
+    }
+    return nextFastStatusPeriodMs++;
+  }
+  public static int nextSlowStatusPeriodMs() {
+    if (nextSlowStatusPeriodMs > Constants.slowStatusPeriodMaxMs) {
+      nextSlowStatusPeriodMs = Constants.slowStatusPeriodBaseMs;
+    }
+    return nextSlowStatusPeriodMs++;
+  }
   public void disableSubsystems() {
     arm.setCoastMode();
     claw.setCoastMode();
