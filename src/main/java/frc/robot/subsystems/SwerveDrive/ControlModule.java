@@ -114,7 +114,7 @@ public class ControlModule {
 
       switch(wheelNumber) {
         case 0: return "FRONT_RIGHT";
-        case 1: return "RONT_LEFT";
+        case 1: return "FRONT_LEFT";
         case 2: return "BACK_LEFT";
         case 3: return "BACK_RIGHT";
         default: return "???";
