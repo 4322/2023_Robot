@@ -69,9 +69,9 @@ public class Drive extends SubsystemBase {
   private GenericEntry botAccelerationMag;
   private GenericEntry botVelocityAngle;
   private GenericEntry botAccelerationAngle;
-  private GenericEntry tipDecelerationAtiveTab;
-  private GenericEntry tipSmallStickAtiveTab;
-  private GenericEntry tipBigStickAtiveTab;
+  private GenericEntry tipDecelerationActiveTab;
+  private GenericEntry tipSmallStickActiveTab;
+  private GenericEntry tipBigStickActiveTab;
   private GenericEntry driveXTab;
   private GenericEntry driveYTab;
   private GenericEntry rotateTab;
@@ -85,12 +85,10 @@ public class Drive extends SubsystemBase {
 
   public void init() {
     if (Constants.driveEnabled) {
-
       rotPID = new PIDController(DriveConstants.autoRotkP, 0, DriveConstants.autoRotkD);
 
       if (Constants.gyroEnabled) {
         gyro = new AHRS(SPI.Port.kMXP);
-
 
         // wait for first gyro reading to be received
         try {
@@ -104,18 +102,18 @@ public class Drive extends SubsystemBase {
       }
 
       if (Constants.driveEnabled) {
-        swerveModules[WheelPosition.FRONT_RIGHT.wheelNumber] =
-            new SwerveModule(DriveConstants.frontRightRotationID, DriveConstants.frontRightDriveID,
-                WheelPosition.FRONT_RIGHT, DriveConstants.frontRightEncoderID);
-        swerveModules[WheelPosition.FRONT_LEFT.wheelNumber] =
-            new SwerveModule(DriveConstants.frontLeftRotationID, DriveConstants.frontLeftDriveID,
-                WheelPosition.FRONT_LEFT, DriveConstants.frontLeftEncoderID);
-        swerveModules[WheelPosition.BACK_RIGHT.wheelNumber] =
-            new SwerveModule(DriveConstants.rearRightRotationID, DriveConstants.rearRightDriveID,
-                WheelPosition.BACK_RIGHT, DriveConstants.rearRightEncoderID);
-        swerveModules[WheelPosition.BACK_LEFT.wheelNumber] =
-            new SwerveModule(DriveConstants.rearLeftRotationID, DriveConstants.rearLeftDriveID,
-                WheelPosition.BACK_LEFT, DriveConstants.rearLeftEncoderID);
+        swerveModules[WheelPosition.FRONT_RIGHT.wheelNumber] = new SwerveModule(DriveConstants.frontRightRotationID,
+            DriveConstants.frontRightDriveID,
+            WheelPosition.FRONT_RIGHT, DriveConstants.frontRightEncoderID);
+        swerveModules[WheelPosition.FRONT_LEFT.wheelNumber] = new SwerveModule(DriveConstants.frontLeftRotationID,
+            DriveConstants.frontLeftDriveID,
+            WheelPosition.FRONT_LEFT, DriveConstants.frontLeftEncoderID);
+        swerveModules[WheelPosition.BACK_RIGHT.wheelNumber] = new SwerveModule(DriveConstants.rearRightRotationID,
+            DriveConstants.rearRightDriveID,
+            WheelPosition.BACK_RIGHT, DriveConstants.rearRightEncoderID);
+        swerveModules[WheelPosition.BACK_LEFT.wheelNumber] = new SwerveModule(DriveConstants.rearLeftRotationID,
+            DriveConstants.rearLeftDriveID,
+            WheelPosition.BACK_LEFT, DriveConstants.rearLeftEncoderID);
         odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2d(), getModulePostitions());
 
         for (SwerveModule module : swerveModules) {
@@ -148,16 +146,15 @@ public class Drive extends SubsystemBase {
 
         botVelocityAngle = tab.add("Bot Vel Angle", 0).withPosition(4, 0).withSize(1, 1).getEntry();
 
-        botAccelerationAngle =
-            tab.add("Bot Acc Angle", 0).withPosition(4, 1).withSize(1, 1).getEntry();
+        botAccelerationAngle = tab.add("Bot Acc Angle", 0).withPosition(4, 1).withSize(1, 1).getEntry();
 
-        tipDecelerationAtiveTab = tab.add("Tip Deceleration", true)
+        tipDecelerationActiveTab = tab.add("Tip Deceleration", true)
             .withWidget(BuiltInWidgets.kBooleanBox).withPosition(5, 0).withSize(1, 1).getEntry();
 
-        tipSmallStickAtiveTab = tab.add("Tip Small Stick", true)
+        tipSmallStickActiveTab = tab.add("Tip Small Stick", true)
             .withWidget(BuiltInWidgets.kBooleanBox).withPosition(5, 1).withSize(1, 1).getEntry();
 
-        tipBigStickAtiveTab = tab.add("Tip Big Stick", true).withWidget(BuiltInWidgets.kBooleanBox)
+        tipBigStickActiveTab = tab.add("Tip Big Stick", true).withWidget(BuiltInWidgets.kBooleanBox)
             .withPosition(5, 2).withSize(1, 1).getEntry();
 
         driveXTab = tab.add("Drive X", 0).withPosition(0, 2).withSize(1, 1).getEntry();
@@ -170,15 +167,15 @@ public class Drive extends SubsystemBase {
 
         odometryY = tab.add("Odometry Y", 0).withPosition(4, 2).withSize(1, 1).getEntry();
 
-        odometryDegrees =
-            tab.add("Odometry Degrees", 0).withPosition(2, 2).withSize(1, 1).getEntry();
+        odometryDegrees = tab.add("Odometry Degrees", 0).withPosition(2, 2).withSize(1, 1).getEntry();
       }
     }
   }
 
   public enum DriveMode {
     fieldCentric(0), frontCamCentric(1), leftCamCentric(2), rightCamCentric(
-        3), limelightFieldCentric(4), killFieldCentric(5), sideKillFieldCentric(6);
+        3),
+    limelightFieldCentric(4), killFieldCentric(5), sideKillFieldCentric(6);
 
     private int value;
 
@@ -190,7 +187,6 @@ public class Drive extends SubsystemBase {
       return value;
     }
   }
-
 
   private static DriveMode driveMode = DriveMode.fieldCentric;
 
@@ -420,7 +416,7 @@ public class Drive extends SubsystemBase {
         swerveModules[WheelPosition.FRONT_RIGHT.wheelNumber].getPosition(),
         swerveModules[WheelPosition.FRONT_LEFT.wheelNumber].getPosition(),
         swerveModules[WheelPosition.BACK_LEFT.wheelNumber].getPosition(),
-        swerveModules[WheelPosition.BACK_RIGHT.wheelNumber].getPosition()};
+        swerveModules[WheelPosition.BACK_RIGHT.wheelNumber].getPosition() };
   }
 
   // convert angle to range of +/- 180 degrees
