@@ -150,9 +150,7 @@ public class Constants {
       public static final double kFF = 0.05;
     }
 
-    public static final double logIntervalSeconds = 1;
-    public static final int maxPosition = 1000;
-    public static final int minPosition = -1000;
+ 
   }
 
   public static final class ArmConstants {
@@ -160,6 +158,9 @@ public class Constants {
     public static final double rampRate = 0.0;
     public static final double forward = 1;
     public static final double backward = -1;
+    public static final double logIntervalSeconds = 1;
+    public static final int maxPosition = 1000;
+    public static final int minPosition = -1000;
   }
 
   public static final class ClawConstants {
