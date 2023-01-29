@@ -21,8 +21,8 @@ public class Arm extends SubsystemBase {
 
   public Arm() {
     if (Constants.armEnabled) {
-      leftMotor = new CANSparkMax(ArmConstants.motorID, MotorType.kBrushless);
-      rightMotor = new CANSparkMax(ArmConstants.motorID, MotorType.kBrushless);
+      leftMotor = new CANSparkMax(ArmConstants.leftMotorID, MotorType.kBrushless);
+      rightMotor = new CANSparkMax(ArmConstants.rightMotorID, MotorType.kBrushless);
     }
   }
 
@@ -60,7 +60,7 @@ public class Arm extends SubsystemBase {
     if (Constants.armEnabled) {
       if ((targetPosition > ArmConstants.minPosition)
           && (targetPosition < ArmConstants.maxPosition)) {
-        leftMotor.getPIDController().setReference(targetPosition, ControlType.kPosition);
+        leftMotor.getPIDController().setReference(targetPosition, CANSparkMax.ControlType.kPosition);
         currentTarget = targetPosition;
         DataLogManager
             .log("Rotating to position " + currentTarget + " from position " + getPosition());
