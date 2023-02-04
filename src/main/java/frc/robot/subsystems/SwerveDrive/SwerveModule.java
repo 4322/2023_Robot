@@ -132,7 +132,7 @@ public class SwerveModule extends ControlModule{
 		ErrorCode error = talon.setSelectedSensorPosition(count, 0, Constants.controllerConfigTimeoutMs);
 		if (error != ErrorCode.OK) {
 			DriverStation.reportError("Error " + error.value + " initializing Talon FX " + talon.getDeviceID() + 
-				" position ", false);
+				" position ", true);
 		}
 
 		// don't need the CANCoder any longer, so a slow frame rate is OK
