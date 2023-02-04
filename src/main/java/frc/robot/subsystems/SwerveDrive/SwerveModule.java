@@ -1,4 +1,5 @@
 package frc.robot.subsystems.SwerveDrive;
+
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
@@ -21,17 +22,24 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
-public class SwerveModule extends ControlModule{
-  private WPI_TalonFX turningMotor; 
-	private WPI_TalonFX driveMotor;
-	private CANCoder encoder;
-	private WheelPosition wheelPosition;
+
+public class SwerveModule extends ControlModule {
+  private WPI_TalonFX turningMotor;
+  private WPI_TalonFX driveMotor;
+  private CANCoder encoder;
+  private WheelPosition wheelPosition;
+
   public SwerveModule(int rotationID, int wheelID, WheelPosition pos, int encoderID) {
     super(pos);
-		turningMotor = new WPI_TalonFX(rotationID);
-		driveMotor = new WPI_TalonFX(wheelID);
-		encoder = new CANCoder(encoderID);
-		wheelPosition = pos;
+    turningMotor = new WPI_TalonFX(rotationID);
+    driveMotor = new WPI_TalonFX(wheelID);
+    encoder = new CANCoder(encoderID);
+    wheelPosition = pos;
+
+    RobotContainer.staggerTalonStatusFrames(driveMotor);
+    RobotContainer.staggerTalonStatusFrames(turningMotor);
+    encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData,
+        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
   }
 
   public void init() {
@@ -46,35 +54,32 @@ public class SwerveModule extends ControlModule{
     config.slot0.kD = DriveConstants.Drive.kD;
     config.slot0.integralZone = DriveConstants.Drive.kIz;
     config.slot0.kF = DriveConstants.Drive.kFF;
-		config.closedloopRamp = DriveConstants.Drive.configClosedLoopRamp;
-		config.neutralDeadband = DriveConstants.Drive.brakeModeDeadband; // delay brake mode activation for tipping
+    config.closedloopRamp = DriveConstants.Drive.configClosedLoopRamp;
+    config.neutralDeadband = DriveConstants.Drive.brakeModeDeadband; // delay brake mode activation
+                                                                     // for tipping
 
-		talon.configAllSettings(config);
+    talon.configAllSettings(config);
 
-    talon.setNeutralMode(NeutralMode.Coast); //Allow robot to be moved prior to enabling
-		boolean isRightSide = pos == WheelPosition.FRONT_RIGHT || pos == WheelPosition.BACK_RIGHT;
+    talon.setNeutralMode(NeutralMode.Coast); // Allow robot to be moved prior to enabling
+    boolean isRightSide = pos == WheelPosition.FRONT_RIGHT || pos == WheelPosition.BACK_RIGHT;
     talon.setInverted(!isRightSide);
     talon.setSensorPhase(false);
-		
-		talon.configVoltageCompSaturation(DriveConstants.Drive.voltageCompSaturation);
-		talon.enableVoltageCompensation(DriveConstants.Drive.enableVoltageCompensation);
 
-		talon.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(
-			DriveConstants.Drive.statorEnabled, 
-			DriveConstants.Drive.statorLimit, 
-			DriveConstants.Drive.statorThreshold, 
-			DriveConstants.Drive.statorTime));
-		talon.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(
-			DriveConstants.Drive.supplyEnabled, 
-			DriveConstants.Drive.supplyLimit, 
-			DriveConstants.Drive.supplyThreshold, 
-			DriveConstants.Drive.supplyTime));
+    talon.configVoltageCompSaturation(DriveConstants.Drive.voltageCompSaturation);
+    talon.enableVoltageCompensation(DriveConstants.Drive.enableVoltageCompensation);
 
-		// need rapid velocity feedback for anti-tipping logic
-	
-    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 
-			RobotContainer.nextFastStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
-   
+    talon.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(
+        DriveConstants.Drive.statorEnabled, DriveConstants.Drive.statorLimit,
+        DriveConstants.Drive.statorThreshold, DriveConstants.Drive.statorTime));
+    talon.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(
+        DriveConstants.Drive.supplyEnabled, DriveConstants.Drive.supplyLimit,
+        DriveConstants.Drive.supplyThreshold, DriveConstants.Drive.supplyTime));
+
+    // need rapid velocity feedback for anti-tipping logic
+
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0,
+        RobotContainer.nextFastStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+
   }
 
   private void configRotation(WPI_TalonFX talon) {
@@ -82,122 +87,123 @@ public class SwerveModule extends ControlModule{
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.slot0.kP = DriveConstants.Rotation.kP;
     config.slot0.kD = DriveConstants.Rotation.kD;
-		config.closedloopRamp = DriveConstants.Rotation.configCLosedLoopRamp;
-    config.slot0.allowableClosedloopError = DriveConstants.Rotation.allowableClosedloopError;  
-		config.nominalOutputForward = DriveConstants.Rotation.minPower;
-		config.nominalOutputReverse = -DriveConstants.Rotation.minPower;
-		config.peakOutputForward = DriveConstants.Rotation.maxPower;
-		config.peakOutputReverse = -DriveConstants.Rotation.maxPower;
+    config.closedloopRamp = DriveConstants.Rotation.configCLosedLoopRamp;
+    config.slot0.allowableClosedloopError = DriveConstants.Rotation.allowableClosedloopError;
+    config.nominalOutputForward = DriveConstants.Rotation.minPower;
+    config.nominalOutputReverse = -DriveConstants.Rotation.minPower;
+    config.peakOutputForward = DriveConstants.Rotation.maxPower;
+    config.peakOutputReverse = -DriveConstants.Rotation.maxPower;
 
-		talon.configAllSettings(config);	// factory default is the baseline
-    talon.setNeutralMode(NeutralMode.Coast); //Allow robot to be moved prior to enabling
+    talon.configAllSettings(config); // factory default is the baseline
+    talon.setNeutralMode(NeutralMode.Coast); // Allow robot to be moved prior to enabling
     talon.setInverted(true);
     talon.setSensorPhase(false);
-		
-		talon.configVoltageCompSaturation(DriveConstants.Rotation.configVoltageCompSaturation);
-		talon.enableVoltageCompensation(DriveConstants.Rotation.enableVoltageCompensation);
-		
-		talon.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(
-			DriveConstants.Rotation.statorEnabled, 
-			DriveConstants.Rotation.statorLimit, 
-			DriveConstants.Rotation.statorThreshold, 
-			DriveConstants.Rotation.statorTime));
-		talon.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(
-			DriveConstants.Rotation.supplyEnabled, 
-			DriveConstants.Rotation.supplyLimit, 
-			DriveConstants.Rotation.supplyThreshold, 
-			DriveConstants.Rotation.supplyTime));
 
-		CANCoderConfiguration encoderConfig = new CANCoderConfiguration();
-		encoderConfig.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
-		encoderConfig.sensorDirection = false;  // positive rotation is CCW
-		encoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
-		
-		encoder.configAllSettings(encoderConfig);  // factory default is the baseline
+    talon.configVoltageCompSaturation(DriveConstants.Rotation.configVoltageCompSaturation);
+    talon.enableVoltageCompensation(DriveConstants.Rotation.enableVoltageCompensation);
 
-		// need fast initial reading from the CANCoder
-		encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 
-			10, Constants.controllerConfigTimeoutMs);
+    talon.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(
+        DriveConstants.Rotation.statorEnabled, DriveConstants.Rotation.statorLimit,
+        DriveConstants.Rotation.statorThreshold, DriveConstants.Rotation.statorTime));
+    talon.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(
+        DriveConstants.Rotation.supplyEnabled, DriveConstants.Rotation.supplyLimit,
+        DriveConstants.Rotation.supplyThreshold, DriveConstants.Rotation.supplyTime));
 
-		try {
-			Thread.sleep(50); // 5 status frames to be safe
-		}
-		catch (InterruptedException e) {}
+    CANCoderConfiguration encoderConfig = new CANCoderConfiguration();
+    encoderConfig.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
+    encoderConfig.sensorDirection = false; // positive rotation is CCW
+    encoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
 
-		// initialize internal Falcon encoder to absolute wheel position from CANCoder
-		double count = 	(encoder.getAbsolutePosition() - 
-                     DriveConstants.Rotation.CANCoderOffsetDegrees[position.wheelNumber]) / 
-                       DriveConstants.Rotation.countToDegrees;
+    encoder.configAllSettings(encoderConfig); // factory default is the baseline
 
-		ErrorCode error = talon.setSelectedSensorPosition(count, 0, Constants.controllerConfigTimeoutMs);
-		if (error != ErrorCode.OK) {
-			DriverStation.reportError("Error " + error.value + " initializing Talon FX " + talon.getDeviceID() + 
-				" position ", false);
-		}
+    // need fast initial reading from the CANCoder
+    encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 10,
+        Constants.controllerConfigTimeoutMs);
 
-		// don't need the CANCoder any longer, so a slow frame rate is OK
-		encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 
-			RobotContainer.nextSlowStatusPeriodMs(),
-			Constants.controllerConfigTimeoutMs);
-
-		// need rapid position feedback for steering logic
-		turningMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 
-			RobotContainer.nextFastStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+    try {
+      Thread.sleep(50); // 5 status frames to be safe
+    } catch (InterruptedException e) {
     }
+
+    // initialize internal Falcon encoder to absolute wheel position from CANCoder
+    double count = (encoder.getAbsolutePosition()
+        - DriveConstants.Rotation.CANCoderOffsetDegrees[position.wheelNumber])
+        / DriveConstants.Rotation.countToDegrees;
+
+    ErrorCode error =
+        talon.setSelectedSensorPosition(count, 0, Constants.controllerConfigTimeoutMs);
+    if (error != ErrorCode.OK) {
+      DriverStation.reportError(
+          "Error " + error.value + " initializing Talon FX " + talon.getDeviceID() + " position ",
+          false);
+    }
+
+    // don't need the CANCoder any longer, so a slow frame rate is OK
+    encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData,
+        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+
+    // need rapid position feedback for steering logic
+    turningMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0,
+        RobotContainer.nextFastStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+  }
+
   public double getMagneticRotationAngle() {
     return encoder.getAbsolutePosition();
   }
 
   public double getInternalRotationCount() {
     return turningMotor.getSelectedSensorPosition();
-	}
+  }
 
   public double getInternalRotationDegrees() {
-    return Drive.boundDegrees(getInternalRotationCount() * 
-			   DriveConstants.Rotation.countToDegrees);
+    return Drive.boundDegrees(getInternalRotationCount() * DriveConstants.Rotation.countToDegrees);
   }
+
   @Override
   public double getDistance() {
-    return driveMotor.getSelectedSensorPosition(0) / DriveConstants.encoderResolution /
-			Constants.DriveConstants.Drive.gearRatio * Math.PI *
-			DriveConstants.Drive.wheelDiameterInches / 12;
+    return driveMotor.getSelectedSensorPosition(0) / DriveConstants.encoderResolution
+        / Constants.DriveConstants.Drive.gearRatio * Math.PI
+        * DriveConstants.Drive.wheelDiameterInches / 12;
   }
+
   @Override
   public double getVelocity() {
     // feet per second
-		return driveMotor.getSelectedSensorVelocity(0) * 10 / DriveConstants.encoderResolution /
-    Constants.DriveConstants.Drive.gearRatio * Math.PI * 
-    Constants.DriveConstants.Drive.wheelDiameterInches / 12;
+    return driveMotor.getSelectedSensorVelocity(0) * 10 / DriveConstants.encoderResolution
+        / Constants.DriveConstants.Drive.gearRatio * Math.PI
+        * Constants.DriveConstants.Drive.wheelDiameterInches / 12;
   }
 
   public SwerveModuleState getState() {
     return new SwerveModuleState(getVelocity() * Constants.feetToMeters, Rotation2d.fromDegrees(
-            turningMotor.getSelectedSensorPosition() * DriveConstants.Rotation.countToDegrees));
+        turningMotor.getSelectedSensorPosition() * DriveConstants.Rotation.countToDegrees));
 
   }
 
   public SwerveModulePosition getPosition() {
-    return new SwerveModulePosition(OrangeMath.feetToMeters(getDistance()), Rotation2d.fromDegrees(getAngle()));
+    return new SwerveModulePosition(OrangeMath.feetToMeters(getDistance()),
+        Rotation2d.fromDegrees(getAngle()));
 
   }
 
   public void setDesiredState(SwerveModuleState desiredState) {
-    double currentDeg = turningMotor.getSelectedSensorPosition() * DriveConstants.Rotation.countToDegrees;
+    double currentDeg =
+        turningMotor.getSelectedSensorPosition() * DriveConstants.Rotation.countToDegrees;
 
     // Optimize the reference state to avoid spinning further than 90 degrees
     SwerveModuleState state =
         SwerveModuleState.optimize(desiredState, Rotation2d.fromDegrees(currentDeg));
 
-    driveMotor.set(ControlMode.Velocity, 
-        state.speedMetersPerSecond / 
-        (DriveConstants.Drive.wheelDiameterInches * Constants.inchesToMeters * Math.PI)
-        * DriveConstants.Drive.gearRatio * DriveConstants.encoderResolution
-        / 10); // every 100 ms
+    driveMotor.set(ControlMode.Velocity,
+        state.speedMetersPerSecond
+            / (DriveConstants.Drive.wheelDiameterInches * Constants.inchesToMeters * Math.PI)
+            * DriveConstants.Drive.gearRatio * DriveConstants.encoderResolution / 10); // every 100
+                                                                                       // ms
 
-	// Calculate the change in degrees and add that to the current position
-    turningMotor.set(ControlMode.Position, 
+    // Calculate the change in degrees and add that to the current position
+    turningMotor.set(ControlMode.Position,
         (currentDeg + Drive.boundDegrees(state.angle.getDegrees() - currentDeg))
-		/ DriveConstants.Rotation.countToDegrees);
+            / DriveConstants.Rotation.countToDegrees);
 
   }
 
