@@ -15,7 +15,6 @@ public class RobotContainer {
 
   // Define controllers
   public static XboxController coPilot;
-  public static XboxController coPilot;
   public static Joystick driveStick;
   public static Joystick rotateStick;
   
