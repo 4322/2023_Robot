@@ -8,16 +8,18 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
 import frc.robot.commands.*;
+import edu.wpi.first.wpilibj.Joystick;
 
 public class RobotContainer {
 
   private Timer disableTimer = new Timer();
 
   // Define controllers
+
   public static XboxController coPilot;
   public static Joystick driveStick;
   public static Joystick rotateStick;
-  
+
   // The robot's subsystems and commands are defined here...
   private final Arm arm = new Arm();
   private final Claw claw = new Claw();
