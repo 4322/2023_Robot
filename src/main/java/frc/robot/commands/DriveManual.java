@@ -70,7 +70,9 @@ public class DriveManual extends CommandBase {
         driveY = driveRawX * driveRawX * driveRawY;
       } else {
         driveX = driveRawY * driveRawY * driveRawX;
-}
+      }
+    }
+  }
 
 // Called once the command ends or is interrupted.
 @Override
