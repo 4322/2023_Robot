@@ -5,12 +5,15 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.commands.*;
+import edu.wpi.first.wpilibj.Joystick;
 
 public class RobotContainer {
 
   private Timer disableTimer = new Timer();
 
   // Define controllers
+  public static Joystick driveStick;
+  public static Joystick rotateStick;
   private final XboxController xbox = new XboxController(2);
 
   // The robot's subsystems and commands are defined here...
