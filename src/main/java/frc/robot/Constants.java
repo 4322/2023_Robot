@@ -37,15 +37,15 @@ public class Constants {
   public static final int controllerConfigTimeoutMs = 50;
 
   public static final class DriveConstants {
-    public static final int frontRightDriveID = 0;
-    public static final int frontRightRotationID = 0;
-    public static final int rearRightDriveID = 0;
-    public static final int rearRightRotationID = 0;
-    public static final int frontLeftDriveID = 0;
-    public static final int frontLeftRotationID = 0;
-    public static final int rearLeftDriveID = 0;
-    public static final int rearLeftRotationID = 0;
-
+    public static final int frontRightDriveID = 2;
+    public static final int frontRightRotationID = 3;
+    public static final int rearRightDriveID = 4;
+    public static final int rearRightRotationID = 5;
+    public static final int frontLeftDriveID = 6;
+    public static final int frontLeftRotationID = 7;
+    public static final int rearLeftDriveID = 8;
+    public static final int rearLeftRotationID = 9;
+    
     public static final int frontRightEncoderID = 10;
     public static final int rearRightEncoderID = 11;
     public static final int frontLeftEncoderID = 12;
