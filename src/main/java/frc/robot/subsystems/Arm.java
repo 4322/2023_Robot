@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -17,6 +18,7 @@ import frc.robot.Constants.ArmConstants.ArmDirection;
 public class Arm extends SubsystemBase {
   private CANSparkMax motor;
   private Double currentTarget = null;
+  private Timer logTimer = new Timer();
   private ArmDirection armDirection;
 
   public Arm() {
