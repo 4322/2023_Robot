@@ -37,39 +37,39 @@ public class Constants {
   public static final int controllerConfigTimeoutMs = 50;
 
   public static final class DriveConstants {
-    public static final int frontRightDriveID = 0;
-    public static final int frontRightRotationID = 0;
-    public static final int rearRightDriveID = 0;
-    public static final int rearRightRotationID = 0;
-    public static final int frontLeftDriveID = 0;
-    public static final int frontLeftRotationID = 0;
-    public static final int rearLeftDriveID = 0;
-    public static final int rearLeftRotationID = 0;
+    public static final int frontRightDriveID = 2;
+    public static final int frontRightRotationID = 3;
+    public static final int rearRightDriveID = 4;
+    public static final int rearRightRotationID = 5;
+    public static final int frontLeftDriveID = 6;
+    public static final int frontLeftRotationID = 7;
+    public static final int rearLeftDriveID = 8;
+    public static final int rearLeftRotationID = 9;
 
     public static final int frontRightEncoderID = 10;
     public static final int rearRightEncoderID = 11;
     public static final int frontLeftEncoderID = 12;
     public static final int rearLeftEncoderID = 13;
 
-    public static final int encoderResolution = 0;
+    public static final int encoderResolution = 2048;
 
-    public static final double distWheelMetersX = 0;
-    public static final double distWheelMetersY = 0;
+    public static final double distWheelMetersX = 0.339725;
+    public static final double distWheelMetersY = 0.244475;
 
 
-    public static final double wheelBaseLengthFeet = 0;
-    public static final double wheelBaseWidthFeet = 0;
+    public static final double wheelBaseLengthFeet = 26.75/12.0;
+    public static final double wheelBaseWidthFeet = 19.25/12.0;
 
-    public static final double maxSpeedMetersPerSecond = 0;
-    public static final double maxRotationSpeedRadSecond = 0;
+    public static final double maxSpeedMetersPerSecond = 3.6576;
+    public static final double maxRotationSpeedRadSecond = 12.2718;
 
-    public static final double autoRotkP = 0;
-    public static final double autoRotkD = 0;
+    public static final double autoRotkP = 0.008;
+    public static final double autoRotkD = 0.0004;
 
-    public static final double movingVelocityThresholdFtPerSec = 0.0;
+    public static final double movingVelocityThresholdFtPerSec = 0.2;
 
-    public static final double minAutoRotateSpeed = 0.0;
-    public static final double maxAutoRotateSpeed = 0.0;
+    public static final double minAutoRotateSpeed = 0.03;
+    public static final double maxAutoRotateSpeed = Constants.demo.inDemoMode? Constants.demo.rotationScaleFactor : 0.5;
 
     public static final double drivePolarDeadband = 0.06;
     public static final double rotatePolarDeadband = 0.5;
