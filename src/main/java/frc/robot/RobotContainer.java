@@ -77,6 +77,7 @@ public class RobotContainer {
         driveStick = new Joystick(0);
         rotateStick = new Joystick(1);
         coPilot = new XboxController(2);
+
         JoystickButton aButton = new JoystickButton(coPilot, XboxController.Button.kA.value);
         JoystickButton bButton = new JoystickButton(coPilot, XboxController.Button.kB.value);
         JoystickButton xButton = new JoystickButton(coPilot, XboxController.Button.kX.value);
@@ -87,6 +88,10 @@ public class RobotContainer {
         JoystickButton startButton = new JoystickButton(coPilot, XboxController.Button.kStart.value);
         JoystickButton leftStickButton = new JoystickButton(coPilot, XboxController.Button.kLeftStick.value);
         JoystickButton rightStickButton = new JoystickButton(coPilot, XboxController.Button.kRightStick.value);
+
+        JoystickButton driveButtonSeven = new JoystickButton(driveStick, 7);
+
+        driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
 
         if (coPilot.getAButtonPressed()){
           if (!coPilot.getAButtonReleased()){
