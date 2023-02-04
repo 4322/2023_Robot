@@ -179,5 +179,8 @@ public class Constants {
   
     public static final int maxPosition = 1000;
     public static final int minPosition = -1000;
+    public static final double manualDeadband = 0;
+
+    public static final double kMaxRange = 0;
   }
 }

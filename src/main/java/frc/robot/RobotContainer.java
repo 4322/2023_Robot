@@ -15,8 +15,10 @@ public class RobotContainer {
 
   // Define controllers
   public static XboxController coPilot;
+  public static XboxController coPilot;
   public static Joystick driveStick;
   public static Joystick rotateStick;
+  
   
   // The robot's subsystems and commands are defined here...
   private final Arm arm = new Arm();
@@ -58,6 +60,8 @@ public class RobotContainer {
         driveStick = new Joystick(0);
         rotateStick = new Joystick(1);
         coPilot = new XboxController(2);
+        coPilot = new XboxController(2);
+        
       }
     }
   
