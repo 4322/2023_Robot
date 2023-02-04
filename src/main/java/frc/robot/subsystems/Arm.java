@@ -9,35 +9,30 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.ArmConstants.ArmDirection;
 
 public class Arm extends SubsystemBase {
-  private CANSparkMax leftMotor;
-  private CANSparkMax rightMotor;
+  private CANSparkMax motor;
   private Double currentTarget = null;
+  private ArmDirection armDirection;
 
   public Arm() {
     if (Constants.armEnabled) {
-      leftMotor = new CANSparkMax(Constants.ArmConstants.motorID, MotorType.kBrushless);
-      rightMotor = new CANSparkMax(Constants.ArmConstants.motorID, MotorType.kBrushless);
+      motor = new CANSparkMax(Constants.ArmConstants.motorID, MotorType.kBrushless);
     }
   }
 
   public void init() {
     if (Constants.armEnabled) {
-      leftMotor.restoreFactoryDefaults();
-      leftMotor.setIdleMode(IdleMode.kCoast);
-      leftMotor.setOpenLoopRampRate(Constants.ArmConstants.rampRate);
-      rightMotor.restoreFactoryDefaults();
-      rightMotor.setIdleMode(IdleMode.kCoast);
-      rightMotor.setOpenLoopRampRate(Constants.ArmConstants.rampRate);
-      rightMotor.follow(leftMotor);
-      rightMotor.setInverted(true);
+      motor.restoreFactoryDefaults();
+      motor.setIdleMode(IdleMode.kCoast);
+      motor.setOpenLoopRampRate(Constants.ArmConstants.rampRate);
     }
   }
 
   public double getPosition() {
     if (Constants.armEnabled) {
-      return leftMotor.getEncoder().getPosition();
+      return motor.getEncoder().getPosition();
     } else {
       return -1;
     }
@@ -52,31 +47,36 @@ public class Arm extends SubsystemBase {
 
   public boolean rotateToPosition(double targetPosition) {
     if (Constants.armEnabled) {
-      leftMotor.getPIDController().setReference(targetPosition, ControlType.kPosition);
+      motor.getPIDController().setReference(targetPosition, ControlType.kPosition);
       currentTarget = targetPosition;
     }
     return false;
   }
 
   public void rotateForward() {
-    leftMotor.set(Constants.ArmConstants.forward);
+    motor.set(Constants.ArmConstants.forward);
+    armDirection = ArmDirection.forwards;
   }
 
   public void rotateBackward() {
-    leftMotor.set(Constants.ArmConstants.backward);
+    motor.set(Constants.ArmConstants.backward);
+    armDirection = ArmDirection.backwards;
+  }
+
+  public void stop() {
+    motor.set(0);
+    armDirection = ArmDirection.stationary;
   }
 
   public void setCoastMode() {
     if (Constants.armEnabled) {
-      leftMotor.setIdleMode(IdleMode.kCoast);
-      rightMotor.setIdleMode(IdleMode.kCoast);
+      motor.setIdleMode(IdleMode.kCoast);
     }
   }
 
   public void setBrakeMode() {
     if (Constants.armEnabled) {
-      leftMotor.setIdleMode(IdleMode.kBrake);
-      rightMotor.setIdleMode(IdleMode.kBrake);
+      motor.setIdleMode(IdleMode.kBrake);
     }
   }
 }
