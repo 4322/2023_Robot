@@ -112,12 +112,14 @@ public class RobotContainer {
     }
     return nextFastStatusPeriodMs++;
   }
+
   public static int nextSlowStatusPeriodMs() {
     if (nextSlowStatusPeriodMs > Constants.slowStatusPeriodMaxMs) {
       nextSlowStatusPeriodMs = Constants.slowStatusPeriodBaseMs;
     }
     return nextSlowStatusPeriodMs++;
   }
+
   public void disableSubsystems() {
     arm.setCoastMode();
     claw.setCoastMode();
