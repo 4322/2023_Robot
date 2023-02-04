@@ -16,28 +16,37 @@ import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ArmConstants.ArmDirection;
 
 public class Arm extends SubsystemBase {
-  private CANSparkMax motor;
+  private CANSparkMax leftMotor;
+  private CANSparkMax rightMotor;
   private Double currentTarget = null;
   private Timer logTimer = new Timer();
   private ArmDirection armDirection;
 
   public Arm() {
     if (Constants.armEnabled) {
-      motor = new CANSparkMax(Constants.ArmConstants.motorID, MotorType.kBrushless);
+      leftMotor = new CANSparkMax(Constants.ArmConstants.leftMotorID, MotorType.kBrushless);
+      rightMotor = new CANSparkMax(Constants.ArmConstants.rightMotorID, MotorType.kBrushless);
     }
   }
 
   public void init() {
     if (Constants.armEnabled) {
-      motor.restoreFactoryDefaults();
-      motor.setIdleMode(IdleMode.kCoast);
-      motor.setOpenLoopRampRate(Constants.ArmConstants.rampRate);
+      leftMotor.restoreFactoryDefaults();
+      leftMotor.setIdleMode(IdleMode.kCoast);
+      leftMotor.setOpenLoopRampRate(ArmConstants.rampRate);
+      rightMotor.restoreFactoryDefaults();
+      rightMotor.setIdleMode(IdleMode.kCoast);
+      rightMotor.setOpenLoopRampRate(ArmConstants.rampRate);
+      rightMotor.follow(leftMotor);
+      rightMotor.setInverted(true);
+      logTimer.reset();
+      logTimer.start();
     }
   }
 
   public double getPosition() {
     if (Constants.armEnabled) {
-      return motor.getEncoder().getPosition();
+      return leftMotor.getEncoder().getPosition();
     } else {
       return -1;
     }
@@ -54,7 +63,7 @@ public class Arm extends SubsystemBase {
     if (Constants.armEnabled) {
       if ((targetPosition > ArmConstants.minPosition)
           && (targetPosition < ArmConstants.maxPosition)) {
-        motor.getPIDController().setReference(targetPosition, ControlType.kPosition);
+        leftMotor.getPIDController().setReference(targetPosition, ControlType.kPosition);
         currentTarget = targetPosition;
         DataLogManager
             .log("Rotating to position " + currentTarget + " from position " + getPosition());
@@ -65,28 +74,30 @@ public class Arm extends SubsystemBase {
   }
 
   public void rotateForward() {
-    motor.set(ArmConstants.forward);
+    leftMotor.set(ArmConstants.forward);
     DataLogManager.log("Arm rotating forward");
   }
 
   public void rotateBackward() {
-    motor.set(ArmConstants.backward);
+    leftMotor.set(ArmConstants.backward);
     DataLogManager.log("Arm rotating backward");
   }
 
   public void setArmSpeed(double speed) {
-    motor.set(speed);
+    leftMotor.set(speed);
   }
 
   public void setCoastMode() {
     if (Constants.armEnabled) {
-      motor.setIdleMode(IdleMode.kCoast);
+      leftMotor.setIdleMode(IdleMode.kCoast);
+      rightMotor.setIdleMode(IdleMode.kCoast);
     }
   }
 
   public void setBrakeMode() {
     if (Constants.armEnabled) {
-      motor.setIdleMode(IdleMode.kBrake);
+      leftMotor.setIdleMode(IdleMode.kBrake);
+      rightMotor.setIdleMode(IdleMode.kBrake);
     }
   }
 
