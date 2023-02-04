@@ -18,6 +18,7 @@ public class RobotContainer {
   public static Joystick driveStick;
   public static Joystick rotateStick;
   
+  
   // The robot's subsystems and commands are defined here...
   private final Arm arm = new Arm();
   private final Claw claw = new Claw();
@@ -57,6 +58,7 @@ public class RobotContainer {
       if (Constants.joysticksEnabled) {
         driveStick = new Joystick(0);
         rotateStick = new Joystick(1);
+        coPilot = new XboxController(2);
         coPilot = new XboxController(2);
         
       }
