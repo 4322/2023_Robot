@@ -18,6 +18,7 @@ import frc.robot.RobotContainer;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.Drive;
 import frc.utility.OrangeMath;
+import frc.utility.TalonUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -36,10 +37,10 @@ public class SwerveModule extends ControlModule {
     encoder = new CANCoder(encoderID);
     wheelPosition = pos;
 
-    RobotContainer.staggerTalonStatusFrames(driveMotor);
-    RobotContainer.staggerTalonStatusFrames(turningMotor);
-    encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData,
-        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+    TalonUtil.staggerTalonStatusFrames(driveMotor);
+    TalonUtil.staggerTalonStatusFrames(turningMotor);
+    encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, TalonUtil.nextSlowStatusPeriodMs(),
+        Constants.controllerConfigTimeoutMs);
   }
 
   public void init() {
@@ -78,7 +79,7 @@ public class SwerveModule extends ControlModule {
     // need rapid velocity feedback for anti-tipping logic
 
     talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0,
-        RobotContainer.nextFastStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+        TalonUtil.nextFastStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
 
   }
 
@@ -140,11 +141,11 @@ public class SwerveModule extends ControlModule {
 
     // don't need the CANCoder any longer, so a slow frame rate is OK
     encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData,
-        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+        TalonUtil.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
 
     // need rapid position feedback for steering logic
     turningMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0,
-        RobotContainer.nextFastStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+        TalonUtil.nextFastStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
   }
 
   public double getMagneticRotationAngle() {
