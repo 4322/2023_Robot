@@ -17,12 +17,7 @@ public class RobotContainer {
   public static XboxController coPilot;
   public static Joystick driveStick;
   public static Joystick rotateStick;
-
   
-
-
-
-
   // The robot's subsystems and commands are defined here...
   private final Arm arm = new Arm();
   private final Claw claw = new Claw();

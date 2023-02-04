@@ -26,7 +26,7 @@ public class ArmManual extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    speed = RobotContainer.coPilot.leftstick.getY();
+    speed = RobotContainer.coPilot.getLeftY();
     if (Math.abs(speed) < ArmConstants.manualDeadband) {
       speed = 0;
     }
