@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 public class Constants {
   public static final boolean debug = false;
   public static final boolean inDemoMode = false;
+  public static final boolean joysticksEnabled = false;
 
   public static final boolean armEnabled = false;
   public static final boolean clawEnabled = false;
