@@ -194,12 +194,12 @@ public class Drive extends SubsystemBase {
 
   private static DriveMode driveMode = DriveMode.fieldCentric;
 
-  public static DriveMode getDrivemode() {
+  public static DriveMode getDriveMode() {
     return driveMode;
   }
 
   public void setDriveMode(DriveMode mode) {
-    if (Constants.inDemoMode) {
+    if (Constants.demo.inDemoMode) {
       if (mode != DriveMode.fieldCentric) {
         return;
       }
