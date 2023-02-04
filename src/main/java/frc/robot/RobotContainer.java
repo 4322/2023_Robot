@@ -1,5 +1,8 @@
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
@@ -134,5 +137,75 @@ public class RobotContainer {
     arm.setCoastMode();
     claw.setCoastMode();
     drive.stop();
+  }
+
+  // Stagger status frames from Talon FX controllers.
+  // Status frames needed at a higher rate can be set after initialization.
+  public static void staggerTalonStatusFrames(WPI_TalonFX talon) {
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General,
+        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0,
+        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature,
+        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_4_AinTempVbat,
+        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_6_Misc,
+        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_7_CommStatus,
+        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth,
+        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_9_MotProfBuffer,
+        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic,
+        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_10_Targets,
+        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_11_UartGadgeteer,
+        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_12_Feedback1,
+        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0,
+        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_14_Turn_PIDF1,
+        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_15_FirmwareApiStatus,
+        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+  }
+
+  // Stagger status frames from Talon SRX controllers.
+  // Status frames needed at a higher rate can be set after initialization.
+  public static void staggerTalonStatusFrames(WPI_TalonSRX talon) {
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General,
+        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0,
+        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature,
+        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_4_AinTempVbat,
+        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_6_Misc,
+        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_7_CommStatus,
+        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth,
+        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_9_MotProfBuffer,
+        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic,
+        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_10_Targets,
+        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_11_UartGadgeteer,
+        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_12_Feedback1,
+        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0,
+        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_14_Turn_PIDF1,
+        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_15_FirmwareApiStatus,
+        RobotContainer.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
   }
 }
