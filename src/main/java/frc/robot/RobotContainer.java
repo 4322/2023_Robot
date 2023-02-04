@@ -12,8 +12,6 @@ import edu.wpi.first.wpilibj.Joystick;
 
 public class RobotContainer {
 
-  private Timer disableTimer = new Timer();
-
   // Define controllers
 
   public static XboxController coPilot;
@@ -125,8 +123,16 @@ public class RobotContainer {
     return nextSlowStatusPeriodMs++;
   }
 
+  public void enableSubsystems() {
+    drive.setDriveMode(Drive.getDriveMode());  // reset limelight LED state
+    drive.setBrakeMode();
+    arm.setBrakeMode();
+    claw.setBrakeMode();
+  }
+
   public void disableSubsystems() {
     arm.setCoastMode();
     claw.setCoastMode();
+    drive.stop();
   }
 }

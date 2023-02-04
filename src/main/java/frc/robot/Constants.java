@@ -22,8 +22,8 @@ public class Constants {
 
   public static final boolean armEnabled = false;
   public static final boolean clawEnabled = false;
-  public static final boolean driveEnabled = false;
-  public static final boolean gyroEnabled = false;
+  public static final boolean driveEnabled = true;
+  public static final boolean gyroEnabled = true;
   public static final boolean joysticksEnabled = true;
 
   public static final int falconEncoderUnits = 2048;
