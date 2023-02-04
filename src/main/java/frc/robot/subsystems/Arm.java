@@ -9,20 +9,23 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.ArmConstants.ArmDirection;
 
 public class Arm extends SubsystemBase {
   private CANSparkMax leftMotor;
   private CANSparkMax rightMotor;
   private Double currentTarget = null;
   private Timer logTimer = new Timer();
+  private ArmDirection armDirection;
 
   public Arm() {
     if (Constants.armEnabled) {
-      leftMotor = new CANSparkMax(ArmConstants.motorID, MotorType.kBrushless);
-      rightMotor = new CANSparkMax(ArmConstants.motorID, MotorType.kBrushless);
+      leftMotor = new CANSparkMax(Constants.ArmConstants.leftMotorID, MotorType.kBrushless);
+      rightMotor = new CANSparkMax(Constants.ArmConstants.rightMotorID, MotorType.kBrushless);
     }
   }
 
@@ -78,6 +81,10 @@ public class Arm extends SubsystemBase {
   public void rotateBackward() {
     leftMotor.set(ArmConstants.backward);
     DataLogManager.log("Arm rotating backward");
+  }
+
+  public void setArmSpeed(double speed) {
+    leftMotor.set(speed);
   }
 
   public void setCoastMode() {

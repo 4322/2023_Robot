@@ -7,12 +7,24 @@ import edu.wpi.first.math.geometry.Translation2d;
 
 public class Constants {
   public static final boolean debug = false;
-  public static final boolean inDemoMode = false;
+
+  public static final class demo {
+    public enum DriveMode {
+      OFF, SLOW_ROTATE_ONLY, SLOW_DRIVE
+    }
+
+    public static final boolean inDemoMode = false;
+    public static final DriveMode driveMode = DriveMode.SLOW_DRIVE;
+
+    public static final double driveScaleFactor = 0.15;
+    public static final double rotationScaleFactor = 0.1;
+  }
 
   public static final boolean armEnabled = false;
   public static final boolean clawEnabled = false;
   public static final boolean driveEnabled = false;
   public static final boolean gyroEnabled = false;
+  public static final boolean joysticksEnabled = true;
 
   public static final int falconEncoderUnits = 2048;
 
@@ -59,12 +71,19 @@ public class Constants {
     public static final double minAutoRotateSpeed = 0.0;
     public static final double maxAutoRotateSpeed = 0.0;
 
+    public static final double drivePolarDeadband = 0.06;
+    public static final double rotatePolarDeadband = 0.5;
+    public static final double twistDeadband = 0.08;
+
+    public static final double manualRotateToleranceDegrees = 1.5;
+
     // 1 degree
-    public static final Pose2d poseError = new Pose2d(new Translation2d(0.1, 0.1), new Rotation2d(0.0174533));
-    
+    public static final Pose2d poseError =
+        new Pose2d(new Translation2d(0.1, 0.1), new Rotation2d(0.0174533));
+
     public final static class Tip {
-      public static final double highVelocityFtPerSec = 6.0; 
-      public static final double lowVelocityFtPerSec = 3.0; 
+      public static final double highVelocityFtPerSec = 6.0;
+      public static final double lowVelocityFtPerSec = 3.0;
       public static final double highAccFtPerSec2 = 8.0;
       public static final double lowAccFtPerSec2 = 4.0;
       public static final double velAccDiffMaxDeg = 30;
@@ -73,18 +92,18 @@ public class Constants {
       public static final double highSpeedSteeringChangeMaxDegrees = 20;
       public static final double velocityHistorySeconds = 0.1;
     }
-    
+
     public static final class Rotation {
 
-    public static final double minAutoRotateSpeed = 0.0;
-    public static final double maxAutoRotateSpeed = 0.0;
+      public static final double minAutoRotateSpeed = 0.0;
+      public static final double maxAutoRotateSpeed = 0.0;
 
-    public static final double autoMaxSpeedMetersPerSecond = 3.5;
+      public static final double autoMaxSpeedMetersPerSecond = 3.5;
 
-    public static final double movingVelocityThresholdFtPerSec = 0.2;
+      public static final double movingVelocityThresholdFtPerSec = 0.2;
 
-    public static final Pose2d poseError =
-        new Pose2d(new Translation2d(0.1, 0.1), new Rotation2d(0.0174533));
+      public static final Pose2d poseError =
+          new Pose2d(new Translation2d(0.1, 0.1), new Rotation2d(0.0174533));
 
       public static final double kP = 1.2;
       public static final double kD = 6.0;
@@ -150,7 +169,7 @@ public class Constants {
       public static final double kFF = 0.05;
     }
 
- 
+
   }
 
   public static final class ClawConstants {// all temp values
@@ -165,13 +184,22 @@ public class Constants {
   }
 
   public static final class ArmConstants {
-    public static final int motorID = 0;
+    public static final int leftMotorID = 0;
+    public static final int rightMotorID = 1;
     public static final double rampRate = 0.0;
     public static final double forward = 1;
     public static final double backward = -1;
     public static final double logIntervalSeconds = 1;
     public static final int positionTolerance = 100;
+
+    public static enum ArmDirection {
+      forwards, stationary, backwards
+    };
+  
     public static final int maxPosition = 1000;
     public static final int minPosition = -1000;
+    public static final double manualDeadband = 0;
+
+    public static final double kMaxRange = 0;
   }
 }
