@@ -1,10 +1,10 @@
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.*;
+import edu.wpi.first.wpilibj.DataLogManager;
 import frc.robot.subsystems.Arm;
 public class armTest {
   private Arm arm;
-  @BeforeEach
-  public void setup()
+  public armTest()
   {
     arm = new Arm();
   }
@@ -13,8 +13,9 @@ public class armTest {
   {
     assertFalse(arm.rotateToPosition(1500));
   }
-  public void testMoveTo900EqualsTrue()
+  @Test
+  public void testMoveTo1100EqualsFalse()
   {
-    assertTrue(arm.rotateToPosition(900));
+    assertFalse(arm.rotateToPosition(1100));
   }
 }

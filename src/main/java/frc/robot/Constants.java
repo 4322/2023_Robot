@@ -9,7 +9,7 @@ public class Constants {
   public static final boolean debug = false;
   public static final boolean inDemoMode = false;
 
-  public static final boolean armEnabled = false;
+  public static final boolean armEnabled = true;
   public static final boolean clawEnabled = false;
   public static final boolean driveEnabled = false;
   public static final boolean gyroEnabled = false;
