@@ -14,9 +14,12 @@ public class RobotContainer {
   private Timer disableTimer = new Timer();
 
   // Define controllers
-  private final XboxController xbox = new XboxController(2);
+  public static XboxController coPilot;
   public static Joystick driveStick;
   public static Joystick rotateStick;
+
+  
+
 
 
 
@@ -59,6 +62,8 @@ public class RobotContainer {
       if (Constants.joysticksEnabled) {
         driveStick = new Joystick(0);
         rotateStick = new Joystick(1);
+        coPilot = new XboxController(2);
+        
       }
     }
   

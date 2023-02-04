@@ -74,6 +74,10 @@ public class Arm extends SubsystemBase {
     DataLogManager.log("Arm rotating backward");
   }
 
+  public void setArmSpeed(double speed) {
+    motor.set(speed);
+  }
+
   public void setCoastMode() {
     if (Constants.armEnabled) {
       motor.setIdleMode(IdleMode.kCoast);
