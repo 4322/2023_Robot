@@ -20,10 +20,23 @@ public class RobotContainer {
   public static Joystick driveStick;
   public static Joystick rotateStick;
 
+  // Define buttons
+  public static JoystickButton aButton;
+  public static JoystickButton bButton;
+  public static JoystickButton xButton;
+  public static JoystickButton yButton;
+  public static JoystickButton leftBumperButton;
+  public static JoystickButton rightBumperButton;
+  public static JoystickButton backButton;
+  public static JoystickButton startButton;
+  public static JoystickButton leftStickButton;
+  public static JoystickButton rightStickButton;
+
   // The robot's subsystems and commands are defined here...
   private final Arm arm = new Arm();
   private final Claw claw = new Claw();
   private final Drive drive = new Drive();
+  private final DriveManual driveManual = new DriveManual(drive);
 
   // Arm commands
 
@@ -45,6 +58,10 @@ public class RobotContainer {
 
     // Conifigure the button bindings
     configureButtonBindings();
+    
+    if (Constants.driveEnabled) {
+      drive.setDefaultCommand(driveManual);
+    }
   }
 
 
@@ -60,8 +77,28 @@ public class RobotContainer {
         driveStick = new Joystick(0);
         rotateStick = new Joystick(1);
         coPilot = new XboxController(2);
-        coPilot = new XboxController(2);
-        
+        JoystickButton aButton = new JoystickButton(coPilot, XboxController.Button.kA.value);
+        JoystickButton bButton = new JoystickButton(coPilot, XboxController.Button.kB.value);
+        JoystickButton xButton = new JoystickButton(coPilot, XboxController.Button.kX.value);
+        JoystickButton yButton = new JoystickButton(coPilot, XboxController.Button.kY.value);
+        JoystickButton leftBumperButton = new JoystickButton(coPilot, XboxController.Button.kLeftBumper.value);
+        JoystickButton rightBumperButton = new JoystickButton(coPilot, XboxController.Button.kRightBumper.value);
+        JoystickButton backButton = new JoystickButton(coPilot, XboxController.Button.kBack.value);
+        JoystickButton startButton = new JoystickButton(coPilot, XboxController.Button.kStart.value);
+        JoystickButton leftStickButton = new JoystickButton(coPilot, XboxController.Button.kLeftStick.value);
+        JoystickButton rightStickButton = new JoystickButton(coPilot, XboxController.Button.kRightStick.value);
+
+        if (coPilot.getAButtonPressed()){
+          if (!coPilot.getAButtonReleased()){
+            new ClawIntake(claw);
+          }
+        }
+
+        if (coPilot.getBButtonPressed()){
+          if (!coPilot.getBButtonReleased()){
+            new ClawOuttake(claw);
+          }
+        } 
       }
     }
   
