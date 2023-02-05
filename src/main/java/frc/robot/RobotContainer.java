@@ -8,7 +8,6 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
 import frc.robot.commands.*;
-import edu.wpi.first.wpilibj.Joystick;
 
 public class RobotContainer {
   private Timer disableTimer = new Timer();
@@ -105,23 +104,6 @@ public class RobotContainer {
       }
     }
   
-  // stagger status frame periods to reduce peak CAN bus utilization
-  private static int nextFastStatusPeriodMs = Constants.fastStatusPeriodBaseMs;
-  private static int nextSlowStatusPeriodMs = Constants.slowStatusPeriodBaseMs;
-
-  public static int nextFastStatusPeriodMs() {
-    if (nextFastStatusPeriodMs > Constants.fastStatusPeriodMaxMs) {
-      nextFastStatusPeriodMs = Constants.fastStatusPeriodBaseMs;
-    }
-    return nextFastStatusPeriodMs++;
-  }
-
-  public static int nextSlowStatusPeriodMs() {
-    if (nextSlowStatusPeriodMs > Constants.slowStatusPeriodMaxMs) {
-      nextSlowStatusPeriodMs = Constants.slowStatusPeriodBaseMs;
-    }
-    return nextSlowStatusPeriodMs++;
-  }
   public void disabledPeriodic() {
     if (disableTimer.hasElapsed(Constants.DriveConstants.disableBreakSec)) {
       drive.setCoastMode();  // robot has stopped, safe to enter coast mode
