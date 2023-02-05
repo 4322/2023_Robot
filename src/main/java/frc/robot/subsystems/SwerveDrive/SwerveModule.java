@@ -222,4 +222,12 @@ public class SwerveModule extends ControlModule {
     driveMotor.stopMotor();
     turningMotor.stopMotor();
   }
+
+  public WPI_TalonFX getDriveMotor() {
+    return driveMotor;
+  }
+
+  public WPI_TalonFX getTurningMotor() {
+    return turningMotor;
+  }
 }

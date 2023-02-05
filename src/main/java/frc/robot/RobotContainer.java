@@ -42,6 +42,8 @@ public class RobotContainer {
   private final ClawOuttake clawOuttake = new ClawOuttake(claw);
 
   // Drive Commands
+  private final DrivePlaySong playZelda = new DrivePlaySong(drive, "zelda.chrp");
+  private final DrivePlaySong playRick = new DrivePlaySong(drive, "rick.chrp");
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
 
@@ -88,7 +90,13 @@ public class RobotContainer {
 
         JoystickButton driveButtonSeven = new JoystickButton(driveStick, 7);
 
+        JoystickButton rotateButtonFive = new JoystickButton(rotateStick, 5);
+        JoystickButton rotateButtonSix = new JoystickButton(rotateStick, 6);
+
         driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
+
+        rotateButtonFive.whileTrue(playZelda);
+        rotateButtonSix.whileTrue(playRick);
 
         if (coPilot.getAButtonPressed()){
           if (!coPilot.getAButtonReleased()){

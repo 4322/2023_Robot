@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import com.kauailabs.navx.frc.AHRS;
+import com.ctre.phoenix.music.Orchestra;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -56,6 +57,8 @@ public class Drive extends SubsystemBase {
   private SwerveDriveOdometry odometry;
   private double robotCentricOffsetDegrees;
   private boolean fieldRelative = true;
+
+  private final Orchestra orchestra = new Orchestra();
 
   private ShuffleboardTab tab;
 
@@ -121,6 +124,11 @@ public class Drive extends SubsystemBase {
       }
 
       ram.setTolerance(DriveConstants.poseError);
+
+      for (SwerveModule module : swerveModules) {
+        orchestra.addInstrument(module.getDriveMotor());
+        orchestra.addInstrument(module.getTurningMotor());
+      }
 
       if (Constants.debug) {
         tab = Shuffleboard.getTab("Drivebase");
@@ -430,5 +438,26 @@ public class Drive extends SubsystemBase {
       x += 360;
     }
     return x;
+  }
+
+  public void musicLoad(String path) {
+    if (Constants.driveEnabled) {
+      if (orchestra.isPlaying()) {
+        orchestra.stop();
+      }
+      orchestra.loadMusic(path);
+    }
+  }
+
+  public void musicPlay() {
+    orchestra.play();
+  }
+
+  public void musicPause() {
+    orchestra.pause();
+  }
+
+  public void musicStop() {
+    orchestra.stop();
   }
 }
