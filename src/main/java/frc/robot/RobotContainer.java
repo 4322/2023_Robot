@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Arm;
@@ -9,7 +10,7 @@ import frc.robot.subsystems.Drive;
 import frc.robot.commands.*;
 
 public class RobotContainer {
-
+  private Timer disableTimer = new Timer();
   // Define controllers
 
   public static XboxController coPilot;
@@ -102,17 +103,30 @@ public class RobotContainer {
         } 
       }
     }
+  
+  public void disabledPeriodic() {
+    if (disableTimer.hasElapsed(Constants.DriveConstants.disableBreakSec)) {
+      drive.setCoastMode();  // robot has stopped, safe to enter coast mode
+      disableTimer.stop();
+      disableTimer.reset();
+    }
+  }
 
   public void enableSubsystems() {
     drive.setDriveMode(Drive.getDriveMode());  // reset limelight LED state
     drive.setBrakeMode();
     arm.setBrakeMode();
     claw.setBrakeMode();
+    disableTimer.stop();
+    disableTimer.reset();
+
   }
 
   public void disableSubsystems() {
     arm.setCoastMode();
     claw.setCoastMode();
+    disableTimer.reset();
+    disableTimer.start();
     drive.stop();
   }
 }
