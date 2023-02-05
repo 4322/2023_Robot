@@ -55,7 +55,7 @@ public class Drive extends SubsystemBase {
   private RamseteController ram = new RamseteController();
   private SwerveDriveOdometry odometry;
   private double robotCentricOffsetDegrees;
-  private boolean fieldRelative;
+  private boolean fieldRelative = true;
 
   private ShuffleboardTab tab;
 
