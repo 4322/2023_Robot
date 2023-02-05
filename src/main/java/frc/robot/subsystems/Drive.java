@@ -94,22 +94,20 @@ public class Drive extends SubsystemBase {
       swerveModules[WheelPosition.BACK_LEFT.wheelNumber] =
           new SwerveModule(DriveConstants.rearLeftRotationID, DriveConstants.rearLeftDriveID,
               WheelPosition.BACK_LEFT, DriveConstants.rearLeftEncoderID);
-      if (Constants.gyroEnabled) {
-        odometry =
-            new SwerveDriveOdometry(kinematics, gyro.getRotation2d(), getModulePostitions());
-      }
-      for (SwerveModule module : swerveModules) {
-        module.init();
-      }
     }
   }
 
   public void init() {
     if (Constants.driveEnabled) {
       rotPID = new PIDController(DriveConstants.autoRotkP, 0, DriveConstants.autoRotkD);
+      
+      for (SwerveModule module : swerveModules) {
+        module.init();
+      }
 
       if (Constants.gyroEnabled) {
         gyro = new AHRS(SPI.Port.kMXP);
+        odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2d(), getModulePostitions());
 
         // wait for first gyro reading to be received
         try {
@@ -147,7 +145,8 @@ public class Drive extends SubsystemBase {
 
         botVelocityAngle = tab.add("Bot Vel Angle", 0).withPosition(4, 0).withSize(1, 1).getEntry();
 
-        botAccelerationAngle = tab.add("Bot Acc Angle", 0).withPosition(4, 1).withSize(1, 1).getEntry();
+        botAccelerationAngle =
+            tab.add("Bot Acc Angle", 0).withPosition(4, 1).withSize(1, 1).getEntry();
 
         tipDecelerationActiveTab = tab.add("Tip Deceleration", true)
             .withWidget(BuiltInWidgets.kBooleanBox).withPosition(5, 0).withSize(1, 1).getEntry();
@@ -168,15 +167,15 @@ public class Drive extends SubsystemBase {
 
         odometryY = tab.add("Odometry Y", 0).withPosition(4, 2).withSize(1, 1).getEntry();
 
-        odometryDegrees = tab.add("Odometry Degrees", 0).withPosition(2, 2).withSize(1, 1).getEntry();
+        odometryDegrees =
+            tab.add("Odometry Degrees", 0).withPosition(2, 2).withSize(1, 1).getEntry();
       }
     }
   }
 
   public enum DriveMode {
     fieldCentric(0), frontCamCentric(1), leftCamCentric(2), rightCamCentric(
-        3),
-    limelightFieldCentric(4), killFieldCentric(5), sideKillFieldCentric(6);
+        3), limelightFieldCentric(4), killFieldCentric(5), sideKillFieldCentric(6);
 
     private int value;
 
@@ -422,7 +421,7 @@ public class Drive extends SubsystemBase {
         swerveModules[WheelPosition.FRONT_RIGHT.wheelNumber].getPosition(),
         swerveModules[WheelPosition.FRONT_LEFT.wheelNumber].getPosition(),
         swerveModules[WheelPosition.BACK_LEFT.wheelNumber].getPosition(),
-        swerveModules[WheelPosition.BACK_RIGHT.wheelNumber].getPosition() };
+        swerveModules[WheelPosition.BACK_RIGHT.wheelNumber].getPosition()};
   }
 
   // convert angle to range of +/- 180 degrees
