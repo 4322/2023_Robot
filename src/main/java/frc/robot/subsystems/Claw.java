@@ -9,6 +9,7 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Claw extends SubsystemBase {
@@ -35,6 +36,7 @@ public class Claw extends SubsystemBase {
     if (Constants.clawEnabled) {
       clawMotor.set(ClawConstants.IntakeVelocity);
       intakeMode = IntakeMode.intaking;
+      DataLogManager.log("Rolly Grabbers intaking");
     }
   }
 
@@ -42,6 +44,7 @@ public class Claw extends SubsystemBase {
     if (Constants.clawEnabled) {
       clawMotor.set(ClawConstants.EjectionVelocity);
       intakeMode = IntakeMode.ejecting;
+      DataLogManager.log("Rolly Grabbers outtaking");
     }
   }
 
@@ -49,6 +52,7 @@ public class Claw extends SubsystemBase {
     if (Constants.clawEnabled) {
       clawMotor.stopMotor();
       intakeMode = IntakeMode.stationary;
+      DataLogManager.log("Rolly Grabbers stopping");
     }
   }
 
