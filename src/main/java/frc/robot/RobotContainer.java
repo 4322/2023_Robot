@@ -33,7 +33,6 @@ public class RobotContainer {
   private final Arm arm = new Arm();
   private final Claw claw = new Claw();
   private final Drive drive = new Drive();
-  private final DriveManual driveManual = new DriveManual(drive);
 
   // Arm commands
 
@@ -42,6 +41,7 @@ public class RobotContainer {
   private final ClawOuttake clawOuttake = new ClawOuttake(claw);
 
   // Drive Commands
+  private final DriveManual driveManual = new DriveManual(drive);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
 
