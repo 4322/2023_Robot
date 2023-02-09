@@ -117,9 +117,7 @@ public class Drive extends SubsystemBase {
         }
 
         resetFieldCentric(0);
-      } else {
-        setDriveMode(DriveMode.frontCamCentric);
-      }
+      } 
 
       ram.setTolerance(DriveConstants.poseError);
 
@@ -173,9 +171,7 @@ public class Drive extends SubsystemBase {
   }
 
   public enum DriveMode {
-    fieldCentric(0), frontCamCentric(1), leftCamCentric(2), rightCamCentric(
-        3),
-    limelightFieldCentric(4), killFieldCentric(5), sideKillFieldCentric(6);
+    fieldCentric(0), botCentric(1);
 
     private int value;
 
@@ -201,6 +197,12 @@ public class Drive extends SubsystemBase {
         return;
       }
     }
+    driveMode = mode;
+    switch (mode) {
+      case fieldCentric:
+      case botCentric:
+    }
+    DataLogManager.log("DriveMode set to " + mode);
   }
 
   public double getAngle() {
