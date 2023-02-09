@@ -8,9 +8,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 /**
- * A ControlModule allows you to easily control the speed controllers for 
- * both rotation and speed</br>
- * The rotation speed controller has a PIDController with an potentiometer source. 
+ * A ControlModule allows you to easily control the speed controllers for both rotation and
+ * speed</br>
+ * The rotation speed controller has a PIDController with an potentiometer source.
  * 
  * @author created by Unnas Hussain on 8/2/2017
  */
@@ -74,7 +74,6 @@ public class ControlModule {
   }
 
   public double getAcceleration() {
-
     return filteredAccel; // feet per sec per sec
   }
 
@@ -99,8 +98,8 @@ public class ControlModule {
     SmartDashboard.putNumber(name + "Acceleration", this.getAcceleration());
   }
 
-  public enum WheelPosition{
-  // construction of SwerveDriveKinematics is dependent on this enum 
+  public enum WheelPosition {
+    // construction of SwerveDriveKinematics is dependent on this enum
 
     FRONT_RIGHT(0), FRONT_LEFT(1), BACK_LEFT(2), BACK_RIGHT(3);
 
@@ -112,12 +111,17 @@ public class ControlModule {
 
     public String toString() {
 
-      switch(wheelNumber) {
-        case 0: return "FRONT_RIGHT";
-        case 1: return "FRONT_LEFT";
-        case 2: return "BACK_LEFT";
-        case 3: return "BACK_RIGHT";
-        default: return "???";
+      switch (wheelNumber) {
+        case 0:
+          return "FRONT_RIGHT";
+        case 1:
+          return "FRONT_LEFT";
+        case 2:
+          return "BACK_LEFT";
+        case 3:
+          return "BACK_RIGHT";
+        default:
+          return "???";
       }
     }
   }

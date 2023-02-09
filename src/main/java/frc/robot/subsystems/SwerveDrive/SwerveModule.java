@@ -140,8 +140,8 @@ public class SwerveModule extends ControlModule {
     }
 
     // don't need the CANCoder any longer, so a slow frame rate is OK
-    encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData,
-        TalonUtil.nextSlowStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+    encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, TalonUtil.nextSlowStatusPeriodMs(),
+        Constants.controllerConfigTimeoutMs);
 
     // need rapid position feedback for steering logic
     turningMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0,
