@@ -75,12 +75,15 @@ public class Arm extends SubsystemBase {
 
   public void rotateForward() {
     leftMotor.set(ArmConstants.forward);
+    armDirection = ArmDirection.forwards;
     DataLogManager.log("Arm rotating forward");
   }
 
   public void rotateBackward() {
     leftMotor.set(ArmConstants.backward);
+    armDirection = ArmDirection.backwards;
     DataLogManager.log("Arm rotating backward");
+    
   }
 
   public void setArmSpeed(double speed) {
@@ -91,6 +94,7 @@ public class Arm extends SubsystemBase {
     if (Constants.armEnabled) {
       leftMotor.setIdleMode(IdleMode.kCoast);
       rightMotor.setIdleMode(IdleMode.kCoast);
+      armDirection = ArmDirection.stationary;
     }
   }
 
@@ -98,6 +102,7 @@ public class Arm extends SubsystemBase {
     if (Constants.armEnabled) {
       leftMotor.setIdleMode(IdleMode.kBrake);
       rightMotor.setIdleMode(IdleMode.kBrake);
+      armDirection = ArmDirection.stationary;
     }
   }
 

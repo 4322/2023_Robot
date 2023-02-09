@@ -36,6 +36,7 @@ public class RobotContainer {
   private final DriveManual driveManual = new DriveManual(drive);
 
   // Arm commands
+  private final ArmManual armManual = new ArmManual(arm);
 
   // Claw commands
   private final ClawIntake clawIntake = new ClawIntake(claw);
@@ -58,6 +59,10 @@ public class RobotContainer {
     
     if (Constants.driveEnabled) {
       drive.setDefaultCommand(driveManual);
+    }
+
+    if (Constants.armEnabled) {
+      arm.setDefaultCommand(armManual);
     }
   }
 
@@ -119,7 +124,6 @@ public class RobotContainer {
     claw.setBrakeMode();
     disableTimer.stop();
     disableTimer.reset();
-
   }
 
   public void disableSubsystems() {
