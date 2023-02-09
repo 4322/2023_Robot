@@ -23,6 +23,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Pose2d;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -190,6 +191,7 @@ public class Drive extends SubsystemBase {
   private static DriveMode driveMode = DriveMode.fieldCentric;
 
   public static DriveMode getDriveMode() {
+    DataLogManager.log("DriveMode is " + driveMode);
     return driveMode;
   }
 
@@ -366,11 +368,13 @@ public class Drive extends SubsystemBase {
   public void setToFieldCentric() {
     fieldRelative = true;
     robotCentricOffsetDegrees = 0;
+    DataLogManager.log("Robot Mode = Field Centric");
   }
 
   public void setToBotCentric(double offsetDeg) {
     fieldRelative = false;
     robotCentricOffsetDegrees = offsetDeg;
+    DataLogManager.log("Robot Mode = Robot Centric");
   }
 
   public void setCoastMode() {
