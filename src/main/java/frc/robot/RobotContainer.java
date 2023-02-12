@@ -36,6 +36,7 @@ public class RobotContainer {
 
   // Arm commands
   private final ArmManual armManual = new ArmManual(arm);
+  private final ArmSetCoastMode armSetCoastMode = new ArmSetCoastMode(arm);
 
   // Claw commands
   private final ClawIntake clawIntake = new ClawIntake(claw);
@@ -95,17 +96,7 @@ public class RobotContainer {
 
         driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
 
-        if (coPilot.getAButtonPressed()){
-          if (!coPilot.getAButtonReleased()){
-            new ClawIntake(claw);
-          }
-        }
-
-        if (coPilot.getBButtonPressed()){
-          if (!coPilot.getBButtonReleased()){
-            new ClawOuttake(claw);
-          }
-        } 
+        backButton.onTrue(armSetCoastMode);
       }
     }
   
