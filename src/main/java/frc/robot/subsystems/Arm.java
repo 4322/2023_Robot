@@ -13,14 +13,12 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
-import frc.robot.Constants.ArmConstants.ArmDirection;
 
 public class Arm extends SubsystemBase {
   private CANSparkMax leftMotor;
   private CANSparkMax rightMotor;
   private Double currentTarget = null;
   private Timer logTimer = new Timer();
-  private ArmDirection armDirection;
 
   public Arm() {
     if (Constants.armEnabled) {
@@ -81,6 +79,7 @@ public class Arm extends SubsystemBase {
   public void rotateBackward() {
     leftMotor.set(ArmConstants.backward);
     DataLogManager.log("Arm rotating backward");
+    
   }
 
   public void setArmSpeed(double speed) {
