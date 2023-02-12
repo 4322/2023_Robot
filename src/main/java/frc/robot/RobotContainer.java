@@ -90,17 +90,8 @@ public class RobotContainer {
 
         driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
 
-        if (coPilot.getAButtonPressed()){
-          if (!coPilot.getAButtonReleased()){
-            new ClawIntake(claw);
-          }
-        }
-
-        if (coPilot.getBButtonPressed()){
-          if (!coPilot.getBButtonReleased()){
-            new ClawOuttake(claw);
-          }
-        } 
+        aButton.whileTrue(clawIntake);
+        bButton.whileTrue(clawOuttake);
       }
     }
   
