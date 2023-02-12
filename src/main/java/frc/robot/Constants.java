@@ -179,7 +179,7 @@ public class Constants {
     public static final double IntakeVelocity = 300;
     public static final double EjectionVelocity = -200;
 
-    public static enum IntakeMode {
+    public static enum ClawMode {
       ejecting, stationary, intaking
     };
   }
