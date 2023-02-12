@@ -13,14 +13,12 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
-import frc.robot.Constants.ArmConstants.ArmDirection;
 
 public class Arm extends SubsystemBase {
   private CANSparkMax leftMotor;
   private CANSparkMax rightMotor;
   private Double currentTarget = null;
   private Timer logTimer = new Timer();
-  private ArmDirection armDirection;
 
   public Arm() {
     if (Constants.armEnabled) {
@@ -75,13 +73,11 @@ public class Arm extends SubsystemBase {
 
   public void rotateForward() {
     leftMotor.set(ArmConstants.forward);
-    armDirection = ArmDirection.forwards;
     DataLogManager.log("Arm rotating forward");
   }
 
   public void rotateBackward() {
     leftMotor.set(ArmConstants.backward);
-    armDirection = ArmDirection.backwards;
     DataLogManager.log("Arm rotating backward");
     
   }
@@ -94,7 +90,6 @@ public class Arm extends SubsystemBase {
     if (Constants.armEnabled) {
       leftMotor.setIdleMode(IdleMode.kCoast);
       rightMotor.setIdleMode(IdleMode.kCoast);
-      armDirection = ArmDirection.stationary;
     }
   }
 
@@ -102,7 +97,6 @@ public class Arm extends SubsystemBase {
     if (Constants.armEnabled) {
       leftMotor.setIdleMode(IdleMode.kBrake);
       rightMotor.setIdleMode(IdleMode.kBrake);
-      armDirection = ArmDirection.stationary;
     }
   }
 

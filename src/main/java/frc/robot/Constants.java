@@ -192,10 +192,6 @@ public class Constants {
     public static final double backward = -1;
     public static final double logIntervalSeconds = 1;
     public static final int positionTolerance = 100;
-
-    public static enum ArmDirection {
-      forwards, stationary, backwards
-    };
   
     public static final int maxPosition = 1000;
     public static final int minPosition = -1000;
