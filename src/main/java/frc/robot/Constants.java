@@ -53,12 +53,8 @@ public class Constants {
 
     public static final int encoderResolution = 2048;
 
-    public static final double distWheelMetersX = 0.314325;
-    public static final double distWheelMetersY = 0.314325;
-
-
-    public static final double wheelBaseLengthFeet = 12.375*2/12.0;
-    public static final double wheelBaseWidthFeet = 12.375*2/12.0;
+    public static final double distWheelMetersX = 0.314325; // 24.75 in
+    public static final double distWheelMetersY = 0.314325; // 24.75 in
 
     public static final double maxSpeedMetersPerSecond = 3.6576;
     public static final double maxRotationSpeedRadSecond = 12.2718;
