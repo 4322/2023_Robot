@@ -95,7 +95,8 @@ public class RobotContainer {
         JoystickButton driveButtonSeven = new JoystickButton(driveStick, 7);
 
         driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
-
+        aButton.whileTrue(clawIntake);
+        bButton.whileTrue(clawOuttake);
         backButton.onTrue(armSetCoastMode);
       }
     }
