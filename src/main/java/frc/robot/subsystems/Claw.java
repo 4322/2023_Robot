@@ -2,7 +2,7 @@ package frc.robot.subsystems;
 
 import frc.robot.Constants;
 import frc.robot.Constants.ClawConstants;
-import frc.robot.Constants.ClawConstants.IntakeMode;
+import frc.robot.Constants.ClawConstants.ClawMode;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
@@ -14,8 +14,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Claw extends SubsystemBase {
   private CANSparkMax clawMotor;
-  private SparkMaxPIDController clawPID;
-  public IntakeMode intakeMode;
+  public ClawMode clawMode;
 
   public Claw() {
     if (Constants.clawEnabled) {
@@ -25,7 +24,7 @@ public class Claw extends SubsystemBase {
 
   public void init() {
     if (Constants.clawEnabled) {
-      intakeMode = IntakeMode.stationary;
+      clawMode = ClawMode.stationary;
       clawMotor.restoreFactoryDefaults();
       clawMotor.setOpenLoopRampRate(Constants.ClawConstants.rampRate);
     }
@@ -35,7 +34,7 @@ public class Claw extends SubsystemBase {
   public void intake() {
     if (Constants.clawEnabled) {
       clawMotor.set(ClawConstants.IntakeVelocity);
-      intakeMode = IntakeMode.intaking;
+      clawMode = ClawMode.intaking;
       DataLogManager.log("Rolly Grabbers intaking");
     }
   }
@@ -43,7 +42,7 @@ public class Claw extends SubsystemBase {
   public void outtake() {
     if (Constants.clawEnabled) {
       clawMotor.set(ClawConstants.EjectionVelocity);
-      intakeMode = IntakeMode.ejecting;
+      clawMode = ClawMode.ejecting;
       DataLogManager.log("Rolly Grabbers outtaking");
     }
   }
@@ -51,7 +50,7 @@ public class Claw extends SubsystemBase {
   public void stop() {
     if (Constants.clawEnabled) {
       clawMotor.stopMotor();
-      intakeMode = IntakeMode.stationary;
+      clawMode = ClawMode.stationary;
       DataLogManager.log("Rolly Grabbers stopping");
     }
   }
