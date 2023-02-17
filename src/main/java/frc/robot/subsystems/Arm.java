@@ -100,6 +100,13 @@ public class Arm extends SubsystemBase {
     }
   }
 
+  public void stop() {
+    if (Constants.armEnabled) {
+      leftMotor.stopMotor();
+      rightMotor.stopMotor();
+    }
+  }
+
   @Override
   public void periodic() {
     if (Constants.armEnabled) {

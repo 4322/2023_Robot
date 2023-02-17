@@ -98,6 +98,7 @@ public class RobotContainer {
         aButton.whileTrue(clawIntake);
         bButton.whileTrue(clawOuttake);
         backButton.onTrue(armSetCoastMode);
+
       }
     }
   
