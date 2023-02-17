@@ -198,5 +198,7 @@ public class Constants {
     public static final double manualDeadband = 0;
 
     public static final double kMaxRange = 0;
+
+    public static final double targetPosition = 0.0;
   }
 }
