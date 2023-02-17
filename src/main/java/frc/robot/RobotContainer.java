@@ -1,12 +1,17 @@
 package frc.robot;
 
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.libcommands.PPSwerveControllerCommand;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.*;
 
 public class RobotContainer {
@@ -105,6 +110,17 @@ public class RobotContainer {
 
       }
     }
+
+    /**
+   * Use this to pass the autonomous command to the main {@link Robot} class.
+   *
+   * @return the command to run in autonomous
+   */
+  public Command getAutonomousCommand() {
+    if (Constants.demo.inDemoMode) {
+      return null;
+    }
+  }
   
   public void disabledPeriodic() {
     if (disableTimer.hasElapsed(Constants.DriveConstants.disableBreakSec)) {
