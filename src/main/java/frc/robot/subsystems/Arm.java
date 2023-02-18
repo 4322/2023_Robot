@@ -71,6 +71,10 @@ public class Arm extends SubsystemBase {
     return false;
   }
 
+  public void stop() {
+    leftMotor.stopMotor();
+  }
+  //rotate methods not being used right now
   public void rotateForward() {
     leftMotor.set(ArmConstants.forward);
     DataLogManager.log("Arm rotating forward");
@@ -79,7 +83,6 @@ public class Arm extends SubsystemBase {
   public void rotateBackward() {
     leftMotor.set(ArmConstants.backward);
     DataLogManager.log("Arm rotating backward");
-    
   }
 
   public void setArmSpeed(double speed) {
@@ -97,13 +100,6 @@ public class Arm extends SubsystemBase {
     if (Constants.armEnabled) {
       leftMotor.setIdleMode(IdleMode.kBrake);
       rightMotor.setIdleMode(IdleMode.kBrake);
-    }
-  }
-
-  public void stop() {
-    if (Constants.armEnabled) {
-      leftMotor.stopMotor();
-      rightMotor.stopMotor();
     }
   }
 
