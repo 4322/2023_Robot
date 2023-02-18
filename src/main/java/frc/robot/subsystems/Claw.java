@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import frc.robot.Constants;
 import frc.robot.Constants.ClawConstants;
 import frc.robot.Constants.ClawConstants.ClawMode;
+import frc.utility.SparkMaxUtil;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
@@ -19,6 +20,8 @@ public class Claw extends SubsystemBase {
   public Claw() {
     if (Constants.clawEnabled) {
       clawMotor = new CANSparkMax(Constants.ClawConstants.motorID, MotorType.kBrushless);
+
+      SparkMaxUtil.staggerSparkMax(clawMotor);
     }
   }
 
