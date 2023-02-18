@@ -38,6 +38,7 @@ public class RobotContainer {
   private final ArmManual armManual = new ArmManual(arm); 
   private final ArmRotateToPosition armRotateToPosition = new ArmRotateToPosition(arm);
   private final ArmSetCoastMode armSetCoastMode = new ArmSetCoastMode(arm);
+  private final ArmHoming armHoming = new ArmHoming(arm);
 
   // Claw commands
   private final ClawIntake clawIntake = new ClawIntake(claw);
@@ -99,10 +100,8 @@ public class RobotContainer {
         aButton.whileTrue(clawIntake);
         bButton.whileTrue(clawOuttake);
         backButton.onTrue(armSetCoastMode);
-
-
-        startButton.onTrue(armRotateToPosition);
-
+        xButton.onTrue(armRotateToPosition);
+        startButton.onTrue(armHoming);
       }
     }
   
