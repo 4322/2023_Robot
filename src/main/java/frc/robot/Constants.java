@@ -35,6 +35,7 @@ public class Constants {
   public static final int fastStatusPeriodMaxMs = 18;
   public static final int slowStatusPeriodMaxMs = 255;
   public static final int controllerConfigTimeoutMs = 50;
+  public static final int verySlowStatusPeriodSparkBaseMs = 1000;
 
   public static final class DriveConstants {
     public static final int frontRightDriveID = 2;
