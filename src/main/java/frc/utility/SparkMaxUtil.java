@@ -22,7 +22,7 @@ public class SparkMaxUtil {
     return nextSparkVerySlowStatusPeriodMs;
   }
 
-  // Stagger status frames from Talon FX controllers.
+  // Stagger status frames from Spark Max controllers.
   // Status frames needed at a higher rate can be set after initialization.
   public static void staggerSparkMax(CANSparkMax spark) {
     spark.setPeriodicFramePeriod(PeriodicFrame.kStatus0, nextSlowStatusPeriodSparkMs());
