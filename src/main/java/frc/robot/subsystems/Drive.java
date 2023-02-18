@@ -437,4 +437,8 @@ public class Drive extends SubsystemBase {
     }
     return x;
   }
+
+  public SwerveDriveKinematics getKinematics() {
+    return kinematics;
+  }
 }
