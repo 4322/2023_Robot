@@ -25,6 +25,7 @@ public class Constants {
   public static final boolean driveEnabled = true;
   public static final boolean gyroEnabled = true;
   public static final boolean joysticksEnabled = true;
+  public static final boolean limeLightEnabled = false;
 
   public static final int falconEncoderUnits = 2048;
 
@@ -196,5 +197,12 @@ public class Constants {
     public static final double kMaxRange = 0;
 
     public static final double targetPosition = 0.0;
+  }
+
+  public static final class LimelightConstants {
+    // All distance values in inches
+    public static final double limelightAngle = 0;
+    public static final double targetHeight = 0;
+    public static final double limelightHeight = 0;
   }
 }
