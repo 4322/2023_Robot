@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import java.lang.annotation.Target;
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
@@ -8,6 +9,7 @@ import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -17,6 +19,7 @@ import frc.robot.Constants.ArmConstants;
 public class Arm extends SubsystemBase {
   private CANSparkMax leftMotor;
   private CANSparkMax rightMotor;
+  private DigitalInput armSensor;
   private Double currentTarget = null;
   private Timer logTimer = new Timer();
 
@@ -39,6 +42,10 @@ public class Arm extends SubsystemBase {
       rightMotor.setInverted(true);
       logTimer.reset();
       logTimer.start();
+
+      if (Constants.armSensorEnabled) {
+        armSensor = new DigitalInput(ArmConstants.armSensorPort);
+      }
     }
   }
 
@@ -50,6 +57,11 @@ public class Arm extends SubsystemBase {
     }
   }
 
+  public void setPosition(double pos) {
+    if (Constants.armEnabled) {
+      leftMotor.getEncoder().setPosition(pos);
+    }
+  }
   public boolean isAtTarget() {
     if (!Constants.armEnabled) {
       return true;
@@ -69,6 +81,14 @@ public class Arm extends SubsystemBase {
       }
     }
     return false;
+  }
+
+  public boolean getArmSensorPressed() {
+    if (Constants.armSensorEnabled) {
+      return armSensor.get();
+    } else {
+      return false;
+    }
   }
 
   public void stop() {

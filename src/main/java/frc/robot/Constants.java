@@ -21,6 +21,7 @@ public class Constants {
   }
 
   public static final boolean armEnabled = false;
+  public static final boolean armSensorEnabled = false;
   public static final boolean clawEnabled = false;
   public static final boolean driveEnabled = true;
   public static final boolean gyroEnabled = true;
@@ -183,6 +184,7 @@ public class Constants {
   public static final class ArmConstants {
     public static final int leftMotorID = 0;
     public static final int rightMotorID = 1;
+    public static final int armSensorPort = 0; // Need to change to DIO port of sensor
     public static final double rampRate = 0.0;
     public static final double forward = 1;
     public static final double backward = -1;
