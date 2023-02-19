@@ -124,7 +124,7 @@ public class RobotContainer {
   }
 
   public void disableSubsystems() {
-    arm.setCoastMode();
+    arm.stop();
     claw.setCoastMode();
     disableTimer.reset();
     disableTimer.start();

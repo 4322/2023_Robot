@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arm;
 
@@ -13,7 +14,10 @@ public class ArmSetCoastMode extends CommandBase{
 
   @Override
   public void initialize() {
-    arm.setCoastMode();
+    if(DriverStation.isDisabled())
+    {
+      arm.setCoastMode();
+    }
   }
 
   @Override
@@ -27,5 +31,10 @@ public class ArmSetCoastMode extends CommandBase{
   @Override
   public boolean isFinished() {
     return false;
+  }
+
+  @Override
+  public boolean runsWhenDisabled() {
+    return true;  // allows arm to coast after match
   }
 }
