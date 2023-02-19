@@ -119,7 +119,7 @@ public class Limelight extends SubsystemBase{
   }
 
   //Formula Referenced From: https://docs.limelightvision.io/en/latest/cs_estimating_distance.html
-  public double getDistance() {
+  public double getDistanceInches() {
     double distance = 0;
     
     if (getTargetVisible()) {
