@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
@@ -28,6 +29,9 @@ public class RobotContainer {
   public static JoystickButton startButton;
   public static JoystickButton leftStickButton;
   public static JoystickButton rightStickButton;
+  public static JoystickButton leftTriggerButton;
+  public static JoystickButton rightTriggerButton;
+
 
   // The robot's subsystems and commands are defined here...
   private final Arm arm = new Arm();
@@ -36,7 +40,9 @@ public class RobotContainer {
 
   // Arm commands
   private final ArmManual armManual = new ArmManual(arm); 
-  private final ArmRotateToPosition armRotateToPosition = new ArmRotateToPosition(arm);
+  private final ArmRotateToPosition armRotateToLowPosition = new ArmRotateToPosition(arm, Constants.ArmConstants.LowTargetPosition);
+  private final ArmRotateToPosition armRotateToMidPosition = new ArmRotateToPosition(arm, Constants.ArmConstants.MidTargetPosition);
+  private final ArmRotateToPosition armRotateToHighPosition = new ArmRotateToPosition(arm, Constants.ArmConstants.HighTargetPosition);
   private final ArmSetCoastMode armSetCoastMode = new ArmSetCoastMode(arm);
 
   // Claw commands
@@ -88,6 +94,9 @@ public class RobotContainer {
         JoystickButton yButton = new JoystickButton(coPilot, XboxController.Button.kY.value);
         JoystickButton leftBumperButton = new JoystickButton(coPilot, XboxController.Button.kLeftBumper.value);
         JoystickButton rightBumperButton = new JoystickButton(coPilot, XboxController.Button.kRightBumper.value);
+        
+        JoystickButton leftTriggerButton = new JoystickButton(coPilot, XboxController.Button.kLeftBumper.value);
+        Trigger rightTriggerButton = new Trigger(copilot);
         JoystickButton backButton = new JoystickButton(coPilot, XboxController.Button.kBack.value);
         JoystickButton startButton = new JoystickButton(coPilot, XboxController.Button.kStart.value);
         JoystickButton leftStickButton = new JoystickButton(coPilot, XboxController.Button.kLeftStick.value);
@@ -96,12 +105,14 @@ public class RobotContainer {
         JoystickButton driveButtonSeven = new JoystickButton(driveStick, 7);
 
         driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
-        aButton.whileTrue(clawIntake);
-        bButton.whileTrue(clawOuttake);
+        leftTriggerButton.whileTrue(clawIntake);
+        rightTriggerButton.whileTrue(clawOuttake);
         backButton.onTrue(armSetCoastMode);
+        
 
-
-        startButton.onTrue(armRotateToPosition);
+        aButton.onTrue(armRotateToLowPosition);
+        bButton.onTrue(armRotateToMidPosition);
+        yButton.onTrue(armRotateToHighPosition);
 
       }
     }
