@@ -20,4 +20,9 @@ public class ArmSetCoastMode extends InstantCommand{
       arm.setCoastMode();
     }
   }
+  @Override
+  public boolean runsWhenDisabled()
+  {
+    return true;
+  }
 }
