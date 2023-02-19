@@ -19,7 +19,7 @@ public class ScoreAuto extends CommandBase {
   private Timer timer = new Timer();
 
   public enum scoringStates {
-    firstStop, calibrate, score, done, abort;
+    firstStop, startPath, drivingPath, score, done, abort;
   }
 
   public ScoreAuto(Drive drive, Arm armSubsystem, Claw clawSubsystem, Limelight limelight) {
@@ -37,6 +37,7 @@ public class ScoreAuto extends CommandBase {
     currentMode = scoringStates.firstStop;
     timer.reset();
     timer.start();
+    drive.stop();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -44,18 +45,19 @@ public class ScoreAuto extends CommandBase {
   public void execute() {
     switch (currentMode) {
       case firstStop:
-        drive.stop();
-        currentMode = scoringStates.calibrate;
-      case calibrate:
-      if (currentMode == scoringStates.calibrate){
+        if (timer.hasElapsed(1.0)){
+          currentMode = scoringStates.startPath;
+        }
+      case startPath:
         // add path planner calculations
         // need to change drivex, drivey, and rotate variables
         drive.drive(Constants.DriveConstants.driveX, Constants.DriveConstants.driveY,
         Constants.DriveConstants.rotate);
+        currentMode = scoringStates.drivingPath;
+      case drivingPath:
         if (limelight.getDistanceInches() == 0){
           currentMode = scoringStates.score;
         }
-      }
       case score:
         // run claw outtake
         currentMode = scoringStates.done;
