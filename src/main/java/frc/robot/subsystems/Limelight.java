@@ -43,7 +43,7 @@ public class Limelight extends SubsystemBase{
     if (Constants.limeLightEnabled) {
       SmartDashboard.putBoolean("Target Visible", getTargetVisible());
       if (Constants.debug) {
-        distanceToTarget.setDouble(getDistance());
+        distanceToTarget.setDouble(getDistanceInches());
         targetVisible.setBoolean(getTargetVisible());
       }
     }
