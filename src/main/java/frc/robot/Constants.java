@@ -197,7 +197,9 @@ public class Constants {
 
     public static final double kMaxRange = 0;
 
-    public static final double targetPosition = 0.0;
+    public static final double LoadPosition = 0.0;
+    public static final double MidScoringPosition = 1000.0;
+    public static final double HighScoringPosition = 2000.0;
   }
 
   public static final class LimelightConstants {

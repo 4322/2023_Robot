@@ -6,17 +6,17 @@ import frc.robot.subsystems.Arm;
 
 public class ArmRotateToPosition extends CommandBase{
   private final Arm arm;
-
-  public ArmRotateToPosition (Arm armSubsystem) {
+  double targetPos;
+  public ArmRotateToPosition (Arm armSubsystem, double targetPos) {
     arm = armSubsystem;
-
+    this.targetPos = targetPos;
     addRequirements(arm);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    arm.rotateToPosition(Constants.ArmConstants.targetPosition);
+    arm.rotateToPosition(targetPos);
   }
 
   // Called once the command ends or is interrupted.
@@ -28,6 +28,6 @@ public class ArmRotateToPosition extends CommandBase{
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return arm.isAtTarget();
   }
 }
