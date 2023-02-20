@@ -27,9 +27,9 @@ public class RobotContainer {
 
   // Arm commands
   private final ArmManual armManual = new ArmManual(arm); 
-  private final ArmRotateToPosition armRotateToLowPosition = new ArmRotateToPosition(arm, Constants.ArmConstants.LowTargetPosition);
-  private final ArmRotateToPosition armRotateToMidPosition = new ArmRotateToPosition(arm, Constants.ArmConstants.MidTargetPosition);
-  private final ArmRotateToPosition armRotateToHighPosition = new ArmRotateToPosition(arm, Constants.ArmConstants.HighTargetPosition);
+  private final ArmRotateToPosition armRotateToLoadPosition = new ArmRotateToPosition(arm, Constants.ArmConstants.LoadPosition);
+  private final ArmRotateToPosition armRotateToMidPosition = new ArmRotateToPosition(arm, Constants.ArmConstants.MidScoringPosition);
+  private final ArmRotateToPosition armRotateToHighPosition = new ArmRotateToPosition(arm, Constants.ArmConstants.HighScoringPosition);
   private final ArmSetCoastMode armSetCoastMode = new ArmSetCoastMode(arm);
 
   // Claw commands
@@ -83,7 +83,7 @@ public class RobotContainer {
         coPilot.back().onTrue(armSetCoastMode);
         
 
-        coPilot.a().onTrue(armRotateToLowPosition);
+        coPilot.a().onTrue(armRotateToLoadPosition);
         coPilot.b().onTrue(armRotateToMidPosition);
         coPilot.y().onTrue(armRotateToHighPosition);
 
