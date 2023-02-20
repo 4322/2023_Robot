@@ -217,8 +217,17 @@ public class Constants {
   public static final class LimelightConstants {
     // All distance values in inches
     public static final double limelightAngle = 0;
-    public static final double targetHeight = 0;
     public static final double limelightHeight = 0;
+
+    // Tape heights are 1 inch higher than described in manual to account for
+    // height to center of tape
+    public static final double middleTapeHeight = 23.125;
+    public static final double highTapeHeight = 42.875;
+
+    // AprilTag heights are 4 inches higher than described in manual to account
+    // for height to center of tag
+    public static final double gridAprilTagHeight = 18.25;
+    public static final double doubleSubstationAprilTagHeight = 27.375;
 
     public static final double distanceToTargetInches = 0;
   }
