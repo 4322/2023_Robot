@@ -12,7 +12,11 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 	  {
 		  LEFT, RIGHT
 	  }
-
+    /* Default Values */
+    private static final double DEFAULT_TRIGGER_DEADZONE = 0.01; // Jiggle room for the triggers
+	  private static final double DEFAULT_TRIGGER_SENSITIVITY = 0.6;  // If the trigger is beyond this limit, say it has been pressed
+    private static final int LEFT_TRIGGER_AXIS_ID = 2;
+    private static final int RIGHT_TRIGGER_AXIS_ID = 3;
 		/* Instance Values */
 		private final Joystick parent;
 		private final HAND hand;
@@ -37,10 +41,40 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 			this.sensitivity = DEFAULT_TRIGGER_SENSITIVITY;
 		}
 
+    	/**
+	 * Creates a deadzone, but without clipping the lower values.
+	 * turns this
+	 * |--1--2--3--4--5--|
+	 * into this
+	 * ______|-1-2-3-4-5-|
+	 *
+	 * @param input
+	 * @param deadZoneSize
+	 * @return adjusted_input
+	 */
+	private static double createDeadZone(double input, double deadZoneSize)
+	{
+		final double negative;
+		double deadZoneSizeClamp = deadZoneSize;
+		double adjusted;
+
+		if(deadZoneSizeClamp < 0 || deadZoneSizeClamp >= 1)
+		{
+			deadZoneSizeClamp = 0;  // Prevent any weird errors
+		}
+
+		negative = input < 0 ? -1 : 1;
+
+		adjusted = Math.abs(input) - deadZoneSizeClamp;  // Subtract the deadzone from the magnitude
+		adjusted = adjusted < 0 ? 0 : adjusted;          // if the new input is negative, make it zero
+		adjusted = adjusted / (1 - deadZoneSizeClamp);   // Adjust the adjustment so it can max at 1
+
+		return negative * adjusted;
+	}
 
 		/* Extended Methods */
 		@Override
-		public boolean get()
+		public boolean getAsBoolean()
 		{
 			return getX() > sensitivity;
 		}

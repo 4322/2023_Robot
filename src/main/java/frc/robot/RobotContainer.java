@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Arm;
@@ -14,23 +15,9 @@ public class RobotContainer {
   private Timer disableTimer = new Timer();
   // Define controllers
 
-  public static XboxController coPilot;
+  public static CommandXboxController coPilot;
   public static Joystick driveStick;
   public static Joystick rotateStick;
-
-  // Define buttons
-  public static JoystickButton aButton;
-  public static JoystickButton bButton;
-  public static JoystickButton xButton;
-  public static JoystickButton yButton;
-  public static JoystickButton leftBumperButton;
-  public static JoystickButton rightBumperButton;
-  public static JoystickButton backButton;
-  public static JoystickButton startButton;
-  public static JoystickButton leftStickButton;
-  public static JoystickButton rightStickButton;
-  public static JoystickButton leftTriggerButton;
-  public static JoystickButton rightTriggerButton;
 
 
   // The robot's subsystems and commands are defined here...
@@ -86,33 +73,19 @@ public class RobotContainer {
       if (Constants.joysticksEnabled) {
         driveStick = new Joystick(0);
         rotateStick = new Joystick(1);
-        coPilot = new XboxController(2);
-
-        JoystickButton aButton = new JoystickButton(coPilot, XboxController.Button.kA.value);
-        JoystickButton bButton = new JoystickButton(coPilot, XboxController.Button.kB.value);
-        JoystickButton xButton = new JoystickButton(coPilot, XboxController.Button.kX.value);
-        JoystickButton yButton = new JoystickButton(coPilot, XboxController.Button.kY.value);
-        JoystickButton leftBumperButton = new JoystickButton(coPilot, XboxController.Button.kLeftBumper.value);
-        JoystickButton rightBumperButton = new JoystickButton(coPilot, XboxController.Button.kRightBumper.value);
-        
-        JoystickButton leftTriggerButton = new JoystickButton(coPilot, XboxController.Button.kLeftBumper.value);
-        Trigger rightTriggerButton = new Trigger(copilot);
-        JoystickButton backButton = new JoystickButton(coPilot, XboxController.Button.kBack.value);
-        JoystickButton startButton = new JoystickButton(coPilot, XboxController.Button.kStart.value);
-        JoystickButton leftStickButton = new JoystickButton(coPilot, XboxController.Button.kLeftStick.value);
-        JoystickButton rightStickButton = new JoystickButton(coPilot, XboxController.Button.kRightStick.value);
+        coPilot = new CommandXboxController(2);
 
         JoystickButton driveButtonSeven = new JoystickButton(driveStick, 7);
 
         driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
-        leftTriggerButton.whileTrue(clawIntake);
-        rightTriggerButton.whileTrue(clawOuttake);
-        backButton.onTrue(armSetCoastMode);
+        coPilot.leftTrigger().whileTrue(clawIntake);
+        coPilot.rightTrigger().whileTrue(clawOuttake);
+        coPilot.back().onTrue(armSetCoastMode);
         
 
-        aButton.onTrue(armRotateToLowPosition);
-        bButton.onTrue(armRotateToMidPosition);
-        yButton.onTrue(armRotateToHighPosition);
+        coPilot.a().onTrue(armRotateToLowPosition);
+        coPilot.b().onTrue(armRotateToMidPosition);
+        coPilot.y().onTrue(armRotateToHighPosition);
 
       }
     }
