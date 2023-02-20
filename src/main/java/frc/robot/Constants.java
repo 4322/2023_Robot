@@ -174,6 +174,12 @@ public class Constants {
       
     }
 
+    public static final class Auto{ // all need to be tuned
+       public static final double maxVelocity = 0;
+       public static final double maxAcceleration = 0;
+       
+    }
+
 
   }
 
@@ -213,5 +219,7 @@ public class Constants {
     public static final double limelightAngle = 0;
     public static final double targetHeight = 0;
     public static final double limelightHeight = 0;
+
+    public static final double distanceToTargetInches = 0;
   }
 }

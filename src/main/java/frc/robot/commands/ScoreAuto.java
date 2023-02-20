@@ -1,5 +1,12 @@
 package frc.robot.commands;
 
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPoint;
+
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
@@ -53,13 +60,22 @@ public class ScoreAuto extends CommandBase {
         // need to change drivex, drivey, and rotate variables
         drive.drive(Constants.DriveConstants.driveX, Constants.DriveConstants.driveY,
         Constants.DriveConstants.rotate);
+        PathPlannerTrajectory path = PathPlanner.generatePath (
+          new PathConstraints(0, 0),
+          new PathPoint(new Translation2d(0, 0), Rotation2d.fromDegrees(0), Rotation2d.fromDegrees(0)), // position, heading(direction of travel), holonomic rotation
+          new PathPoint(new Translation2d(0, 0), Rotation2d.fromDegrees(0), Rotation2d.fromDegrees(0))  // position, heading(direction of travel), holonomic rotation
+        );
+          
+        
         currentMode = scoringStates.drivingPath;
       case drivingPath:
-        if (limelight.getDistanceInches() == 0){
+        if (limelight.getDistanceInches() == Constants.LimelightConstants.distanceToTargetInches){
           currentMode = scoringStates.score;
         }
       case score:
         // run claw outtake
+        arm.rotateToPosition(Constants.ArmConstants.MidScoringPosition);
+        claw.outtake();
         currentMode = scoringStates.done;
     }
   }
