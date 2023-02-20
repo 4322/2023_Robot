@@ -13,12 +13,12 @@ import frc.robot.commands.*;
 
 public class RobotContainer {
   private Timer disableTimer = new Timer();
-  // Define controllers
 
-  public static CommandXboxController coPilot;
+  // Define controllers
+  public static CommandXboxController coPilot = new CommandXboxController(2);
   public static Joystick driveStick;
   public static Joystick rotateStick;
-
+  private JoystickButton driveButtonSeven;
 
   // The robot's subsystems and commands are defined here...
   private final Arm arm = new Arm();
@@ -26,10 +26,13 @@ public class RobotContainer {
   private final Drive drive = new Drive();
 
   // Arm commands
-  private final ArmManual armManual = new ArmManual(arm); 
-  private final ArmRotateToPosition armRotateToLoadPosition = new ArmRotateToPosition(arm, Constants.ArmConstants.LoadPosition);
-  private final ArmRotateToPosition armRotateToMidPosition = new ArmRotateToPosition(arm, Constants.ArmConstants.MidScoringPosition);
-  private final ArmRotateToPosition armRotateToHighPosition = new ArmRotateToPosition(arm, Constants.ArmConstants.HighScoringPosition);
+  private final ArmManual armManual = new ArmManual(arm);
+  private final ArmRotateToPosition armRotateToLoadPosition =
+      new ArmRotateToPosition(arm, Constants.ArmConstants.LoadPosition);
+  private final ArmRotateToPosition armRotateToMidPosition =
+      new ArmRotateToPosition(arm, Constants.ArmConstants.MidScoringPosition);
+  private final ArmRotateToPosition armRotateToHighPosition =
+      new ArmRotateToPosition(arm, Constants.ArmConstants.HighScoringPosition);
   private final ArmSetCoastMode armSetCoastMode = new ArmSetCoastMode(arm);
 
   // Claw commands
@@ -51,7 +54,7 @@ public class RobotContainer {
 
     // Conifigure the button bindings
     configureButtonBindings();
-    
+
     if (Constants.driveEnabled) {
       drive.setDefaultCommand(driveManual);
     }
@@ -64,42 +67,36 @@ public class RobotContainer {
 
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+   * instantiating a {@link GenericHID} or one of its subclasses
+   * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a
+   * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-    private void configureButtonBindings() {
-      
-      if (Constants.joysticksEnabled) {
-        driveStick = new Joystick(0);
-        rotateStick = new Joystick(1);
-        coPilot = new CommandXboxController(2);
+  private void configureButtonBindings() {
 
-        JoystickButton driveButtonSeven = new JoystickButton(driveStick, 7);
-
-        driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
-        coPilot.leftTrigger().whileTrue(clawIntake);
-        coPilot.rightTrigger().whileTrue(clawOuttake);
-        coPilot.back().onTrue(armSetCoastMode);
-        
-
-        coPilot.a().onTrue(armRotateToLoadPosition);
-        coPilot.b().onTrue(armRotateToMidPosition);
-        coPilot.y().onTrue(armRotateToHighPosition);
-
-      }
+    if (Constants.joysticksEnabled) {
+      driveStick = new Joystick(0);
+      rotateStick = new Joystick(1);
+      driveButtonSeven = new JoystickButton(driveStick, 7);
+      driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
     }
-  
+    coPilot.leftTrigger().whileTrue(clawIntake);
+    coPilot.rightTrigger().whileTrue(clawOuttake);
+    coPilot.back().onTrue(armSetCoastMode);
+    coPilot.a().onTrue(armRotateToLoadPosition);
+    coPilot.b().onTrue(armRotateToMidPosition);
+    coPilot.y().onTrue(armRotateToHighPosition);
+  }
+
   public void disabledPeriodic() {
     if (disableTimer.hasElapsed(Constants.DriveConstants.disableBreakSec)) {
-      drive.setCoastMode();  // robot has stopped, safe to enter coast mode
+      drive.setCoastMode(); // robot has stopped, safe to enter coast mode
       disableTimer.stop();
       disableTimer.reset();
     }
   }
 
   public void enableSubsystems() {
-    drive.setDriveMode(Drive.getDriveMode());  // reset limelight LED state
+    drive.setDriveMode(Drive.getDriveMode()); // reset limelight LED state
     drive.setBrakeMode();
     arm.setBrakeMode();
     claw.setBrakeMode();
