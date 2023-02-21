@@ -69,7 +69,7 @@ public class ScoreAuto extends CommandBase {
         
         currentMode = scoringStates.drivingPath;
       case drivingPath:
-        if (limelight.getDistanceInches() == Constants.LimelightConstants.distanceToTargetInches){
+        if (limelight.getTargetPosRobotRelative().getY() == Constants.LimelightConstants.distanceToTargetInches) {
           currentMode = scoringStates.score;
         }
       case score:

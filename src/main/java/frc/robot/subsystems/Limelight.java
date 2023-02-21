@@ -1,5 +1,8 @@
 package frc.robot.subsystems;
 
+import java.util.Arrays;
+import java.util.List;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -9,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.LimelightConstants;
 
-public class Limelight extends SubsystemBase{
+public class Limelight extends SubsystemBase {
   NetworkTable table;
 
   NetworkTableEntry tx;
@@ -22,7 +25,8 @@ public class Limelight extends SubsystemBase{
 
   // SHUFFLEBOARD
   ShuffleboardTab tab;
-  NetworkTableEntry distanceToTarget;
+  NetworkTableEntry distanceToTargetX;
+  NetworkTableEntry distanceToTargetY;
   NetworkTableEntry targetVisible;
 
   public Limelight() {
@@ -43,7 +47,9 @@ public class Limelight extends SubsystemBase{
     if (Constants.limeLightEnabled) {
       SmartDashboard.putBoolean("Target Visible", getTargetVisible());
       if (Constants.debug) {
-        distanceToTarget.setDouble(getDistanceInches());
+        Translation2d targetPos = getTargetPosRobotRelative();
+        distanceToTargetX.setDouble(targetPos.getX());
+        distanceToTargetY.setDouble(targetPos.getY());
         targetVisible.setBoolean(getTargetVisible());
       }
     }
@@ -98,9 +104,7 @@ public class Limelight extends SubsystemBase{
   }
 
   public enum LedMode {
-    Off(1),
-    Blink(2),
-    On(3);
+    Off(1), Blink(2), On(3);
 
     private int value;
 
@@ -114,21 +118,46 @@ public class Limelight extends SubsystemBase{
   }
 
   public enum CamMode {
-    VisionProcessor,
-    DriverCamera;
+    VisionProcessor, DriverCamera;
   }
 
-  //Formula Referenced From: https://docs.limelightvision.io/en/latest/cs_estimating_distance.html
-  public double getDistanceInches() {
-    double distance = 0;
+  // distance y formula referenced from:
+  // https://docs.limelightvision.io/en/latest/cs_estimating_distance.html
+  // All distances assume coordinate plane from top view (where y is perpendicular to the grid and x
+  // is parallel to the grid)
+  public Translation2d getTargetPosRobotRelative() {
     
+    double distanceX = 0;
+    double distanceY = 0;
+    double yDeg = getVerticalDegToTarget();
+    double xDeg = getHorizontalDegToTarget();
+    int pipelineIdx = (int) pipeline.getInteger(0); // Note: long is a longer integer
+    List<Integer> tapeList = Arrays.asList(LimelightConstants.tapePipelines);
+
     if (getTargetVisible()) {
-    double angleToTarget = LimelightConstants.limelightAngle + getVerticalDegToTarget();
-    distance = (LimelightConstants.targetHeight - LimelightConstants.limelightHeight) /
-    Math.tan(Math.toRadians(angleToTarget));
+
+      double angleToTarget = LimelightConstants.limelightAngle + yDeg;
+      
+      if (tapeList.contains(pipelineIdx)) {
+
+        if (yDeg > LimelightConstants.targetHeightThresholdDeg) {
+          distanceY = (LimelightConstants.highTapeHeight - LimelightConstants.limelightHeight)
+            / Math.tan(Math.toRadians(angleToTarget));
+        } else {
+          distanceY = (LimelightConstants.middleTapeHeight - LimelightConstants.limelightHeight)
+            / Math.tan(Math.toRadians(angleToTarget));
+        } 
+
+      } else {
+        distanceY = (LimelightConstants.gridAprilTagHeight - LimelightConstants.limelightHeight)
+          / Math.tan(Math.toRadians(angleToTarget));
+      }
+
+      distanceX = distanceY * Math.tan(Math.toRadians(xDeg));
+
     }
 
-    return distance;
+    return new Translation2d(distanceX, distanceY);
   }
 
   public void enableLed() {
@@ -141,5 +170,9 @@ public class Limelight extends SubsystemBase{
     if (Constants.limeLightEnabled) {
       setLed(LedMode.Off);
     }
+  }
+
+  public void switchPipeline(int pipelineIdx) {
+    pipeline.setNumber(pipelineIdx);
   }
 }
