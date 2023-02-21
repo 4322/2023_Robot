@@ -12,7 +12,7 @@ import frc.robot.Constants;
 public class LED extends SubsystemBase {
   LEDStrip led1;
   LEDStrip led2;
-  public LEDColor ledColor;
+  private LEDColor ledColor;
 
   public LED() {
     if (Constants.ledEnabled) {
@@ -31,7 +31,10 @@ public class LED extends SubsystemBase {
       ledColor = LEDColor.purple;
     }
   }
-
+  public LEDColor ledColor()
+  {
+    return ledColor;
+  }
   public void yellow() {
     if (Constants.ledEnabled) {
       led1.yellow();
@@ -47,8 +50,6 @@ public class LED extends SubsystemBase {
     private Solenoid red;
     private Solenoid green;
     private Solenoid blue;
-
-
 
     private LEDStrip(int pcmID, int rPort, int gPort, int bPort) {
       red = new Solenoid(pcmID, PneumaticsModuleType.REVPH, rPort);
