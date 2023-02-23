@@ -79,6 +79,12 @@ public class ScoreAuto extends CommandBase {
         arm.rotateToPosition(Constants.ArmConstants.MidScoringPosition);
         claw.outtake();
         currentMode = scoringStates.done;
+      case abort:
+        drive.stop();
+        arm.stop();
+        claw.stop();
+        currentMode = scoringStates.done;
+      case done:
     }
   }
 

@@ -228,6 +228,7 @@ public class Constants {
     // above = high tape, below = middle tape
     public static final double targetHeightThresholdDeg = 0;
 
+    // Desired distance from robot to target to score
     public static final double distanceToTargetInches = 0;
   }
 
