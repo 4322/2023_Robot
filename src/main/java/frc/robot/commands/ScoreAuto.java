@@ -61,12 +61,14 @@ public class ScoreAuto extends CommandBase {
         drive.drive(Constants.DriveConstants.driveX, Constants.DriveConstants.driveY,
         Constants.DriveConstants.rotate);
         PathPlannerTrajectory path = PathPlanner.generatePath (
-          new PathConstraints(0, 0),
-          new PathPoint(new Translation2d(0, 0), Rotation2d.fromDegrees(0), Rotation2d.fromDegrees(drive.getAngle())), // position, heading(direction of travel), holonomic rotation
-          new PathPoint(new Translation2d(Math.cos(drive.getAngle()), Math.sin(drive.getAngle())), Rotation2d.fromDegrees(Constants.DriveConstants.AutoScore.endDirection), Rotation2d.fromDegrees(Constants.DriveConstants.AutoScore.scoreAngle))  // position, heading(direction of travel), holonomic rotation
+          new PathConstraints(Constants.AutoScore.maxVelocity, Constants.AutoScore.maxAcceleration),
+          new PathPoint(new Translation2d(Math.cos(drive.getAngle()), Math.sin(drive.getAngle())), // position
+                        Rotation2d.fromDegrees(0), // heading (direction of travel)
+                        Rotation2d.fromDegrees(drive.getAngle())), // holonomic rotation
+          new PathPoint(new Translation2d(Constants.AutoScore.endPosX, Constants.AutoScore.endPosY), // position
+                        Rotation2d.fromDegrees(Constants.AutoScore.endDirection), // heading(direction of travel)
+                        Rotation2d.fromDegrees(Constants.AutoScore.scoreAngle))  // holonomic rotation
         );
-          
-        
         currentMode = scoringStates.drivingPath;
       case drivingPath:
         if (limelight.getTargetPosRobotRelative().getY() == Constants.LimelightConstants.distanceToTargetInches) {

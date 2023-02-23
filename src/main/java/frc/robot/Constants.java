@@ -173,15 +173,6 @@ public class Constants {
 
       
     }
-
-    public static final class AutoScore{ // all need to be tuned
-       public static final double maxVelocity = 0;
-       public static final double maxAcceleration = 0;
-       public static final double scoreAngle = 0;
-       public static final double endDirection = 0;
-    }
-
-
   }
 
   public static final class ClawConstants {// all temp values
@@ -239,4 +230,14 @@ public class Constants {
 
     public static final double distanceToTargetInches = 0;
   }
+
+  // all values need to be tuned
+  public static final class AutoScore{
+    public static final double maxVelocity = 0;
+    public static final double maxAcceleration = 0;
+    public static final double scoreAngle = 0;
+    public static final double endDirection = 0;
+    public static final double endPosX = 0;
+    public static final double endPosY = 0;
+ }
 }
