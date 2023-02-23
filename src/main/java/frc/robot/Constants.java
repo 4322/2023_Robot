@@ -174,10 +174,11 @@ public class Constants {
       
     }
 
-    public static final class Auto{ // all need to be tuned
+    public static final class AutoScore{ // all need to be tuned
        public static final double maxVelocity = 0;
        public static final double maxAcceleration = 0;
-       
+       public static final double scoreAngle = 0;
+       public static final double endDirection = 0;
     }
 
 

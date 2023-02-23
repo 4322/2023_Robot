@@ -62,8 +62,8 @@ public class ScoreAuto extends CommandBase {
         Constants.DriveConstants.rotate);
         PathPlannerTrajectory path = PathPlanner.generatePath (
           new PathConstraints(0, 0),
-          new PathPoint(new Translation2d(0, 0), Rotation2d.fromDegrees(0), Rotation2d.fromDegrees(0)), // position, heading(direction of travel), holonomic rotation
-          new PathPoint(new Translation2d(0, 0), Rotation2d.fromDegrees(0), Rotation2d.fromDegrees(0))  // position, heading(direction of travel), holonomic rotation
+          new PathPoint(new Translation2d(0, 0), Rotation2d.fromDegrees(0), Rotation2d.fromDegrees(drive.getAngle())), // position, heading(direction of travel), holonomic rotation
+          new PathPoint(new Translation2d(Math.cos(drive.getAngle()), Math.sin(drive.getAngle())), Rotation2d.fromDegrees(Constants.DriveConstants.AutoScore.endDirection), Rotation2d.fromDegrees(Constants.DriveConstants.AutoScore.scoreAngle))  // position, heading(direction of travel), holonomic rotation
         );
           
         
