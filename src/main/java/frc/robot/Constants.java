@@ -76,6 +76,12 @@ public class Constants {
 
     public static final double manualRotateToleranceDegrees = 1.5;
 
+    // Values for autonomous path finding
+    public static final double autoMaxSpeedMetersPerSecond = 3.5;
+    public static final double autoMaxAccelerationMetersPerSec2 = 2.5;
+    public static final double autoMaxRotationRadPerSecond = Math.PI * 2;
+    public static final double autoMaxRotationAccelerationRadPerSec2 = Math.PI * 4;
+
     // 1 degree
     public static final Pose2d poseError =
         new Pose2d(new Translation2d(0.1, 0.1), new Rotation2d(0.0174533));
@@ -97,8 +103,6 @@ public class Constants {
 
       public static final double minAutoRotateSpeed = 0.0;
       public static final double maxAutoRotateSpeed = 0.0;
-
-      public static final double autoMaxSpeedMetersPerSecond = 3.5;
 
       public static final double movingVelocityThresholdFtPerSec = 0.2;
 
@@ -169,6 +173,19 @@ public class Constants {
       public static final double kFF = 0.05;
     }
 
+    public static final class Trajectory {
+      public static final class PIDXY {
+        public static final double kP = 0.5;
+        public static final double kI = 0;
+        public static final double kD = 0;
+      }
+
+      public static final class PIDR {
+        public static final double kP = 4;
+        public static final double kI = 0;
+        public static final double kD = 0.5;
+      }
+    }
 
   }
 
