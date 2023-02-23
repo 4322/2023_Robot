@@ -51,26 +51,32 @@ public class ScoreAuto extends CommandBase {
   public void execute() {
     switch (currentMode) {
       case firstStop:
-        if (timer.hasElapsed(1.0)){
+        if (timer.hasElapsed(1.0)) {
           currentMode = scoringStates.startPath;
         }
       case startPath:
         // add path planner calculations
         // need to change drivex, drivey, and rotate variables
         drive.drive(Constants.DriveConstants.driveX, Constants.DriveConstants.driveY,
-        Constants.DriveConstants.rotate);
-        PathPlannerTrajectory path = PathPlanner.generatePath (
-          new PathConstraints(Constants.AutoScore.maxVelocity, Constants.AutoScore.maxAcceleration),
-          new PathPoint(new Translation2d(Math.cos(drive.getAngle()), Math.sin(drive.getAngle())), // position
-                        Rotation2d.fromDegrees(0), // heading (direction of travel)
-                        Rotation2d.fromDegrees(drive.getAngle())), // holonomic rotation
-          new PathPoint(new Translation2d(Constants.AutoScore.endPosX, Constants.AutoScore.endPosY), // position
-                        Rotation2d.fromDegrees(Constants.AutoScore.endDirection), // heading(direction of travel)
-                        Rotation2d.fromDegrees(Constants.AutoScore.scoreAngle))  // holonomic rotation
+            Constants.DriveConstants.rotate);
+        PathPlannerTrajectory path = PathPlanner.generatePath(
+            new PathConstraints(Constants.AutoScore.maxVelocity,
+                Constants.AutoScore.maxAcceleration),
+            new PathPoint(
+                new Translation2d(
+                    limelight.getTargetPosRobotRelative().getX() * Math.cos(drive.getAngle()),  // X start position
+                    limelight.getTargetPosRobotRelative().getY() * Math.sin(drive.getAngle())), // Y start position
+                Rotation2d.fromDegrees(0), // start heading (direction of travel)
+                Rotation2d.fromDegrees(drive.getAngle())), // start holonomic rotation
+            new PathPoint(
+                new Translation2d(Constants.AutoScore.endPosX, Constants.AutoScore.endPosY), // end position
+                Rotation2d.fromDegrees(Constants.AutoScore.endDirection), // end heading(direction of travel)
+                Rotation2d.fromDegrees(Constants.AutoScore.scoreAngle)) // end holonomic rotation
         );
         currentMode = scoringStates.drivingPath;
       case drivingPath:
-        if (limelight.getTargetPosRobotRelative().getY() == Constants.LimelightConstants.distanceToTargetInches) {
+        if (limelight.getTargetPosRobotRelative()
+            .getY() == Constants.LimelightConstants.distanceToTargetInches) {
           currentMode = scoringStates.score;
         }
       case score:
@@ -80,7 +86,7 @@ public class ScoreAuto extends CommandBase {
         // give time for cone or cube to exit grabber
         if (timer.hasElapsed(0.5)) {
           currentMode = scoringStates.done;
-        }  
+        }
       case abort:
         drive.stop();
         arm.stop();
