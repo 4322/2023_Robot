@@ -26,6 +26,7 @@ public class Constants {
   public static final boolean gyroEnabled = true;
   public static final boolean joysticksEnabled = true;
   public static final boolean limeLightEnabled = false;
+  public static final boolean ledEnabled = true;
 
   public static final int falconEncoderUnits = 2048;
 
@@ -201,7 +202,16 @@ public class Constants {
     public static final double MidScoringPosition = 1000.0;
     public static final double HighScoringPosition = 2000.0;
   }
-
+  public static final class LEDConstants
+  {
+    public static final int pcmID=4;
+    public static final int rPort1=0;
+    public static final int gPort1=1;
+    public static final int bPort1=2;
+    public static final int rPort2=3;
+    public static final int gPort2=4;
+    public static final int bPort2=5;
+  }
   public static final class LimelightConstants {
     // All distance values in inches
     public static final double limelightAngle = 0;
