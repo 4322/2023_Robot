@@ -26,6 +26,7 @@ public class Constants {
   public static final boolean gyroEnabled = true;
   public static final boolean joysticksEnabled = true;
   public static final boolean limeLightEnabled = false;
+  public static final boolean ledEnabled = true;
 
   public static final int falconEncoderUnits = 2048;
 
@@ -78,6 +79,12 @@ public class Constants {
     public static final double driveX = 0;
     public static final double driveY = 0;
     public static final double rotate = 0;
+    
+    // Values for autonomous path finding
+    public static final double autoMaxSpeedMetersPerSecond = 3.5;
+    public static final double autoMaxAccelerationMetersPerSec2 = 2.5;
+    public static final double autoMaxRotationRadPerSecond = Math.PI * 2;
+    public static final double autoMaxRotationAccelerationRadPerSec2 = Math.PI * 4;
 
     // 1 degree
     public static final Pose2d poseError =
@@ -100,8 +107,6 @@ public class Constants {
 
       public static final double minAutoRotateSpeed = 0.0;
       public static final double maxAutoRotateSpeed = 0.0;
-
-      public static final double autoMaxSpeedMetersPerSecond = 3.5;
 
       public static final double movingVelocityThresholdFtPerSec = 0.2;
 
@@ -173,6 +178,20 @@ public class Constants {
 
       
     }
+
+    public static final class Trajectory {
+      public static final class PIDXY {
+        public static final double kP = 0.5;
+        public static final double kI = 0;
+        public static final double kD = 0;
+      }
+
+      public static final class PIDR {
+        public static final double kP = 4;
+        public static final double kI = 0;
+        public static final double kD = 0.5;
+      }
+    }
   }
 
   public static final class ClawConstants {// all temp values
@@ -206,6 +225,17 @@ public class Constants {
     public static final double HighScoringPosition = 2000.0;
   }
 
+  public static final class LEDConstants
+  {
+    public static final int pcmID=4;
+    public static final int rPort1=0;
+    public static final int gPort1=1;
+    public static final int bPort1=2;
+    public static final int rPort2=3;
+    public static final int gPort2=4;
+    public static final int bPort2=5;
+  }
+  
   // All distance values in inches
   public static final class LimelightConstants {
     public static final Integer[] tapePipelines = {0};
