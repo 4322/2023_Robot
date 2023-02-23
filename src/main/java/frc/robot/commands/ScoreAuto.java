@@ -14,7 +14,6 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Limelight;
-import frc.robot.commands.ClawOuttake;
 
 public class ScoreAuto extends CommandBase {
   private scoringStates currentMode;
@@ -78,7 +77,10 @@ public class ScoreAuto extends CommandBase {
         // run claw outtake
         arm.rotateToPosition(Constants.ArmConstants.MidScoringPosition);
         claw.outtake();
-        currentMode = scoringStates.done;
+        // give time for cone or cube to exit grabber
+        if (timer.hasElapsed(0.5)) {
+          currentMode = scoringStates.done;
+        }  
       case abort:
         drive.stop();
         arm.stop();
