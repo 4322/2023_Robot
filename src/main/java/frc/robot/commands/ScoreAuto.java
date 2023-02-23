@@ -7,6 +7,7 @@ import com.pathplanner.lib.PathPoint;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
@@ -51,10 +52,12 @@ public class ScoreAuto extends CommandBase {
   public void execute() {
     switch (currentMode) {
       case firstStop:
+        DataLogManager.log("First stop");
         if (timer.hasElapsed(1.0)) {
           currentMode = scoringStates.startPath;
         }
       case startPath:
+        DataLogManager.log("Start Path");
         // add path planner calculations
         // need to change drivex, drivey, and rotate variables
         drive.drive(Constants.DriveConstants.driveX, Constants.DriveConstants.driveY,
@@ -75,11 +78,13 @@ public class ScoreAuto extends CommandBase {
         );
         currentMode = scoringStates.drivingPath;
       case drivingPath:
+        DataLogManager.log("Driving Path");
         if (limelight.getTargetPosRobotRelative()
             .getY() == Constants.LimelightConstants.distanceToTargetInches) {
           currentMode = scoringStates.score;
         }
       case score:
+        DataLogManager.log("Scoring");
         // run claw outtake
         arm.rotateToPosition(Constants.ArmConstants.MidScoringPosition);
         claw.outtake();
@@ -88,11 +93,13 @@ public class ScoreAuto extends CommandBase {
           currentMode = scoringStates.done;
         }
       case abort:
+        DataLogManager.log("Abort");
         drive.stop();
         arm.stop();
         claw.stop();
         currentMode = scoringStates.done;
       case done:
+        DataLogManager.log("Done");
     }
   }
 
