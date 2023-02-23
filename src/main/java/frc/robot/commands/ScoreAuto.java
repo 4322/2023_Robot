@@ -94,10 +94,7 @@ public class ScoreAuto extends CommandBase {
         }
       case abort:
         DataLogManager.log("Abort");
-        drive.stop();
-        arm.stop();
-        claw.stop();
-        currentMode = scoringStates.done;
+        break;
       case done:
         DataLogManager.log("Done");
     }
