@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
+import frc.utility.SparkMaxUtil;
 
 public class Arm extends SubsystemBase {
   private CANSparkMax leftMotor;
@@ -27,6 +28,9 @@ public class Arm extends SubsystemBase {
     if (Constants.armEnabled) {
       leftMotor = new CANSparkMax(Constants.ArmConstants.leftMotorID, MotorType.kBrushless);
       rightMotor = new CANSparkMax(Constants.ArmConstants.rightMotorID, MotorType.kBrushless);
+
+      SparkMaxUtil.staggerSparkMax(leftMotor);
+      SparkMaxUtil.staggerSparkMax(rightMotor);
     }
   }
 
