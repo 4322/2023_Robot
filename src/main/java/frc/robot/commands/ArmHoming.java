@@ -24,11 +24,11 @@ public class ArmHoming extends CommandBase{
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    while (arm.getArmSensorPressed() == false) {
-      arm.setCoastMode();
+    arm.rotateBackward();
+    if (arm.getArmSensorPressed() == true) {
+      arm.setBrakeMode();
+      arm.setPosition(ArmConstants.minPosition);
     }
-
-    arm.setPosition(ArmConstants.minPosition);
   }
 
   // Called once the command ends or is interrupted.
