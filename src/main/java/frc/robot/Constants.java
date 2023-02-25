@@ -82,6 +82,10 @@ public class Constants {
     public static final double autoMaxRotationRadPerSecond = Math.PI * 2;
     public static final double autoMaxRotationAccelerationRadPerSec2 = Math.PI * 4;
 
+    // Values for auto balance
+    public static final double autoBalanceVelocity = 0.0;
+    public static final double chargeStationOffAngle = 9;
+
     // 1 degree
     public static final Pose2d poseError =
         new Pose2d(new Translation2d(0.1, 0.1), new Rotation2d(0.0174533));
@@ -186,7 +190,6 @@ public class Constants {
         public static final double kD = 0.5;
       }
     }
-
   }
 
   public static final class ClawConstants {// all temp values
