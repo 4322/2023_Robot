@@ -12,7 +12,7 @@ import frc.robot.Constants;
 public class ColorSensor extends SubsystemBase{
 
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
-  private final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
+  private final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort); // change port when put sensor on
   private final ColorMatch colorMatcher = new ColorMatch();
 
   private final Color kYellowTarget = new Color(0.992, 0.792, 0.329);
