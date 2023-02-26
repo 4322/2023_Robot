@@ -137,10 +137,10 @@ public class Constants {
       public static final double[] CANCoderOffsetDegrees;
       static {
         CANCoderOffsetDegrees = new double[4];
-        CANCoderOffsetDegrees[WheelPosition.FRONT_RIGHT.wheelNumber] = -78.311;
-        CANCoderOffsetDegrees[WheelPosition.FRONT_LEFT.wheelNumber] = -169.365;
-        CANCoderOffsetDegrees[WheelPosition.BACK_RIGHT.wheelNumber] = 9.844;
-        CANCoderOffsetDegrees[WheelPosition.BACK_LEFT.wheelNumber] = 104.678;
+        CANCoderOffsetDegrees[WheelPosition.FRONT_RIGHT.wheelNumber] = 149.941;
+        CANCoderOffsetDegrees[WheelPosition.FRONT_LEFT.wheelNumber] = -169.365; // needs to be updated
+        CANCoderOffsetDegrees[WheelPosition.BACK_RIGHT.wheelNumber] = 22.939 + 90;
+        CANCoderOffsetDegrees[WheelPosition.BACK_LEFT.wheelNumber] = -72.773;
       }
     }
 
