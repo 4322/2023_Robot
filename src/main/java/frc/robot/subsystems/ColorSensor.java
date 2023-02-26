@@ -3,16 +3,28 @@ package frc.robot.subsystems;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
+import com.revrobotics.ColorSensorV3.MainControl;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class ColorSensor extends SubsystemBase{
+public class ColorSensor extends SubsystemBase {
+  private ShuffleboardTab tab;
+  private GenericEntry Red;
+  private GenericEntry Green;
+  private GenericEntry Blue;
+  private GenericEntry Confidence;
+  private GenericEntry DetectedObject;
+  private String ObjectString;
 
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
-  private final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort); // change port when put sensor on
+  private final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort); // change port when put
+                                                                        // sensor on
   private final ColorMatch colorMatcher = new ColorMatch();
 
   private final Color kYellowTarget = new Color(0.992, 0.792, 0.329);
@@ -23,24 +35,25 @@ public class ColorSensor extends SubsystemBase{
     if (Constants.colorSensorEnabled) {
       Color detectedColor = colorSensor.getColor();
 
-      String colorString;
       ColorMatchResult match = colorMatcher.matchClosestColor(detectedColor);
 
       if (match.color == kOrangeTarget) {
-        colorString = "Orange";
+        ObjectString = "Nothing";
       } else if (match.color == kYellowTarget) {
-        colorString = "Yellow";
+        ObjectString = "Cone";
       } else if (match.color == kPurpleTarget) {
-        colorString = "Purple";
-      } else {
-        colorString = "Unknown";
+        ObjectString = "Cube";
       }
 
-    SmartDashboard.putNumber("Red", detectedColor.red); 
-    SmartDashboard.putNumber("Green", detectedColor.green);
-    SmartDashboard.putNumber("Blue", detectedColor.blue);
-    SmartDashboard.putNumber("Confidence", match.confidence);
-    SmartDashboard.putString("Detected Color", colorString);
+
+      if (Constants.debug) {
+        tab = Shuffleboard.getTab("Detected Object");
+        Red = tab.add("Red Value", detectedColor.red).getEntry();
+        Green = tab.add("Green Value", detectedColor.green).getEntry();
+        Blue = tab.add("Blue Value", detectedColor.blue).getEntry();
+        Confidence = tab.add("Confidence", match.confidence).getEntry();
+        DetectedObject = tab.add("Detected Object", ObjectString).getEntry();
+      }
     }
   }
 
@@ -52,8 +65,12 @@ public class ColorSensor extends SubsystemBase{
     }
   }
 
-  public Color getColor() {
+  private Color getColor() {
     return colorSensor.getColor();
   }
+
+  public String getObject() {
+    return ObjectString;
+  }
 }
-  
+
