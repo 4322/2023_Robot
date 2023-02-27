@@ -28,6 +28,7 @@ public class Constants {
   public static final boolean joysticksEnabled = true;
   public static final boolean limeLightEnabled = true;
   public static final boolean ledEnabled = true;
+  public static final boolean colorSensorEnabled = false;
 
   public static final int falconEncoderUnits = 2048;
   public static final double inchesToMeters = 0.0254;
