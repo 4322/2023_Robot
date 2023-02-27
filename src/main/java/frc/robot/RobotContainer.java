@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.LED;
 import frc.robot.commands.*;
 
 public class RobotContainer {
@@ -24,6 +25,7 @@ public class RobotContainer {
   private final Arm arm = new Arm();
   private final Claw claw = new Claw();
   private final Drive drive = new Drive();
+  private final LED LED = new LED();
 
   // Arm commands
   private final ArmManual armManual = new ArmManual(arm);
@@ -41,7 +43,8 @@ public class RobotContainer {
 
   // Drive Commands
   private final DriveManual driveManual = new DriveManual(drive);
-
+  //LED Commands
+  private final ColorChange colorChange = new ColorChange(LED);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
 
   public RobotContainer() {
@@ -85,11 +88,14 @@ public class RobotContainer {
     coPilot.a().onTrue(armRotateToLoadPosition);
     coPilot.b().onTrue(armRotateToMidPosition);
     coPilot.y().onTrue(armRotateToHighPosition);
+    coPilot.x().onTrue(colorChange);
   }
 
   public void disabledPeriodic() {
     if (disableTimer.hasElapsed(Constants.DriveConstants.disableBreakSec)) {
-      drive.setCoastMode(); // robot has stopped, safe to enter coast mode
+      if (Constants.driveEnabled) {
+        drive.setCoastMode(); // robot has stopped, safe to enter coast mode
+      }
       disableTimer.stop();
       disableTimer.reset();
     }
@@ -105,11 +111,17 @@ public class RobotContainer {
   }
 
   public void disableSubsystems() {
-    arm.stop();
-    claw.stop();
-    claw.setCoastMode();  
+    if (Constants.armEnabled) {
+      arm.stop();
+    }
+    if (Constants.clawEnabled) {
+      claw.stop();
+      claw.setCoastMode();
+    }
+    if (Constants.driveEnabled) {
+      drive.stop();
+    }
     disableTimer.reset();
     disableTimer.start();
-    drive.stop();
   }
 }
