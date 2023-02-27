@@ -21,6 +21,7 @@ public class Constants {
   }
 
   public static final boolean armEnabled = true;
+  public static final boolean armSensorEnabled = false;
   public static final boolean clawEnabled = true;
   public static final boolean driveEnabled = true;
   public static final boolean gyroEnabled = true;

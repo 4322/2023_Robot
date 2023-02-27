@@ -36,6 +36,7 @@ public class RobotContainer {
   private final ArmRotateToPosition armRotateToHighPosition =
       new ArmRotateToPosition(arm, Constants.ArmConstants.HighScoringPosition);
   private final ArmSetCoastMode armSetCoastMode = new ArmSetCoastMode(arm);
+  private final ArmHoming armHoming = new ArmHoming(arm);
 
   // Claw commands
   private final ClawIntake clawIntake = new ClawIntake(claw);
@@ -74,6 +75,7 @@ public class RobotContainer {
    * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
+
   private void configureButtonBindings() {
 
     if (Constants.joysticksEnabled) {
