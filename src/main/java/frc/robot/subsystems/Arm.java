@@ -110,7 +110,7 @@ public class Arm extends SubsystemBase {
   @Override
   public void periodic() {
     if (Constants.armEnabled) {
-      if (logTimer.hasElapsed(ArmConstants.logIntervalSeconds)) {
+      if (logTimer.hasElapsed(ArmConstants.logIntervalSeconds) && Constants.debug) {
         DataLogManager.log("Arm position: " + getPosition());
         logTimer.reset();
       }

@@ -20,16 +20,15 @@ public class Constants {
     public static final double rotationScaleFactor = 0.1;
   }
 
-  public static final boolean armEnabled = false;
-  public static final boolean clawEnabled = false;
+  public static final boolean armEnabled = true;
+  public static final boolean clawEnabled = true;
   public static final boolean driveEnabled = true;
   public static final boolean gyroEnabled = true;
   public static final boolean joysticksEnabled = true;
-  public static final boolean limeLightEnabled = false;
+  public static final boolean limeLightEnabled = true;
   public static final boolean ledEnabled = true;
 
   public static final int falconEncoderUnits = 2048;
-
   public static final double inchesToMeters = 0.0254;
   public static final double feetToMeters = inchesToMeters * 12;
   public static final int slowStatusPeriodBaseMs = 180;
@@ -190,7 +189,7 @@ public class Constants {
   }
 
   public static final class ClawConstants {// all temp values
-    public static final int motorID = 1; // temp value
+    public static final int motorID = 14; // temp value
     public static final double rampRate = 0.8; // temp value
     public static final double IntakeVelocity = 0.5;
     public static final double EjectionVelocity = -0.2;
@@ -201,12 +200,12 @@ public class Constants {
   }
 
   public static final class ArmConstants {
-    public static final int leftMotorID = 0;
-    public static final int rightMotorID = 1;
+    public static final int leftMotorID = 15;
+    public static final int rightMotorID = 16;
     public static final double rampRate = 0.0;
     public static final double forward = 1;
     public static final double backward = -1;
-    public static final double logIntervalSeconds = 1;
+    public static final double logIntervalSeconds = 0.5;
     public static final int positionTolerance = 100;
   
     public static final int maxPosition = 1000;
@@ -221,7 +220,7 @@ public class Constants {
   }
   public static final class LEDConstants
   {
-    public static final int pcmID=4;
+    public static final int pcmID=17;
     public static final int rPort1=0;
     public static final int gPort1=1;
     public static final int bPort1=2;
