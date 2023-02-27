@@ -41,18 +41,18 @@ public class Constants {
   public static final int verySlowStatusPeriodSparkBaseMs = 1000;
 
   public static final class DriveConstants {
-    public static final int frontRightDriveID = 2;
-    public static final int frontRightRotationID = 3;
-    public static final int rearRightDriveID = 4;
-    public static final int rearRightRotationID = 5;
-    public static final int frontLeftDriveID = 6;
-    public static final int frontLeftRotationID = 7;
+    public static final int frontRightDriveID = 3;
+    public static final int frontRightRotationID = 5;
+    public static final int rearRightDriveID = 6;
+    public static final int rearRightRotationID = 7;
+    public static final int frontLeftDriveID = 2;
+    public static final int frontLeftRotationID = 4;
     public static final int rearLeftDriveID = 8;
     public static final int rearLeftRotationID = 9;
     
     public static final int frontRightEncoderID = 10;
-    public static final int rearRightEncoderID = 11;
-    public static final int frontLeftEncoderID = 12;
+    public static final int rearRightEncoderID = 12;
+    public static final int frontLeftEncoderID = 11;
     public static final int rearLeftEncoderID = 13;
 
     public static final int encoderResolution = 2048;
@@ -191,7 +191,7 @@ public class Constants {
   }
 
   public static final class ClawConstants {// all temp values
-    public static final int motorID = 14; // temp value
+    public static final int motorID = 16; // temp value
     public static final double rampRate = 0.8; // temp value
     public static final double IntakeVelocity = 0.5;
     public static final double EjectionVelocity = -0.2;
@@ -203,7 +203,7 @@ public class Constants {
 
   public static final class ArmConstants {
     public static final int leftMotorID = 15;
-    public static final int rightMotorID = 16;
+    public static final int rightMotorID = 14;
     public static final double rampRate = 0.0;
     public static final double forward = 1;
     public static final double backward = -1;
@@ -222,7 +222,7 @@ public class Constants {
   }
   public static final class LEDConstants
   {
-    public static final int pcmID=17;
+    public static final int pcmID=30;
     public static final int rPort1=0;
     public static final int gPort1=1;
     public static final int bPort1=2;
