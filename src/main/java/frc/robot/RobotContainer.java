@@ -95,7 +95,9 @@ public class RobotContainer {
 
   public void disabledPeriodic() {
     if (disableTimer.hasElapsed(Constants.DriveConstants.disableBreakSec)) {
-      drive.setCoastMode(); // robot has stopped, safe to enter coast mode
+      if (Constants.driveEnabled) {
+        drive.setCoastMode(); // robot has stopped, safe to enter coast mode
+      }
       disableTimer.stop();
       disableTimer.reset();
     }
@@ -111,11 +113,17 @@ public class RobotContainer {
   }
 
   public void disableSubsystems() {
-    arm.stop();
-    claw.stop();
-    claw.setCoastMode();  
+    if (Constants.armEnabled) {
+      arm.stop();
+    }
+    if (Constants.clawEnabled) {
+      claw.stop();
+      claw.setCoastMode();
+    }
+    if (Constants.driveEnabled) {
+      drive.stop();
+    }
     disableTimer.reset();
     disableTimer.start();
-    drive.stop();
   }
 }
