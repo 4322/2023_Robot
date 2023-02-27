@@ -1,15 +1,12 @@
 package frc.robot.subsystems;
 
-import java.lang.annotation.Target;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.SparkMaxLimitSwitch;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
@@ -18,6 +15,7 @@ import frc.utility.SparkMaxUtil;
 public class Arm extends SubsystemBase {
   private CANSparkMax leftMotor;
   private CANSparkMax rightMotor;
+  private SparkMaxLimitSwitch armSensor;
   private Double currentTarget = null;
   private Timer logTimer = new Timer();
 
@@ -43,6 +41,10 @@ public class Arm extends SubsystemBase {
       rightMotor.setInverted(true);
       logTimer.reset();
       logTimer.start();
+
+      if (Constants.armSensorEnabled) {
+        armSensor = leftMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
+      }
     }
   }
 
@@ -54,6 +56,11 @@ public class Arm extends SubsystemBase {
     }
   }
 
+  public void setPosition(double pos) {
+    if (Constants.armEnabled) {
+      leftMotor.getEncoder().setPosition(pos);
+    }
+  }
   public boolean isAtTarget() {
     if (!Constants.armEnabled) {
       return true;
@@ -73,6 +80,14 @@ public class Arm extends SubsystemBase {
       }
     }
     return false;
+  }
+
+  public boolean getArmSensorPressed() {
+    if (Constants.armSensorEnabled) {
+      return armSensor.isPressed();
+    } else {
+      return false;
+    }
   }
 
   public void stop() {
