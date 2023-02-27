@@ -20,6 +20,7 @@ import frc.utility.SparkMaxUtil;
 public class Arm extends SubsystemBase {
   private CANSparkMax leftMotor;
   private CANSparkMax rightMotor;
+  private DigitalInput armSensor;
   private Double currentTarget = null;
   private Timer logTimer = new Timer();
 
@@ -45,6 +46,10 @@ public class Arm extends SubsystemBase {
       rightMotor.setInverted(true);
       logTimer.reset();
       logTimer.start();
+
+      if (Constants.armSensorEnabled) {
+        armSensor = new DigitalInput(ArmConstants.armSensorPort);
+      }
     }
   }
 
@@ -84,8 +89,7 @@ public class Arm extends SubsystemBase {
 
   public boolean getArmSensorPressed() {
     if (Constants.armSensorEnabled) {
-      // return leftMotor.
-      return true; // TODO: change this to whatever sensor
+      return armSensor.get();
     } else {
       return false;
     }
