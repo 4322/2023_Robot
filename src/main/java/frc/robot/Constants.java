@@ -145,7 +145,6 @@ public class Constants {
 
     public static final class Drive {
 
-      // TODO: Needs tuning
       public static final double configClosedLoopRamp = 0.08;
 
       public static final double voltageCompSaturation = 11.5;
@@ -235,7 +234,5 @@ public class Constants {
     // Threshold for limelight target height
     // above = high tape, below = middle tape
     public static final double targetHeightThresholdDeg = 0;
-
-    public static final double distanceToTargetInches = 0;
   }
 }
