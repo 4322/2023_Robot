@@ -139,8 +139,8 @@ public class Constants {
       static {
         CANCoderOffsetDegrees = new double[4];
         CANCoderOffsetDegrees[WheelPosition.FRONT_RIGHT.wheelNumber] = 149.941;
-        CANCoderOffsetDegrees[WheelPosition.FRONT_LEFT.wheelNumber] = 2.637 + 90;
-        CANCoderOffsetDegrees[WheelPosition.BACK_RIGHT.wheelNumber] = 22.939 + 90;
+        CANCoderOffsetDegrees[WheelPosition.FRONT_LEFT.wheelNumber] = 2.637 - 90;
+        CANCoderOffsetDegrees[WheelPosition.BACK_RIGHT.wheelNumber] = 22.939 - 90;
         CANCoderOffsetDegrees[WheelPosition.BACK_LEFT.wheelNumber] = -72.773;
       }
     }
@@ -210,8 +210,8 @@ public class Constants {
     public static final double logIntervalSeconds = 0.5;
     public static final int positionTolerance = 100;
   
-    public static final int maxPosition = 1000;
-    public static final int minPosition = -1000;
+    public static final int maxPosition = 500;
+    public static final int minPosition = -500;
     public static final double manualDeadband = 0;
 
     public static final double kMaxRange = 0;
