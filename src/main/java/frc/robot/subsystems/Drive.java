@@ -17,7 +17,6 @@ import frc.robot.subsystems.SwerveDrive.SwerveModule;
 import frc.robot.subsystems.SwerveDrive.ControlModule.WheelPosition;
 import frc.utility.SnapshotTranslation2D;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -53,7 +52,6 @@ public class Drive extends SubsystemBase {
   private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontRightLocation,
       frontLeftLocation, backLeftLocation, backRightLocation);
 
-  private RamseteController ram = new RamseteController();
   private SwerveDriveOdometry odometry;
   private double robotCentricOffsetDegrees;
   private boolean fieldRelative = true;
@@ -100,7 +98,7 @@ public class Drive extends SubsystemBase {
 
   public void init() {
     if (Constants.driveEnabled) {
-      rotPID = new PIDController(DriveConstants.autoRotkP, 0, DriveConstants.autoRotkD);
+      rotPID = new PIDController(DriveConstants.Auto.autoRotkP, 0, DriveConstants.Auto.autoRotkD);
 
       for (SwerveModule module : swerveModules) {
         module.init();
@@ -119,8 +117,6 @@ public class Drive extends SubsystemBase {
         resetFieldCentric(0);
       } 
 
-      ram.setTolerance(DriveConstants.poseError);
-
       if (Constants.debug) {
         tab = Shuffleboard.getTab("Drivebase");
 
@@ -128,10 +124,10 @@ public class Drive extends SubsystemBase {
 
         rotSpeedTab = tab.add("Rotation Speed", 0).withPosition(0, 1).withSize(1, 1).getEntry();
 
-        rotkP = tab.add("Rotation kP", DriveConstants.autoRotkP).withPosition(1, 0).withSize(1, 1)
+        rotkP = tab.add("Rotation kP", DriveConstants.Auto.autoRotkP).withPosition(1, 0).withSize(1, 1)
             .getEntry();
 
-        rotkD = tab.add("Rotation kD", DriveConstants.autoRotkD).withPosition(2, 0).withSize(1, 1)
+        rotkD = tab.add("Rotation kD", DriveConstants.Auto.autoRotkD).withPosition(2, 0).withSize(1, 1)
             .getEntry();
 
         roll = tab.add("Roll", 0).withPosition(1, 1).withSize(1, 1).getEntry();
@@ -318,29 +314,25 @@ public class Drive extends SubsystemBase {
     }
   }
 
-  public boolean isAtTarget() {
-    return ram.atReference();
-  }
-
   // Uses a PID Controller to rotate the robot to a certain degree
   // Must be periodically updated to work
   public void driveAutoRotate(double driveX, double driveY, double rotateDeg, double toleranceDeg) {
 
     if (Constants.debug) {
-      rotPID.setP(rotkP.getDouble(DriveConstants.autoRotkP));
-      rotPID.setD(rotkD.getDouble(DriveConstants.autoRotkD));
+      rotPID.setP(rotkP.getDouble(DriveConstants.Auto.autoRotkP));
+      rotPID.setD(rotkD.getDouble(DriveConstants.Auto.autoRotkD));
     }
 
     double rotPIDSpeed = rotPID.calculate(0, rotateDeg);
 
     if (Math.abs(rotateDeg) <= toleranceDeg) {
       rotPIDSpeed = 0;
-    } else if (Math.abs(rotPIDSpeed) < DriveConstants.minAutoRotateSpeed) {
-      rotPIDSpeed = Math.copySign(DriveConstants.minAutoRotateSpeed, rotPIDSpeed);
-    } else if (rotPIDSpeed > DriveConstants.maxAutoRotateSpeed) {
-      rotPIDSpeed = DriveConstants.maxAutoRotateSpeed;
-    } else if (rotPIDSpeed < -DriveConstants.maxAutoRotateSpeed) {
-      rotPIDSpeed = -DriveConstants.maxAutoRotateSpeed;
+    } else if (Math.abs(rotPIDSpeed) < DriveConstants.Auto.minAutoRotateSpeed) {
+      rotPIDSpeed = Math.copySign(DriveConstants.Auto.minAutoRotateSpeed, rotPIDSpeed);
+    } else if (rotPIDSpeed > DriveConstants.Auto.maxAutoRotateSpeed) {
+      rotPIDSpeed = DriveConstants.Auto.maxAutoRotateSpeed;
+    } else if (rotPIDSpeed < -DriveConstants.Auto.maxAutoRotateSpeed) {
+      rotPIDSpeed = -DriveConstants.Auto.maxAutoRotateSpeed;
     }
 
     drive(driveX, driveY, rotPIDSpeed);

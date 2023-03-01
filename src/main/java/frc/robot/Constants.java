@@ -41,6 +41,7 @@ public class Constants {
   public static final int verySlowStatusPeriodSparkBaseMs = 1000;
 
   public static final class DriveConstants {
+    
     public static final int frontRightDriveID = 3;
     public static final int frontRightRotationID = 5;
     public static final int rearRightDriveID = 6;
@@ -63,32 +64,36 @@ public class Constants {
     public static final double maxSpeedMetersPerSecond = 3.6576;
     public static final double maxRotationSpeedRadSecond = 12.2718;
 
-    public static final double autoRotkP = 0.008;
-    public static final double autoRotkD = 0.0004;
-
     public static final double movingVelocityThresholdFtPerSec = 0.2;
-
-    public static final double minAutoRotateSpeed = 0.03;
-    public static final double maxAutoRotateSpeed = Constants.demo.inDemoMode? Constants.demo.rotationScaleFactor : 0.5;
-
-    public static final double drivePolarDeadband = 0.06;
-    public static final double rotatePolarDeadband = 0.5;
-    public static final double twistDeadband = 0.08;
-
-    public static final double manualRotateToleranceDegrees = 1.5;
-
-    // Values for autonomous path finding
-    public static final double autoMaxSpeedMetersPerSecond = 3.5;
-    public static final double autoMaxAccelerationMetersPerSec2 = 2.5;
-    public static final double autoMaxRotationRadPerSecond = Math.PI * 2;
-    public static final double autoMaxRotationAccelerationRadPerSec2 = Math.PI * 4;
 
     // 1 degree
     public static final Pose2d poseError =
         new Pose2d(new Translation2d(0.1, 0.1), new Rotation2d(0.0174533));
+
     public static final double disableBreakSec = 2.0;
 
-    public final static class Tip {
+    public static final class Manual {
+      public static final double drivePolarDeadband = 0.06;
+      public static final double rotatePolarDeadband = 0.5;
+      public static final double twistDeadband = 0.08;
+    }
+
+    public static final class Auto {
+
+      // Values for autonomous path finding
+      public static final double autoMaxSpeedMetersPerSecond = 3.5;
+      public static final double autoMaxAccelerationMetersPerSec2 = 2.5;
+      public static final double autoMaxRotationRadPerSecond = Math.PI * 2;
+      public static final double autoMaxRotationAccelerationRadPerSec2 = Math.PI * 4;
+
+      //TODO: needs tuning
+      public static final double autoRotkP = 0.08;
+      public static final double autoRotkD = 0.004;
+      public static final double minAutoRotateSpeed = 0.05;
+      public static final double maxAutoRotateSpeed = 0.05;
+    }
+
+    public static final class Tip {
       public static final double highVelocityFtPerSec = 6.0;
       public static final double lowVelocityFtPerSec = 3.0;
       public static final double highAccFtPerSec2 = 8.0;
@@ -147,7 +152,7 @@ public class Constants {
 
     public static final class Drive {
 
-      // TODO: Needs tuning
+      // TODO: needs tuning
       public static final double configClosedLoopRamp = 0.08;
 
       public static final double voltageCompSaturation = 11.5;

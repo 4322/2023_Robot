@@ -36,6 +36,11 @@ public class DriveManual extends CommandBase {
       // Positive Y is down
       // Positive Z is CW
 
+      // Xbox polarity:
+      // Positive X is to the right
+      // Positive Y is down
+      // (it's the same)
+
       // WPI uses a trigonometric coordinate system with the front of the robot
       // pointing toward positive X. Thus:
       // Positive X is forward
@@ -47,76 +52,22 @@ public class DriveManual extends CommandBase {
 
       // Cache hardware status for consistency in logic and convert
       // joystick coordinates to WPI coordinates.
-      final double driveRawX = -RobotContainer.driveStick.getY();
-      final double driveRawY = -RobotContainer.driveStick.getX();
-      final double rotateRawX = -RobotContainer.rotateStick.getY();
-      final double rotateRawY = -RobotContainer.rotateStick.getX();
-      final double rotateRawZ = -RobotContainer.rotateStick.getZ();
+      final double driveJoyRawX = -RobotContainer.driveStick.getY();
+      final double driveJoyRawY = -RobotContainer.driveStick.getX();
+      final double driveJoyRawZ = -RobotContainer.driveStick.getZ();
+      final double rotateJoyRawX = -RobotContainer.rotateStick.getY();
+      final double rotateJoyRawY = -RobotContainer.rotateStick.getX();
+      final double rotateJoyRawZ = -RobotContainer.rotateStick.getZ();
 
-      // calculate distance from center of joysticks
-      final double driveRawR = Math.sqrt(driveRawX * driveRawX + driveRawY * driveRawY);
-      final double rotateRawR = Math.sqrt(rotateRawX * rotateRawX + rotateRawY * rotateRawY);
+      final double leftCtrlRawX = -RobotContainer.xbox.getLeftY();
+      final double leftCtrlRawY = -RobotContainer.xbox.getLeftX();
+      final double rightCtrlRawX = -RobotContainer.xbox.getRightY();
+      final double rightCtrlRawY = -RobotContainer.xbox.getRightX();
 
-      /*
-       * cube drive joystick inputs to increase sensitivity x = smaller value y = greater value x =
-       * (y^3 / y) * x
-       */
-      double driveX;
-      double driveY;
-      if (Math.abs(driveRawX) >= Math.abs(driveRawY)) {
-        driveX = driveRawX * driveRawX * driveRawX;
-        driveY = driveRawX * driveRawX * driveRawY;
-      } else {
-        driveX = driveRawY * driveRawY * driveRawX;
-        driveY = driveRawY * driveRawY * driveRawY;
-      }
+      final double xboxRawRotation = rightCtrlRawY
 
-      // Check for drive deadband.
-      // Can't renormalize x and y independently because we wouldn't be able to drive diagonally
-      // at low speed.
-      if (driveRawR < DriveConstants.drivePolarDeadband) {
-        driveX = 0;
-        driveY = 0;
-      }
 
-      // adjust for twist deadband
-      double rotatePower;
-      final double twistDeadband = DriveConstants.twistDeadband;
-      if (Math.abs(rotateRawZ) < twistDeadband) {
-        rotatePower = 0;
-      } else if (rotateRawZ > 0) {
-        // rescale to full positive range
-        rotatePower = (rotateRawZ - twistDeadband) / (1 - twistDeadband);
-      } else {
-        // rescale to full negative range
-        rotatePower = (rotateRawZ + twistDeadband) / (1 - twistDeadband);
-      }
-      rotatePower = rotatePower * rotatePower * rotatePower; // increase sensitivity
 
-      if (Constants.demo.inDemoMode) {
-        rotatePower *= Constants.demo.rotationScaleFactor;
-        if (Constants.demo.driveMode == Constants.demo.DriveMode.SLOW_DRIVE) {
-          driveX *= Constants.demo.driveScaleFactor;
-          driveY *= Constants.demo.driveScaleFactor;
-        } else {
-          driveX = 0;
-          driveY = 0;
-        }
-      }
-      // determine drive mode
-      double headingDeg;
-      double headingChangeDeg;
-      if (rotateRawR >= DriveConstants.rotatePolarDeadband) {
-        // Use angle of joystick as desired rotation target
-        headingChangeDeg = Drive
-            .boundDegrees(Math.toDegrees(Math.atan2(rotateRawY, rotateRawX)) - drive.getAngle());
-        drive.driveAutoRotate(driveX, driveY, headingChangeDeg,
-            DriveConstants.manualRotateToleranceDegrees);
-      } else {
-        // normal drive
-        drive.resetRotatePID();
-        drive.drive(driveX, driveY, rotatePower);
-      }
     }
   }
 
