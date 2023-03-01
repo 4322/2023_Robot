@@ -64,7 +64,7 @@ public class RobotContainer {
     }
 
     if (Constants.armEnabled) {
-      arm.setDefaultCommand(armManual);
+      //arm.setDefaultCommand(armManual);
     }
   }
 
