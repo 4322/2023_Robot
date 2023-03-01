@@ -32,11 +32,11 @@ public class Arm extends SubsystemBase {
   public void init() {
     if (Constants.armEnabled) {
       leftMotor.restoreFactoryDefaults();
-      leftMotor.setIdleMode(IdleMode.kCoast);
-      leftMotor.setOpenLoopRampRate(ArmConstants.rampRate);
+      leftMotor.setIdleMode(IdleMode.kBrake);
+      //leftMotor.setOpenLoopRampRate(ArmConstants.rampRate);
       rightMotor.restoreFactoryDefaults();
-      rightMotor.setIdleMode(IdleMode.kCoast);
-      rightMotor.setOpenLoopRampRate(ArmConstants.rampRate);
+      rightMotor.setIdleMode(IdleMode.kBrake);
+      //rightMotor.setOpenLoopRampRate(ArmConstants.rampRate);
       rightMotor.follow(leftMotor, true);
       logTimer.reset();
       logTimer.start();
