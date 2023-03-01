@@ -33,12 +33,15 @@ public class Arm extends SubsystemBase {
     if (Constants.armEnabled) {
       leftMotor.restoreFactoryDefaults();
       leftMotor.setIdleMode(IdleMode.kBrake);
-      //leftMotor.setOpenLoopRampRate(ArmConstants.rampRate);
+      leftMotor.setOpenLoopRampRate(ArmConstants.rampRate);
       rightMotor.restoreFactoryDefaults();
       rightMotor.setIdleMode(IdleMode.kBrake);
-      //rightMotor.setOpenLoopRampRate(ArmConstants.rampRate);
+      rightMotor.setOpenLoopRampRate(ArmConstants.rampRate);
       rightMotor.follow(leftMotor, true);
       CanBusUtil.dualSparkMaxPosCtrl(leftMotor);
+      
+      leftMotor.burnFlash();
+      rightMotor.burnFlash();
       logTimer.reset();
       logTimer.start();
 

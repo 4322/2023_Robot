@@ -114,7 +114,7 @@ public class RobotContainer {
 
   public void disableSubsystems() {
     if (Constants.armEnabled) {
-      arm.stop();
+      //arm.stop();  TODO: Why does the arm left motor keep stoping with this code active??
     }
     if (Constants.clawEnabled) {
       claw.stop();

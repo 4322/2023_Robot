@@ -206,7 +206,7 @@ public class Constants {
   public static final class ArmConstants {
     public static final int leftMotorID = 15;
     public static final int rightMotorID = 14;
-    public static final double rampRate = 0.0;
+    public static final double rampRate = 0;
     public static final double forward = 1;
     public static final double backward = -1;
     public static final double logIntervalSeconds = 0.5;
