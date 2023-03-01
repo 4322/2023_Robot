@@ -219,8 +219,9 @@ public class Constants {
     public static final double logIntervalSeconds = 0.5;
     public static final int positionTolerance = 100;
   
-    public static final int maxPosition = 70;
-    public static final int minPosition = 0;
+    public static final int maxPosition = 500;
+    public static final int minPosition = -500;
+
     public static final double manualDeadband = 0;
 
     public static final double kMaxRange = 0;
