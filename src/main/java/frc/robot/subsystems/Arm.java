@@ -5,8 +5,13 @@ import com.revrobotics.SparkMaxLimitSwitch;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
@@ -19,13 +24,21 @@ public class Arm extends SubsystemBase {
   private Double currentTarget = null;
   private Timer logTimer = new Timer();
 
+  private ShuffleboardTab tab;
+  private GenericEntry armPos;
+
   public Arm() {
     if (Constants.armEnabled) {
       leftMotor = new CANSparkMax(Constants.ArmConstants.leftMotorID, MotorType.kBrushless);
       rightMotor = new CANSparkMax(Constants.ArmConstants.rightMotorID, MotorType.kBrushless);
 
-      CanBusUtil.staggerSparkMax(leftMotor);
-      CanBusUtil.staggerSparkMax(rightMotor);
+      SparkMaxUtil.staggerSparkMax(leftMotor);
+      SparkMaxUtil.staggerSparkMax(rightMotor);
+
+      if (Constants.debug) {
+        tab = Shuffleboard.getTab("Arm");
+        armPos = tab.add("Arm Position", 0).withPosition(0,0).getEntry();
+      }
     }
   }
 
@@ -33,12 +46,15 @@ public class Arm extends SubsystemBase {
     if (Constants.armEnabled) {
       leftMotor.restoreFactoryDefaults();
       leftMotor.setIdleMode(IdleMode.kBrake);
-      //leftMotor.setOpenLoopRampRate(ArmConstants.rampRate);
+      leftMotor.setOpenLoopRampRate(ArmConstants.rampRate);
       rightMotor.restoreFactoryDefaults();
       rightMotor.setIdleMode(IdleMode.kBrake);
-      //rightMotor.setOpenLoopRampRate(ArmConstants.rampRate);
+      rightMotor.setOpenLoopRampRate(ArmConstants.rampRate);
       rightMotor.follow(leftMotor, true);
       CanBusUtil.dualSparkMaxPosCtrl(leftMotor);
+      
+      leftMotor.burnFlash();
+      rightMotor.burnFlash();
       logTimer.reset();
       logTimer.start();
 
@@ -125,9 +141,12 @@ public class Arm extends SubsystemBase {
   @Override
   public void periodic() {
     if (Constants.armEnabled) {
-      if (logTimer.hasElapsed(ArmConstants.logIntervalSeconds) && Constants.debug) {
-        DataLogManager.log("Arm position: " + getPosition());
-        logTimer.reset();
+      if (Constants.debug) {
+        if (logTimer.hasElapsed(ArmConstants.logIntervalSeconds)) {
+          DataLogManager.log("Arm position: " + getPosition());
+          logTimer.reset();
+        }
+        armPos.setDouble(getPosition());
       }
     }
   }
