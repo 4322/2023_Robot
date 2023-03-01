@@ -86,11 +86,12 @@ public class Constants {
       public static final double autoMaxRotationRadPerSecond = Math.PI * 2;
       public static final double autoMaxRotationAccelerationRadPerSec2 = Math.PI * 4;
 
-      //TODO: needs tuning
+      // TODO: needs tuning
       public static final double autoRotkP = 0.08;
       public static final double autoRotkD = 0.004;
-      public static final double minAutoRotateSpeed = 0.05;
-      public static final double maxAutoRotateSpeed = 0.05;
+      public static final double minAutoRotateSpeed = 0.03;
+      public static final double maxAutoRotateSpeed = Constants.demo.inDemoMode ? Constants.demo.rotationScaleFactor
+          : 0.5;
     }
 
     public static final class Tip {
