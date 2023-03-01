@@ -37,8 +37,7 @@ public class Arm extends SubsystemBase {
       rightMotor.restoreFactoryDefaults();
       rightMotor.setIdleMode(IdleMode.kCoast);
       rightMotor.setOpenLoopRampRate(ArmConstants.rampRate);
-      rightMotor.follow(leftMotor);
-      rightMotor.setInverted(true);
+      rightMotor.follow(leftMotor, true);
       logTimer.reset();
       logTimer.start();
 
