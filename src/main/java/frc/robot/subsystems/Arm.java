@@ -1,7 +1,10 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkMaxAbsoluteEncoder;
 import com.revrobotics.SparkMaxLimitSwitch;
+import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.SparkMaxRelativeEncoder;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -16,6 +19,8 @@ public class Arm extends SubsystemBase {
   private CANSparkMax leftMotor;
   private CANSparkMax rightMotor;
   private SparkMaxLimitSwitch armSensor;
+  private SparkMaxPIDController pidController;
+  private SparkMaxRelativeEncoder encoder;
   private Double currentTarget = null;
   private Timer logTimer = new Timer();
 
@@ -42,6 +47,19 @@ public class Arm extends SubsystemBase {
       logTimer.reset();
       logTimer.start();
 
+      pidController = leftMotor.getPIDController();
+
+      pidController.setP(ArmConstants.SmartMotion.kP);
+      pidController.setI(ArmConstants.SmartMotion.kI);
+      pidController.setD(ArmConstants.SmartMotion.kD);
+      pidController.setIZone(ArmConstants.SmartMotion.kIz);
+      pidController.setFF(ArmConstants.SmartMotion.kFF);
+      pidController.setOutputRange(ArmConstants.SmartMotion.kMinOutput, ArmConstants.SmartMotion.kMaxOutput);
+      pidController.setSmartMotionMinOutputVelocity(ArmConstants.SmartMotion.minVel, 0);
+      pidController.setSmartMotionMaxVelocity(ArmConstants.SmartMotion.maxVel, 0);
+      pidController.setSmartMotionMaxAccel(ArmConstants.SmartMotion.maxAcc, 0);
+      pidController.setSmartMotionAllowedClosedLoopError(ArmConstants.SmartMotion.positionTolerance, 0);
+
       if (Constants.armSensorEnabled) {
         armSensor = leftMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
       }
@@ -50,7 +68,7 @@ public class Arm extends SubsystemBase {
 
   public double getPosition() {
     if (Constants.armEnabled) {
-      return leftMotor.getEncoder().getPosition();
+      return encoder.getPosition();
     } else {
       return -1;
     }
@@ -65,14 +83,14 @@ public class Arm extends SubsystemBase {
     if (!Constants.armEnabled) {
       return true;
     }
-    return (Math.abs(getPosition() - currentTarget) <= ArmConstants.positionTolerance);
+    return (Math.abs(getPosition() - currentTarget) <= ArmConstants.SmartMotion.positionTolerance);
   }
 
   public boolean rotateToPosition(double targetPosition) {
     if (Constants.armEnabled) {
       if ((targetPosition > ArmConstants.minPosition)
           && (targetPosition < ArmConstants.maxPosition)) {
-        leftMotor.getPIDController().setReference(targetPosition, ControlType.kPosition);
+        pidController.setReference(targetPosition, ControlType.kSmartMotion);
         currentTarget = targetPosition;
         DataLogManager
             .log("Rotating to position " + currentTarget + " from position " + getPosition());

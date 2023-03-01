@@ -210,7 +210,6 @@ public class Constants {
     public static final double forward = 1;
     public static final double backward = -1;
     public static final double logIntervalSeconds = 0.5;
-    public static final int positionTolerance = 100;
   
     public static final int maxPosition = 70;
     public static final int minPosition = 0;
@@ -221,6 +220,20 @@ public class Constants {
     public static final double LoadPosition = 2;
     public static final double MidScoringPosition = 64;
     public static final double HighScoringPosition = 60;
+
+    public static final class SmartMotion {
+      public static final double kP = 5e-5; 
+      public static final double kI = 1e-6;
+      public static final double kD = 0; 
+      public static final double kIz = 0; 
+      public static final double kFF = 0.000156; 
+      public static final double kMaxOutput = 1; 
+      public static final double kMinOutput = -1;
+      public static final double minVel = 100;
+      public static final double maxVel = 2000; // rpm
+      public static final double maxAcc = 1500;
+      public static final double positionTolerance = 100;
+    }
   }
   public static final class LEDConstants
   {
