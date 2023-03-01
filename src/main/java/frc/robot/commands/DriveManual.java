@@ -120,8 +120,8 @@ public class DriveManual extends CommandBase {
       }
 
       // Increase sensitivity
-      driveX = Math.pow(driveX, 3);
-      driveY = Math.pow(driveY, 3);
+      driveX = driveX * driveX * driveY;
+      driveY = driveY * driveY * driveX;
       rotatePower = Math.pow(rotatePower, 3);
 
       drive.drive(driveX, driveY, rotatePower);
