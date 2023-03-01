@@ -12,10 +12,16 @@ import frc.robot.Constants;
 public class LED extends SubsystemBase {
   LEDStrip led1;
   LEDStrip led2;
+  Solenoid power1;
+  Solenoid power2;
   private LEDColor ledColor;
 
   public LED() {
     if (Constants.ledEnabled) {
+      power1 = new Solenoid(LEDConstants.pcmID,PneumaticsModuleType.REVPH, LEDConstants.pPort1);
+      power1.set(true);
+      power2 = new Solenoid(LEDConstants.pcmID,PneumaticsModuleType.REVPH, LEDConstants.pPort2);
+      power2.set(true);
       led1 = new LEDStrip(LEDConstants.pcmID, LEDConstants.rPort1, LEDConstants.gPort1,
           LEDConstants.bPort1);
       led2 = new LEDStrip(LEDConstants.pcmID, LEDConstants.rPort2, LEDConstants.gPort2,
