@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
-import frc.utility.SparkMaxUtil;
+import frc.utility.CanBusUtil;
 
 public class Arm extends SubsystemBase {
   private CANSparkMax leftMotor;
@@ -24,8 +24,8 @@ public class Arm extends SubsystemBase {
       leftMotor = new CANSparkMax(Constants.ArmConstants.leftMotorID, MotorType.kBrushless);
       rightMotor = new CANSparkMax(Constants.ArmConstants.rightMotorID, MotorType.kBrushless);
 
-      SparkMaxUtil.staggerSparkMax(leftMotor);
-      SparkMaxUtil.staggerSparkMax(rightMotor);
+      CanBusUtil.staggerSparkMax(leftMotor);
+      CanBusUtil.staggerSparkMax(rightMotor);
     }
   }
 
@@ -38,6 +38,7 @@ public class Arm extends SubsystemBase {
       rightMotor.setIdleMode(IdleMode.kBrake);
       //rightMotor.setOpenLoopRampRate(ArmConstants.rampRate);
       rightMotor.follow(leftMotor, true);
+      CanBusUtil.dualSparkMaxPosCtrl(leftMotor);
       logTimer.reset();
       logTimer.start();
 

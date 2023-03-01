@@ -33,12 +33,14 @@ public class Constants {
   public static final int falconEncoderUnits = 2048;
   public static final double inchesToMeters = 0.0254;
   public static final double feetToMeters = inchesToMeters * 12;
-  public static final int slowStatusPeriodBaseMs = 180;
   public static final int fastStatusPeriodBaseMs = 13;
+  public static final int shuffleboardStatusPeriodBaseMs = 75;
+  public static final int slowStatusPeriodBaseMs = 180;
+  public static final int verySlowStatusPeriodSparkBaseMs = 1000;
   public static final int fastStatusPeriodMaxMs = 18;
+  public static final int shuffleboardStatusPeriodMaxMs = 90;  // for interactive response
   public static final int slowStatusPeriodMaxMs = 255;
   public static final int controllerConfigTimeoutMs = 50;
-  public static final int verySlowStatusPeriodSparkBaseMs = 1000;
 
   public static final class DriveConstants {
     public static final int frontRightDriveID = 3;
