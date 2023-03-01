@@ -21,7 +21,7 @@ public class Constants {
   }
 
   public static final boolean armEnabled = true;
-  public static final boolean armSensorEnabled = false;
+  public static final boolean armSensorEnabled = true;
   public static final boolean clawEnabled = true;
   public static final boolean driveEnabled = true;
   public static final boolean gyroEnabled = true;
@@ -222,17 +222,16 @@ public class Constants {
     public static final double HighScoringPosition = 60;
 
     public static final class SmartMotion {
-      public static final double kP = 5e-5; 
-      public static final double kI = 1e-6;
+      public static final double kP = 1; 
+      public static final double kI = 0;
       public static final double kD = 0; 
-      public static final double kIz = 0; 
-      public static final double kFF = 0.000156; 
-      public static final double kMaxOutput = 1; 
-      public static final double kMinOutput = -1;
+      public static final double kIz = 3;
+      public static final double kMaxOutput = 0.3; 
+      public static final double kMinOutput = -0.3;
       public static final double minVel = 100;
-      public static final double maxVel = 2000; // rpm
-      public static final double maxAcc = 1500;
-      public static final double positionTolerance = 100;
+      public static final double maxVel = 1800; // rpm
+      public static final double maxAcc = 3000;
+      public static final double positionTolerance = 1;
     }
   }
   public static final class LEDConstants

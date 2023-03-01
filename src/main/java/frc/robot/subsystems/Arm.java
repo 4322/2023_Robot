@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
 import com.revrobotics.SparkMaxLimitSwitch;
 import com.revrobotics.SparkMaxPIDController;
@@ -20,7 +21,7 @@ public class Arm extends SubsystemBase {
   private CANSparkMax rightMotor;
   private SparkMaxLimitSwitch armSensor;
   private SparkMaxPIDController pidController;
-  private SparkMaxRelativeEncoder encoder;
+  private RelativeEncoder encoder;
   private Double currentTarget = null;
   private Timer logTimer = new Timer();
 
@@ -47,13 +48,13 @@ public class Arm extends SubsystemBase {
       logTimer.reset();
       logTimer.start();
 
+      encoder = leftMotor.getEncoder();
       pidController = leftMotor.getPIDController();
 
       pidController.setP(ArmConstants.SmartMotion.kP);
       pidController.setI(ArmConstants.SmartMotion.kI);
       pidController.setD(ArmConstants.SmartMotion.kD);
       pidController.setIZone(ArmConstants.SmartMotion.kIz);
-      pidController.setFF(ArmConstants.SmartMotion.kFF);
       pidController.setOutputRange(ArmConstants.SmartMotion.kMinOutput, ArmConstants.SmartMotion.kMaxOutput);
       pidController.setSmartMotionMinOutputVelocity(ArmConstants.SmartMotion.minVel, 0);
       pidController.setSmartMotionMaxVelocity(ArmConstants.SmartMotion.maxVel, 0);
