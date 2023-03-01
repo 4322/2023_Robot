@@ -3,13 +3,10 @@ package frc.robot.subsystems;
 import frc.robot.Constants;
 import frc.robot.Constants.ClawConstants;
 import frc.robot.Constants.ClawConstants.ClawMode;
-import frc.utility.SparkMaxUtil;
+import frc.utility.CanBusUtil;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -20,8 +17,7 @@ public class Claw extends SubsystemBase {
   public Claw() {
     if (Constants.clawEnabled) {
       clawMotor = new CANSparkMax(Constants.ClawConstants.motorID, MotorType.kBrushless);
-
-      SparkMaxUtil.staggerSparkMax(clawMotor);
+      CanBusUtil.staggerSparkMax(clawMotor);
     }
   }
 

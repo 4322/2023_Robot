@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
-import frc.utility.SparkMaxUtil;
+import frc.utility.CanBusUtil;
 
 public class Arm extends SubsystemBase {
   private CANSparkMax leftMotor;
@@ -45,13 +45,16 @@ public class Arm extends SubsystemBase {
   public void init() {
     if (Constants.armEnabled) {
       leftMotor.restoreFactoryDefaults();
-      leftMotor.setIdleMode(IdleMode.kCoast);
+      leftMotor.setIdleMode(IdleMode.kBrake);
       leftMotor.setOpenLoopRampRate(ArmConstants.rampRate);
       rightMotor.restoreFactoryDefaults();
-      rightMotor.setIdleMode(IdleMode.kCoast);
+      rightMotor.setIdleMode(IdleMode.kBrake);
       rightMotor.setOpenLoopRampRate(ArmConstants.rampRate);
-      rightMotor.follow(leftMotor);
-      rightMotor.setInverted(true);
+      rightMotor.follow(leftMotor, true);
+      CanBusUtil.dualSparkMaxPosCtrl(leftMotor);
+      
+      leftMotor.burnFlash();
+      rightMotor.burnFlash();
       logTimer.reset();
       logTimer.start();
 

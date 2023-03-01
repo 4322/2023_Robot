@@ -33,12 +33,14 @@ public class Constants {
   public static final int falconEncoderUnits = 2048;
   public static final double inchesToMeters = 0.0254;
   public static final double feetToMeters = inchesToMeters * 12;
-  public static final int slowStatusPeriodBaseMs = 180;
   public static final int fastStatusPeriodBaseMs = 13;
+  public static final int shuffleboardStatusPeriodBaseMs = 75;
+  public static final int slowStatusPeriodBaseMs = 180;
+  public static final int verySlowStatusPeriodSparkBaseMs = 1000;
   public static final int fastStatusPeriodMaxMs = 18;
+  public static final int shuffleboardStatusPeriodMaxMs = 90;  // for interactive response
   public static final int slowStatusPeriodMaxMs = 255;
   public static final int controllerConfigTimeoutMs = 50;
-  public static final int verySlowStatusPeriodSparkBaseMs = 1000;
 
   public static final class DriveConstants {
     public static final int frontRightDriveID = 3;
@@ -57,8 +59,8 @@ public class Constants {
 
     public static final int encoderResolution = 2048;
 
-    public static final double distWheelMetersX = 0.314325; // 24.75 in
-    public static final double distWheelMetersY = 0.314325; // 24.75 in
+    public static final double distWheelMetersX = 0.62865; // 24.75 in
+    public static final double distWheelMetersY = 0.62865; // 24.75 in
 
     public static final double maxSpeedMetersPerSecond = 3.6576;
     public static final double maxRotationSpeedRadSecond = 12.2718;
@@ -147,7 +149,6 @@ public class Constants {
 
     public static final class Drive {
 
-      // TODO: Needs tuning
       public static final double configClosedLoopRamp = 0.08;
 
       public static final double voltageCompSaturation = 11.5;
@@ -172,6 +173,14 @@ public class Constants {
       public static final double kD = 0.0;
       public static final double kIz = 500;
       public static final double kFF = 0.05;
+
+      
+    }
+
+    public static final class Auto { // all need to be tuned
+       public static final double maxVelocity = 0;
+       public static final double maxAcceleration = 0;
+       
     }
 
     public static final class Trajectory {
@@ -204,7 +213,7 @@ public class Constants {
   public static final class ArmConstants {
     public static final int leftMotorID = 15;
     public static final int rightMotorID = 14;
-    public static final double rampRate = 0.0;
+    public static final double rampRate = 0;
     public static final double forward = 1;
     public static final double backward = -1;
     public static final double logIntervalSeconds = 0.5;
@@ -212,28 +221,49 @@ public class Constants {
   
     public static final int maxPosition = 500;
     public static final int minPosition = -500;
+
     public static final double manualDeadband = 0;
 
     public static final double kMaxRange = 0;
 
-    public static final double LoadPosition = 0.0;
-    public static final double MidScoringPosition = 1000.0;
-    public static final double HighScoringPosition = 2000.0;
+    public static final double LoadPosition = 2;
+    public static final double MidScoringPosition = 64;
+    public static final double HighScoringPosition = 60;
   }
+
   public static final class LEDConstants
   {
     public static final int pcmID=30;
-    public static final int rPort1=0;
+    public static final int rPort1=3;
     public static final int gPort1=1;
     public static final int bPort1=2;
-    public static final int rPort2=3;
-    public static final int gPort2=4;
-    public static final int bPort2=5;
+    public static final int rPort2=7;
+    public static final int gPort2=5;
+    public static final int bPort2=6;
+    public static final int pPort1=0;
+    public static final int pPort2=4;
+    
   }
+
   public static final class LimelightConstants {
-    // All distance values in inches
+    public static final Integer[] tapePipelines = {0};
+    public static final Integer[] tagPipelines = {1};
+
     public static final double limelightAngle = 0;
-    public static final double targetHeight = 0;
-    public static final double limelightHeight = 0;
+    public static final double limelightHeight = 26.125;
+
+    // Tape heights are 1 inch higher than described in manual to account for
+    // height to center of tape
+    public static final double middleTapeHeight = 23.125;
+    public static final double highTapeHeight = 42.875;
+
+    // AprilTag heights are 4 inches higher than described in manual to account
+    // for height to center of tag
+    public static final double gridAprilTagHeight = 18.25;
+    public static final double doubleSubstationAprilTagHeight = 27.375;
+
+    // Threshold for limelight target height
+    // above = high tape, below = middle tape
+    public static final double targetHeightThresholdDeg = 0;
   }
 }
