@@ -23,4 +23,13 @@ public class OrangeMath {
     return meters * 3.281;
   }
 
+  public static double pythag(double a, double b) {
+    return Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
+  }
+
+  // Solve for a leg
+  public static double inversePythag(double hypotenuse, double leg) {
+    return Math.sqrt(Math.pow(hypotenuse, 2) - Math.pow(leg, 2));
+  }
+
 }
