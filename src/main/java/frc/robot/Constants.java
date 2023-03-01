@@ -59,8 +59,8 @@ public class Constants {
 
     public static final int encoderResolution = 2048;
 
-    public static final double distWheelMetersX = 0.314325; // 24.75 in
-    public static final double distWheelMetersY = 0.314325; // 24.75 in
+    public static final double distWheelMetersX = 0.62865; // 24.75 in
+    public static final double distWheelMetersY = 0.62865; // 24.75 in
 
     public static final double maxSpeedMetersPerSecond = 3.6576;
     public static final double maxRotationSpeedRadSecond = 12.2718;
@@ -212,15 +212,15 @@ public class Constants {
     public static final double logIntervalSeconds = 0.5;
     public static final int positionTolerance = 100;
   
-    public static final int maxPosition = 1000;
-    public static final int minPosition = -1000;
+    public static final int maxPosition = 70;
+    public static final int minPosition = 0;
     public static final double manualDeadband = 0;
 
     public static final double kMaxRange = 0;
 
-    public static final double LoadPosition = 0.0;
-    public static final double MidScoringPosition = 1000.0;
-    public static final double HighScoringPosition = 2000.0;
+    public static final double LoadPosition = 2;
+    public static final double MidScoringPosition = 64;
+    public static final double HighScoringPosition = 60;
   }
   public static final class LEDConstants
   {
