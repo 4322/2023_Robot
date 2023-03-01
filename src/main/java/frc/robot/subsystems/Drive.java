@@ -188,17 +188,13 @@ public class Drive extends SubsystemBase {
   }
 
   public void setDriveMode(DriveMode mode) {
-    if (Constants.demo.inDemoMode) {
-      if (mode != DriveMode.fieldCentric) {
-        return;
-      }
-    }
-    driveMode = mode;
-    switch (mode) {
-      case fieldCentric:
-      case botCentric:
-    }
-    DataLogManager.log("DriveMode set to " + mode);
+    // driveMode = mode;
+    // switch (mode) {
+    //   case fieldCentric:
+    //   case botCentric:
+    // }
+    // DataLogManager.log("DriveMode set to " + mode);
+    return;
   }
 
   public double getAngle() {
@@ -252,7 +248,7 @@ public class Drive extends SubsystemBase {
   }
 
   public void drive(double driveX, double driveY, double rotate) {
-    if (Constants.driveEnabled) {
+    if (Constants.driveEnabled && Constants.gyroEnabled) {
       double clock = runTime.get(); // cache value to reduce CPU usage
       double[] currentAngle = new double[4];
       for (int i = 0; i < swerveModules.length; i++) {
@@ -293,15 +289,11 @@ public class Drive extends SubsystemBase {
 
       // ready to drive!
       if ((driveX == 0) && (driveY == 0) && (rotate == 0)) {
-        // don't rotate wheels such that we trip over them when decelerating
         stop();
       } else {
         Rotation2d robotAngle;
-        if (fieldRelative && Constants.gyroEnabled) {
           robotAngle = gyro.getRotation2d();
-        } else {
-          robotAngle = Rotation2d.fromDegrees(-robotCentricOffsetDegrees);
-        }
+
         // create SwerveModuleStates inversely from the kinematics
         var swerveModuleStates = kinematics.toSwerveModuleStates(
             ChassisSpeeds.fromFieldRelativeSpeeds(driveX, driveY, rotate, robotAngle));
@@ -363,12 +355,6 @@ public class Drive extends SubsystemBase {
     fieldRelative = true;
     robotCentricOffsetDegrees = 0;
     DataLogManager.log("Robot Mode = Field Centric");
-  }
-
-  public void setToBotCentric(double offsetDeg) {
-    fieldRelative = false;
-    robotCentricOffsetDegrees = offsetDeg;
-    DataLogManager.log("Robot Mode = Robot Centric");
   }
 
   public void setCoastMode() {

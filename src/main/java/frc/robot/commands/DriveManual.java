@@ -2,8 +2,9 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drive;
+import frc.utility.OrangeMath;
 import frc.robot.Constants;
-import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.DriveConstants.Manual;
 import frc.robot.RobotContainer;
 
 public class DriveManual extends CommandBase {
@@ -29,7 +30,7 @@ public class DriveManual extends CommandBase {
 
   @Override
   public void execute() {
-    if (Constants.joysticksEnabled) {
+    if (Constants.joysticksEnabled && Constants.xboxEnabled) {
 
       // Joystick polarity:
       // Positive X is to the right
@@ -52,22 +53,78 @@ public class DriveManual extends CommandBase {
 
       // Cache hardware status for consistency in logic and convert
       // joystick coordinates to WPI coordinates.
+
+      // Cartesian inputs
       final double driveJoyRawX = -RobotContainer.driveStick.getY();
       final double driveJoyRawY = -RobotContainer.driveStick.getX();
-      final double driveJoyRawZ = -RobotContainer.driveStick.getZ();
       final double rotateJoyRawX = -RobotContainer.rotateStick.getY();
       final double rotateJoyRawY = -RobotContainer.rotateStick.getX();
+
+      final double driveXboxRawX = -RobotContainer.xbox.getLeftY();
+      final double driveXboxRawY = -RobotContainer.xbox.getLeftX();
+      final double rotateXboxRawX = -RobotContainer.xbox.getRightY();
+      final double rotateXboxRawY = -RobotContainer.xbox.getRightX();
+
+      // Polar inputs
+      final double driveJoyRawMag = OrangeMath.pythag(driveJoyRawX, driveJoyRawY);
+      final double rotateJoyRawMag = OrangeMath.pythag(rotateJoyRawX, rotateJoyRawY);
+      final double driveXboxRawMag = OrangeMath.pythag(driveXboxRawX, driveXboxRawY);
+      final double rotateXboxRawMag = OrangeMath.pythag(rotateXboxRawX, rotateXboxRawY);
+
+      final double driveJoyRawTheta = Math.atan2(driveJoyRawY, driveJoyRawX);
+      final double rotateJoyRawTheta = Math.atan2(rotateJoyRawY, rotateJoyRawX);
+      final double driveXboxRawTheta = Math.atan2(driveXboxRawY, driveXboxRawX);
+      final double rotateXboxRawTheta = Math.atan2(rotateXboxRawY, rotateXboxRawX);
+
+      // Joystick rotations
+      final double driveJoyRawZ = -RobotContainer.driveStick.getZ();
       final double rotateJoyRawZ = -RobotContainer.rotateStick.getZ();
 
-      final double leftCtrlRawX = -RobotContainer.xbox.getLeftY();
-      final double leftCtrlRawY = -RobotContainer.xbox.getLeftX();
-      final double rightCtrlRawX = -RobotContainer.xbox.getRightY();
-      final double rightCtrlRawY = -RobotContainer.xbox.getRightX();
+      // Deadbands and Active Checks
+      final boolean driveJoyOutDeadband = Math.abs(driveJoyRawMag) > Manual.joystickDriveDeadband;
+      final boolean rotateJoyOutDeadband = Math.abs(rotateJoyRawZ) > Manual.joystickRotateDeadband;
+      final boolean driveXboxOutDeadband = Math.abs(driveXboxRawMag) > Manual.joystickDriveDeadband;
+      final boolean rotateXboxOutDeadband =
+          Math.abs(rotateXboxRawY) > Manual.joystickRotateDeadband;
 
-      final double xboxRawRotation = rightCtrlRawY
+      // Other variables
+      double driveX;
+      double driveY;
+      double rotatePower;
 
+      if (driveJoyOutDeadband && driveXboxOutDeadband) {
+        driveX = (driveJoyRawX + driveXboxRawX) / 2;
+        driveY = (driveJoyRawY + driveXboxRawY) / 2;
+      } else if (driveJoyOutDeadband) {
+        driveX = driveJoyRawX;
+        driveY = driveJoyRawY;
+      } else if (driveXboxOutDeadband) {
+        driveX = driveXboxRawX;
+        driveY = driveXboxRawY;
+      } else {
+        driveX = 0;
+        driveY = 0;
+      }
 
+      if (rotateJoyOutDeadband && rotateXboxOutDeadband) {
+        double combinedDeadband = Manual.joystickRotateDeadband + Manual.xboxRotateDeadband;
+        rotatePower = (rotateJoyRawZ + rotateXboxRawY - combinedDeadband) / (2 - combinedDeadband);
+      } else if (rotateJoyOutDeadband) {
+        rotatePower =
+            (rotateJoyRawZ - Manual.joystickRotateDeadband) / (1 - Manual.joystickRotateDeadband);
+      } else if (rotateXboxOutDeadband) {
+        rotatePower =
+            (rotateXboxRawY - Manual.xboxRotateDeadband) / (1 - Manual.xboxRotateDeadband);
+      } else {
+        rotatePower = 0;
+      }
 
+      // Increase sensitivity
+      driveX = Math.pow(driveX, 3);
+      driveY = Math.pow(driveY, 3);
+      rotatePower = Math.pow(rotatePower, 3);
+
+      drive.drive(driveX, driveY, rotatePower);
     }
   }
 

@@ -8,24 +8,13 @@ import edu.wpi.first.math.geometry.Translation2d;
 public class Constants {
   public static final boolean debug = false;
 
-  public static final class demo {
-    public enum DriveMode {
-      OFF, SLOW_ROTATE_ONLY, SLOW_DRIVE
-    }
-
-    public static final boolean inDemoMode = false;
-    public static final DriveMode driveMode = DriveMode.SLOW_DRIVE;
-
-    public static final double driveScaleFactor = 0.15;
-    public static final double rotationScaleFactor = 0.1;
-  }
-
   public static final boolean armEnabled = true;
   public static final boolean armSensorEnabled = false;
   public static final boolean clawEnabled = true;
   public static final boolean driveEnabled = true;
   public static final boolean gyroEnabled = true;
   public static final boolean joysticksEnabled = true;
+  public static final boolean xboxEnabled = true;
   public static final boolean limeLightEnabled = true;
   public static final boolean ledEnabled = true;
   public static final boolean colorSensorEnabled = false;
@@ -73,9 +62,13 @@ public class Constants {
     public static final double disableBreakSec = 2.0;
 
     public static final class Manual {
-      public static final double drivePolarDeadband = 0.06;
-      public static final double rotatePolarDeadband = 0.5;
-      public static final double twistDeadband = 0.08;
+
+      public static final double joystickDriveDeadband = 0.06;
+      public static final double joystickRotateDeadband = 0.08;
+
+      public static final double xboxDriveDeadband = 0.06;
+      public static final double xboxRotateDeadband = 0.06;
+
     }
 
     public static final class Auto {
@@ -90,11 +83,13 @@ public class Constants {
       public static final double autoRotkP = 0.08;
       public static final double autoRotkD = 0.004;
       public static final double minAutoRotateSpeed = 0.03;
-      public static final double maxAutoRotateSpeed = Constants.demo.inDemoMode ? Constants.demo.rotationScaleFactor
-          : 0.5;
+      public static final double maxAutoRotateSpeed = 0.5;
+
     }
 
     public static final class Tip {
+
+      // TODO: needs tuning
       public static final double highVelocityFtPerSec = 6.0;
       public static final double lowVelocityFtPerSec = 3.0;
       public static final double highAccFtPerSec2 = 8.0;
@@ -104,6 +99,7 @@ public class Constants {
       public static final double lowPowerOff = 0.19;
       public static final double highSpeedSteeringChangeMaxDegrees = 20;
       public static final double velocityHistorySeconds = 0.1;
+
     }
 
     public static final class Rotation {
