@@ -23,7 +23,7 @@ public class Constants {
   // in the application to enable it and no set() commands can be issued because
   // the REV library will continuously send the same command, thereby overriding
   // tuning commands from the REV Hardware CLient.
-  public static final boolean armTuningMode = false;
+  public static final boolean armTuningMode = true;
   public static final boolean clawTuningMode = false;
 
   public static final int falconEncoderUnits = 2048;
