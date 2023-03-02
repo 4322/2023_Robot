@@ -187,12 +187,6 @@ public class Constants {
       
     }
 
-    public static final class Auto { // all need to be tuned
-       public static final double maxVelocity = 0;
-       public static final double maxAcceleration = 0;
-       
-    }
-
     public static final class Trajectory {
       public static final class PIDXY {
         public static final double kP = 0.5;
