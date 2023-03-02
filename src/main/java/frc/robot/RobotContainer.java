@@ -15,7 +15,7 @@ public class RobotContainer {
   private Timer disableTimer = new Timer();
 
   // Define controllers
-  public static CommandXboxController coPilot = new CommandXboxController(2);
+  public static CommandXboxController xbox = new CommandXboxController(2);
   public static Joystick driveStick;
   public static Joystick rotateStick;
   private JoystickButton driveButtonSeven;
@@ -83,13 +83,13 @@ public class RobotContainer {
       driveButtonSeven = new JoystickButton(driveStick, 7);
       driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
     }
-    coPilot.leftTrigger().whileTrue(clawIntake);
-    coPilot.rightTrigger().whileTrue(clawOuttake);
-    coPilot.back().onTrue(armSetCoastMode);
-    coPilot.a().onTrue(armRotateToLoadPosition);
-    coPilot.b().onTrue(armRotateToMidPosition);
-    coPilot.y().onTrue(armRotateToHighPosition);
-    coPilot.x().onTrue(colorChange);
+    xbox.leftTrigger().whileTrue(clawIntake);
+    xbox.rightTrigger().whileTrue(clawOuttake);
+    xbox.back().onTrue(armSetCoastMode);
+    xbox.a().onTrue(armRotateToLoadPosition);
+    xbox.b().onTrue(armRotateToMidPosition);
+    xbox.y().onTrue(armRotateToHighPosition);
+    xbox.x().onTrue(colorChange);
   }
 
   public void disabledPeriodic() {

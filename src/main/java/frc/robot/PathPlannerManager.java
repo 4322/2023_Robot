@@ -30,8 +30,8 @@ class PathPlannerManager {
 
     drive = driveSubsystem;
 
-    defaultConstraints = new PathConstraints(DriveConstants.autoMaxSpeedMetersPerSecond,
-        DriveConstants.autoMaxAccelerationMetersPerSec2);
+    defaultConstraints = new PathConstraints(DriveConstants.Auto.autoMaxSpeedMetersPerSecond,
+        DriveConstants.Auto.autoMaxAccelerationMetersPerSec2);
 
     builder = new SwerveAutoBuilder(drive::getPose2d, drive::resetOdometry, drive.getKinematics(),
         new PIDConstants(DriveConstants.Trajectory.PIDXY.kP, DriveConstants.Trajectory.PIDXY.kI,
