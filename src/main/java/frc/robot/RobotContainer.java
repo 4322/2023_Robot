@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
@@ -114,7 +113,7 @@ public class RobotContainer {
 
   public void disableSubsystems() {
     if (Constants.armEnabled) {
-      //arm.stop();  TODO: Why does the arm left motor keep stoping with this code active??
+      arm.stop();
     }
     if (Constants.clawEnabled) {
       claw.stop();

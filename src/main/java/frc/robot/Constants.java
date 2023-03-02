@@ -21,7 +21,7 @@ public class Constants {
   }
 
   public static final boolean armEnabled = true;
-  public static final boolean armSensorEnabled = false;
+  public static final boolean armSensorEnabled = true;
   public static final boolean clawEnabled = true;
   public static final boolean driveEnabled = true;
   public static final boolean gyroEnabled = true;
@@ -29,6 +29,13 @@ public class Constants {
   public static final boolean limeLightEnabled = true;
   public static final boolean ledEnabled = true;
   public static final boolean colorSensorEnabled = false;
+
+  // To tune a NEO with the REV Hardware Client, the motor must be initialized
+  // in the application to enable it and no set() commands can be issued because
+  // the REV library will continuously send the same command, thereby overriding
+  // tuning commands from the REV Hardware CLient.
+  public static final boolean armTuningMode = false;
+  public static final boolean clawTuningMode = false;
 
   public static final int falconEncoderUnits = 2048;
   public static final double inchesToMeters = 0.0254;

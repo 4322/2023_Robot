@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxLimitSwitch;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Timer;
@@ -34,6 +35,8 @@ public class Arm extends SubsystemBase {
       leftMotor.restoreFactoryDefaults();
       leftMotor.setIdleMode(IdleMode.kBrake);
       leftMotor.setOpenLoopRampRate(ArmConstants.rampRate);
+      leftMotor.setSoftLimit(SoftLimitDirection.kForward, Constants.ArmConstants.maxPosition);
+      leftMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
       rightMotor.restoreFactoryDefaults();
       rightMotor.setIdleMode(IdleMode.kBrake);
       rightMotor.setOpenLoopRampRate(ArmConstants.rampRate);
@@ -61,9 +64,12 @@ public class Arm extends SubsystemBase {
 
   public void setPosition(double pos) {
     if (Constants.armEnabled) {
-      leftMotor.getEncoder().setPosition(pos);
+      if (!Constants.armTuningMode) {
+        leftMotor.getEncoder().setPosition(pos);
+      }
     }
   }
+
   public boolean isAtTarget() {
     if (!Constants.armEnabled) {
       return true;
@@ -71,18 +77,18 @@ public class Arm extends SubsystemBase {
     return (Math.abs(getPosition() - currentTarget) <= ArmConstants.positionTolerance);
   }
 
-  public boolean rotateToPosition(double targetPosition) {
+  public void rotateToPosition(double targetPosition) {
     if (Constants.armEnabled) {
-      if ((targetPosition > ArmConstants.minPosition)
-          && (targetPosition < ArmConstants.maxPosition)) {
-        leftMotor.getPIDController().setReference(targetPosition, ControlType.kPosition);
-        currentTarget = targetPosition;
-        DataLogManager
-            .log("Rotating to position " + currentTarget + " from position " + getPosition());
-        return true;
+      if (!Constants.armTuningMode) {
+        if ((targetPosition > ArmConstants.minPosition)
+            && (targetPosition < ArmConstants.maxPosition)) {
+          leftMotor.getPIDController().setReference(targetPosition, ControlType.kPosition);
+          currentTarget = targetPosition;
+          DataLogManager
+              .log("Rotating to position " + currentTarget + " from position " + getPosition());
+        }
       }
     }
-    return false;
   }
 
   public boolean getArmSensorPressed() {
@@ -94,21 +100,15 @@ public class Arm extends SubsystemBase {
   }
 
   public void stop() {
-    leftMotor.stopMotor();
-  }
-  //rotate methods not being used right now
-  public void rotateForward() {
-    leftMotor.set(ArmConstants.forward);
-    DataLogManager.log("Arm rotating forward");
-  }
-
-  public void rotateBackward() {
-    leftMotor.set(ArmConstants.backward);
-    DataLogManager.log("Arm rotating backward");
+    if (!Constants.armTuningMode) {
+      leftMotor.stopMotor();
+    }
   }
 
   public void setArmSpeed(double speed) {
-    leftMotor.set(speed);
+    if (!Constants.armTuningMode) {
+      leftMotor.set(speed);
+    }
   }
 
   public void setCoastMode() {
@@ -127,10 +127,13 @@ public class Arm extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // separate tests to avoid dead code warnings
     if (Constants.armEnabled) {
-      if (logTimer.hasElapsed(ArmConstants.logIntervalSeconds) && Constants.debug) {
-        DataLogManager.log("Arm position: " + getPosition());
-        logTimer.reset();
+      if (Constants.debug) {
+        if (logTimer.hasElapsed(ArmConstants.logIntervalSeconds)) {
+          DataLogManager.log("Arm position: " + getPosition());
+          logTimer.reset();
+        }
       }
     }
   }
