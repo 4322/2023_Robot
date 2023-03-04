@@ -194,11 +194,11 @@ public class SwerveModule extends ControlModule {
     SwerveModuleState state =
         SwerveModuleState.optimize(desiredState, Rotation2d.fromDegrees(currentDeg));
 
-    driveMotor.set(ControlMode.Velocity,
-        state.speedMetersPerSecond
-            / (DriveConstants.Drive.wheelDiameterInches * Constants.inchesToMeters * Math.PI)
-            * DriveConstants.Drive.gearRatio * DriveConstants.encoderResolution / 10); // every 100
-                                                                                       // ms
+    // driveMotor.set(ControlMode.Velocity,
+    //     state.speedMetersPerSecond
+    //         / (DriveConstants.Drive.wheelDiameterInches * Constants.inchesToMeters * Math.PI)
+    //         * DriveConstants.Drive.gearRatio * DriveConstants.encoderResolution / 10); // every 100
+    //                                                                                    // ms
 
     // Calculate the change in degrees and add that to the current position
     turningMotor.set(ControlMode.Position,
@@ -218,7 +218,11 @@ public class SwerveModule extends ControlModule {
   }
 
   public void stop() {
-    driveMotor.stopMotor();
+    // driveMotor.stopMotor();
     turningMotor.stopMotor();
+  }
+
+  public WPI_TalonFX getDriveMotor() {
+    return driveMotor;
   }
 }

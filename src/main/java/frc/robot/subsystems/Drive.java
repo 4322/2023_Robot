@@ -5,6 +5,9 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+
+import com.ctre.phoenix.motorcontrol.InvertType;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -159,6 +162,8 @@ public class Drive extends SubsystemBase {
 
         odometryDegrees = tab.add("Odometry Degrees", 0).withPosition(2, 2).withSize(1, 1).getEntry();
       }
+
+      setFollowDrive();
     }
   }
 
@@ -442,6 +447,17 @@ public class Drive extends SubsystemBase {
       return kinematics;
     } else {
       return null;
+    }
+  }
+
+  private void setFollowDrive() {
+    if (Constants.driveEnabled) {
+      WPI_TalonFX primary = swerveModules[WheelPosition.FRONT_LEFT.wheelNumber].getDriveMotor();
+      swerveModules[WheelPosition.FRONT_RIGHT.wheelNumber].getDriveMotor().follow(primary);
+      swerveModules[WheelPosition.FRONT_RIGHT.wheelNumber].getDriveMotor().setInverted(InvertType.OpposeMaster);
+      swerveModules[WheelPosition.BACK_LEFT.wheelNumber].getDriveMotor().follow(primary);
+      swerveModules[WheelPosition.BACK_RIGHT.wheelNumber].getDriveMotor().follow(primary);
+      swerveModules[WheelPosition.BACK_RIGHT.wheelNumber].getDriveMotor().setInverted(InvertType.OpposeMaster);
     }
   }
 }
