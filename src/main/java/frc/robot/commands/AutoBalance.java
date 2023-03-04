@@ -1,13 +1,14 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drive;
 
 public class AutoBalance extends CommandBase{
   private Drive drive;
-  String direction;
   private autoBalanceMode currentMode;
+  private Timer timer = new Timer();
 
   public enum autoBalanceMode {
     driving, 
@@ -18,29 +19,43 @@ public class AutoBalance extends CommandBase{
     abort;
   }
 
-  public AutoBalance(Drive driveSubsystem, String direction) {
+  public AutoBalance(Drive driveSubsystem) {
     drive = driveSubsystem;
-    this.direction = direction;
 
     addRequirements(drive);
-
-    
   }
 
   @Override
-  public void initialize() {}
+  public void initialize() {
+    currentMode = autoBalanceMode.driving;
+    timer.reset();
+    timer.start();
+  }
 
   @Override
   public void execute() {
     if (Constants.driveEnabled) {
       switch (currentMode) {
         case driving:
-          drive.drive(Constants.DriveConstants.autoBalanceVelocity, 0, 0);
+          drive.drive(0, -Constants.DriveConstants.autoBalanceVelocity, 0);
+          if (Math.abs(drive.getPitch()) > Constants.DriveConstants.chargeStationOffAngle) {
+            currentMode = autoBalanceMode.approaching;
+          }
         case approaching:
+          drive.drive(0, -Constants.DriveConstants.autoBalanceVelocity, 0);
+          if (Math.abs(drive.getPitch()) < Constants.DriveConstants.chargeStationOffAngle) {
+            currentMode = autoBalanceMode.past;
+          }
         case past:
+          drive.stop();
+          // more complicated logic here to readjust roobot after on charging station
+          currentMode = autoBalanceMode.stop;
         case stop:
-        case done:
+          drive.stop();
+          currentMode = autoBalanceMode.done;
+        case done: // fall through to break
         case abort:
+          break;
       }
     }
   }
@@ -53,6 +68,6 @@ public class AutoBalance extends CommandBase{
 
   @Override
   public boolean isFinished() {
-    return false;
+    return ((currentMode == autoBalanceMode.done) || (currentMode == autoBalanceMode.abort));
   }
 }
