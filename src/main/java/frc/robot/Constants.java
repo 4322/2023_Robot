@@ -88,7 +88,6 @@ public class Constants {
       public static final double autoMaxRotationRadPerSecond = Math.PI * 2;
       public static final double autoMaxRotationAccelerationRadPerSec2 = Math.PI * 4;
 
-      // TODO: needs tuning
       public static final double autoRotkP = 0.08;
       public static final double autoRotkD = 0.004;
       public static final double minAutoRotateSpeed = 0.03;
@@ -98,7 +97,6 @@ public class Constants {
 
     public static final class Tip {
 
-      // TODO: needs tuning
       public static final double highVelocityFtPerSec = 6.0;
       public static final double lowVelocityFtPerSec = 3.0;
       public static final double highAccFtPerSec2 = 8.0;
@@ -158,7 +156,6 @@ public class Constants {
 
     public static final class Drive {
 
-      // TODO: needs tuning
       public static final double configClosedLoopRamp = 0.08;
 
       public static final double voltageCompSaturation = 11.5;
@@ -232,6 +229,7 @@ public class Constants {
     public static final double LoadPosition = 2;
     public static final double MidScoringPosition = 64;
     public static final double HighScoringPosition = 60;
+    public static final double ArmHomingSpeed = 0;
 
     public static final class SmartMotion {
       public static final double kP = 1; 
