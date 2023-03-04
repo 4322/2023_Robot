@@ -35,7 +35,7 @@ public class Robot extends TimedRobot {
     tab = Shuffleboard.getTab("Enabled Subsystems");
 
     subsystemEnabled("Comp Mode", 0, 0, !Constants.debug);
-    subsystemEnabled("Demo Mode", 1, 0, Constants.demo);
+    subsystemEnabled("Demo Mode", 1, 0, Constants.inDemoMode);
     subsystemEnabled("Drivebase", 2, 0, Constants.driveEnabled);
     subsystemEnabled("Arm", 3, 0, Constants.armEnabled);
     subsystemEnabled("Arm Sensor", 4, 0, Constants.armSensorEnabled);

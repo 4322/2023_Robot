@@ -7,7 +7,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 
 public class Constants {
   public static final boolean debug = false;
-  public static final boolean demo = false;
+  public static final boolean inDemoMode = false;
 
   public static final boolean armEnabled = true;
   public static final boolean armSensorEnabled = true;
