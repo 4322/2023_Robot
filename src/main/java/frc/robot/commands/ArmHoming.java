@@ -24,7 +24,7 @@ public class ArmHoming extends CommandBase{
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    arm.rotateBackward();
+    //arm.rotateBackward(); TODO: Set homing speed
     if (arm.getArmSensorPressed() == true) {
       arm.setBrakeMode();
       arm.setPosition(ArmConstants.minPosition);

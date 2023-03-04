@@ -8,27 +8,23 @@ import edu.wpi.first.math.geometry.Translation2d;
 public class Constants {
   public static final boolean debug = false;
 
-  public static final class demo {
-    public enum DriveMode {
-      OFF, SLOW_ROTATE_ONLY, SLOW_DRIVE
-    }
-
-    public static final boolean inDemoMode = false;
-    public static final DriveMode driveMode = DriveMode.SLOW_DRIVE;
-
-    public static final double driveScaleFactor = 0.15;
-    public static final double rotationScaleFactor = 0.1;
-  }
-
   public static final boolean armEnabled = true;
-  public static final boolean armSensorEnabled = false;
+  public static final boolean armSensorEnabled = true;
   public static final boolean clawEnabled = true;
   public static final boolean driveEnabled = true;
   public static final boolean gyroEnabled = true;
   public static final boolean joysticksEnabled = true;
+  public static final boolean xboxEnabled = true;
   public static final boolean limeLightEnabled = true;
   public static final boolean ledEnabled = true;
   public static final boolean colorSensorEnabled = false;
+
+  // To tune a NEO with the REV Hardware Client, the motor must be initialized
+  // in the application to enable it and no set() commands can be issued because
+  // the REV library will continuously send the same command, thereby overriding
+  // tuning commands from the REV Hardware CLient.
+  public static final boolean armTuningMode = true;
+  public static final boolean clawTuningMode = false;
 
   public static final int falconEncoderUnits = 2048;
   public static final double inchesToMeters = 0.0254;
@@ -43,6 +39,7 @@ public class Constants {
   public static final int controllerConfigTimeoutMs = 50;
 
   public static final class DriveConstants {
+    
     public static final int frontRightDriveID = 3;
     public static final int frontRightRotationID = 5;
     public static final int rearRightDriveID = 6;
@@ -59,38 +56,49 @@ public class Constants {
 
     public static final int encoderResolution = 2048;
 
-    public static final double distWheelMetersX = 0.314325; // 24.75 in
-    public static final double distWheelMetersY = 0.314325; // 24.75 in
+    public static final double distWheelMetersX = 0.62865; // 24.75 in
+    public static final double distWheelMetersY = 0.62865; // 24.75 in
 
     public static final double maxSpeedMetersPerSecond = 3.6576;
     public static final double maxRotationSpeedRadSecond = 12.2718;
 
-    public static final double autoRotkP = 0.008;
-    public static final double autoRotkD = 0.0004;
-
     public static final double movingVelocityThresholdFtPerSec = 0.2;
-
-    public static final double minAutoRotateSpeed = 0.03;
-    public static final double maxAutoRotateSpeed = Constants.demo.inDemoMode? Constants.demo.rotationScaleFactor : 0.5;
-
-    public static final double drivePolarDeadband = 0.06;
-    public static final double rotatePolarDeadband = 0.5;
-    public static final double twistDeadband = 0.08;
-
-    public static final double manualRotateToleranceDegrees = 1.5;
-
-    // Values for autonomous path finding
-    public static final double autoMaxSpeedMetersPerSecond = 3.5;
-    public static final double autoMaxAccelerationMetersPerSec2 = 2.5;
-    public static final double autoMaxRotationRadPerSecond = Math.PI * 2;
-    public static final double autoMaxRotationAccelerationRadPerSec2 = Math.PI * 4;
 
     // 1 degree
     public static final Pose2d poseError =
         new Pose2d(new Translation2d(0.1, 0.1), new Rotation2d(0.0174533));
+
     public static final double disableBreakSec = 2.0;
 
-    public final static class Tip {
+    public static final class Manual {
+
+      public static final double joystickDriveDeadband = 0.06;
+      public static final double joystickRotateDeadband = 0.08;
+
+      public static final double xboxDriveDeadband = 0.06;
+      public static final double xboxRotateDeadband = 0.06;
+
+    }
+
+    public static final class Auto {
+
+      // Values for autonomous path finding
+      public static final double autoMaxSpeedMetersPerSecond = 3.5;
+      public static final double autoMaxAccelerationMetersPerSec2 = 2.5;
+      public static final double autoMaxRotationRadPerSecond = Math.PI * 2;
+      public static final double autoMaxRotationAccelerationRadPerSec2 = Math.PI * 4;
+
+      // TODO: needs tuning
+      public static final double autoRotkP = 0.08;
+      public static final double autoRotkD = 0.004;
+      public static final double minAutoRotateSpeed = 0.03;
+      public static final double maxAutoRotateSpeed = 0.5;
+
+    }
+
+    public static final class Tip {
+
+      // TODO: needs tuning
       public static final double highVelocityFtPerSec = 6.0;
       public static final double lowVelocityFtPerSec = 3.0;
       public static final double highAccFtPerSec2 = 8.0;
@@ -100,6 +108,7 @@ public class Constants {
       public static final double lowPowerOff = 0.19;
       public static final double highSpeedSteeringChangeMaxDegrees = 20;
       public static final double velocityHistorySeconds = 0.1;
+
     }
 
     public static final class Rotation {
@@ -149,7 +158,7 @@ public class Constants {
 
     public static final class Drive {
 
-      // TODO: Needs tuning
+      // TODO: needs tuning
       public static final double configClosedLoopRamp = 0.08;
 
       public static final double voltageCompSaturation = 11.5;
@@ -174,6 +183,8 @@ public class Constants {
       public static final double kD = 0.0;
       public static final double kIz = 500;
       public static final double kFF = 0.05;
+
+      
     }
 
     public static final class Trajectory {
@@ -206,22 +217,36 @@ public class Constants {
   public static final class ArmConstants {
     public static final int leftMotorID = 15;
     public static final int rightMotorID = 14;
-    public static final double rampRate = 0.0;
+    public static final double rampRate = 0;
     public static final double forward = 1;
     public static final double backward = -1;
     public static final double logIntervalSeconds = 0.5;
-    public static final int positionTolerance = 100;
   
-    public static final int maxPosition = 1000;
-    public static final int minPosition = -1000;
+    public static final int maxPosition = 500;
+    public static final int minPosition = -500;
+
     public static final double manualDeadband = 0;
 
     public static final double kMaxRange = 0;
 
-    public static final double LoadPosition = 0.0;
-    public static final double MidScoringPosition = 1000.0;
-    public static final double HighScoringPosition = 2000.0;
+    public static final double LoadPosition = 2;
+    public static final double MidScoringPosition = 64;
+    public static final double HighScoringPosition = 60;
+
+    public static final class SmartMotion {
+      public static final double kP = 1; 
+      public static final double kI = 0;
+      public static final double kD = 0; 
+      public static final double kIz = 3;
+      public static final double kMaxOutput = 0.3; 
+      public static final double kMinOutput = -0.3;
+      public static final double minVel = 100;
+      public static final double maxVel = 1800; // rpm
+      public static final double maxAcc = 3000;
+      public static final double positionTolerance = 1;
+    }
   }
+
   public static final class LEDConstants
   {
     public static final int pcmID=30;
@@ -235,10 +260,26 @@ public class Constants {
     public static final int pPort2=4;
     
   }
+
   public static final class LimelightConstants {
-    // All distance values in inches
+    public static final Integer[] tapePipelines = {0};
+    public static final Integer[] tagPipelines = {1};
+
     public static final double limelightAngle = 0;
-    public static final double targetHeight = 0;
-    public static final double limelightHeight = 0;
+    public static final double limelightHeight = 26.125;
+
+    // Tape heights are 1 inch higher than described in manual to account for
+    // height to center of tape
+    public static final double middleTapeHeight = 23.125;
+    public static final double highTapeHeight = 42.875;
+
+    // AprilTag heights are 4 inches higher than described in manual to account
+    // for height to center of tag
+    public static final double gridAprilTagHeight = 18.25;
+    public static final double doubleSubstationAprilTagHeight = 27.375;
+
+    // Threshold for limelight target height
+    // above = high tape, below = middle tape
+    public static final double targetHeightThresholdDeg = 0;
   }
 }

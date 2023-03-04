@@ -1,7 +1,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.DataLogManager;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.ArmConstants;
@@ -25,7 +24,7 @@ public class ArmManual extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    speed = RobotContainer.coPilot.getLeftY();
+    speed = RobotContainer.xbox.getLeftY();
     if (Math.abs(speed) < ArmConstants.manualDeadband) {
       speed = 0;
     }

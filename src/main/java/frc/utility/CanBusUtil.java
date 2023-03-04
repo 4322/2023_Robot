@@ -129,7 +129,6 @@ public class CanBusUtil {
   public static void dualSparkMaxPosCtrl(CANSparkMax mainMotor) {
     mainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, // applied output for follower
         nextFastStatusPeriodMs());
-    mainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, nextVerySlowStatusPeriodSparkMs());
     mainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, // to detect when at target position
         nextFastStatusPeriodMs());
   }
@@ -141,7 +140,6 @@ public class CanBusUtil {
         nextFastStatusPeriodMs());
     mainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, // to detect when at target speed
         nextFastStatusPeriodMs());
-    mainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, nextVerySlowStatusPeriodSparkMs());
   }
 
 }
