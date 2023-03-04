@@ -51,19 +51,14 @@ public class Arm extends SubsystemBase {
       leftMotor.restoreFactoryDefaults();
       leftMotor.setIdleMode(IdleMode.kBrake);
       leftMotor.setOpenLoopRampRate(ArmConstants.rampRate);
+      leftMotor.setClosedLoopRampRate(ArmConstants.rampRate);
       leftMotor.setSoftLimit(SoftLimitDirection.kForward, Constants.ArmConstants.maxPosition);
       leftMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
       rightMotor.restoreFactoryDefaults();
       rightMotor.setIdleMode(IdleMode.kBrake);
       rightMotor.setOpenLoopRampRate(ArmConstants.rampRate);
       rightMotor.follow(leftMotor, true);
-      CanBusUtil.dualSparkMaxPosCtrl(leftMotor);
       
-      leftMotor.burnFlash();
-      rightMotor.burnFlash();
-      logTimer.reset();
-      logTimer.start();
-
       encoder = leftMotor.getEncoder();
       pidController = leftMotor.getPIDController();
 
@@ -76,6 +71,12 @@ public class Arm extends SubsystemBase {
       pidController.setSmartMotionMaxVelocity(ArmConstants.SmartMotion.maxVel, 0);
       pidController.setSmartMotionMaxAccel(ArmConstants.SmartMotion.maxAcc, 0);
       pidController.setSmartMotionAllowedClosedLoopError(ArmConstants.SmartMotion.positionTolerance, 0);
+      CanBusUtil.dualSparkMaxPosCtrl(leftMotor, Constants.armTuningMode);
+
+      leftMotor.burnFlash();
+      rightMotor.burnFlash();
+      logTimer.reset();
+      logTimer.start();
 
       if (Constants.armSensorEnabled) {
         armSensor = leftMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
@@ -103,7 +104,7 @@ public class Arm extends SubsystemBase {
     if (!Constants.armEnabled) {
       return true;
     }
-    return (Math.abs(getPosition() - currentTarget) <= ArmConstants.SmartMotion.positionTolerance);
+    return (Math.abs(getPosition() - currentTarget) <= ArmConstants.positionToleranceInternal);
   }
 
   public void rotateToPosition(double targetPosition) {
@@ -111,7 +112,7 @@ public class Arm extends SubsystemBase {
       if (!Constants.armTuningMode) {
         if ((targetPosition > ArmConstants.minPosition)
             && (targetPosition < ArmConstants.maxPosition)) {
-          pidController.setReference(targetPosition, ControlType.kSmartMotion);
+          pidController.setReference(targetPosition, ControlType.kPosition);
           currentTarget = targetPosition;
           DataLogManager
               .log("Rotating to position " + currentTarget + " from position " + getPosition());

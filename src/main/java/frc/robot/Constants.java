@@ -34,7 +34,7 @@ public class Constants {
   // in the application to enable it and no set() commands can be issued because
   // the REV library will continuously send the same command, thereby overriding
   // tuning commands from the REV Hardware CLient.
-  public static final boolean armTuningMode = true;
+  public static final boolean armTuningMode = false;
   public static final boolean clawTuningMode = false;
 
   public static final int falconEncoderUnits = 2048;
@@ -247,13 +247,11 @@ public class Constants {
   public static final class ArmConstants {
     public static final int leftMotorID = 15;
     public static final int rightMotorID = 14;
-    public static final double rampRate = 0;
-    public static final double forward = 1;
-    public static final double backward = -1;
+    public static final double rampRate = 0.3; // good range: 0.3 to 0.5
     public static final double logIntervalSeconds = 0.5;
   
-    public static final int maxPosition = 500;
-    public static final int minPosition = -500;
+    public static final int maxPosition = 70;
+    public static final int minPosition = 0;
 
     public static final double manualDeadband = 0;
 
@@ -264,17 +262,19 @@ public class Constants {
     public static final double HighScoringPosition = 60;
     public static final double ArmHomingSpeed = 0;
 
-    public static final class SmartMotion {
-      public static final double kP = 1; 
+    public static final double positionToleranceInternal = 0.3;
+
+    public static final class SmartMotion { // SmartMotion values need to be checked (not k values), currently not using
+      public static final double kP = 0.1;
       public static final double kI = 0;
-      public static final double kD = 0; 
-      public static final double kIz = 3;
-      public static final double kMaxOutput = 0.3; 
-      public static final double kMinOutput = -0.3;
-      public static final double minVel = 100;
-      public static final double maxVel = 1800; // rpm
-      public static final double maxAcc = 3000;
-      public static final double positionTolerance = 1;
+      public static final double kD = 0;
+      public static final double kIz = 0;
+      public static final double kMaxOutput = 0.5;
+      public static final double kMinOutput = -0.5;
+      public static final double minVel = 0;
+      public static final double maxVel = 3000; // rpm
+      public static final double maxAcc = 10000;
+      public static final double positionTolerance = 0.2;
     }
   }
 

@@ -124,22 +124,37 @@ public class CanBusUtil {
     spark.setPeriodicFramePeriod(PeriodicFrame.kStatus6, nextVerySlowStatusPeriodSparkMs());
   }
 
-  // Increase frame rates for a SPARK MAX main/follower config after initialization
+  // Increase frame rates for a SPARK MAX main/follower config after
+  // initialization
   // when position control is in use.
-  public static void dualSparkMaxPosCtrl(CANSparkMax mainMotor) {
-    mainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, // applied output for follower
+  public static void dualSparkMaxPosCtrl(CANSparkMax mainMotor, boolean tuningMode) {
+    // applied output for follower
+    mainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0,
         nextFastStatusPeriodMs());
-    mainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, // to detect when at target position
+    // to detect when at target position
+    mainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2,
         nextFastStatusPeriodMs());
+    if (tuningMode) {
+      // to graph velocity
+      mainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1,
+          nextFastStatusPeriodMs());
+    }
   }
 
   // Increase frame rates for a SPARK MAX main/follower motor after initialization
   // when velocity control is in use.
-  public static void dualSparkMaxVelCtrl(CANSparkMax mainMotor) {
-    mainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, // applied output for follower
+  public static void dualSparkMaxVelCtrl(CANSparkMax mainMotor, boolean tuningMode) {
+    // applied output for follower
+    mainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0,
         nextFastStatusPeriodMs());
-    mainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, // to detect when at target speed
+    // to detect when at target speed
+    mainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1,
         nextFastStatusPeriodMs());
+    if (tuningMode) {
+      // to graph position
+      mainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2,
+          nextFastStatusPeriodMs());
+    }
   }
 
 }
