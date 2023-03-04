@@ -10,7 +10,12 @@ public class AutoBalance extends CommandBase{
   private autoBalanceMode currentMode;
 
   public enum autoBalanceMode {
-    driving, up, down, stop, done, abort;
+    driving, 
+    approaching, //when deg over 9
+    past, //when degree falls under 9
+    stop, 
+    done, 
+    abort;
   }
 
   public AutoBalance(Drive driveSubsystem, String direction) {
@@ -30,8 +35,8 @@ public class AutoBalance extends CommandBase{
     if (Constants.driveEnabled) {
       switch (currentMode) {
         case driving:
-        case up:
-        case down:
+        case approaching:
+        case past:
         case stop:
         case done:
         case abort:
