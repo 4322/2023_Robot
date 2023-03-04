@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 
 public class Constants {
   public static final boolean debug = false;
+  public static final boolean demo = false;
 
   public static final boolean armEnabled = true;
   public static final boolean armSensorEnabled = true;
@@ -37,6 +38,8 @@ public class Constants {
   public static final int shuffleboardStatusPeriodMaxMs = 90;  // for interactive response
   public static final int slowStatusPeriodMaxMs = 255;
   public static final int controllerConfigTimeoutMs = 50;
+
+  
 
   public static final class DriveConstants {
     
@@ -248,12 +251,12 @@ public class Constants {
   public static final class LEDConstants
   {
     public static final int pcmID=30;
-    public static final int rPort1=3;
+    public static final int rPort1=2;
     public static final int gPort1=1;
-    public static final int bPort1=2;
-    public static final int rPort2=7;
+    public static final int bPort1=3;
+    public static final int rPort2=6;
     public static final int gPort2=5;
-    public static final int bPort2=6;
+    public static final int bPort2=7;
     public static final int pPort1=0;
     public static final int pPort2=4;
     
