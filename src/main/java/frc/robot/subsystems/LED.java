@@ -12,10 +12,16 @@ import frc.robot.Constants;
 public class LED extends SubsystemBase {
   LEDStrip led1;
   LEDStrip led2;
+  Solenoid power1;
+  Solenoid power2;
   private LEDColor ledColor;
 
   public LED() {
     if (Constants.ledEnabled) {
+      power1 = new Solenoid(LEDConstants.pcmID,PneumaticsModuleType.REVPH, LEDConstants.pPort1);
+      power1.set(true);
+      power2 = new Solenoid(LEDConstants.pcmID,PneumaticsModuleType.REVPH, LEDConstants.pPort2);
+      power2.set(true);
       led1 = new LEDStrip(LEDConstants.pcmID, LEDConstants.rPort1, LEDConstants.gPort1,
           LEDConstants.bPort1);
       led2 = new LEDStrip(LEDConstants.pcmID, LEDConstants.rPort2, LEDConstants.gPort2,
@@ -31,9 +37,12 @@ public class LED extends SubsystemBase {
       ledColor = LEDColor.purple;
     }
   }
-  public LEDColor ledColor()
-  {
-    return ledColor;
+  public LEDColor ledColor() {
+    if (Constants.ledEnabled) {
+      return ledColor;
+    } else {
+      return null;
+    }
   }
   public void yellow() {
     if (Constants.ledEnabled) {
@@ -46,6 +55,7 @@ public class LED extends SubsystemBase {
   public enum LEDColor {
     yellow, purple, none
   }
+  
   private class LEDStrip {
     private Solenoid red;
     private Solenoid green;
@@ -58,16 +68,19 @@ public class LED extends SubsystemBase {
     }
 
     public void yellow() {
-      red.set(true);
-      green.set(true);
-      blue.set(false);
+      if (Constants.ledEnabled) {
+        red.set(true);
+        green.set(true);
+        blue.set(false);
+      }
     }
 
     public void purple() {
-      red.set(true);
-      green.set(false);
-      blue.set(true);
-
+      if (Constants.ledEnabled) {
+        red.set(true);
+        green.set(false);
+        blue.set(true);
+      }
     }
   }
 }

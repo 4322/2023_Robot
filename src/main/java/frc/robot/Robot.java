@@ -5,9 +5,10 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -21,20 +22,46 @@ public class Robot extends TimedRobot {
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
-  private final SendableChooser<String> m_chooser = new SendableChooser<>();
   private Command m_autonomousCommand;
-
+  private ShuffleboardTab tab;
   private RobotContainer m_robotContainer;
 
-  private ShuffleboardTab tab;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   @Override
   public void robotInit() {
+    tab = Shuffleboard.getTab("Enabled Subsystems");
+
+    subsystemEnabled("Comp Mode", 0, 0, !Constants.debug);
+    subsystemEnabled("Demo Mode", 1, 0, Constants.demo);
+    subsystemEnabled("Drivebase", 2, 0, Constants.driveEnabled);
+    subsystemEnabled("Arm", 3, 0, Constants.armEnabled);
+    subsystemEnabled("Arm Sensor", 4, 0, Constants.armSensorEnabled);
+    subsystemEnabled("Claw", 5, 0, Constants.clawEnabled);
+    subsystemEnabled("LEDs", 6,0, Constants.ledEnabled);
+
+    subsystemEnabled("Joysticks", 0, 1, Constants.joysticksEnabled);
+    subsystemEnabled("Gyro", 1, 1, Constants.gyroEnabled);
+    subsystemEnabled("Limeight", 2, 1, Constants.limeLightEnabled);
+    subsystemEnabled("XBOX Controller", 3, 1, Constants.xboxEnabled);
+    subsystemEnabled("Color Sensor", 4, 1, Constants.colorSensorEnabled);
 
     m_robotContainer = new RobotContainer();
+  }
+
+    // create new shuffleboard tab to show whether or not subsystem is enabled
+  // also print error to driver station if not
+  private void subsystemEnabled(String title, int posX, int posY, boolean enabled) {
+    tab.add(title, enabled)
+    .withWidget(BuiltInWidgets.kBooleanBox)
+    .withPosition(posX, posY)
+    .withSize(1, 1);
+
+    if (!enabled) {
+      DriverStation.reportError(title + " not enabled", false);
+    }
   }
 
   /**
