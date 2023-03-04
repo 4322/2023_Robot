@@ -12,9 +12,9 @@ public class ColorChange extends InstantCommand{
   @Override
   public void initialize()
   {
-    if (LED.ledColor() == LEDColor.purple)
-      LED.yellow();
-    else if (LED.ledColor() == LEDColor.yellow || LED.ledColor() == LEDColor.none)
+    if (LED.ledColor() == LEDColor.yellow)
       LED.purple();
+    else if (LED.ledColor() == LEDColor.purple || LED.ledColor() == LEDColor.none)
+      LED.yellow();
   }
 }
