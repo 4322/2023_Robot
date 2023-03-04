@@ -18,7 +18,11 @@ public class RobotContainer {
   public static CommandXboxController xbox = new CommandXboxController(2);
   public static Joystick driveStick;
   public static Joystick rotateStick;
+
+  private JoystickButton driveTrigger;
   private JoystickButton driveButtonSeven;
+
+  private JoystickButton rotateTrigger;
 
   // The robot's subsystems and commands are defined here...
   private final Arm arm = new Arm();
@@ -63,7 +67,7 @@ public class RobotContainer {
     }
 
     if (Constants.armEnabled) {
-      //arm.setDefaultCommand(armManual);
+      arm.setDefaultCommand(armRotateToLoadPosition);
     }
   }
 
@@ -80,16 +84,22 @@ public class RobotContainer {
     if (Constants.joysticksEnabled) {
       driveStick = new Joystick(0);
       rotateStick = new Joystick(1);
+
+      driveTrigger = new JoystickButton(driveStick, 1);
       driveButtonSeven = new JoystickButton(driveStick, 7);
+      rotateTrigger = new JoystickButton(rotateStick, 1);
+
+      driveTrigger.whileTrue(clawOuttake);
       driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
+      rotateTrigger.whileTrue(armRotateToLoadPosition);
     }
-    xbox.leftTrigger().whileTrue(clawIntake);
-    xbox.rightTrigger().whileTrue(clawOuttake);
-    xbox.back().onTrue(armSetCoastMode);
-    xbox.a().onTrue(armRotateToLoadPosition);
-    xbox.b().onTrue(armRotateToMidPosition);
-    xbox.y().onTrue(armRotateToHighPosition);
-    xbox.x().onTrue(colorChange);
+
+    if (Constants.xboxEnabled) {
+      xbox.leftTrigger().whileTrue(clawIntake);
+      xbox.rightTrigger().whileTrue(clawOuttake);
+      xbox.back().onTrue(armSetCoastMode);
+      xbox.x().onTrue(colorChange);
+    }
   }
 
   public void disabledPeriodic() {
