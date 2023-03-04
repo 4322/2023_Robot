@@ -57,27 +57,14 @@ public class DriveManual extends CommandBase {
       // Cartesian inputs
       final double driveJoyRawX = -RobotContainer.driveStick.getY();
       final double driveJoyRawY = -RobotContainer.driveStick.getX();
-      final double rotateJoyRawX = -RobotContainer.rotateStick.getY();
-      final double rotateJoyRawY = -RobotContainer.rotateStick.getX();
-
       final double driveXboxRawX = -RobotContainer.xbox.getLeftY();
       final double driveXboxRawY = -RobotContainer.xbox.getLeftX();
-      final double rotateXboxRawX = -RobotContainer.xbox.getRightY();
       final double rotateXboxRawY = -RobotContainer.xbox.getRightX();
 
       // Polar inputs
       final double driveJoyRawMag = OrangeMath.pythag(driveJoyRawX, driveJoyRawY);
-      final double rotateJoyRawMag = OrangeMath.pythag(rotateJoyRawX, rotateJoyRawY);
       final double driveXboxRawMag = OrangeMath.pythag(driveXboxRawX, driveXboxRawY);
-      final double rotateXboxRawMag = OrangeMath.pythag(rotateXboxRawX, rotateXboxRawY);
-
-      final double driveJoyRawTheta = Math.atan2(driveJoyRawY, driveJoyRawX);
-      final double rotateJoyRawTheta = Math.atan2(rotateJoyRawY, rotateJoyRawX);
-      final double driveXboxRawTheta = Math.atan2(driveXboxRawY, driveXboxRawX);
-      final double rotateXboxRawTheta = Math.atan2(rotateXboxRawY, rotateXboxRawX);
-
       // Joystick rotations
-      final double driveJoyRawZ = -RobotContainer.driveStick.getZ();
       final double rotateJoyRawZ = -RobotContainer.rotateStick.getZ();
 
       // Deadbands and Active Checks

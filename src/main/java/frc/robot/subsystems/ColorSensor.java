@@ -64,11 +64,19 @@ public class ColorSensor extends SubsystemBase {
   }
 
   private Color getColor() {
-    return colorSensor.getColor();
+    if (Constants.colorSensorEnabled) {
+      return colorSensor.getColor();
+    } else {
+      return null;
+    }
   }
 
   public String getObject() {
-    return ObjectString;
+    if (Constants.colorSensorEnabled) {
+      return ObjectString;
+    } else {
+      return null;
+    }
   }
 }
 

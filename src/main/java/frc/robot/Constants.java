@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 
 public class Constants {
   public static final boolean debug = false;
+  public static final boolean inDemoMode = false;
 
   public static final boolean armEnabled = true;
   public static final boolean armSensorEnabled = true;
@@ -37,6 +38,8 @@ public class Constants {
   public static final int shuffleboardStatusPeriodMaxMs = 90;  // for interactive response
   public static final int slowStatusPeriodMaxMs = 255;
   public static final int controllerConfigTimeoutMs = 50;
+
+  
 
   public static final class DriveConstants {
     
@@ -88,7 +91,6 @@ public class Constants {
       public static final double autoMaxRotationRadPerSecond = Math.PI * 2;
       public static final double autoMaxRotationAccelerationRadPerSec2 = Math.PI * 4;
 
-      // TODO: needs tuning
       public static final double autoRotkP = 0.08;
       public static final double autoRotkD = 0.004;
       public static final double minAutoRotateSpeed = 0.03;
@@ -98,7 +100,6 @@ public class Constants {
 
     public static final class Tip {
 
-      // TODO: needs tuning
       public static final double highVelocityFtPerSec = 6.0;
       public static final double lowVelocityFtPerSec = 3.0;
       public static final double highAccFtPerSec2 = 8.0;
@@ -158,7 +159,6 @@ public class Constants {
 
     public static final class Drive {
 
-      // TODO: needs tuning
       public static final double configClosedLoopRamp = 0.08;
 
       public static final double voltageCompSaturation = 11.5;
@@ -230,6 +230,7 @@ public class Constants {
     public static final double LoadPosition = 2;
     public static final double MidScoringPosition = 64;
     public static final double HighScoringPosition = 60;
+    public static final double ArmHomingSpeed = 0;
 
     public static final double positionToleranceInternal = 0.3;
 
@@ -250,12 +251,12 @@ public class Constants {
   public static final class LEDConstants
   {
     public static final int pcmID=30;
-    public static final int rPort1=3;
+    public static final int rPort1=2;
     public static final int gPort1=1;
-    public static final int bPort1=2;
-    public static final int rPort2=7;
+    public static final int bPort1=3;
+    public static final int rPort2=6;
     public static final int gPort2=5;
-    public static final int bPort2=6;
+    public static final int bPort2=7;
     public static final int pPort1=0;
     public static final int pPort2=4;
     

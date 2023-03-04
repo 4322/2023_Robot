@@ -126,38 +126,41 @@ public class Limelight extends SubsystemBase {
   // All distances assume coordinate plane from top view (where y is perpendicular to the grid and x
   // is parallel to the grid)
   public Translation2d getTargetPosRobotRelative() {
-    
-    double distanceX = 0;
-    double distanceY = 0;
-    double yDeg = getVerticalDegToTarget();
-    double xDeg = getHorizontalDegToTarget();
-    int pipelineIdx = (int) pipeline.getInteger(0); // Note: long is a longer integer
-    List<Integer> tapeList = Arrays.asList(LimelightConstants.tapePipelines);
+    if (Constants.limeLightEnabled) {
+      double distanceX = 0;
+      double distanceY = 0;
+      double yDeg = getVerticalDegToTarget();
+      double xDeg = getHorizontalDegToTarget();
+      int pipelineIdx = (int) pipeline.getInteger(0); // Note: long is a longer integer
+      List<Integer> tapeList = Arrays.asList(LimelightConstants.tapePipelines);
 
-    if (getTargetVisible()) {
+      if (getTargetVisible()) {
 
-      double angleToTarget = LimelightConstants.limelightAngle + yDeg;
-      
-      if (tapeList.contains(pipelineIdx)) {
+        double angleToTarget = LimelightConstants.limelightAngle + yDeg;
+        
+        if (tapeList.contains(pipelineIdx)) {
 
-        if (yDeg > LimelightConstants.targetHeightThresholdDeg) {
-          distanceY = (LimelightConstants.highTapeHeight - LimelightConstants.limelightHeight)
-            / Math.tan(Math.toRadians(angleToTarget));
+          if (yDeg > LimelightConstants.targetHeightThresholdDeg) {
+            distanceY = (LimelightConstants.highTapeHeight - LimelightConstants.limelightHeight)
+              / Math.tan(Math.toRadians(angleToTarget));
+          } else {
+            distanceY = (LimelightConstants.middleTapeHeight - LimelightConstants.limelightHeight)
+              / Math.tan(Math.toRadians(angleToTarget));
+          } 
+
         } else {
-          distanceY = (LimelightConstants.middleTapeHeight - LimelightConstants.limelightHeight)
+          distanceY = (LimelightConstants.gridAprilTagHeight - LimelightConstants.limelightHeight)
             / Math.tan(Math.toRadians(angleToTarget));
-        } 
+        }
 
-      } else {
-        distanceY = (LimelightConstants.gridAprilTagHeight - LimelightConstants.limelightHeight)
-          / Math.tan(Math.toRadians(angleToTarget));
+        distanceX = distanceY * Math.tan(Math.toRadians(xDeg));
+
       }
 
-      distanceX = distanceY * Math.tan(Math.toRadians(xDeg));
-
+      return new Translation2d(distanceX, distanceY);
+    } else {
+      return null;
     }
-
-    return new Translation2d(distanceX, distanceY);
   }
 
   public void enableLed() {
@@ -173,6 +176,8 @@ public class Limelight extends SubsystemBase {
   }
 
   public void switchPipeline(int pipelineIdx) {
-    pipeline.setNumber(pipelineIdx);
+    if (Constants.limeLightEnabled) {
+      pipeline.setNumber(pipelineIdx);
+    }
   }
 }
