@@ -14,11 +14,10 @@ import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import frc.robot.Constants;
-import frc.robot.RobotContainer;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.Drive;
 import frc.utility.OrangeMath;
-import frc.utility.TalonUtil;
+import frc.utility.CanBusUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -37,9 +36,9 @@ public class SwerveModule extends ControlModule {
     encoder = new CANCoder(encoderID);
     wheelPosition = pos;
 
-    TalonUtil.staggerTalonStatusFrames(driveMotor);
-    TalonUtil.staggerTalonStatusFrames(turningMotor);
-    encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, TalonUtil.nextSlowStatusPeriodMs(),
+    CanBusUtil.staggerTalonStatusFrames(driveMotor);
+    CanBusUtil.staggerTalonStatusFrames(turningMotor);
+    encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, CanBusUtil.nextSlowStatusPeriodMs(),
         Constants.controllerConfigTimeoutMs);
   }
 
@@ -79,7 +78,7 @@ public class SwerveModule extends ControlModule {
     // need rapid velocity feedback for anti-tipping logic
 
     talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0,
-        TalonUtil.nextFastStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+        CanBusUtil.nextFastStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
 
   }
 
@@ -140,12 +139,12 @@ public class SwerveModule extends ControlModule {
     }
 
     // don't need the CANCoder any longer, so a slow frame rate is OK
-    encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, TalonUtil.nextSlowStatusPeriodMs(),
+    encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, CanBusUtil.nextSlowStatusPeriodMs(),
         Constants.controllerConfigTimeoutMs);
 
     // need rapid position feedback for steering logic
     turningMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0,
-        TalonUtil.nextFastStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+        CanBusUtil.nextFastStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
   }
 
   public double getMagneticRotationAngle() {
