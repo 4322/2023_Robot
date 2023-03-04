@@ -35,6 +35,7 @@ public class AutoBalance extends CommandBase{
     if (Constants.driveEnabled) {
       switch (currentMode) {
         case driving:
+          drive.drive(Constants.DriveConstants.autoBalanceVelocity, 0, 0);
         case approaching:
         case past:
         case stop:
