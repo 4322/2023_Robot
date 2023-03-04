@@ -195,8 +195,8 @@ public class Constants {
   public static final class ClawConstants {// all temp values
     public static final int motorID = 16; // temp value
     public static final double rampRate = 0.8; // temp value
-    public static final double IntakeVelocity = 0.5;
-    public static final double EjectionVelocity = -0.2;
+    public static final double IntakeVelocity = 1;
+    public static final double EjectionVelocity = -0.75;
 
     public static enum ClawMode {
       ejecting, stationary, intaking
