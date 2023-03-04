@@ -36,13 +36,13 @@ public class AutoBalance extends CommandBase{
     if (Constants.driveEnabled) {
       switch (currentMode) {
         case driving:
-          drive.drive(0, -Constants.DriveConstants.autoBalanceStartingVelocity, 0);
+          drive.drive(-Constants.DriveConstants.autoBalanceStartingVelocity, 0, 0);
           if (Math.abs(drive.getPitch()) > (Constants.DriveConstants.chargeStationOffSet - 
                                             Constants.DriveConstants.chargeStationTolerance)) {
             currentMode = autoBalanceMode.approaching;
           }
         case approaching:
-          drive.drive(0, -Constants.DriveConstants.autoBalanceApproachingVelocity, 0);
+          drive.drive(-Constants.DriveConstants.autoBalanceApproachingVelocity, 0, 0);
           if (Math.abs(drive.getPitch()) < (Constants.DriveConstants.chargeStationOffSet - 
                                             Constants.DriveConstants.chargeStationTolerance)) {
             currentMode = autoBalanceMode.stop;
