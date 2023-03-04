@@ -198,12 +198,9 @@ public class Drive extends SubsystemBase {
   }
 
   public double getAngle() {
-    if(Constants.gyroEnabled){
-      if (gyro != null && gyro.isConnected() && !gyro.isCalibrating()) {
-          return -gyro.getAngle();
-      } 
-    }
-    else {
+    if (gyro != null && gyro.isConnected() && !gyro.isCalibrating() && Constants.gyroEnabled) {
+        return -gyro.getAngle();
+    } else {
       return 0;
     }
   }
