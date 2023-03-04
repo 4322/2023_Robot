@@ -13,8 +13,7 @@ public class AutoBalance extends CommandBase{
   public enum autoBalanceMode {
     driving, 
     approaching, //when deg over 9
-    past, //when degree falls under 9
-    stop, 
+    stop, // stop when deg under 9
     done, 
     abort;
   }
@@ -37,19 +36,17 @@ public class AutoBalance extends CommandBase{
     if (Constants.driveEnabled) {
       switch (currentMode) {
         case driving:
-          drive.drive(0, -Constants.DriveConstants.autoBalanceVelocity, 0);
-          if (Math.abs(drive.getPitch()) > Constants.DriveConstants.chargeStationOffAngle) {
+          drive.drive(0, -Constants.DriveConstants.autoBalanceStartingVelocity, 0);
+          if (Math.abs(drive.getPitch()) > (Constants.DriveConstants.chargeStationOffSet - 
+                                            Constants.DriveConstants.chargeStationTolerance)) {
             currentMode = autoBalanceMode.approaching;
           }
         case approaching:
-          drive.drive(0, -Constants.DriveConstants.autoBalanceVelocity, 0);
-          if (Math.abs(drive.getPitch()) < Constants.DriveConstants.chargeStationOffAngle) {
-            currentMode = autoBalanceMode.past;
+          drive.drive(0, -Constants.DriveConstants.autoBalanceApproachingVelocity, 0);
+          if (Math.abs(drive.getPitch()) < (Constants.DriveConstants.chargeStationOffSet - 
+                                            Constants.DriveConstants.chargeStationTolerance)) {
+            currentMode = autoBalanceMode.stop;
           }
-        case past:
-          drive.stop();
-          // more complicated logic here to readjust roobot after on charging station
-          currentMode = autoBalanceMode.stop;
         case stop:
           drive.stop();
           currentMode = autoBalanceMode.done;
