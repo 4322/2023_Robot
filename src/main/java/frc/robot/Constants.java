@@ -93,8 +93,8 @@ public class Constants {
     public static final double autoMaxRotationAccelerationRadPerSec2 = Math.PI * 4;
 
     // Values for auto balance
-    public static final double autoBalanceStartingVelocity = 0.0;
-    public static final double autoBalanceApproachingVelocity = 0.0; // slower speed when approaching midpoint of charging station
+    public static final double autoBalanceStartingVelocity = 1;
+    public static final double autoBalanceApproachingVelocity = 0.3; // slower speed when approaching midpoint of charging station
     public static final double chargeStationOffSet = 11;
     public static final double chargeStationTolerance = 2;
 
