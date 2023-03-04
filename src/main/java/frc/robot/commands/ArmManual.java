@@ -10,7 +10,6 @@ import frc.robot.subsystems.Arm;
  * THIS COMMAND IS CURRENTLY UNUSABLE, DO NOT USE IT UNDER ANY CIRCUMSTANCES
 */
 
-
 public class ArmManual extends CommandBase {
 
   private final Arm arm;

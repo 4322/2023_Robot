@@ -79,7 +79,7 @@ public class Constants {
       public static final double joystickRotateDeadband = 0.1;
 
       public static final double xboxDriveDeadband = 0.06;
-      public static final double xboxRotateDeadband = 0.06;
+      public static final double xboxRotateDeadband = 0.1;
 
     }
 
@@ -208,6 +208,9 @@ public class Constants {
     public static final double rampRate = 0.8; // temp value
     public static final double IntakeVelocity = 1;
     public static final double EjectionVelocity = -0.75;
+
+    public static final double stallCurrentAmps = 3;
+    public static final double stallRPMLimit = 500;
 
     public static enum ClawMode {
       ejecting, stationary, intaking
