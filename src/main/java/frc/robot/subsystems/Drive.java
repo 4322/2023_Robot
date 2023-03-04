@@ -53,9 +53,6 @@ public class Drive extends SubsystemBase {
       frontLeftLocation, backLeftLocation, backRightLocation);
 
   private SwerveDriveOdometry odometry;
-  private double robotCentricOffsetDegrees;
-  private boolean fieldRelative = true;
-
   private ShuffleboardTab tab;
 
   private GenericEntry rotErrorTab;
@@ -68,9 +65,6 @@ public class Drive extends SubsystemBase {
   private GenericEntry botAccelerationMag;
   private GenericEntry botVelocityAngle;
   private GenericEntry botAccelerationAngle;
-  private GenericEntry tipDecelerationActiveTab;
-  private GenericEntry tipSmallStickActiveTab;
-  private GenericEntry tipBigStickActiveTab;
   private GenericEntry driveXTab;
   private GenericEntry driveYTab;
   private GenericEntry rotateTab;
@@ -142,13 +136,13 @@ public class Drive extends SubsystemBase {
 
         botAccelerationAngle = tab.add("Bot Acc Angle", 0).withPosition(4, 1).withSize(1, 1).getEntry();
 
-        tipDecelerationActiveTab = tab.add("Tip Deceleration", true)
+        tab.add("Tip Deceleration", true)
             .withWidget(BuiltInWidgets.kBooleanBox).withPosition(5, 0).withSize(1, 1).getEntry();
 
-        tipSmallStickActiveTab = tab.add("Tip Small Stick", true)
+        tab.add("Tip Small Stick", true)
             .withWidget(BuiltInWidgets.kBooleanBox).withPosition(5, 1).withSize(1, 1).getEntry();
 
-        tipBigStickActiveTab = tab.add("Tip Big Stick", true).withWidget(BuiltInWidgets.kBooleanBox)
+        tab.add("Tip Big Stick", true).withWidget(BuiltInWidgets.kBooleanBox)
             .withPosition(5, 2).withSize(1, 1).getEntry();
 
         driveXTab = tab.add("Drive X", 0).withPosition(0, 2).withSize(1, 1).getEntry();
@@ -269,8 +263,6 @@ public class Drive extends SubsystemBase {
 
       Translation2d velocityXY = new Translation2d();
       Translation2d accelerationXY = new Translation2d();
-      Translation2d driveXY = new Translation2d(driveX, driveY);
-
       // sum wheel velocity and acceleration vectors
       for (int i = 0; i < swerveModules.length; i++) {
         double wheelAngleDegrees = currentAngle[i];
