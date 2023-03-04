@@ -248,12 +248,12 @@ public class Constants {
   public static final class LEDConstants
   {
     public static final int pcmID=30;
-    public static final int rPort1=3;
+    public static final int rPort1=2;
     public static final int gPort1=1;
-    public static final int bPort1=2;
-    public static final int rPort2=7;
+    public static final int bPort1=3;
+    public static final int rPort2=6;
     public static final int gPort2=5;
-    public static final int bPort2=6;
+    public static final int bPort2=7;
     public static final int pPort1=0;
     public static final int pPort2=4;
     
