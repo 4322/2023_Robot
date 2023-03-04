@@ -91,7 +91,7 @@ public class RobotContainer {
 
       driveTrigger.whileTrue(clawOuttake);
       driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
-      rotateTrigger.whileTrue(armRotateToLoadPosition);
+      rotateTrigger.whileTrue(armRotateToMidPosition);
     }
 
     if (Constants.xboxEnabled) {
