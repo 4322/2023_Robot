@@ -64,6 +64,7 @@ public class AutoBalance extends CommandBase{
   @Override
   public void end(boolean interrupted) {
     drive.stop();
+    currentMode = autoBalanceMode.done;
   }
 
   @Override
