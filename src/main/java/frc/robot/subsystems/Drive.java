@@ -183,22 +183,28 @@ public class Drive extends SubsystemBase {
   private static DriveMode driveMode = DriveMode.fieldCentric;
 
   public static DriveMode getDriveMode() {
-    DataLogManager.log("DriveMode is " + driveMode);
-    return driveMode;
+    if (Constants.driveEnabled) {
+      DataLogManager.log("DriveMode is " + driveMode);
+      return driveMode;
+    } else {
+      return null;
+    }
   }
 
   public void setDriveMode(DriveMode mode) {
+    if (Constants.driveEnabled) {
     // driveMode = mode;
     // switch (mode) {
     //   case fieldCentric:
     //   case botCentric:
     // }
     // DataLogManager.log("DriveMode set to " + mode);
-    return;
+      return;
+    }
   }
 
   public double getAngle() {
-    if (gyro != null && gyro.isConnected() && !gyro.isCalibrating()) {
+    if (gyro != null && gyro.isConnected() && !gyro.isCalibrating() && Constants.gyroEnabled) {
       return -gyro.getAngle();
     } else {
       return 0;
@@ -236,15 +242,21 @@ public class Drive extends SubsystemBase {
 
   // rotation isn't considered to be movement
   public boolean isRobotMoving() {
-    return latestVelocity >= DriveConstants.movingVelocityThresholdFtPerSec;
+    if (Constants.driveEnabled) {
+      return latestVelocity >= DriveConstants.movingVelocityThresholdFtPerSec;
+    } else {
+      return false;
+    }
   }
 
   public void resetFieldCentric(double offset) {
-    if (gyro != null) {
-      gyro.setAngleAdjustment(0);
-      gyro.setAngleAdjustment(-gyro.getAngle() + offset);
+    if (Constants.driveEnabled && Constants.gyroEnabled) {
+      if (gyro != null) {
+        gyro.setAngleAdjustment(0);
+        gyro.setAngleAdjustment(-gyro.getAngle() + offset);
+      }
+      setDriveMode(DriveMode.fieldCentric);
     }
-    setDriveMode(DriveMode.fieldCentric);
   }
 
   public void drive(double driveX, double driveY, double rotate) {
@@ -309,34 +321,37 @@ public class Drive extends SubsystemBase {
   // Uses a PID Controller to rotate the robot to a certain degree
   // Must be periodically updated to work
   public void driveAutoRotate(double driveX, double driveY, double rotateDeg, double toleranceDeg) {
+    if (Constants.driveEnabled) {
+      if (Constants.debug) {
+        rotPID.setP(rotkP.getDouble(DriveConstants.Auto.autoRotkP));
+        rotPID.setD(rotkD.getDouble(DriveConstants.Auto.autoRotkD));
+      }
 
-    if (Constants.debug) {
-      rotPID.setP(rotkP.getDouble(DriveConstants.Auto.autoRotkP));
-      rotPID.setD(rotkD.getDouble(DriveConstants.Auto.autoRotkD));
-    }
+      double rotPIDSpeed = rotPID.calculate(0, rotateDeg);
 
-    double rotPIDSpeed = rotPID.calculate(0, rotateDeg);
+      if (Math.abs(rotateDeg) <= toleranceDeg) {
+        rotPIDSpeed = 0;
+      } else if (Math.abs(rotPIDSpeed) < DriveConstants.Auto.minAutoRotateSpeed) {
+        rotPIDSpeed = Math.copySign(DriveConstants.Auto.minAutoRotateSpeed, rotPIDSpeed);
+      } else if (rotPIDSpeed > DriveConstants.Auto.maxAutoRotateSpeed) {
+        rotPIDSpeed = DriveConstants.Auto.maxAutoRotateSpeed;
+      } else if (rotPIDSpeed < -DriveConstants.Auto.maxAutoRotateSpeed) {
+        rotPIDSpeed = -DriveConstants.Auto.maxAutoRotateSpeed;
+      }
 
-    if (Math.abs(rotateDeg) <= toleranceDeg) {
-      rotPIDSpeed = 0;
-    } else if (Math.abs(rotPIDSpeed) < DriveConstants.Auto.minAutoRotateSpeed) {
-      rotPIDSpeed = Math.copySign(DriveConstants.Auto.minAutoRotateSpeed, rotPIDSpeed);
-    } else if (rotPIDSpeed > DriveConstants.Auto.maxAutoRotateSpeed) {
-      rotPIDSpeed = DriveConstants.Auto.maxAutoRotateSpeed;
-    } else if (rotPIDSpeed < -DriveConstants.Auto.maxAutoRotateSpeed) {
-      rotPIDSpeed = -DriveConstants.Auto.maxAutoRotateSpeed;
-    }
+      drive(driveX, driveY, rotPIDSpeed);
 
-    drive(driveX, driveY, rotPIDSpeed);
-
-    if (Constants.debug) {
-      rotErrorTab.setDouble(rotateDeg);
-      rotSpeedTab.setDouble(rotPIDSpeed);
+      if (Constants.debug) {
+        rotErrorTab.setDouble(rotateDeg);
+        rotSpeedTab.setDouble(rotPIDSpeed);
+      }
     }
   }
 
   public void resetRotatePID() {
-    rotPID.reset();
+    if (Constants.driveEnabled) {
+      rotPID.reset();
+    }
   }
 
   public void updateOdometry() {
@@ -352,9 +367,11 @@ public class Drive extends SubsystemBase {
   }
 
   public void setToFieldCentric() {
-    fieldRelative = true;
-    robotCentricOffsetDegrees = 0;
-    DataLogManager.log("Robot Mode = Field Centric");
+    if (Constants.driveEnabled) {
+      fieldRelative = true;
+      robotCentricOffsetDegrees = 0;
+      DataLogManager.log("Robot Mode = Field Centric");
+    }
   }
 
   public void setCoastMode() {
@@ -390,33 +407,47 @@ public class Drive extends SubsystemBase {
   }
 
   public void setModuleStates(SwerveModuleState[] states) {
-    SwerveDriveKinematics.desaturateWheelSpeeds(states, DriveConstants.maxSpeedMetersPerSecond);
-    int i = 0;
-    for (SwerveModuleState s : states) {
-      swerveModules[i].setDesiredState(s);
-      i++;
+    if (Constants.driveEnabled) {
+      SwerveDriveKinematics.desaturateWheelSpeeds(states, DriveConstants.maxSpeedMetersPerSecond);
+      int i = 0;
+      for (SwerveModuleState s : states) {
+        swerveModules[i].setDesiredState(s);
+        i++;
+      }
     }
   }
 
   public SwerveModulePosition[] getModulePostitions() {
-    // wheel locations must be in the same order as the WheelPosition enum values
-    return new SwerveModulePosition[] {
-        swerveModules[WheelPosition.FRONT_RIGHT.wheelNumber].getPosition(),
-        swerveModules[WheelPosition.FRONT_LEFT.wheelNumber].getPosition(),
-        swerveModules[WheelPosition.BACK_LEFT.wheelNumber].getPosition(),
-        swerveModules[WheelPosition.BACK_RIGHT.wheelNumber].getPosition() };
+    if (Constants.driveEnabled) {
+      // wheel locations must be in the same order as the WheelPosition enum values
+      return new SwerveModulePosition[] {
+          swerveModules[WheelPosition.FRONT_RIGHT.wheelNumber].getPosition(),
+          swerveModules[WheelPosition.FRONT_LEFT.wheelNumber].getPosition(),
+          swerveModules[WheelPosition.BACK_LEFT.wheelNumber].getPosition(),
+          swerveModules[WheelPosition.BACK_RIGHT.wheelNumber].getPosition() };
+    } else {
+      return null;
+    }
   }
 
   // convert angle to range of +/- 180 degrees
   public static double boundDegrees(double angleDegrees) {
-    double x = ((angleDegrees + 180) % 360) - 180;
-    if (x < -180) {
-      x += 360;
+    if (Constants.driveEnabled) {
+      double x = ((angleDegrees + 180) % 360) - 180;
+      if (x < -180) {
+        x += 360;
+      }
+      return x;
+    } else {
+      return 0;
     }
-    return x;
   }
 
   public SwerveDriveKinematics getKinematics() {
-    return kinematics;
+    if (Constants.driveEnabled) {
+      return kinematics;
+    } else {
+      return null;
+    }
   }
 }

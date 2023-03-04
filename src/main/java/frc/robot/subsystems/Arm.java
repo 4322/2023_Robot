@@ -129,14 +129,18 @@ public class Arm extends SubsystemBase {
   }
 
   public void stop() {
-    if (!Constants.armTuningMode) {
-      leftMotor.stopMotor();
+    if (Constants.armEnabled) {
+      if (!Constants.armTuningMode) {
+        leftMotor.stopMotor();
+      }
     }
   }
 
   public void setArmSpeed(double speed) {
-    if (!Constants.armTuningMode) {
-      leftMotor.set(speed);
+    if (Constants.armEnabled) {
+      if (!Constants.armTuningMode) {
+        leftMotor.set(speed);
+      }
     }
   }
 

@@ -37,9 +37,12 @@ public class LED extends SubsystemBase {
       ledColor = LEDColor.purple;
     }
   }
-  public LEDColor ledColor()
-  {
-    return ledColor;
+  public LEDColor ledColor() {
+    if (Constants.ledEnabled) {
+      return ledColor;
+    } else {
+      return null;
+    }
   }
   public void yellow() {
     if (Constants.ledEnabled) {
@@ -52,6 +55,7 @@ public class LED extends SubsystemBase {
   public enum LEDColor {
     yellow, purple, none
   }
+  
   private class LEDStrip {
     private Solenoid red;
     private Solenoid green;
@@ -64,16 +68,19 @@ public class LED extends SubsystemBase {
     }
 
     public void yellow() {
-      red.set(true);
-      green.set(true);
-      blue.set(false);
+      if (Constants.ledEnabled) {
+        red.set(true);
+        green.set(true);
+        blue.set(false);
+      }
     }
 
     public void purple() {
-      red.set(true);
-      green.set(false);
-      blue.set(true);
-
+      if (Constants.ledEnabled) {
+        red.set(true);
+        green.set(false);
+        blue.set(true);
+      }
     }
   }
 }
