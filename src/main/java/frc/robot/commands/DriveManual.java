@@ -86,7 +86,7 @@ public class DriveManual extends CommandBase {
       final boolean rotateJoyOutDeadband = Math.abs(rotateJoyRawZ) > Manual.joystickRotateDeadband;
       final boolean driveXboxOutDeadband = Math.abs(driveXboxRawMag) > Manual.joystickDriveDeadband;
       final boolean rotateXboxOutDeadband =
-          Math.abs(rotateXboxRawY) > Manual.joystickRotateDeadband;
+          Math.abs(rotateXboxRawX) > Manual.joystickRotateDeadband;
 
       // Other variables
       double driveMag;
@@ -111,13 +111,13 @@ public class DriveManual extends CommandBase {
 
       if (rotateJoyOutDeadband && rotateXboxOutDeadband) {
         double combinedDeadband = Manual.joystickRotateDeadband + Manual.xboxRotateDeadband;
-        rotatePower = (rotateJoyRawZ + rotateXboxRawY - combinedDeadband) / (2 - combinedDeadband);
+        rotatePower = (rotateJoyRawZ + rotateXboxRawX - combinedDeadband) / (2 - combinedDeadband);
       } else if (rotateJoyOutDeadband) {
         rotatePower =
             (rotateJoyRawZ - Manual.joystickRotateDeadband) / (1 - Manual.joystickRotateDeadband);
       } else if (rotateXboxOutDeadband) {
         rotatePower =
-            (rotateXboxRawY - Manual.xboxRotateDeadband) / (1 - Manual.xboxRotateDeadband);
+            (rotateXboxRawX - Manual.xboxRotateDeadband) / (1 - Manual.xboxRotateDeadband);
       } else {
         rotatePower = 0;
       }
