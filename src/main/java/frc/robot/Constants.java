@@ -7,7 +7,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 
 public class Constants {
   public static final boolean debug = false;
-
+  public static final boolean inDemoMode = false;
   public static final class demo {
     public enum DriveMode {
       OFF, SLOW_ROTATE_ONLY, SLOW_DRIVE
@@ -19,39 +19,52 @@ public class Constants {
     public static final double driveScaleFactor = 0.15;
     public static final double rotationScaleFactor = 0.1;
   }
-
-  public static final boolean armEnabled = false;
-  public static final boolean clawEnabled = false;
+  public static final boolean armEnabled = true;
+  public static final boolean armSensorEnabled = true;
+  public static final boolean clawEnabled = true;
   public static final boolean driveEnabled = true;
   public static final boolean gyroEnabled = true;
   public static final boolean joysticksEnabled = true;
-  public static final boolean limeLightEnabled = false;
+  public static final boolean xboxEnabled = true;
+  public static final boolean limeLightEnabled = true;
   public static final boolean ledEnabled = true;
+  public static final boolean colorSensorEnabled = false;
+
+  // To tune a NEO with the REV Hardware Client, the motor must be initialized
+  // in the application to enable it and no set() commands can be issued because
+  // the REV library will continuously send the same command, thereby overriding
+  // tuning commands from the REV Hardware CLient.
+  public static final boolean armTuningMode = true;
+  public static final boolean clawTuningMode = false;
 
   public static final int falconEncoderUnits = 2048;
-
   public static final double inchesToMeters = 0.0254;
   public static final double feetToMeters = inchesToMeters * 12;
-  public static final int slowStatusPeriodBaseMs = 180;
   public static final int fastStatusPeriodBaseMs = 13;
+  public static final int shuffleboardStatusPeriodBaseMs = 75;
+  public static final int slowStatusPeriodBaseMs = 180;
+  public static final int verySlowStatusPeriodSparkBaseMs = 1000;
   public static final int fastStatusPeriodMaxMs = 18;
+  public static final int shuffleboardStatusPeriodMaxMs = 90;  // for interactive response
   public static final int slowStatusPeriodMaxMs = 255;
   public static final int controllerConfigTimeoutMs = 50;
-  public static final int verySlowStatusPeriodSparkBaseMs = 1000;
+
+  
 
   public static final class DriveConstants {
-    public static final int frontRightDriveID = 2;
-    public static final int frontRightRotationID = 3;
-    public static final int rearRightDriveID = 4;
-    public static final int rearRightRotationID = 5;
-    public static final int frontLeftDriveID = 6;
-    public static final int frontLeftRotationID = 7;
+    
+    public static final int frontRightDriveID = 3;
+    public static final int frontRightRotationID = 5;
+    public static final int rearRightDriveID = 6;
+    public static final int rearRightRotationID = 7;
+    public static final int frontLeftDriveID = 2;
+    public static final int frontLeftRotationID = 4;
     public static final int rearLeftDriveID = 8;
     public static final int rearLeftRotationID = 9;
     
     public static final int frontRightEncoderID = 10;
-    public static final int rearRightEncoderID = 11;
-    public static final int frontLeftEncoderID = 12;
+    public static final int rearRightEncoderID = 12;
+    public static final int frontLeftEncoderID = 11;
     public static final int rearLeftEncoderID = 13;
 
     public static final int encoderResolution = 2048;
@@ -61,9 +74,6 @@ public class Constants {
 
     public static final double maxSpeedMetersPerSecond = 3.6576;
     public static final double maxRotationSpeedRadSecond = 12.2718;
-
-    public static final double autoRotkP = 0.008;
-    public static final double autoRotkD = 0.0004;
 
     public static final double movingVelocityThresholdFtPerSec = 0.2;
 
@@ -89,9 +99,36 @@ public class Constants {
     // 1 degree
     public static final Pose2d poseError =
         new Pose2d(new Translation2d(0.1, 0.1), new Rotation2d(0.0174533));
+
     public static final double disableBreakSec = 2.0;
 
-    public final static class Tip {
+    public static final class Manual {
+
+      public static final double joystickDriveDeadband = 0.06;
+      public static final double joystickRotateDeadband = 0.08;
+
+      public static final double xboxDriveDeadband = 0.06;
+      public static final double xboxRotateDeadband = 0.06;
+
+    }
+
+    public static final class Auto {
+
+      // Values for autonomous path finding
+      public static final double autoMaxSpeedMetersPerSecond = 3.5;
+      public static final double autoMaxAccelerationMetersPerSec2 = 2.5;
+      public static final double autoMaxRotationRadPerSecond = Math.PI * 2;
+      public static final double autoMaxRotationAccelerationRadPerSec2 = Math.PI * 4;
+
+      public static final double autoRotkP = 0.08;
+      public static final double autoRotkD = 0.004;
+      public static final double minAutoRotateSpeed = 0.03;
+      public static final double maxAutoRotateSpeed = 0.5;
+
+    }
+
+    public static final class Tip {
+
       public static final double highVelocityFtPerSec = 6.0;
       public static final double lowVelocityFtPerSec = 3.0;
       public static final double highAccFtPerSec2 = 8.0;
@@ -101,6 +138,7 @@ public class Constants {
       public static final double lowPowerOff = 0.19;
       public static final double highSpeedSteeringChangeMaxDegrees = 20;
       public static final double velocityHistorySeconds = 0.1;
+
     }
 
     public static final class Rotation {
@@ -141,16 +179,15 @@ public class Constants {
       public static final double[] CANCoderOffsetDegrees;
       static {
         CANCoderOffsetDegrees = new double[4];
-        CANCoderOffsetDegrees[WheelPosition.FRONT_RIGHT.wheelNumber] = -78.311;
-        CANCoderOffsetDegrees[WheelPosition.FRONT_LEFT.wheelNumber] = -169.365;
-        CANCoderOffsetDegrees[WheelPosition.BACK_RIGHT.wheelNumber] = 9.844;
-        CANCoderOffsetDegrees[WheelPosition.BACK_LEFT.wheelNumber] = 104.678;
+        CANCoderOffsetDegrees[WheelPosition.FRONT_RIGHT.wheelNumber] = 149.941;
+        CANCoderOffsetDegrees[WheelPosition.FRONT_LEFT.wheelNumber] = 2.637 - 90;
+        CANCoderOffsetDegrees[WheelPosition.BACK_RIGHT.wheelNumber] = 22.939 - 90;
+        CANCoderOffsetDegrees[WheelPosition.BACK_LEFT.wheelNumber] = -72.773;
       }
     }
 
     public static final class Drive {
 
-      // TODO: Needs tuning
       public static final double configClosedLoopRamp = 0.08;
 
       public static final double voltageCompSaturation = 11.5;
@@ -175,6 +212,8 @@ public class Constants {
       public static final double kD = 0.0;
       public static final double kIz = 500;
       public static final double kFF = 0.05;
+
+      
     }
 
     public static final class Trajectory {
@@ -193,10 +232,10 @@ public class Constants {
   }
 
   public static final class ClawConstants {// all temp values
-    public static final int motorID = 1; // temp value
+    public static final int motorID = 16; // temp value
     public static final double rampRate = 0.8; // temp value
-    public static final double IntakeVelocity = 0.5;
-    public static final double EjectionVelocity = -0.2;
+    public static final double IntakeVelocity = 1;
+    public static final double EjectionVelocity = -0.75;
 
     public static enum ClawMode {
       ejecting, stationary, intaking
@@ -204,38 +243,72 @@ public class Constants {
   }
 
   public static final class ArmConstants {
-    public static final int leftMotorID = 0;
-    public static final int rightMotorID = 1;
-    public static final double rampRate = 0.0;
+    public static final int leftMotorID = 15;
+    public static final int rightMotorID = 14;
+    public static final double rampRate = 0;
     public static final double forward = 1;
     public static final double backward = -1;
-    public static final double logIntervalSeconds = 1;
-    public static final int positionTolerance = 100;
+    public static final double logIntervalSeconds = 0.5;
   
-    public static final int maxPosition = 1000;
-    public static final int minPosition = -1000;
+    public static final int maxPosition = 500;
+    public static final int minPosition = -500;
+
     public static final double manualDeadband = 0;
 
     public static final double kMaxRange = 0;
 
-    public static final double LoadPosition = 0.0;
-    public static final double MidScoringPosition = 1000.0;
-    public static final double HighScoringPosition = 2000.0;
+    public static final double LoadPosition = 2;
+    public static final double MidScoringPosition = 64;
+    public static final double HighScoringPosition = 60;
+    public static final double ArmHomingSpeed = 0;
+
+    public static final class SmartMotion {
+      public static final double kP = 1; 
+      public static final double kI = 0;
+      public static final double kD = 0; 
+      public static final double kIz = 3;
+      public static final double kMaxOutput = 0.3; 
+      public static final double kMinOutput = -0.3;
+      public static final double minVel = 100;
+      public static final double maxVel = 1800; // rpm
+      public static final double maxAcc = 3000;
+      public static final double positionTolerance = 1;
+    }
   }
+
   public static final class LEDConstants
   {
-    public static final int pcmID=4;
-    public static final int rPort1=0;
+    public static final int pcmID=30;
+    public static final int rPort1=2;
     public static final int gPort1=1;
-    public static final int bPort1=2;
-    public static final int rPort2=3;
-    public static final int gPort2=4;
-    public static final int bPort2=5;
+    public static final int bPort1=3;
+    public static final int rPort2=6;
+    public static final int gPort2=5;
+    public static final int bPort2=7;
+    public static final int pPort1=0;
+    public static final int pPort2=4;
+    
   }
+
   public static final class LimelightConstants {
-    // All distance values in inches
+    public static final Integer[] tapePipelines = {0};
+    public static final Integer[] tagPipelines = {1};
+
     public static final double limelightAngle = 0;
-    public static final double targetHeight = 0;
-    public static final double limelightHeight = 0;
+    public static final double limelightHeight = 26.125;
+
+    // Tape heights are 1 inch higher than described in manual to account for
+    // height to center of tape
+    public static final double middleTapeHeight = 23.125;
+    public static final double highTapeHeight = 42.875;
+
+    // AprilTag heights are 4 inches higher than described in manual to account
+    // for height to center of tag
+    public static final double gridAprilTagHeight = 18.25;
+    public static final double doubleSubstationAprilTagHeight = 27.375;
+
+    // Threshold for limelight target height
+    // above = high tape, below = middle tape
+    public static final double targetHeightThresholdDeg = 0;
   }
 }

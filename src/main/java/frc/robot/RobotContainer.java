@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
@@ -16,7 +15,7 @@ public class RobotContainer {
   private Timer disableTimer = new Timer();
 
   // Define controllers
-  public static CommandXboxController coPilot = new CommandXboxController(2);
+  public static CommandXboxController xbox = new CommandXboxController(2);
   public static Joystick driveStick;
   public static Joystick rotateStick;
   private JoystickButton driveButtonSeven;
@@ -36,6 +35,7 @@ public class RobotContainer {
   private final ArmRotateToPosition armRotateToHighPosition =
       new ArmRotateToPosition(arm, Constants.ArmConstants.HighScoringPosition);
   private final ArmSetCoastMode armSetCoastMode = new ArmSetCoastMode(arm);
+  private final ArmHoming armHoming = new ArmHoming(arm);
 
   // Claw commands
   private final ClawIntake clawIntake = new ClawIntake(claw);
@@ -63,7 +63,7 @@ public class RobotContainer {
     }
 
     if (Constants.armEnabled) {
-      arm.setDefaultCommand(armManual);
+      //arm.setDefaultCommand(armManual);
     }
   }
 
@@ -74,6 +74,7 @@ public class RobotContainer {
    * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
+
   private void configureButtonBindings() {
 
     if (Constants.joysticksEnabled) {
@@ -82,18 +83,20 @@ public class RobotContainer {
       driveButtonSeven = new JoystickButton(driveStick, 7);
       driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
     }
-    coPilot.leftTrigger().whileTrue(clawIntake);
-    coPilot.rightTrigger().whileTrue(clawOuttake);
-    coPilot.back().onTrue(armSetCoastMode);
-    coPilot.a().onTrue(armRotateToLoadPosition);
-    coPilot.b().onTrue(armRotateToMidPosition);
-    coPilot.y().onTrue(armRotateToHighPosition);
-    coPilot.x().onTrue(colorChange);
+    xbox.leftTrigger().whileTrue(clawIntake);
+    xbox.rightTrigger().whileTrue(clawOuttake);
+    xbox.back().onTrue(armSetCoastMode);
+    xbox.a().onTrue(armRotateToLoadPosition);
+    xbox.b().onTrue(armRotateToMidPosition);
+    xbox.y().onTrue(armRotateToHighPosition);
+    xbox.x().onTrue(colorChange);
   }
 
   public void disabledPeriodic() {
     if (disableTimer.hasElapsed(Constants.DriveConstants.disableBreakSec)) {
-      drive.setCoastMode(); // robot has stopped, safe to enter coast mode
+      if (Constants.driveEnabled) {
+        drive.setCoastMode(); // robot has stopped, safe to enter coast mode
+      }
       disableTimer.stop();
       disableTimer.reset();
     }
@@ -109,11 +112,17 @@ public class RobotContainer {
   }
 
   public void disableSubsystems() {
-    arm.stop();
-    claw.stop();
-    claw.setCoastMode();  
+    if (Constants.armEnabled) {
+      arm.stop();
+    }
+    if (Constants.clawEnabled) {
+      claw.stop();
+      claw.setCoastMode();
+    }
+    if (Constants.driveEnabled) {
+      drive.stop();
+    }
     disableTimer.reset();
     disableTimer.start();
-    drive.stop();
   }
 }
