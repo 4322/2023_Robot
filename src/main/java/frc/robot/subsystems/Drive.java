@@ -54,6 +54,8 @@ public class Drive extends SubsystemBase {
 
   private SwerveDriveOdometry odometry;
   private ShuffleboardTab tab;
+  private double robotCentricOffsetDegrees;
+  private boolean fieldRelative = true;
 
   private GenericEntry rotErrorTab;
   private GenericEntry rotSpeedTab;
