@@ -7,12 +7,19 @@ import frc.robot.subsystems.Drive;
 public class AutoBalance extends CommandBase{
   private Drive drive;
   String direction;
+  private autoBalanceMode currentMode;
+
+  public enum autoBalanceMode {
+    driving, up, down, stop, done, abort;
+  }
 
   public AutoBalance(Drive driveSubsystem, String direction) {
     drive = driveSubsystem;
     this.direction = direction;
 
     addRequirements(drive);
+
+    
   }
 
   @Override
@@ -20,12 +27,14 @@ public class AutoBalance extends CommandBase{
 
   @Override
   public void execute() {
-    if (direction.equals("Forward")) { // Coming from direction of drive stations
-      drive.drive(Constants.DriveConstants.autoBalanceVelocity, 0, 0); // not rotating or moving side to side
-      if (drive.getAngle() >= Constants.DriveConstants.chargeStationOffAngle) {
-        if (drive.getAngle() <= Constants.DriveConstants.chargeStationOffAngle) {
-          drive.stop();
-        }
+    if (Constants.driveEnabled) {
+      switch (currentMode) {
+        case driving:
+        case up:
+        case down:
+        case stop:
+        case done:
+        case abort:
       }
     }
   }
