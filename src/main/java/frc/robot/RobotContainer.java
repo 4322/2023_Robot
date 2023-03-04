@@ -48,7 +48,8 @@ public class RobotContainer {
   // Drive Commands
   private final DriveManual driveManual = new DriveManual(drive);
   //LED Commands
-  private final ColorChange colorChange = new ColorChange(LED);
+  private final ChangeYellow changeYellow = new ChangeYellow(LED);
+  private final ChangePurple changePurple = new ChangePurple(LED);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
 
   public RobotContainer() {
@@ -98,7 +99,8 @@ public class RobotContainer {
       xbox.leftTrigger().whileTrue(clawIntake);
       xbox.rightTrigger().whileTrue(clawOuttake);
       xbox.back().onTrue(armSetCoastMode);
-      xbox.x().onTrue(colorChange);
+      xbox.y().onTrue(changeYellow);
+      xbox.a().onTrue(changePurple);
     }
   }
 
