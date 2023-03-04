@@ -29,6 +29,7 @@ public class RobotContainer {
   private final Claw claw = new Claw();
   private final Drive drive = new Drive();
   private final LED LED = new LED();
+  private final PathPlannerManager pathPlanner = new PathPlannerManager(drive);
 
   // Arm commands
   private final ArmManual armManual = new ArmManual(arm);
@@ -47,8 +48,12 @@ public class RobotContainer {
 
   // Drive Commands
   private final DriveManual driveManual = new DriveManual(drive);
+
   //LED Commands
   private final ColorChange colorChange = new ColorChange(LED);
+
+  // Auto Commands
+  private final AutoBalance autoBalance = new AutoBalance(drive);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
 
   public RobotContainer() {
@@ -119,6 +124,7 @@ public class RobotContainer {
     claw.setBrakeMode();
     disableTimer.stop();
     disableTimer.reset();
+    pathPlanner.addEvent("autoBalance", autoBalance);
   }
 
   public void disableSubsystems() {
