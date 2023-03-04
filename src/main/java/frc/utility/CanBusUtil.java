@@ -124,6 +124,11 @@ public class CanBusUtil {
     spark.setPeriodicFramePeriod(PeriodicFrame.kStatus6, nextVerySlowStatusPeriodSparkMs());
   }
 
+  public static void fastVelocity(CANSparkMax spark) {
+    spark.setPeriodicFramePeriod(PeriodicFrame.kStatus1,
+        nextFastStatusPeriodMs());
+  }
+
   // Increase frame rates for a SPARK MAX main/follower config after
   // initialization
   // when position control is in use.

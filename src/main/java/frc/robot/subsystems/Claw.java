@@ -30,6 +30,7 @@ public class Claw extends SubsystemBase {
       clawMode = ClawMode.stationary;
       clawMotor.restoreFactoryDefaults();
       clawMotor.setOpenLoopRampRate(Constants.ClawConstants.rampRate);
+      CanBusUtil.fastVelocity(clawMotor);
       clawMotor.burnFlash();
     }
   }
@@ -41,7 +42,7 @@ public class Claw extends SubsystemBase {
         if (stalled) {
           clawMotor.getPIDController().setReference(ClawConstants.stallCurrentAmps, ControlType.kCurrent);
         } else {
-          clawMotor.set(ClawConstants.IntakeVelocity);
+          clawMotor.set(ClawConstants.IntakePower);
           clawMode = ClawMode.intaking;
           DataLogManager.log("Rolly Grabbers intaking");   
         }     
@@ -55,7 +56,7 @@ public class Claw extends SubsystemBase {
         if (stalled) {
           clawMotor.getPIDController().setReference(-ClawConstants.stallCurrentAmps, ControlType.kCurrent);
         } else {
-          clawMotor.set(-ClawConstants.IntakeVelocity);
+          clawMotor.set(-ClawConstants.EjectionPower);
           clawMode = ClawMode.intaking;
           DataLogManager.log("Rolly Grabbers outtaking");   
         }  

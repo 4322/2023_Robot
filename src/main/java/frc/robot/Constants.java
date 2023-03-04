@@ -206,8 +206,8 @@ public class Constants {
   public static final class ClawConstants {// all temp values
     public static final int motorID = 16; // temp value
     public static final double rampRate = 0.8; // temp value
-    public static final double IntakeVelocity = 1;
-    public static final double EjectionVelocity = -0.75;
+    public static final double IntakePower = 0.3; // normally 1.0
+    public static final double EjectionPower = -0.3; // normally -0.75
 
     public static final double stallCurrentAmps = 3;
     public static final double stallRPMLimit = 500;
