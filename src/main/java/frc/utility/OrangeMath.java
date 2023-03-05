@@ -16,20 +16,20 @@ public class OrangeMath {
   }
 
   public static double feetToMeters(double feet) {
-    return feet / 3.281;
+    return feet / 3.28084;
   }
 
   public static double metersToFeet(double meters) {
-    return meters * 3.281;
+    return meters * 3.28084;
   }
 
   public static double pythag(double a, double b) {
-    return Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
+    return Math.sqrt(a * a + b * b);  // don't use inefficient Math.pow()
   }
 
   // Solve for a leg
   public static double inversePythag(double hypotenuse, double leg) {
-    return Math.sqrt(Math.pow(hypotenuse, 2) - Math.pow(leg, 2));
+    return Math.sqrt(hypotenuse * hypotenuse - leg * leg);  // don't use inefficient Math.pow()
   }
 
 }
