@@ -3,7 +3,6 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -43,7 +42,6 @@ public class RobotContainer {
   private final ArmRotateToPosition armRotateToHighPosition =
       new ArmRotateToPosition(arm, Constants.ArmConstants.HighScoringPosition);
   private final ArmSetCoastMode armSetCoastMode = new ArmSetCoastMode(arm);
-  private final ArmHoming armHoming = new ArmHoming(arm);
 
   // Claw commands
   private final ClawIntake clawIntake = new ClawIntake(claw);
@@ -75,7 +73,6 @@ public class RobotContainer {
       arm.setDefaultCommand(armRotateToLoadPosition);
     }
 
-    armHoming.withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
   }
 
 
