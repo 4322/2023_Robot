@@ -18,7 +18,13 @@ public class RobotContainer {
   public static CommandXboxController xbox = new CommandXboxController(2);
   public static Joystick driveStick;
   public static Joystick rotateStick;
+
+  private JoystickButton driveTrigger;
   private JoystickButton driveButtonSeven;
+  private JoystickButton driveButtonThree;
+  private JoystickButton driveButtonFour;
+
+  private JoystickButton rotateTrigger;
 
   // The robot's subsystems and commands are defined here...
   private final Arm arm = new Arm();
@@ -44,7 +50,8 @@ public class RobotContainer {
   // Drive Commands
   private final DriveManual driveManual = new DriveManual(drive);
   //LED Commands
-  private final ColorChange colorChange = new ColorChange(LED);
+  private final ChangeYellow changeYellow = new ChangeYellow(LED);
+  private final ChangePurple changePurple = new ChangePurple(LED);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
 
   public RobotContainer() {
@@ -63,7 +70,7 @@ public class RobotContainer {
     }
 
     if (Constants.armEnabled) {
-      //arm.setDefaultCommand(armManual);
+      arm.setDefaultCommand(armRotateToLoadPosition);
     }
   }
 
@@ -80,16 +87,27 @@ public class RobotContainer {
     if (Constants.joysticksEnabled) {
       driveStick = new Joystick(0);
       rotateStick = new Joystick(1);
+
+      driveTrigger = new JoystickButton(driveStick, 1);
       driveButtonSeven = new JoystickButton(driveStick, 7);
+      driveButtonThree = new JoystickButton(driveStick, 3);//cone
+      driveButtonFour = new JoystickButton(driveStick, 4);//cube
+      rotateTrigger = new JoystickButton(rotateStick, 1);
+
+      driveTrigger.whileTrue(clawOuttake);
       driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
+      driveButtonThree.onTrue(changeYellow);
+      driveButtonFour.onTrue(changePurple);
+      rotateTrigger.whileTrue(armRotateToMidPosition);
     }
-    xbox.leftTrigger().whileTrue(clawIntake);
-    xbox.rightTrigger().whileTrue(clawOuttake);
-    xbox.back().onTrue(armSetCoastMode);
-    xbox.a().onTrue(armRotateToLoadPosition);
-    xbox.b().onTrue(armRotateToMidPosition);
-    xbox.y().onTrue(armRotateToHighPosition);
-    xbox.x().onTrue(colorChange);
+
+    if (Constants.xboxEnabled) {
+      xbox.leftTrigger().whileTrue(clawIntake);
+      xbox.rightTrigger().whileTrue(clawOuttake);
+      xbox.back().onTrue(armSetCoastMode);
+      xbox.leftBumper().onTrue(changeYellow);
+      xbox.rightBumper().onTrue(changePurple);
+    }
   }
 
   public void disabledPeriodic() {

@@ -7,7 +7,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 
 public class Constants {
   public static final boolean debug = false;
-  public static final boolean demo = false;
+  public static final boolean inDemoMode = false;
 
   public static final boolean armEnabled = true;
   public static final boolean armSensorEnabled = true;
@@ -24,8 +24,8 @@ public class Constants {
   // in the application to enable it and no set() commands can be issued because
   // the REV library will continuously send the same command, thereby overriding
   // tuning commands from the REV Hardware CLient.
-  public static final boolean armTuningMode = true;
-  public static final boolean clawTuningMode = false;
+  public static final boolean armTuningMode = false;
+  public static final boolean clawTuningMode = true;
 
   public static final int falconEncoderUnits = 2048;
   public static final double inchesToMeters = 0.0254;
@@ -95,10 +95,10 @@ public class Constants {
     public static final class Manual {
 
       public static final double joystickDriveDeadband = 0.06;
-      public static final double joystickRotateDeadband = 0.08;
+      public static final double joystickRotateDeadband = 0.1;
 
       public static final double xboxDriveDeadband = 0.06;
-      public static final double xboxRotateDeadband = 0.06;
+      public static final double xboxRotateDeadband = 0.1;
 
     }
 
@@ -178,7 +178,7 @@ public class Constants {
 
     public static final class Drive {
 
-      public static final double configClosedLoopRamp = 0.08;
+      public static final double configClosedLoopRamp = 0;
 
       public static final double voltageCompSaturation = 11.5;
       public static final boolean enableVoltageCompensation = true;
@@ -196,7 +196,7 @@ public class Constants {
       public static final double supplyTime = 0.5;
 
       public static final double wheelDiameterInches = 4.0;
-      public static final double gearRatio = 6.55;
+      public static final double gearRatio = 7.8;
       public static final double kP = 0.045;
       public static final double kI = 0.000065;
       public static final double kD = 0.0;
@@ -224,8 +224,11 @@ public class Constants {
   public static final class ClawConstants {// all temp values
     public static final int motorID = 16; // temp value
     public static final double rampRate = 0.8; // temp value
-    public static final double IntakeVelocity = 1;
-    public static final double EjectionVelocity = -0.75;
+    public static final double IntakePower = 0.3; // normally 1.0
+    public static final double EjectionPower = -0.3; // normally -0.75
+
+    public static final double stallCurrentAmps = 3;
+    public static final double stallRPMLimit = 500;
 
     public static enum ClawMode {
       ejecting, stationary, intaking
@@ -235,13 +238,11 @@ public class Constants {
   public static final class ArmConstants {
     public static final int leftMotorID = 15;
     public static final int rightMotorID = 14;
-    public static final double rampRate = 0;
-    public static final double forward = 1;
-    public static final double backward = -1;
+    public static final double rampRate = 0.3; // good range: 0.3 to 0.5
     public static final double logIntervalSeconds = 0.5;
   
-    public static final int maxPosition = 500;
-    public static final int minPosition = -500;
+    public static final int maxPosition = 70;
+    public static final int minPosition = 0;
 
     public static final double manualDeadband = 0;
 
@@ -252,17 +253,19 @@ public class Constants {
     public static final double HighScoringPosition = 60;
     public static final double ArmHomingSpeed = 0;
 
-    public static final class SmartMotion {
-      public static final double kP = 1; 
+    public static final double positionToleranceInternal = 0.3;
+
+    public static final class SmartMotion { // SmartMotion values need to be checked (not k values), currently not using
+      public static final double kP = 0.1;
       public static final double kI = 0;
-      public static final double kD = 0; 
-      public static final double kIz = 3;
-      public static final double kMaxOutput = 0.3; 
-      public static final double kMinOutput = -0.3;
-      public static final double minVel = 100;
-      public static final double maxVel = 1800; // rpm
-      public static final double maxAcc = 3000;
-      public static final double positionTolerance = 1;
+      public static final double kD = 0;
+      public static final double kIz = 0;
+      public static final double kMaxOutput = 0.5;
+      public static final double kMinOutput = -0.5;
+      public static final double minVel = 0;
+      public static final double maxVel = 3000; // rpm
+      public static final double maxAcc = 10000;
+      public static final double positionTolerance = 0.2;
     }
   }
 

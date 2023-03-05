@@ -50,6 +50,7 @@ public class DriveManual extends CommandBase {
       // Angles have a range of +/- 180 degrees (need to verify this)
 
       // All variables in this program use WPI coordinates
+      // All "theta" variables are in radians
 
       // Cache hardware status for consistency in logic and convert
       // joystick coordinates to WPI coordinates.
@@ -57,14 +58,27 @@ public class DriveManual extends CommandBase {
       // Cartesian inputs
       final double driveJoyRawX = -RobotContainer.driveStick.getY();
       final double driveJoyRawY = -RobotContainer.driveStick.getX();
+      final double rotateJoyRawX = -RobotContainer.rotateStick.getY();
+      final double rotateJoyRawY = -RobotContainer.rotateStick.getX();
+
       final double driveXboxRawX = -RobotContainer.xbox.getLeftY();
       final double driveXboxRawY = -RobotContainer.xbox.getLeftX();
+      final double rotateXboxRawX = -RobotContainer.xbox.getRightY();
       final double rotateXboxRawY = -RobotContainer.xbox.getRightX();
 
       // Polar inputs
       final double driveJoyRawMag = OrangeMath.pythag(driveJoyRawX, driveJoyRawY);
+      final double rotateJoyRawMag = OrangeMath.pythag(rotateJoyRawX, rotateJoyRawY);
       final double driveXboxRawMag = OrangeMath.pythag(driveXboxRawX, driveXboxRawY);
+      final double rotateXboxRawMag = OrangeMath.pythag(rotateXboxRawX, rotateXboxRawY);
+
+      final double driveJoyRawTheta = Math.atan2(driveJoyRawY, driveJoyRawX);
+      final double rotateJoyRawTheta = Math.atan2(rotateJoyRawY, rotateJoyRawX);
+      final double driveXboxRawTheta = Math.atan2(driveXboxRawY, driveXboxRawX);
+      final double rotateXboxRawTheta = Math.atan2(rotateXboxRawY, rotateXboxRawX);
+
       // Joystick rotations
+      final double driveJoyRawZ = -RobotContainer.driveStick.getZ();
       final double rotateJoyRawZ = -RobotContainer.rotateStick.getZ();
 
       // Deadbands and Active Checks
@@ -72,44 +86,49 @@ public class DriveManual extends CommandBase {
       final boolean rotateJoyOutDeadband = Math.abs(rotateJoyRawZ) > Manual.joystickRotateDeadband;
       final boolean driveXboxOutDeadband = Math.abs(driveXboxRawMag) > Manual.joystickDriveDeadband;
       final boolean rotateXboxOutDeadband =
-          Math.abs(rotateXboxRawY) > Manual.joystickRotateDeadband;
+          Math.abs(rotateXboxRawX) > Manual.joystickRotateDeadband;
 
       // Other variables
+      double driveMag;
+      double driveTheta;
       double driveX;
       double driveY;
       double rotatePower;
 
       if (driveJoyOutDeadband && driveXboxOutDeadband) {
-        driveX = (driveJoyRawX + driveXboxRawX) / 2;
-        driveY = (driveJoyRawY + driveXboxRawY) / 2;
+        driveMag = (driveJoyRawMag + driveXboxRawMag) / 2;
+        driveTheta = (driveJoyRawTheta + driveXboxRawTheta) / 2;
       } else if (driveJoyOutDeadband) {
-        driveX = driveJoyRawX;
-        driveY = driveJoyRawY;
+        driveMag = driveJoyRawMag;
+        driveTheta = driveJoyRawTheta;
       } else if (driveXboxOutDeadband) {
-        driveX = driveXboxRawX;
-        driveY = driveXboxRawY;
+        driveMag = driveXboxRawMag;
+        driveTheta = driveXboxRawTheta;
       } else {
-        driveX = 0;
-        driveY = 0;
+        driveMag = 0;
+        driveTheta = 0;
       }
 
       if (rotateJoyOutDeadband && rotateXboxOutDeadband) {
         double combinedDeadband = Manual.joystickRotateDeadband + Manual.xboxRotateDeadband;
-        rotatePower = (rotateJoyRawZ + rotateXboxRawY - combinedDeadband) / (2 - combinedDeadband);
+        rotatePower = (rotateJoyRawZ + rotateXboxRawX - combinedDeadband) / (2 - combinedDeadband);
       } else if (rotateJoyOutDeadband) {
         rotatePower =
             (rotateJoyRawZ - Manual.joystickRotateDeadband) / (1 - Manual.joystickRotateDeadband);
       } else if (rotateXboxOutDeadband) {
         rotatePower =
-            (rotateXboxRawY - Manual.xboxRotateDeadband) / (1 - Manual.xboxRotateDeadband);
+            (rotateXboxRawX - Manual.xboxRotateDeadband) / (1 - Manual.xboxRotateDeadband);
       } else {
         rotatePower = 0;
       }
 
       // Increase sensitivity
-      driveX = driveX * driveX * driveY;
-      driveY = driveY * driveY * driveX;
+      driveMag = Math.pow(driveMag, 3);
       rotatePower = Math.pow(rotatePower, 3);
+
+      // Convert to field-relative vectors
+      driveX = Math.cos(driveTheta) * driveMag;
+      driveY = Math.sin(driveTheta) * driveMag;
 
       drive.drive(driveX, driveY, rotatePower);
     }

@@ -34,13 +34,13 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     tab = Shuffleboard.getTab("Enabled Subsystems");
 
-    subsystemEnabled("Comp Mode", 0, 0, !Constants.debug);
-    subsystemEnabled("Demo Mode", 1, 0, Constants.demo);
-    subsystemEnabled("Drivebase", 2, 0, Constants.driveEnabled);
-    subsystemEnabled("Arm", 3, 0, Constants.armEnabled);
-    subsystemEnabled("Arm Sensor", 4, 0, Constants.armSensorEnabled);
-    subsystemEnabled("Claw", 5, 0, Constants.clawEnabled);
-    subsystemEnabled("LEDs", 6,0, Constants.ledEnabled);
+    subsystemEnabled("Comp Mode", 0, 0, 
+      !Constants.debug && !Constants.inDemoMode && !Constants.armTuningMode && !Constants.clawTuningMode);
+    subsystemEnabled("Drivebase", 1, 0, Constants.driveEnabled);
+    subsystemEnabled("Arm", 2, 0, Constants.armEnabled);
+    subsystemEnabled("Arm Sensor", 3, 0, Constants.armSensorEnabled);
+    subsystemEnabled("Claw", 4, 0, Constants.clawEnabled);
+    subsystemEnabled("LEDs", 5, 0, Constants.ledEnabled);
 
     subsystemEnabled("Joysticks", 0, 1, Constants.joysticksEnabled);
     subsystemEnabled("Gyro", 1, 1, Constants.gyroEnabled);
