@@ -75,11 +75,11 @@ public class Constants {
 
     public static final class Manual {
 
-      public static final double joystickDriveDeadband = 0.06;
+      public static final double joystickDriveDeadband = 0.1;
       public static final double joystickRotateDeadband = 0.2;
 
-      public static final double xboxDriveDeadband = 0.06;
-      public static final double xboxRotateDeadband = 0.1;
+      public static final double xboxDriveDeadband = 0.1;
+      public static final double xboxRotateDeadband = 0.2;
 
     }
 
@@ -183,7 +183,6 @@ public class Constants {
       public static final double kD = 0.0;
       public static final double kIz = 500;
       public static final double kFF = 0.05;
-
       
     }
 

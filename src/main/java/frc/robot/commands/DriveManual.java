@@ -84,9 +84,9 @@ public class DriveManual extends CommandBase {
       // Deadbands and Active Checks
       final boolean driveJoyOutDeadband = Math.abs(driveJoyRawMag) > Manual.joystickDriveDeadband;
       final boolean rotateJoyOutDeadband = Math.abs(rotateJoyRawZ) > Manual.joystickRotateDeadband;
-      final boolean driveXboxOutDeadband = Math.abs(driveXboxRawMag) > Manual.joystickDriveDeadband;
+      final boolean driveXboxOutDeadband = Math.abs(driveXboxRawMag) > Manual.xboxDriveDeadband;
       final boolean rotateXboxOutDeadband =
-          Math.abs(rotateXboxRawY) > Manual.joystickRotateDeadband;
+          Math.abs(rotateXboxRawY) > Manual.xboxRotateDeadband;
 
       // Other variables
       double driveMag;
