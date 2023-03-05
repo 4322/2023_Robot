@@ -19,7 +19,7 @@ public class ArmHoming extends CommandBase{
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    arm.setCoastMode();
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -27,8 +27,8 @@ public class ArmHoming extends CommandBase{
   public void execute() {
     arm.setArmSpeed(Constants.ArmConstants.ArmHomingSpeed);
     if (arm.getArmSensorPressed() == true) {
-      arm.setBrakeMode();
       arm.setPosition(ArmConstants.minPosition);
+      arm.setHomed();
     }
   }
 
@@ -41,6 +41,6 @@ public class ArmHoming extends CommandBase{
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return arm.isHomed();
   }
 }

@@ -233,7 +233,7 @@ public class Constants {
     public static final double LoadPosition = 2;
     public static final double MidScoringPosition = 64;
     public static final double HighScoringPosition = 60;
-    public static final double ArmHomingSpeed = 0;
+    public static final double ArmHomingSpeed = -0.1;
 
     public static final double positionToleranceInternal = 0.3;
 

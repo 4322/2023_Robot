@@ -30,6 +30,7 @@ public class Arm extends SubsystemBase {
 
   private ShuffleboardTab tab;
   private GenericEntry armPos;
+  private boolean homed = false;
 
   public Arm() {
     if (Constants.armEnabled) {
@@ -157,6 +158,14 @@ public class Arm extends SubsystemBase {
       leftMotor.setIdleMode(IdleMode.kBrake);
       rightMotor.setIdleMode(IdleMode.kBrake);
     }
+  }
+
+  public void setHomed() {
+    homed = true;
+  }
+
+  public boolean isHomed() {
+    return homed;
   }
 
   @Override
