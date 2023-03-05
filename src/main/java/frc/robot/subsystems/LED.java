@@ -70,8 +70,8 @@ public class LED extends SubsystemBase {
     public void yellow() {
       if (Constants.ledEnabled) {
         red.set(true);
-        green.set(true);
         blue.set(false);
+        green.set(true);
       }
     }
 
