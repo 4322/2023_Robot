@@ -96,13 +96,16 @@ public class DriveManual extends CommandBase {
       double rotatePower;
 
       if (driveJoyOutDeadband && driveXboxOutDeadband) {
-        driveMag = (driveJoyRawMag + driveXboxRawMag) / 2;
-        driveTheta = (driveJoyRawTheta + driveXboxRawTheta) / 2;
+        double combinedDeadband = Manual.joystickDriveDeadband + Manual.xboxDriveDeadband;
+        driveMag = (driveJoyRawMag + driveXboxRawMag - combinedDeadband) / (2 - combinedDeadband);
+        driveTheta = ((driveJoyRawTheta * (driveJoyRawMag - Manual.joystickDriveDeadband)) + 
+          (driveXboxRawTheta * (driveXboxRawMag - Manual.xboxDriveDeadband))) / 
+          (driveJoyRawMag + driveXboxRawMag - combinedDeadband);
       } else if (driveJoyOutDeadband) {
-        driveMag = driveJoyRawMag;
+        driveMag = (driveJoyRawMag - Manual.joystickDriveDeadband) / (1 - Manual.joystickDriveDeadband);
         driveTheta = driveJoyRawTheta;
       } else if (driveXboxOutDeadband) {
-        driveMag = driveXboxRawMag;
+        driveMag = (driveXboxRawMag - Manual.xboxDriveDeadband) / (1 - Manual.xboxDriveDeadband);
         driveTheta = driveXboxRawTheta;
       } else {
         driveMag = 0;
