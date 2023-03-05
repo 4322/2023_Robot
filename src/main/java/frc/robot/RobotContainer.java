@@ -67,6 +67,7 @@ public class RobotContainer {
 
   // Auto Commands
   private final AutoBalance autoBalance = new AutoBalance(drive);
+  private final ScoreCone scoreCone = new ScoreCone(arm, claw);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
 
   public RobotContainer() {
@@ -100,6 +101,7 @@ public class RobotContainer {
     pathPlannerManager = new PathPlannerManager(drive);
 
     pathPlannerManager.addEvent("autoBalance", autoBalance);
+    pathPlannerManager.addEvent("scoreCone", scoreCone);
     
     pathPlannerManager.loadAuto("Test Path Rotation", "Test Path Rotation", false);
     pathPlannerManager.loadAuto("Test Auto Balance", "Test Auto Balance Blue", false);
