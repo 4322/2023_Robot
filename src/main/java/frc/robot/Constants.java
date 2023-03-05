@@ -91,10 +91,21 @@ public class Constants {
       public static final double autoMaxRotationRadPerSecond = Math.PI * 2;
       public static final double autoMaxRotationAccelerationRadPerSec2 = Math.PI * 4;
 
+      // Enum for autonomous rotation direction
+      public static enum rotationDir {
+        forward,
+        left,
+        backward,
+        right
+      }
+
       public static final double autoRotkP = 0.08;
       public static final double autoRotkD = 0.004;
       public static final double minAutoRotateSpeed = 0.03;
       public static final double maxAutoRotateSpeed = 0.5;
+      public static final double rotationToleranceDeg = 1; 
+      public static final double rotationTimeAtPosSec = 0.2; // 200 ms
+      public static final double rotationTimeoutSec = 3;
 
     }
 

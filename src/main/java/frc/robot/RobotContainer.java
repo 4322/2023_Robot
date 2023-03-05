@@ -9,6 +9,7 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.LED;
+import frc.robot.Constants.DriveConstants.Auto.rotationDir;
 import frc.robot.commands.*;
 
 public class RobotContainer {
@@ -24,8 +25,10 @@ public class RobotContainer {
   private JoystickButton driveButtonFour;
   private JoystickButton driveButtonFive;
   private JoystickButton driveButtonSeven;
+  private JoystickButton driveButtonNine;
 
   private JoystickButton rotateTrigger;
+  private JoystickButton rotateButtonFive;
 
   // The robot's subsystems and commands are defined here...
   private final Arm arm = new Arm();
@@ -50,6 +53,12 @@ public class RobotContainer {
 
   // Drive Commands
   private final DriveManual driveManual = new DriveManual(drive);
+  private final DriveBreakout driveBreakout = new DriveBreakout(drive);
+  private final DriveDirectionalRotation driveRotateForward = new DriveDirectionalRotation(drive, rotationDir.forward);
+  private final DriveDirectionalRotation driveRotateLeft = new DriveDirectionalRotation(drive, rotationDir.left);
+  private final DriveDirectionalRotation driveRotateBackward = new DriveDirectionalRotation(drive, rotationDir.backward);
+  private final DriveDirectionalRotation driveRotateRight = new DriveDirectionalRotation(drive, rotationDir.right);
+
   //LED Commands
   private final ChangeYellow changeYellow = new ChangeYellow(LED);
   private final ChangePurple changePurple = new ChangePurple(LED);
@@ -94,22 +103,27 @@ public class RobotContainer {
       driveButtonFour = new JoystickButton(driveStick, 4);//cube
       driveButtonFive = new JoystickButton(driveStick, 5);
       driveButtonSeven = new JoystickButton(driveStick, 7);
+      driveButtonNine = new JoystickButton(driveStick, 9);
       rotateTrigger = new JoystickButton(rotateStick, 1);
+      rotateButtonFive = new JoystickButton(rotateStick, 5);
 
       driveTrigger.whileTrue(clawOuttake);
       driveButtonThree.onTrue(changeYellow);
       driveButtonFour.onTrue(changePurple);
       driveButtonFive.whileTrue(clawIntake);
       driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
+      driveButtonNine.onTrue(driveBreakout);
       rotateTrigger.whileTrue(armRotateToMidPosition);
+      rotateButtonFive.onTrue(driveRotateForward);
     }
 
     if (Constants.xboxEnabled) {
       xbox.leftTrigger().whileTrue(clawIntake);
       xbox.rightTrigger().whileTrue(clawOuttake);
       xbox.back().onTrue(armSetCoastMode);
-      xbox.leftBumper().onTrue(changeYellow);
-      xbox.rightBumper().onTrue(changePurple);
+      xbox.button(8).onTrue(driveBreakout); // menu? i think
+      xbox.leftBumper().onTrue(driveRotateLeft);
+      xbox.rightBumper().onTrue(driveRotateRight);
     }
   }
 

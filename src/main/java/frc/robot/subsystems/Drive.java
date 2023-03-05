@@ -55,6 +55,7 @@ public class Drive extends SubsystemBase {
   private SwerveDriveOdometry odometry;
   private ShuffleboardTab tab;
   private double robotCentricOffsetDegrees;
+  private double currentTargetAngle;
   private boolean fieldRelative = true;
 
   private GenericEntry rotErrorTab;
@@ -314,16 +315,19 @@ public class Drive extends SubsystemBase {
 
   // Uses a PID Controller to rotate the robot to a certain degree
   // Must be periodically updated to work
-  public void driveAutoRotate(double driveX, double driveY, double rotateDeg, double toleranceDeg) {
+  public void driveAutoRotate(double driveX, double driveY, double rotateTargetDeg, double toleranceDeg) {
     if (Constants.driveEnabled) {
+      double currentAngle = getAngle();
+      currentTargetAngle = rotateTargetDeg;
+
       if (Constants.debug) {
         rotPID.setP(rotkP.getDouble(DriveConstants.Auto.autoRotkP));
         rotPID.setD(rotkD.getDouble(DriveConstants.Auto.autoRotkD));
       }
 
-      double rotPIDSpeed = rotPID.calculate(0, rotateDeg);
+      double rotPIDSpeed = rotPID.calculate(currentAngle, rotateTargetDeg);
 
-      if (Math.abs(rotateDeg) <= toleranceDeg) {
+      if (Math.abs(rotateTargetDeg) <= toleranceDeg) {
         rotPIDSpeed = 0;
       } else if (Math.abs(rotPIDSpeed) < DriveConstants.Auto.minAutoRotateSpeed) {
         rotPIDSpeed = Math.copySign(DriveConstants.Auto.minAutoRotateSpeed, rotPIDSpeed);
@@ -336,7 +340,7 @@ public class Drive extends SubsystemBase {
       drive(driveX, driveY, rotPIDSpeed);
 
       if (Constants.debug) {
-        rotErrorTab.setDouble(rotateDeg);
+        rotErrorTab.setDouble(currentAngle - rotateTargetDeg);
         rotSpeedTab.setDouble(rotPIDSpeed);
       }
     }
@@ -422,6 +426,10 @@ public class Drive extends SubsystemBase {
     } else {
       return null;
     }
+  }
+
+  public boolean isAtRotationTarget(double rotationToleranceDeg) {
+    return Math.abs(getAngle() - currentTargetAngle) <= rotationToleranceDeg;
   }
 
   // convert angle to range of +/- 180 degrees
