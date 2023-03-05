@@ -96,7 +96,7 @@ public class Arm extends SubsystemBase {
   public void setPosition(double pos) {
     if (Constants.armEnabled) {
       if (!Constants.armTuningMode) {
-        leftMotor.getEncoder().setPosition(pos);
+        encoder.setPosition(pos);
       }
     }
   }
