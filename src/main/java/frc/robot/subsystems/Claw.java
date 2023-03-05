@@ -22,6 +22,7 @@ public class Claw extends SubsystemBase {
     if (Constants.clawEnabled) {
       clawMotor = new CANSparkMax(Constants.ClawConstants.motorID, MotorType.kBrushless);
       CanBusUtil.staggerSparkMax(clawMotor);
+      stallTimer.reset();
     }
   }
 
