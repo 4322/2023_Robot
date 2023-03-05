@@ -21,6 +21,8 @@ public class RobotContainer {
 
   private JoystickButton driveTrigger;
   private JoystickButton driveButtonSeven;
+  private JoystickButton driveButtonThree;
+  private JoystickButton driveButtonFour;
 
   private JoystickButton rotateTrigger;
 
@@ -48,7 +50,8 @@ public class RobotContainer {
   // Drive Commands
   private final DriveManual driveManual = new DriveManual(drive);
   //LED Commands
-  private final ColorChange colorChange = new ColorChange(LED);
+  private final ChangeYellow changeYellow = new ChangeYellow(LED);
+  private final ChangePurple changePurple = new ChangePurple(LED);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
 
   public RobotContainer() {
@@ -87,10 +90,14 @@ public class RobotContainer {
 
       driveTrigger = new JoystickButton(driveStick, 1);
       driveButtonSeven = new JoystickButton(driveStick, 7);
+      driveButtonThree = new JoystickButton(driveStick, 3);//cone
+      driveButtonFour = new JoystickButton(driveStick, 4);//cube
       rotateTrigger = new JoystickButton(rotateStick, 1);
 
       driveTrigger.whileTrue(clawOuttake);
       driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
+      driveButtonThree.onTrue(changeYellow);
+      driveButtonFour.onTrue(changePurple);
       rotateTrigger.whileTrue(armRotateToMidPosition);
     }
 
@@ -98,7 +105,8 @@ public class RobotContainer {
       xbox.leftTrigger().whileTrue(clawIntake);
       xbox.rightTrigger().whileTrue(clawOuttake);
       xbox.back().onTrue(armSetCoastMode);
-      xbox.x().onTrue(colorChange);
+      xbox.leftBumper().onTrue(changeYellow);
+      xbox.rightBumper().onTrue(changePurple);
     }
   }
 
