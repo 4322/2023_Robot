@@ -9,25 +9,25 @@ import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Claw extends SubsystemBase {
   private CANSparkMax clawMotor;
+
   private boolean stalled;
-
-  public ClawMode clawMode;
+  private Timer stallTimer = new Timer();
   
-
   public Claw() {
     if (Constants.clawEnabled) {
       clawMotor = new CANSparkMax(Constants.ClawConstants.motorID, MotorType.kBrushless);
       CanBusUtil.staggerSparkMax(clawMotor);
+      stallTimer.reset();
     }
   }
 
   public void init() {
     if (Constants.clawEnabled) {
-      clawMode = ClawMode.stationary;
       clawMotor.restoreFactoryDefaults();
       clawMotor.setOpenLoopRampRate(Constants.ClawConstants.rampRate);
       CanBusUtil.fastVelocity(clawMotor);
@@ -40,10 +40,9 @@ public class Claw extends SubsystemBase {
     if (Constants.clawEnabled) {
       if (!Constants.clawTuningMode) {
         if (stalled) {
-          clawMotor.getPIDController().setReference(ClawConstants.stallCurrentAmps, ControlType.kCurrent);
+          clawMotor.set(ClawConstants.stallIntakePower);
         } else {
-          clawMotor.set(ClawConstants.IntakePower);
-          clawMode = ClawMode.intaking;
+          clawMotor.set(ClawConstants.intakePower);
           DataLogManager.log("Rolly Grabbers intaking");   
         }     
       }
@@ -54,10 +53,9 @@ public class Claw extends SubsystemBase {
     if (Constants.clawEnabled) {
       if (!Constants.clawTuningMode) {
         if (stalled) {
-          clawMotor.getPIDController().setReference(-ClawConstants.stallCurrentAmps, ControlType.kCurrent);
+          clawMotor.set(ClawConstants.stallOuttakePower);
         } else {
-          clawMotor.set(-ClawConstants.EjectionPower);
-          clawMode = ClawMode.intaking;
+          clawMotor.set(-ClawConstants.outtakePower);
           DataLogManager.log("Rolly Grabbers outtaking");   
         }  
       }
@@ -68,7 +66,6 @@ public class Claw extends SubsystemBase {
     if (Constants.clawEnabled) {
       if (!Constants.clawTuningMode) {
         clawMotor.stopMotor();
-        clawMode = ClawMode.stationary;
         DataLogManager.log("Rolly Grabbers stopping");
       }
     }
@@ -92,9 +89,15 @@ public class Claw extends SubsystemBase {
       double absRPM = Math.abs(clawMotor.getEncoder().getVelocity());
 
       if (absRPM < ClawConstants.stallRPMLimit) {
-        stalled = true;
+        if (stallTimer.hasElapsed(ClawConstants.stallTime)) {
+          stalled = true;
+        } else {
+          stallTimer.start();
+        }
       } else {
         stalled = false;
+        stallTimer.stop();
+        stallTimer.reset();
       }
     }
   }

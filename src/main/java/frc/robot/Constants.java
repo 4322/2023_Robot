@@ -100,12 +100,12 @@ public class Constants {
 
     public static final class Manual {
 
-      public static final double joystickDriveDeadband = 0.06;
-      public static final double joystickRotateDeadband = 0.1;
+      public static final double joystickDriveDeadband = 0.1;
+      public static final double joystickRotateLeftDeadband = 0.4;  // both joysticks have a huge left twist deadzone
+      public static final double joystickRotateRightDeadband = 0.2;
 
-      public static final double xboxDriveDeadband = 0.06;
-      public static final double xboxRotateDeadband = 0.1;
-
+      public static final double xboxDriveDeadband = 0.1;
+      public static final double xboxRotateDeadband = 0.2;
     }
 
     public static final class Auto {
@@ -208,7 +208,6 @@ public class Constants {
       public static final double kD = 0.0;
       public static final double kIz = 500;
       public static final double kFF = 0.05;
-
       
     }
 
@@ -230,10 +229,14 @@ public class Constants {
   public static final class ClawConstants {// all temp values
     public static final int motorID = 16; // temp value
     public static final double rampRate = 0.8; // temp value
-    public static final double IntakePower = 0.3; // normally 1.0
-    public static final double EjectionPower = -0.3; // normally -0.75
 
-    public static final double stallCurrentAmps = 3;
+
+    public static final double intakePower = 0.3; // normally 1.0
+    public static final double outtakePower = -0.3; // normally -0.75
+    public static final double stallIntakePower = 0;
+    public static final double stallOuttakePower = 0;
+
+    public static final double stallTime = 0.2; // 200 ms
     public static final double stallRPMLimit = 500;
 
     public static enum ClawMode {

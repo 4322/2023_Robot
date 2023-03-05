@@ -28,9 +28,10 @@ public class RobotContainer {
   public static Joystick rotateStick;
 
   private JoystickButton driveTrigger;
-  private JoystickButton driveButtonSeven;
   private JoystickButton driveButtonThree;
   private JoystickButton driveButtonFour;
+  private JoystickButton driveButtonFive;
+  private JoystickButton driveButtonSeven;
 
   private JoystickButton rotateTrigger;
 
@@ -119,15 +120,17 @@ public class RobotContainer {
       rotateStick = new Joystick(1);
 
       driveTrigger = new JoystickButton(driveStick, 1);
-      driveButtonSeven = new JoystickButton(driveStick, 7);
       driveButtonThree = new JoystickButton(driveStick, 3);//cone
       driveButtonFour = new JoystickButton(driveStick, 4);//cube
+      driveButtonFive = new JoystickButton(driveStick, 5);
+      driveButtonSeven = new JoystickButton(driveStick, 7);
       rotateTrigger = new JoystickButton(rotateStick, 1);
 
       driveTrigger.whileTrue(clawOuttake);
-      driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
       driveButtonThree.onTrue(changeYellow);
       driveButtonFour.onTrue(changePurple);
+      driveButtonFive.whileTrue(clawIntake);
+      driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
       rotateTrigger.whileTrue(armRotateToMidPosition);
     }
 
