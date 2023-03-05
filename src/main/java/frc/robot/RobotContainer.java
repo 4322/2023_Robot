@@ -1,14 +1,22 @@
 package frc.robot;
 
+import com.pathplanner.lib.PathPlannerTrajectory;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.LED;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.*;
 
 public class RobotContainer {
@@ -26,12 +34,15 @@ public class RobotContainer {
 
   private JoystickButton rotateTrigger;
 
+  private ShuffleboardTab tab;
+  private SendableChooser<Integer> autoModeChooser = new SendableChooser<Integer>();
+
   // The robot's subsystems and commands are defined here...
   private final Arm arm = new Arm();
   private final Claw claw = new Claw();
   private final Drive drive = new Drive();
   private final LED LED = new LED();
-  private final PathPlannerManager pathPlanner = new PathPlannerManager(drive);
+  private final PathPlannerManager pathPlannerManager;
 
   // Arm commands
   private final ArmManual armManual = new ArmManual(arm);
@@ -50,7 +61,6 @@ public class RobotContainer {
 
   // Drive Commands
   private final DriveManual driveManual = new DriveManual(drive);
-
   //LED Commands
   private final ChangeYellow changeYellow = new ChangeYellow(LED);
   private final ChangePurple changePurple = new ChangePurple(LED);
@@ -70,6 +80,15 @@ public class RobotContainer {
     // Conifigure the button bindings
     configureButtonBindings();
 
+    tab = Shuffleboard.getTab("Auto");
+    autoModeChooser.setDefaultOption("Test Path Rotation", 1);
+    autoModeChooser.addOption("Test Auto Balance Blue", 2);
+    
+    tab.add("Auto Mode", autoModeChooser)
+      .withWidget(BuiltInWidgets.kSplitButtonChooser)
+      .withPosition(0, 0)
+      .withSize(4, 2);
+      
     if (Constants.driveEnabled) {
       drive.setDefaultCommand(driveManual);
     }
@@ -77,6 +96,13 @@ public class RobotContainer {
     if (Constants.armEnabled) {
       arm.setDefaultCommand(armRotateToLoadPosition);
     }
+
+    pathPlannerManager = new PathPlannerManager(drive);
+
+    pathPlannerManager.addEvent("autoBalance", autoBalance);
+    
+    pathPlannerManager.loadAuto("Test Path Rotation", "Test Path Rotation", false);
+    pathPlannerManager.loadAuto("Test Auto Balance", "Test Auto Balance Blue", false);
   }
 
 
@@ -87,8 +113,7 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
 
-  private void configureButtonBindings() {
-
+  private void configureButtonBindings() {  
     if (Constants.joysticksEnabled) {
       driveStick = new Joystick(0);
       rotateStick = new Joystick(1);
@@ -132,7 +157,6 @@ public class RobotContainer {
     claw.setBrakeMode();
     disableTimer.stop();
     disableTimer.reset();
-    pathPlanner.addEvent("autoBalance", autoBalance);
   }
 
   public void disableSubsystems() {
@@ -148,5 +172,13 @@ public class RobotContainer {
     }
     disableTimer.reset();
     disableTimer.start();
+  }
+
+  public Command getAutonomousCommand() {
+    if (Constants.demo.inDemoMode) {
+      return null;
+    }
+
+    return pathPlannerManager.getAuto("null");
   }
 }
