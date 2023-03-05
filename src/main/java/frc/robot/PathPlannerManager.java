@@ -30,6 +30,9 @@ class PathPlannerManager {
 
     drive = driveSubsystem;
 
+    eventMap = new HashMap<String, Command>();
+    autoMap = new HashMap<String, Command>();
+
     defaultConstraints = new PathConstraints(DriveConstants.Auto.autoMaxSpeedMetersPerSecond,
         DriveConstants.Auto.autoMaxAccelerationMetersPerSec2);
 

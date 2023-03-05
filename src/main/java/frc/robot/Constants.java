@@ -86,12 +86,6 @@ public class Constants {
 
     public static final double manualRotateToleranceDegrees = 1.5;
 
-    // Values for autonomous path finding
-    public static final double autoMaxSpeedMetersPerSecond = 3.5;
-    public static final double autoMaxAccelerationMetersPerSec2 = 2.5;
-    public static final double autoMaxRotationRadPerSecond = Math.PI * 2;
-    public static final double autoMaxRotationAccelerationRadPerSec2 = Math.PI * 4;
-
     // Values for auto balance
     public static final double autoBalanceStartingVelocity = 1;
     public static final double autoBalanceApproachingVelocity = 0.3; // slower speed when approaching midpoint of charging station
@@ -220,15 +214,15 @@ public class Constants {
 
     public static final class Trajectory {
       public static final class PIDXY {
-        public static final double kP = 0.5;
+        public static final double kP = 0;
         public static final double kI = 0;
         public static final double kD = 0;
       }
 
       public static final class PIDR {
-        public static final double kP = 4;
+        public static final double kP = 0;
         public static final double kI = 0;
-        public static final double kD = 0.5;
+        public static final double kD = 0;
       }
     }
   }
