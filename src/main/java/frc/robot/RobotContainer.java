@@ -88,7 +88,7 @@ public class RobotContainer {
       .withWidget(BuiltInWidgets.kSplitButtonChooser)
       .withPosition(0, 0)
       .withSize(4, 2);
-      
+
     if (Constants.driveEnabled) {
       drive.setDefaultCommand(driveManual);
     }
@@ -179,6 +179,6 @@ public class RobotContainer {
       return null;
     }
 
-    return pathPlannerManager.getAuto("null");
+    return pathPlannerManager.getAuto(auto);
   }
 }
