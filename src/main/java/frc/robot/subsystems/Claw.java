@@ -2,10 +2,8 @@ package frc.robot.subsystems;
 
 import frc.robot.Constants;
 import frc.robot.Constants.ClawConstants;
-import frc.robot.Constants.ClawConstants.ClawMode;
 import frc.utility.CanBusUtil;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -16,6 +14,7 @@ public class Claw extends SubsystemBase {
   private CANSparkMax clawMotor;
 
   private boolean stalled;
+  private boolean stopped;
   private Timer stallTimer = new Timer();
   
   public Claw() {
@@ -39,6 +38,7 @@ public class Claw extends SubsystemBase {
   public void intake() {
     if (Constants.clawEnabled) {
       if (!Constants.clawTuningMode) {
+        stopped = false;
         if (stalled) {
           clawMotor.set(ClawConstants.stallIntakePower);
         } else {
@@ -52,6 +52,7 @@ public class Claw extends SubsystemBase {
   public void outtake() {
     if (Constants.clawEnabled) {
       if (!Constants.clawTuningMode) {
+        stopped = false;
         if (stalled) {
           clawMotor.set(ClawConstants.stallOuttakePower);
         } else {
@@ -65,6 +66,7 @@ public class Claw extends SubsystemBase {
   public void stop() {
     if (Constants.clawEnabled) {
       if (!Constants.clawTuningMode) {
+        stopped = true;
         clawMotor.stopMotor();
         DataLogManager.log("Rolly Grabbers stopping");
       }
@@ -89,10 +91,12 @@ public class Claw extends SubsystemBase {
       double absRPM = Math.abs(clawMotor.getEncoder().getVelocity());
 
       if (absRPM < ClawConstants.stallRPMLimit) {
-        if (stallTimer.hasElapsed(ClawConstants.stallTime)) {
-          stalled = true;
-        } else {
-          stallTimer.start();
+        if (!stopped) {
+          if (stallTimer.hasElapsed(ClawConstants.stallTime)) {
+            stalled = true;
+          } else {
+            stallTimer.start();
+          }
         }
       } else {
         stalled = false;

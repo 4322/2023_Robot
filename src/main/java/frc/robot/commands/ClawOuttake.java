@@ -13,11 +13,13 @@ public class ClawOuttake extends CommandBase {
 
   @Override
   public void initialize() {
-    claw.outtake();
+
   }
 
   @Override
-  public void execute() {}
+  public void execute() {
+    claw.outtake();
+  }
 
   // Called once the command ends or is interrupted.
   @Override
