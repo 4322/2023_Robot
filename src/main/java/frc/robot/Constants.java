@@ -35,7 +35,7 @@ public class Constants {
   // the REV library will continuously send the same command, thereby overriding
   // tuning commands from the REV Hardware CLient.
   public static final boolean armTuningMode = false;
-  public static final boolean clawTuningMode = false;
+  public static final boolean clawTuningMode = true;
 
   public static final int falconEncoderUnits = 2048;
   public static final double inchesToMeters = 0.0254;
@@ -110,7 +110,7 @@ public class Constants {
       public static final double joystickRotateDeadband = 0.1;
 
       public static final double xboxDriveDeadband = 0.06;
-      public static final double xboxRotateDeadband = 0.06;
+      public static final double xboxRotateDeadband = 0.1;
 
     }
 
@@ -236,8 +236,11 @@ public class Constants {
   public static final class ClawConstants {// all temp values
     public static final int motorID = 16; // temp value
     public static final double rampRate = 0.8; // temp value
-    public static final double IntakeVelocity = 1;
-    public static final double EjectionVelocity = -0.75;
+    public static final double IntakePower = 0.3; // normally 1.0
+    public static final double EjectionPower = -0.3; // normally -0.75
+
+    public static final double stallCurrentAmps = 3;
+    public static final double stallRPMLimit = 500;
 
     public static enum ClawMode {
       ejecting, stationary, intaking
