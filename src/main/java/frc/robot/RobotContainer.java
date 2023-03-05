@@ -35,7 +35,7 @@ public class RobotContainer {
   private JoystickButton rotateTrigger;
 
   private ShuffleboardTab tab;
-  private SendableChooser<Integer> autoModeChooser = new SendableChooser<Integer>();
+  private SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
   // The robot's subsystems and commands are defined here...
   private final Arm arm = new Arm();
@@ -82,10 +82,8 @@ public class RobotContainer {
     configureButtonBindings();
 
     tab = Shuffleboard.getTab("Auto");
-    autoModeChooser.setDefaultOption("Test Path Rotation", 1);
-    autoModeChooser.addOption("Test Auto Balance Blue", 2);
     
-    tab.add("Auto Mode", autoModeChooser)
+    tab.add("Auto Mode", autoChooser)
       .withWidget(BuiltInWidgets.kSplitButtonChooser)
       .withPosition(0, 0)
       .withSize(4, 2);
@@ -181,6 +179,7 @@ public class RobotContainer {
       return null;
     }
 
-    return pathPlannerManager.getAuto(auto);
+    return pathPlannerManager.getAuto("Test Path Rotation");
+    // Test Auto Balance Blue
   }
 }
