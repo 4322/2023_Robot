@@ -97,7 +97,6 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.schedule();
     }
 
-    m_robotContainer.armReset();
   }
 
   /** This function is called periodically during autonomous. */
