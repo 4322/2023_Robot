@@ -67,9 +67,11 @@ public class DriveManual extends CommandBase {
 
       // Deadbands are dependent on the type of input device
       final double drive1Deadband = Manual.joystickDriveDeadband;
-      final double rotate1Deadband = Manual.joystickRotateDeadband;
+      final double rotate1LeftDeadband = Manual.joystickRotateLeftDeadband;
+      final double rotate1RightDeadband = Manual.joystickRotateRightDeadband;
       final double drive2Deadband = Manual.xboxDriveDeadband;
-      final double rotate2Deadband = Manual.xboxRotateDeadband;
+      final double rotate2LeftDeadband = Manual.xboxRotateDeadband;
+      final double rotate2RightDeadband = Manual.xboxRotateDeadband;
 
       // Convert raw drive inputs to polar coordinates for more precise deadband correction
       final double drive1RawMag = OrangeMath.pythag(drive1RawX, drive1RawY);
@@ -120,15 +122,21 @@ public class DriveManual extends CommandBase {
       // Process each input separately to avoid a discontinuity  
       // when the second input suddenly exceeds deadband.
       double rotatePower1 = 0;
-      if (Math.abs(rotate1Raw) > rotate1Deadband) {
-        rotatePower1 = (rotate1Raw - rotate1Deadband) / (1 - rotate1Deadband);
-        rotatePower1 = rotatePower1 * rotatePower1 * rotatePower1;  // Increase sensitivity efficiently
-      } 
+      if (rotate1Raw > rotate1LeftDeadband) {
+        rotatePower1 = (rotate1Raw - rotate1LeftDeadband) / (1 - rotate1LeftDeadband);
+      } else if (rotate1Raw < -rotate1RightDeadband) {
+        rotatePower1 = (rotate1Raw + rotate1RightDeadband) / (1 - rotate1RightDeadband);
+      }
+      rotatePower1 = rotatePower1 * rotatePower1 * rotatePower1;  // Increase sensitivity efficiently
+
       double rotatePower2 = 0;
-      if (Math.abs(rotate2Raw) > rotate2Deadband) {
-        rotatePower2 = (rotate2Raw - rotate2Deadband) / (1 - rotate2Deadband);
-        rotatePower2 = rotatePower2 * rotatePower2 * rotatePower2;  // Increase sensitivity efficiently
-      } 
+      if (rotate2Raw > rotate2LeftDeadband) {
+        rotatePower2 = (rotate2Raw - rotate2LeftDeadband) / (1 - rotate2LeftDeadband);
+      } else if (rotate2Raw < -rotate2RightDeadband) {
+        rotatePower2 = (rotate2Raw + rotate2RightDeadband) / (1 - rotate2RightDeadband);
+      }
+      rotatePower2 = rotatePower2 * rotatePower2 * rotatePower2;  // Increase sensitivity efficiently
+
       // Cap the combined rotation power
       double rotatePower = rotatePower1 + rotatePower2;
       if (rotatePower > 1) {

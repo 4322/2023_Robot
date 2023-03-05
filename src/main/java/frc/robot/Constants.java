@@ -76,11 +76,11 @@ public class Constants {
     public static final class Manual {
 
       public static final double joystickDriveDeadband = 0.1;
-      public static final double joystickRotateDeadband = 0.2;
+      public static final double joystickRotateLeftDeadband = 0.4;  // both joysticks have a huge left twist deadzone
+      public static final double joystickRotateRightDeadband = 0.2;
 
       public static final double xboxDriveDeadband = 0.1;
       public static final double xboxRotateDeadband = 0.2;
-
     }
 
     public static final class Auto {
