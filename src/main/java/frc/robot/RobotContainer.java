@@ -35,13 +35,10 @@ public class RobotContainer {
   private final LED LED = new LED();
 
   // Arm commands
-  private final ArmManual armManual = new ArmManual(arm);
   private final ArmRotateToPosition armRotateToLoadPosition =
       new ArmRotateToPosition(arm, Constants.ArmConstants.LoadPosition);
   private final ArmRotateToPosition armRotateToMidPosition =
       new ArmRotateToPosition(arm, Constants.ArmConstants.MidScoringPosition);
-  private final ArmRotateToPosition armRotateToHighPosition =
-      new ArmRotateToPosition(arm, Constants.ArmConstants.HighScoringPosition);
   private final ArmSetCoastMode armSetCoastMode = new ArmSetCoastMode(arm);
 
   // Claw commands
@@ -138,7 +135,7 @@ public class RobotContainer {
       arm.stop();
     }
     if (Constants.clawEnabled) {
-      claw.setEnum(Claw.ClawMode.stopped);
+      claw.changeState(Claw.ClawMode.stopped);
       claw.setCoastMode();
     }
     if (Constants.driveEnabled) {

@@ -56,37 +56,24 @@ public class Claw extends SubsystemBase {
     }
   }
 
-
   private void intake() {
-    if (Constants.clawEnabled) {
-      if (!Constants.clawTuningMode) {
-        if (stalledIn) {
-          clawMotor.set(ClawConstants.stallIntakePower);
-        } else {
-          clawMotor.set(ClawConstants.intakePower);
-        }     
-      }
-    }
+    if (stalledIn) {
+      clawMotor.set(ClawConstants.stallIntakePower);
+    } else {
+      clawMotor.set(ClawConstants.intakePower);
+    }     
   }
 
   private void outtake() {
-    if (Constants.clawEnabled) {
-      if (!Constants.clawTuningMode) {
-        if (stalledOut) {
-          clawMotor.set(ClawConstants.stallOuttakePower);
-        } else {
-          clawMotor.set(ClawConstants.outtakePower);
-        }  
-      }
-    }
+    if (stalledOut) {
+      clawMotor.set(ClawConstants.stallOuttakePower);
+    } else {
+      clawMotor.set(ClawConstants.outtakePower);
+    }  
   }
 
   private void stop() {
-    if (Constants.clawEnabled) {
-      if (!Constants.clawTuningMode) {
-        clawMotor.stopMotor();
-      }
-    }
+    clawMotor.stopMotor();
   }
 
   public void setCoastMode() {
@@ -103,37 +90,39 @@ public class Claw extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (Constants.clawEnabled && !Constants.clawTuningMode) {
-      double signedRPM = clawMotor.getEncoder().getVelocity();
-      double absRPM = Math.abs(signedRPM);
+    if (Constants.clawEnabled) {
+      if (!Constants.clawTuningMode) {
+        double signedRPM = clawMotor.getEncoder().getVelocity();
+        double absRPM = Math.abs(signedRPM);
 
-      if (absRPM > ClawConstants.stallRPMLimit) {
-        stalledIn = false;
-        stalledOut = false;
-        stallInTimer.reset();
-        stallOutTimer.reset();
-        stallInTimer.stop();
-        stallOutTimer.stop();
-      } else if ((clawMode == ClawMode.intaking) && (signedRPM < ClawConstants.stallRPMLimit)) {
-        if (stallInTimer.hasElapsed(ClawConstants.stallTime)) {
-          stalledIn = true;
-        } else {
-          stallInTimer.start();
+        if (absRPM > ClawConstants.stallRPMLimit) {
+          stalledIn = false;
+          stalledOut = false;
+          stallInTimer.reset();
+          stallOutTimer.reset();
+          stallInTimer.stop();
+          stallOutTimer.stop();
+        } else if ((clawMode == ClawMode.intaking) && (signedRPM < ClawConstants.stallRPMLimit)) {
+          if (stallInTimer.hasElapsed(ClawConstants.stallTime)) {
+            stalledIn = true;
+          } else {
+            stallInTimer.start();
+          }
+        } else if ((clawMode == ClawMode.outtaking) && (signedRPM > -ClawConstants.stallRPMLimit)) {
+          if (stallOutTimer.hasElapsed(ClawConstants.stallTime)) {
+            stalledOut = true;
+          } else {
+            stallOutTimer.start();
+          }
         }
-      } else if ((clawMode == ClawMode.outtaking) && (signedRPM > -ClawConstants.stallRPMLimit)) {
-        if (stallOutTimer.hasElapsed(ClawConstants.stallTime)) {
-          stalledOut = true;
-        } else {
-          stallOutTimer.start();
-        }
-      }
 
-      if (clawMode == ClawMode.intaking) {
-        intake();
-      } else if (clawMode == ClawMode.outtaking) {
-        outtake();
-      } else {
-        stop();
+        if (clawMode == ClawMode.intaking) {
+          intake();
+        } else if (clawMode == ClawMode.outtaking) {
+          outtake();
+        } else {
+          stop();
+        }
       }
     }
   }
