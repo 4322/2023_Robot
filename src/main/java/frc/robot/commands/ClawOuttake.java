@@ -13,12 +13,12 @@ public class ClawOuttake extends CommandBase {
 
   @Override
   public void initialize() {
-
+    claw.changeEnum(Claw.ClawMode.outtaking);
   }
 
   @Override
   public void execute() {
-    claw.changeEnum(Claw.ClawMode.outtaking);
+  
   }
 
   // Called once the command ends or is interrupted.
