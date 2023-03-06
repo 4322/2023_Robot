@@ -137,7 +137,7 @@ public class RobotContainer {
       arm.stop();
     }
     if (Constants.clawEnabled) {
-      claw.stop();
+      claw.setEnum(Claw.ClawMode.stopped);
       claw.setCoastMode();
     }
     if (Constants.driveEnabled) {

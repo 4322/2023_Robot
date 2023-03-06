@@ -43,8 +43,17 @@ public class Claw extends SubsystemBase {
     }
   }
 
-  public void changeEnum(ClawMode mode) {
+  public void changeState(ClawMode mode) {
     clawMode = mode;
+    if (clawMode == ClawMode.intaking) {
+      DataLogManager.log("Claw intaking");
+    }
+    if (clawMode == ClawMode.outtaking) {
+      DataLogManager.log("Claw outtaking");
+    }
+    if (clawMode == ClawMode.stopped) {
+      DataLogManager.log("Claw stopped");
+    }
   }
 
 
@@ -55,7 +64,6 @@ public class Claw extends SubsystemBase {
           clawMotor.set(ClawConstants.stallIntakePower);
         } else {
           clawMotor.set(ClawConstants.intakePower);
-          DataLogManager.log("Rolly Grabbers intaking");   
         }     
       }
     }
@@ -68,7 +76,6 @@ public class Claw extends SubsystemBase {
           clawMotor.set(ClawConstants.stallOuttakePower);
         } else {
           clawMotor.set(ClawConstants.outtakePower);
-          DataLogManager.log("Rolly Grabbers outtaking");   
         }  
       }
     }
@@ -78,7 +85,6 @@ public class Claw extends SubsystemBase {
     if (Constants.clawEnabled) {
       if (!Constants.clawTuningMode) {
         clawMotor.stopMotor();
-        DataLogManager.log("Rolly Grabbers stopping");
       }
     }
   }
@@ -97,7 +103,7 @@ public class Claw extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (Constants.clawEnabled) {
+    if (Constants.clawEnabled && !Constants.clawTuningMode) {
       double signedRPM = clawMotor.getEncoder().getVelocity();
       double absRPM = Math.abs(signedRPM);
 
