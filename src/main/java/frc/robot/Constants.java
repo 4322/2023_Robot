@@ -214,10 +214,6 @@ public class Constants {
 
     public static final double stallTime = 0.2; // 200 ms
     public static final double stallRPMLimit = 500;
-
-    public static enum ClawMode {
-      ejecting, stationary, intaking
-    };
   }
 
   public static final class ArmConstants {

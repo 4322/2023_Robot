@@ -13,13 +13,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Claw extends SubsystemBase {
   private CANSparkMax clawMotor;
 
-  enum ClawMode {
+  public static enum ClawMode {
     intaking,
     outtaking,
     stopped
   }
 
-  private ClawMode clawMode;
+  private ClawMode clawMode = ClawMode.stopped;
 
   private boolean stalledIn;
   private boolean stalledOut;
@@ -43,11 +43,14 @@ public class Claw extends SubsystemBase {
     }
   }
 
+  public void changeEnum(ClawMode mode) {
+    clawMode = mode;
+  }
 
-  public void intake() {
+
+  private void intake() {
     if (Constants.clawEnabled) {
       if (!Constants.clawTuningMode) {
-        clawMode = ClawMode.intaking;
         if (stalledIn) {
           clawMotor.set(ClawConstants.stallIntakePower);
         } else {
@@ -58,10 +61,9 @@ public class Claw extends SubsystemBase {
     }
   }
 
-  public void outtake() {
+  private void outtake() {
     if (Constants.clawEnabled) {
       if (!Constants.clawTuningMode) {
-        clawMode = ClawMode.outtaking;
         if (stalledOut) {
           clawMotor.set(ClawConstants.stallOuttakePower);
         } else {
@@ -72,10 +74,9 @@ public class Claw extends SubsystemBase {
     }
   }
 
-  public void stop() {
+  private void stop() {
     if (Constants.clawEnabled) {
       if (!Constants.clawTuningMode) {
-        clawMode = ClawMode.stopped;
         clawMotor.stopMotor();
         DataLogManager.log("Rolly Grabbers stopping");
       }
@@ -108,9 +109,25 @@ public class Claw extends SubsystemBase {
         stallInTimer.stop();
         stallOutTimer.stop();
       } else if ((clawMode == ClawMode.intaking) && (signedRPM < ClawConstants.stallRPMLimit)) {
-        stallInTimer.start();
+        if (stallInTimer.hasElapsed(ClawConstants.stallTime)) {
+          stalledIn = true;
+        } else {
+          stallInTimer.start();
+        }
       } else if ((clawMode == ClawMode.outtaking) && (signedRPM > -ClawConstants.stallRPMLimit)) {
-        stallOutTimer.start();
+        if (stallOutTimer.hasElapsed(ClawConstants.stallTime)) {
+          stalledOut = true;
+        } else {
+          stallOutTimer.start();
+        }
+      }
+
+      if (clawMode == ClawMode.intaking) {
+        intake();
+      } else if (clawMode == ClawMode.outtaking) {
+        outtake();
+      } else {
+        stop();
       }
     }
   }
