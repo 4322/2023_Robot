@@ -13,12 +13,12 @@ public class ClawIntake extends CommandBase {
 
   @Override
   public void initialize() {
-
+    claw.changeEnum(Claw.ClawMode.intaking);
   }
 
   @Override
   public void execute() {
-    claw.changeEnum(Claw.ClawMode.intaking);
+    
   }
 
   // Called once the command ends or is interrupted.
