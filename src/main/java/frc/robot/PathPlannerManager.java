@@ -31,7 +31,6 @@ class PathPlannerManager {
     drive = driveSubsystem;
 
     eventMap = new HashMap<String, Command>();
-    autoMap = new HashMap<String, Command>();
 
     defaultConstraints = new PathConstraints(DriveConstants.Auto.autoMaxSpeedMetersPerSecond,
         DriveConstants.Auto.autoMaxAccelerationMetersPerSec2);
@@ -79,15 +78,11 @@ class PathPlannerManager {
     return command;
   }
 
-  public void loadAuto(String pathGroupName, String autoName, boolean reversed) {
+  public Command loadAuto(String pathGroupName, boolean reversed) {
     List<PathPlannerTrajectory> pathGroup =
         PathPlanner.loadPathGroup(pathGroupName, reversed, defaultConstraints, defaultConstraints);
 
-    autoMap.put(autoName, builder.fullAuto(pathGroup));
-  }
-
-  public Command getAuto(String autoName) {
-    return autoMap.get(autoName);
+    return builder.fullAuto(pathGroup);
   }
 
   public void addEvent(String eventName, Command command) {

@@ -1,7 +1,5 @@
 package frc.robot;
 
-import com.pathplanner.lib.PathPlannerTrajectory;
-
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
@@ -16,7 +14,6 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.LED;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.*;
 
 public class RobotContainer {
@@ -43,7 +40,7 @@ public class RobotContainer {
   private final Claw claw = new Claw();
   private final Drive drive = new Drive();
   private final LED LED = new LED();
-  private final PathPlannerManager pathPlannerManager;
+  private final PathPlannerManager ppManager;
 
   // Arm commands
   private final ArmManual armManual = new ArmManual(arm);
@@ -97,13 +94,15 @@ public class RobotContainer {
       arm.setDefaultCommand(armRotateToLoadPosition);
     }
 
-    pathPlannerManager = new PathPlannerManager(drive);
+    ppManager = new PathPlannerManager(drive);
 
-    pathPlannerManager.addEvent("autoBalance", autoBalance);
-    pathPlannerManager.addEvent("scoreCone", scoreCone);
+    ppManager.addEvent("autoBalance", autoBalance);
+    ppManager.addEvent("scoreCone", scoreCone);
     
-    pathPlannerManager.loadAuto("Test Path Rotation", "Test Path Rotation", false);
-    pathPlannerManager.loadAuto("Test Auto Balance", "Test Auto Balance Blue", false);
+    autoChooser.addOption("Test Path Rotation", 
+      ppManager.loadAuto("Test Path Rotation", false));
+    autoChooser.addOption("Test Auto Balance Blue", 
+      ppManager.loadAuto("Test Auto Balance", false));
   }
 
 
@@ -182,7 +181,6 @@ public class RobotContainer {
       return null;
     }
 
-    return pathPlannerManager.getAuto("Test Path Rotation");
-    // Test Auto Balance Blue
+    return autoChooser.getSelected();
   }
 }
