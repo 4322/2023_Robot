@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
-import frc.robot.Constants.ClawConstants;
 import frc.robot.subsystems.Arm;
 
 public class ArmHoming extends CommandBase{
@@ -24,12 +23,12 @@ public class ArmHoming extends CommandBase{
   @Override
   public void initialize() {
     arm.setLimitSwitch(false);
+    arm.setArmSpeed(Constants.ArmConstants.ArmHomingSpeed);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    arm.setArmSpeed(Constants.ArmConstants.ArmHomingSpeed);
     if (arm.getArmSensorPressed() == true) {
       arm.setPosition(ArmConstants.minPosition);
       arm.setHomed();
