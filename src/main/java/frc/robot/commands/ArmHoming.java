@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
@@ -8,6 +9,8 @@ import frc.robot.subsystems.Arm;
 public class ArmHoming extends CommandBase{
   
   private final Arm arm;
+
+  private final Timer timeout = new Timer();
 
   public ArmHoming(Arm armSubsystem) {
     arm = armSubsystem;
@@ -19,16 +22,16 @@ public class ArmHoming extends CommandBase{
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    arm.setCoastMode();
+    arm.setLimitSwitch(false);
+    arm.setArmSpeed(Constants.ArmConstants.ArmHomingSpeed);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    arm.setArmSpeed(Constants.ArmConstants.ArmHomingSpeed);
     if (arm.getArmSensorPressed() == true) {
-      arm.setBrakeMode();
       arm.setPosition(ArmConstants.minPosition);
+      arm.setHomed();
     }
   }
 
@@ -36,11 +39,12 @@ public class ArmHoming extends CommandBase{
   @Override
   public void end(boolean interrupted) {
     arm.stop();
+    arm.setLimitSwitch(true);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return arm.isHomed() || timeout.hasElapsed(ArmConstants.homingTimeout);
   }
 }

@@ -30,6 +30,7 @@ public class Arm extends SubsystemBase {
 
   private ShuffleboardTab tab;
   private GenericEntry armPos;
+  private boolean homed = false;
 
   public Arm() {
     if (Constants.armEnabled) {
@@ -73,14 +74,15 @@ public class Arm extends SubsystemBase {
       pidController.setSmartMotionAllowedClosedLoopError(ArmConstants.SmartMotion.positionTolerance, 0);
       CanBusUtil.dualSparkMaxPosCtrl(leftMotor, Constants.armTuningMode);
 
+      if (Constants.armSensorEnabled) {
+        armSensor = leftMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
+      }
+
       leftMotor.burnFlash();
       rightMotor.burnFlash();
       logTimer.reset();
       logTimer.start();
 
-      if (Constants.armSensorEnabled) {
-        armSensor = leftMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
-      }
     }
   }
 
@@ -95,7 +97,7 @@ public class Arm extends SubsystemBase {
   public void setPosition(double pos) {
     if (Constants.armEnabled) {
       if (!Constants.armTuningMode) {
-        leftMotor.getEncoder().setPosition(pos);
+        encoder.setPosition(pos);
       }
     }
   }
@@ -108,7 +110,7 @@ public class Arm extends SubsystemBase {
   }
 
   public void rotateToPosition(double targetPosition) {
-    if (Constants.armEnabled) {
+    if (Constants.armEnabled && homed) {
       if (!Constants.armTuningMode) {
         if ((targetPosition > ArmConstants.minPosition)
             && (targetPosition < ArmConstants.maxPosition)) {
@@ -138,7 +140,7 @@ public class Arm extends SubsystemBase {
   }
 
   public void setArmSpeed(double speed) {
-    if (Constants.armEnabled) {
+    if (Constants.armEnabled && homed) {
       if (!Constants.armTuningMode) {
         leftMotor.set(speed);
       }
@@ -157,6 +159,19 @@ public class Arm extends SubsystemBase {
       leftMotor.setIdleMode(IdleMode.kBrake);
       rightMotor.setIdleMode(IdleMode.kBrake);
     }
+  }
+
+  // enable/disable limit switch
+  public void setLimitSwitch(boolean status) {
+    armSensor.enableLimitSwitch(status);
+  }
+
+  public void setHomed() {
+    homed = true;
+  }
+
+  public boolean isHomed() {
+    return homed;
   }
 
   @Override
