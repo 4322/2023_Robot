@@ -139,10 +139,10 @@ public class Arm extends SubsystemBase {
     }
   }
 
-  public void setArmSpeed(double speed) {
-    if (Constants.armEnabled && homed) {
+  public void setHoming() {
+    if (Constants.armEnabled) {
       if (!Constants.armTuningMode) {
-        leftMotor.set(speed);
+        leftMotor.set(ArmConstants.ArmHomingPower);
       }
     }
   }
