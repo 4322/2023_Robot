@@ -38,6 +38,7 @@ public class ArmHoming extends CommandBase{
   @Override
   public void end(boolean interrupted) {
     arm.stop();
+    arm.setHomed();
     arm.setLimitSwitch(true);
   }
 
