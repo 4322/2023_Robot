@@ -9,9 +9,9 @@ public class Constants {
   public static final boolean debug = false;
   public static final boolean inDemoMode = false;
 
-  public static final boolean armEnabled = true;
+  public static final boolean armEnabled = false;
   public static final boolean armSensorEnabled = true;
-  public static final boolean clawEnabled = true;
+  public static final boolean clawEnabled = false;
   public static final boolean driveEnabled = true;
   public static final boolean gyroEnabled = true;
   public static final boolean joysticksEnabled = true;

@@ -18,6 +18,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.SwerveDrive.SwerveModule;
 import frc.robot.subsystems.SwerveDrive.ControlModule.WheelPosition;
+import frc.utility.CanBusUtil;
 import frc.utility.SnapshotTranslation2D;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -453,6 +454,7 @@ public class Drive extends SubsystemBase {
   private void setFollowDrive() {
     if (Constants.driveEnabled) {
       WPI_TalonFX primary = swerveModules[WheelPosition.FRONT_LEFT.wheelNumber].getDriveMotor();
+      CanBusUtil.dualTalon(primary);
       swerveModules[WheelPosition.FRONT_RIGHT.wheelNumber].getDriveMotor().follow(primary);
       swerveModules[WheelPosition.FRONT_RIGHT.wheelNumber].getDriveMotor().setInverted(InvertType.OpposeMaster);
       swerveModules[WheelPosition.BACK_LEFT.wheelNumber].getDriveMotor().follow(primary);
