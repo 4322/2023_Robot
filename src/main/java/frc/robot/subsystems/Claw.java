@@ -57,6 +57,7 @@ public class Claw extends SubsystemBase {
   }
 
   private void intake() {
+    resetStalledOut();
     if (stalledIn) {
       clawMotor.set(ClawConstants.stallIntakePower);
     } else {
@@ -65,6 +66,7 @@ public class Claw extends SubsystemBase {
   }
 
   private void outtake() {
+    resetStalledIn();
     if (stalledOut) {
       clawMotor.set(ClawConstants.stallOuttakePower);
     } else {
@@ -88,6 +90,18 @@ public class Claw extends SubsystemBase {
     }
   }
 
+  private void resetStalledIn() {
+    stalledIn = false;
+    stallInTimer.reset();
+    stallInTimer.stop();
+  }
+  
+  private void resetStalledOut() {
+    stalledOut = false;
+    stallOutTimer.reset();
+    stallOutTimer.stop();
+  }
+
   @Override
   public void periodic() {
     if (Constants.clawEnabled) {
@@ -96,23 +110,23 @@ public class Claw extends SubsystemBase {
         double absRPM = Math.abs(signedRPM);
 
         if (absRPM > ClawConstants.stallRPMLimit) {
-          stalledIn = false;
-          stalledOut = false;
-          stallInTimer.reset();
-          stallOutTimer.reset();
-          stallInTimer.stop();
-          stallOutTimer.stop();
+          resetStalledIn();
+          resetStalledOut();
         } else if ((clawMode == ClawMode.intaking) && (signedRPM < ClawConstants.stallRPMLimit)) {
           if (stallInTimer.hasElapsed(ClawConstants.stallTime)) {
             stalledIn = true;
           } else {
-            stallInTimer.start();
+            if (signedRPM >= 0) {
+              stallInTimer.start();
+            }
           }
-        } else if ((clawMode == ClawMode.outtaking) && (signedRPM > -ClawConstants.stallRPMLimit)) {
+        } else if ((clawMode == ClawMode.outtaking) && (signedRPM < ClawConstants.stallRPMLimit)) {
           if (stallOutTimer.hasElapsed(ClawConstants.stallTime)) {
             stalledOut = true;
           } else {
-            stallOutTimer.start();
+            if (signedRPM <= 0) {
+              stallOutTimer.start();
+            }
           }
         }
 
