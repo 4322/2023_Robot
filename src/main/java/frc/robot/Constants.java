@@ -1,6 +1,7 @@
 package frc.robot;
 
 import frc.robot.subsystems.SwerveDrive.ControlModule.WheelPosition;
+import frc.utility.OrangeMath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -62,7 +63,11 @@ public class Constants {
     public static final double distWheelMetersX = 0.62865; // 24.75 in
     public static final double distWheelMetersY = 0.62865; // 24.75 in
 
-    public static final double maxSpeedMetersPerSecond = 3.6576;
+    // Max speed is 200000 ticks / 1 s
+
+    public static final double maxSpeedMetersPerSecond = 10 * OrangeMath.falconEncoderToMeters(20000,
+        OrangeMath.inchesToMeters(OrangeMath.getCircumference(Drive.wheelDiameterInches)),
+        Drive.gearRatio);
     public static final double maxRotationSpeedRadSecond = 12.2718;
 
     public static final double movingVelocityThresholdFtPerSec = 0.2;
@@ -85,11 +90,13 @@ public class Constants {
 
     public static final class Auto {
 
+      // Max acceleration is 180000 ticks / s^2
+
       // Values for autonomous path finding
-      public static final double autoMaxSpeedMetersPerSecond = 3.5;
-      public static final double autoMaxAccelerationMetersPerSec2 = 2.5;
-      public static final double autoMaxRotationRadPerSecond = Math.PI * 2;
-      public static final double autoMaxRotationAccelerationRadPerSec2 = Math.PI * 4;
+      public static final double autoMaxSpeedMetersPerSecond = 0.75 * DriveConstants.maxSpeedMetersPerSecond;
+      public static final double autoMaxAccelerationMetersPerSec2 = 0.75 * OrangeMath.falconEncoderToMeters(180000,
+          OrangeMath.inchesToMeters(OrangeMath.getCircumference(Drive.wheelDiameterInches)),
+          Drive.gearRatio);
 
       public static final double autoRotkP = 0.08;
       public static final double autoRotkD = 0.004;
@@ -176,7 +183,7 @@ public class Constants {
       public static final double supplyThreshold = 45;
       public static final double supplyTime = 0.5;
 
-      public static final double wheelDiameterInches = 4.0;
+      public static final double wheelDiameterInches = 3.95;
       public static final double gearRatio = 7.8;
       public static final double kP = 0.045;
       public static final double kI = 0.000065;
