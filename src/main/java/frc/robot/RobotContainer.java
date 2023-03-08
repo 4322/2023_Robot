@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Arm;
@@ -37,15 +38,11 @@ public class RobotContainer {
   private final LED LED = new LED();
 
   // Arm commands
-  private final ArmManual armManual = new ArmManual(arm);
   private final ArmRotateToPosition armRotateToLoadPosition =
       new ArmRotateToPosition(arm, Constants.ArmConstants.LoadPosition);
   private final ArmRotateToPosition armRotateToMidPosition =
       new ArmRotateToPosition(arm, Constants.ArmConstants.MidScoringPosition);
-  private final ArmRotateToPosition armRotateToHighPosition =
-      new ArmRotateToPosition(arm, Constants.ArmConstants.HighScoringPosition);
   private final ArmSetCoastMode armSetCoastMode = new ArmSetCoastMode(arm);
-  private final ArmHoming armHoming = new ArmHoming(arm);
 
   // Claw commands
   private final ClawIntake clawIntake = new ClawIntake(claw);
@@ -82,6 +79,7 @@ public class RobotContainer {
     if (Constants.armEnabled) {
       arm.setDefaultCommand(armRotateToLoadPosition);
     }
+
   }
 
 
@@ -151,7 +149,7 @@ public class RobotContainer {
       arm.stop();
     }
     if (Constants.clawEnabled) {
-      claw.stop();
+      claw.changeState(Claw.ClawMode.stopped);
       claw.setCoastMode();
     }
     if (Constants.driveEnabled) {
@@ -159,5 +157,9 @@ public class RobotContainer {
     }
     disableTimer.reset();
     disableTimer.start();
+  }
+
+  public void armReset() {
+    new ArmHoming(arm).withInterruptBehavior(InterruptionBehavior.kCancelIncoming).schedule();
   }
 }

@@ -129,8 +129,7 @@ public class CanBusUtil {
         nextFastStatusPeriodMs());
   }
 
-  // Increase frame rates for a SPARK MAX main/follower config after
-  // initialization
+  // Increase frame rates for a SPARK MAX that is being followed after initialization
   // when position control is in use.
   public static void dualSparkMaxPosCtrl(CANSparkMax mainMotor, boolean tuningMode) {
     // applied output for follower
@@ -146,7 +145,7 @@ public class CanBusUtil {
     }
   }
 
-  // Increase frame rates for a SPARK MAX main/follower motor after initialization
+  // Increase frame rates for a SPARK MAX that is being followed after initialization
   // when velocity control is in use.
   public static void dualSparkMaxVelCtrl(CANSparkMax mainMotor, boolean tuningMode) {
     // applied output for follower
@@ -160,6 +159,13 @@ public class CanBusUtil {
       mainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2,
           nextFastStatusPeriodMs());
     }
+  }
+
+  // Increase frame rates for a Talon that is being followed after initialization.
+  public static void dualTalonFX(WPI_TalonFX mainMotor) {
+    // applied output for follower
+    mainMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 
+        nextFastStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
   }
 
 }

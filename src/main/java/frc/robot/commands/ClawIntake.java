@@ -13,20 +13,18 @@ public class ClawIntake extends CommandBase {
 
   @Override
   public void initialize() {
-    claw.intake();
+    claw.changeState(Claw.ClawMode.intaking);
   }
 
   @Override
   public void execute() {
-
     
-
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    claw.stop();
+    claw.changeState(Claw.ClawMode.stopped);
   }
 
   @Override

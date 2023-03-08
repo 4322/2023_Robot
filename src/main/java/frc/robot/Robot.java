@@ -8,7 +8,9 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -21,10 +23,16 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 public class Robot extends TimedRobot {
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
+  private static final PowerDistribution PDH = new PowerDistribution();
   private String m_autoSelected;
   private Command m_autonomousCommand;
   private ShuffleboardTab tab;
+  private ShuffleboardTab PDHTab;
   private RobotContainer m_robotContainer;
+
+  private GenericEntry leftArmMotor;
+  private GenericEntry rightArmMotor;
+  private GenericEntry clawMotor;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -33,6 +41,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     tab = Shuffleboard.getTab("Enabled Subsystems");
+    PDHTab = Shuffleboard.getTab("PDH Currents");
 
     subsystemEnabled("Comp Mode", 0, 0, 
       !Constants.debug && !Constants.inDemoMode && !Constants.armTuningMode && !Constants.clawTuningMode);
@@ -47,6 +56,10 @@ public class Robot extends TimedRobot {
     subsystemEnabled("Limeight", 2, 1, Constants.limeLightEnabled);
     subsystemEnabled("XBOX Controller", 3, 1, Constants.xboxEnabled);
     subsystemEnabled("Color Sensor", 4, 1, Constants.colorSensorEnabled);
+
+    leftArmMotor = PDHTab.add("Left Arm Motor", 0).getEntry();
+    rightArmMotor = PDHTab.add("Right Arm Motor", 0).getEntry();
+    clawMotor = PDHTab.add("Claw Motor", 0).getEntry();
 
     m_robotContainer = new RobotContainer();
   }
@@ -74,6 +87,9 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    leftArmMotor.setDouble(PDH.getCurrent(6));
+    rightArmMotor.setDouble(PDH.getCurrent(9));
+    clawMotor.setDouble(PDH.getCurrent(13));
   }
 
   /**
@@ -96,6 +112,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+
   }
 
   /** This function is called periodically during autonomous. */
@@ -122,7 +139,9 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    
     m_robotContainer.enableSubsystems();
+    m_robotContainer.armReset();
   }
 
   /** This function is called periodically during operator control. */

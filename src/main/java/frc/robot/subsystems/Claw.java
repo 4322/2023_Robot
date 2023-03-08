@@ -2,10 +2,8 @@ package frc.robot.subsystems;
 
 import frc.robot.Constants;
 import frc.robot.Constants.ClawConstants;
-import frc.robot.Constants.ClawConstants.ClawMode;
 import frc.utility.CanBusUtil;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -15,14 +13,24 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Claw extends SubsystemBase {
   private CANSparkMax clawMotor;
 
-  private boolean stalled;
-  private Timer stallTimer = new Timer();
+  public static enum ClawMode {
+    intaking,
+    outtaking,
+    stopped
+  }
+
+  private ClawMode clawMode = ClawMode.stopped;
+
+  private boolean stalledIn;
+  private boolean stalledOut;
+  private Timer stallInTimer = new Timer();
+  private Timer stallOutTimer = new Timer();
   
   public Claw() {
     if (Constants.clawEnabled) {
       clawMotor = new CANSparkMax(Constants.ClawConstants.motorID, MotorType.kBrushless);
       CanBusUtil.staggerSparkMax(clawMotor);
-      stallTimer.reset();
+      stallInTimer.reset();
     }
   }
 
@@ -35,40 +43,41 @@ public class Claw extends SubsystemBase {
     }
   }
 
-
-  public void intake() {
-    if (Constants.clawEnabled) {
-      if (!Constants.clawTuningMode) {
-        if (stalled) {
-          clawMotor.set(ClawConstants.stallIntakePower);
-        } else {
-          clawMotor.set(ClawConstants.intakePower);
-          DataLogManager.log("Rolly Grabbers intaking");   
-        }     
-      }
+  public void changeState(ClawMode mode) {
+    clawMode = mode;
+    if (clawMode == ClawMode.intaking) {
+      DataLogManager.log("Claw intaking");
+    }
+    if (clawMode == ClawMode.outtaking) {
+      DataLogManager.log("Claw outtaking");
+    }
+    if (clawMode == ClawMode.stopped) {
+      DataLogManager.log("Claw stopped");
     }
   }
 
-  public void outtake() {
-    if (Constants.clawEnabled) {
-      if (!Constants.clawTuningMode) {
-        if (stalled) {
-          clawMotor.set(ClawConstants.stallOuttakePower);
-        } else {
-          clawMotor.set(-ClawConstants.outtakePower);
-          DataLogManager.log("Rolly Grabbers outtaking");   
-        }  
-      }
-    }
+  private void intake() {
+    resetStalledOut();
+    if (stalledIn) {
+      clawMotor.set(ClawConstants.stallIntakePower);
+    } else {
+      clawMotor.set(ClawConstants.intakePower);
+    }     
   }
 
-  public void stop() {
-    if (Constants.clawEnabled) {
-      if (!Constants.clawTuningMode) {
-        clawMotor.stopMotor();
-        DataLogManager.log("Rolly Grabbers stopping");
-      }
-    }
+  private void outtake() {
+    resetStalledIn();
+    if (stalledOut) {
+      clawMotor.set(ClawConstants.stallOuttakePower);
+    } else {
+      clawMotor.set(ClawConstants.outtakePower);
+    }  
+  }
+
+  private void stop() {
+    clawMotor.stopMotor();
+    stallInTimer.stop(); // stop timers to help when button is quickly tapped
+    stallOutTimer.stop();
   }
 
   public void setCoastMode() {
@@ -83,21 +92,49 @@ public class Claw extends SubsystemBase {
     }
   }
 
+  private void resetStalledIn() {
+    stalledIn = false;
+    stallInTimer.reset();
+    stallInTimer.stop();
+  }
+  
+  private void resetStalledOut() {
+    stalledOut = false;
+    stallOutTimer.reset();
+    stallOutTimer.stop();
+  }
+
   @Override
   public void periodic() {
     if (Constants.clawEnabled) {
-      double absRPM = Math.abs(clawMotor.getEncoder().getVelocity());
+      if (!Constants.clawTuningMode) {
+        double signedRPM = clawMotor.getEncoder().getVelocity();
+        double absRPM = Math.abs(signedRPM);
 
-      if (absRPM < ClawConstants.stallRPMLimit) {
-        if (stallTimer.hasElapsed(ClawConstants.stallTime)) {
-          stalled = true;
-        } else {
-          stallTimer.start();
+        if (absRPM > ClawConstants.stallRPMLimit) {
+          resetStalledIn();
+          resetStalledOut();
+        } else if ((clawMode == ClawMode.intaking) && (signedRPM < ClawConstants.stallRPMLimit)) {
+          if (stallInTimer.hasElapsed(ClawConstants.stallTime)) {
+            stalledIn = true;
+          } else if (signedRPM >= 0) { // In case we switch from intaking immediately to outtaking
+            stallInTimer.start();
+          }
+        } else if ((clawMode == ClawMode.outtaking) && (signedRPM > -ClawConstants.stallRPMLimit)) {
+          if (stallOutTimer.hasElapsed(ClawConstants.stallTime)) {
+            stalledOut = true;
+          } else if (signedRPM <= 0) { 
+            stallOutTimer.start();
+          }
         }
-      } else {
-        stalled = false;
-        stallTimer.stop();
-        stallTimer.reset();
+
+        if (clawMode == ClawMode.intaking) {
+          intake();
+        } else if (clawMode == ClawMode.outtaking) {
+          outtake();
+        } else {
+          stop();
+        }
       }
     }
   }

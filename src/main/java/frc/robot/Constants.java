@@ -1,6 +1,7 @@
 package frc.robot;
 
 import frc.robot.subsystems.SwerveDrive.ControlModule.WheelPosition;
+import frc.utility.OrangeMath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -25,7 +26,7 @@ public class Constants {
   // the REV library will continuously send the same command, thereby overriding
   // tuning commands from the REV Hardware CLient.
   public static final boolean armTuningMode = false;
-  public static final boolean clawTuningMode = true;
+  public static final boolean clawTuningMode = false;
 
   public static final int falconEncoderUnits = 2048;
   public static final double inchesToMeters = 0.0254;
@@ -62,7 +63,11 @@ public class Constants {
     public static final double distWheelMetersX = 0.62865; // 24.75 in
     public static final double distWheelMetersY = 0.62865; // 24.75 in
 
-    public static final double maxSpeedMetersPerSecond = 3.6576;
+    // Max speed is 200000 ticks / 1 s
+
+    public static final double maxSpeedMetersPerSecond = 10 * OrangeMath.falconEncoderToMeters(20000,
+        OrangeMath.inchesToMeters(OrangeMath.getCircumference(Drive.wheelDiameterInches)),
+        Drive.gearRatio);
     public static final double maxRotationSpeedRadSecond = 12.2718;
 
     public static final double movingVelocityThresholdFtPerSec = 0.2;
@@ -85,11 +90,13 @@ public class Constants {
 
     public static final class Auto {
 
+      // Max acceleration is 180000 ticks / s^2
+
       // Values for autonomous path finding
-      public static final double autoMaxSpeedMetersPerSecond = 3.5;
-      public static final double autoMaxAccelerationMetersPerSec2 = 2.5;
-      public static final double autoMaxRotationRadPerSecond = Math.PI * 2;
-      public static final double autoMaxRotationAccelerationRadPerSec2 = Math.PI * 4;
+      public static final double autoMaxSpeedMetersPerSecond = 0.75 * DriveConstants.maxSpeedMetersPerSecond;
+      public static final double autoMaxAccelerationMetersPerSec2 = 0.75 * OrangeMath.falconEncoderToMeters(180000,
+          OrangeMath.inchesToMeters(OrangeMath.getCircumference(Drive.wheelDiameterInches)),
+          Drive.gearRatio);
 
       // Enum for autonomous rotation direction
       public static enum rotationDir {
@@ -187,13 +194,13 @@ public class Constants {
       public static final double supplyThreshold = 45;
       public static final double supplyTime = 0.5;
 
-      public static final double wheelDiameterInches = 4.0;
+      public static final double wheelDiameterInches = 3.95;
       public static final double gearRatio = 7.8;
-      public static final double kP = 0.045;
-      public static final double kI = 0.000065;
+      public static final double kP = 0.05;
+      public static final double kI = 0.0002;
       public static final double kD = 0.0;
       public static final double kIz = 500;
-      public static final double kFF = 0.05;
+      public static final double kFF = 0.054;
       
     }
 
@@ -218,17 +225,17 @@ public class Constants {
     public static final double rampRate = 0.8; // temp value
 
 
-    public static final double intakePower = 0.3; // normally 1.0
-    public static final double outtakePower = -0.3; // normally -0.75
-    public static final double stallIntakePower = 0;
-    public static final double stallOuttakePower = 0;
+    public static final double intakePower = 0.4; // don't exceed 0.6 if you don't want to smoke the motor!
+    public static final double outtakePower = -0.4; 
+    public static final double stallIntakePower = 0.06; // don't exceed 0.07 if you don't want to smoke the motor!
+    public static final double stallOuttakePower = -0.06;
 
     public static final double stallTime = 0.2; // 200 ms
-    public static final double stallRPMLimit = 500;
+    public static final double stallRPMLimit = 1000;
 
     public static enum ClawMode {
       ejecting, stationary, intaking
-    };
+    }
   }
 
   public static final class ArmConstants {
@@ -247,7 +254,9 @@ public class Constants {
     public static final double LoadPosition = 2;
     public static final double MidScoringPosition = 64;
     public static final double HighScoringPosition = 60;
-    public static final double ArmHomingSpeed = 0;
+    
+    public static final double ArmHomingPower = -0.1;
+    public static double homingTimeout = 3; // seconds
 
     public static final double positionToleranceInternal = 0.3;
 

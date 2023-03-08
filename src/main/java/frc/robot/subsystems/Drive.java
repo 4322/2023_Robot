@@ -364,14 +364,6 @@ public class Drive extends SubsystemBase {
     }
   }
 
-  public void setToFieldCentric() {
-    if (Constants.driveEnabled) {
-      fieldRelative = true;
-      robotCentricOffsetDegrees = 0;
-      DataLogManager.log("Robot Mode = Field Centric");
-    }
-  }
-
   public void setCoastMode() {
     if (Constants.driveEnabled) {
       for (SwerveModule module : swerveModules) {
