@@ -21,6 +21,8 @@ public class ArmHoming extends CommandBase{
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    timeout.reset();
+    timeout.start();
     arm.setLimitSwitch(false);
     arm.setHoming();
   }
