@@ -120,7 +120,7 @@ public class Claw extends SubsystemBase {
               stallInTimer.start();
             }
           }
-        } else if ((clawMode == ClawMode.outtaking) && (signedRPM < ClawConstants.stallRPMLimit)) {
+        } else if ((clawMode == ClawMode.outtaking) && (signedRPM > -ClawConstants.stallRPMLimit)) {
           if (stallOutTimer.hasElapsed(ClawConstants.stallTime)) {
             stalledOut = true;
           } else {
