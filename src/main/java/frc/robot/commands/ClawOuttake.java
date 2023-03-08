@@ -13,16 +13,18 @@ public class ClawOuttake extends CommandBase {
 
   @Override
   public void initialize() {
-    claw.outtake();
+    claw.changeState(Claw.ClawMode.outtaking);
   }
 
   @Override
-  public void execute() {}
+  public void execute() {
+  
+  }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    claw.stop();
+    claw.changeState(Claw.ClawMode.stopped);
   }
 
   @Override

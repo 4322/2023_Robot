@@ -54,8 +54,6 @@ public class Drive extends SubsystemBase {
 
   private SwerveDriveOdometry odometry;
   private ShuffleboardTab tab;
-  private double robotCentricOffsetDegrees;
-  private boolean fieldRelative = true;
 
   private GenericEntry rotErrorTab;
   private GenericEntry rotSpeedTab;
@@ -367,14 +365,6 @@ public class Drive extends SubsystemBase {
   public void resetOdometry(Pose2d pose) {
     if (Constants.gyroEnabled) {
       odometry.resetPosition(gyro.getRotation2d(), getModulePostitions(), pose);
-    }
-  }
-
-  public void setToFieldCentric() {
-    if (Constants.driveEnabled) {
-      fieldRelative = true;
-      robotCentricOffsetDegrees = 0;
-      DataLogManager.log("Robot Mode = Field Centric");
     }
   }
 

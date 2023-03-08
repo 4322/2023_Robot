@@ -43,15 +43,11 @@ public class RobotContainer {
   private final PathPlannerManager ppManager;
 
   // Arm commands
-  private final ArmManual armManual = new ArmManual(arm);
   private final ArmRotateToPosition armRotateToLoadPosition =
       new ArmRotateToPosition(arm, Constants.ArmConstants.LoadPosition);
   private final ArmRotateToPosition armRotateToMidPosition =
       new ArmRotateToPosition(arm, Constants.ArmConstants.MidScoringPosition);
-  private final ArmRotateToPosition armRotateToHighPosition =
-      new ArmRotateToPosition(arm, Constants.ArmConstants.HighScoringPosition);
   private final ArmSetCoastMode armSetCoastMode = new ArmSetCoastMode(arm);
-  private final ArmHoming armHoming = new ArmHoming(arm);
 
   // Claw commands
   private final ClawIntake clawIntake = new ClawIntake(claw);
@@ -103,6 +99,7 @@ public class RobotContainer {
       ppManager.loadAuto("Test Path Rotation", false));
     autoChooser.addOption("Test Auto Balance Blue", 
       ppManager.loadAuto("Test Auto Balance", false));
+
   }
 
 
@@ -166,7 +163,7 @@ public class RobotContainer {
       arm.stop();
     }
     if (Constants.clawEnabled) {
-      claw.stop();
+      claw.changeState(Claw.ClawMode.stopped);
       claw.setCoastMode();
     }
     if (Constants.driveEnabled) {
@@ -182,5 +179,9 @@ public class RobotContainer {
     }
 
     return autoChooser.getSelected();
+  }
+
+  public void armReset() {
+    new ArmHoming(arm).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming).schedule();
   }
 }
