@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
+import frc.robot.subsystems.Claw.ClawMode;
 
 public class ScoreCone extends CommandBase{
   private Arm arm;
@@ -47,7 +48,7 @@ public class ScoreCone extends CommandBase{
         }
       case atPosition:
         if (Constants.clawEnabled) {
-          claw.outtake();
+          claw.changeState(ClawMode.outtaking);
         }
 
         if (timer.hasElapsed(1)) {
@@ -64,7 +65,7 @@ public class ScoreCone extends CommandBase{
   @Override
   public void end(boolean interrupted) {
     arm.stop();
-    claw.stop();
+    claw.changeState(ClawMode.stopped);
     currentMode = scoreMode.done;
   }
 
