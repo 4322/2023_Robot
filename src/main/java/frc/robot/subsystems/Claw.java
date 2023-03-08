@@ -76,6 +76,8 @@ public class Claw extends SubsystemBase {
 
   private void stop() {
     clawMotor.stopMotor();
+    stallInTimer.stop(); // stop timers to help when button is quickly tapped
+    stallOutTimer.stop();
   }
 
   public void setCoastMode() {
@@ -115,18 +117,14 @@ public class Claw extends SubsystemBase {
         } else if ((clawMode == ClawMode.intaking) && (signedRPM < ClawConstants.stallRPMLimit)) {
           if (stallInTimer.hasElapsed(ClawConstants.stallTime)) {
             stalledIn = true;
-          } else {
-            if (signedRPM >= 0) {
-              stallInTimer.start();
-            }
+          } else if (signedRPM >= 0) { // In case we switch from intaking immediately to outtaking
+            stallInTimer.start();
           }
         } else if ((clawMode == ClawMode.outtaking) && (signedRPM > -ClawConstants.stallRPMLimit)) {
           if (stallOutTimer.hasElapsed(ClawConstants.stallTime)) {
             stalledOut = true;
-          } else {
-            if (signedRPM <= 0) {
-              stallOutTimer.start();
-            }
+          } else if (signedRPM <= 0) { 
+            stallOutTimer.start();
           }
         }
 
