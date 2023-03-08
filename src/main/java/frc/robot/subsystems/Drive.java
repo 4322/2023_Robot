@@ -262,60 +262,60 @@ public class Drive extends SubsystemBase {
   }
 
   public void drive(double driveX, double driveY, double rotate) {
-    if (Constants.driveEnabled && Constants.gyroEnabled) {
-      double clock = runTime.get(); // cache value to reduce CPU usage
-      double[] currentAngle = new double[4];
-      for (int i = 0; i < swerveModules.length; i++) {
-        currentAngle[i] = swerveModules[i].getInternalRotationDegrees();
-      }
+    // if (Constants.driveEnabled && Constants.gyroEnabled) {
+    //   double clock = runTime.get(); // cache value to reduce CPU usage
+    //   double[] currentAngle = new double[4];
+    //   for (int i = 0; i < swerveModules.length; i++) {
+    //     currentAngle[i] = swerveModules[i].getInternalRotationDegrees();
+    //   }
 
-      Translation2d velocityXY = new Translation2d();
-      Translation2d accelerationXY = new Translation2d();
-      // sum wheel velocity and acceleration vectors
-      for (int i = 0; i < swerveModules.length; i++) {
-        double wheelAngleDegrees = currentAngle[i];
-        velocityXY.plus(new Translation2d(swerveModules[i].getVelocity(),
-            Rotation2d.fromDegrees(wheelAngleDegrees)));
-        accelerationXY.plus(new Translation2d(swerveModules[i].getAcceleration(),
-            Rotation2d.fromDegrees(wheelAngleDegrees)));
-      }
-      latestVelocity = velocityXY.getNorm() / 4;
-      latestAcceleration = accelerationXY.getNorm() / 4;
-      velocityHistory
-          .removeIf(n -> (n.getTime() < clock - DriveConstants.Tip.velocityHistorySeconds));
-      velocityHistory.add(new SnapshotTranslation2D(velocityXY, clock));
+    //   Translation2d velocityXY = new Translation2d();
+    //   Translation2d accelerationXY = new Translation2d();
+    //   // sum wheel velocity and acceleration vectors
+    //   for (int i = 0; i < swerveModules.length; i++) {
+    //     double wheelAngleDegrees = currentAngle[i];
+    //     velocityXY.plus(new Translation2d(swerveModules[i].getVelocity(),
+    //         Rotation2d.fromDegrees(wheelAngleDegrees)));
+    //     accelerationXY.plus(new Translation2d(swerveModules[i].getAcceleration(),
+    //         Rotation2d.fromDegrees(wheelAngleDegrees)));
+    //   }
+    //   latestVelocity = velocityXY.getNorm() / 4;
+    //   latestAcceleration = accelerationXY.getNorm() / 4;
+    //   velocityHistory
+    //       .removeIf(n -> (n.getTime() < clock - DriveConstants.Tip.velocityHistorySeconds));
+    //   velocityHistory.add(new SnapshotTranslation2D(velocityXY, clock));
 
-      if (Constants.debug) {
-        botVelocityMag.setDouble(latestVelocity);
-        botAccelerationMag.setDouble(latestAcceleration);
-        botVelocityAngle.setDouble(velocityXY.getAngle().getDegrees());
-        botAccelerationAngle.setDouble(accelerationXY.getAngle().getDegrees());
-        driveXTab.setDouble(driveX);
-        driveYTab.setDouble(driveY);
-        rotateTab.setDouble(rotate);
-      }
-      // convert to proper units
-      rotate = rotate * DriveConstants.maxRotationSpeedRadSecond;
-      driveX = driveX * DriveConstants.maxSpeedMetersPerSecond;
-      driveY = driveY * DriveConstants.maxSpeedMetersPerSecond;
+    //   if (Constants.debug) {
+    //     botVelocityMag.setDouble(latestVelocity);
+    //     botAccelerationMag.setDouble(latestAcceleration);
+    //     botVelocityAngle.setDouble(velocityXY.getAngle().getDegrees());
+    //     botAccelerationAngle.setDouble(accelerationXY.getAngle().getDegrees());
+    //     driveXTab.setDouble(driveX);
+    //     driveYTab.setDouble(driveY);
+    //     rotateTab.setDouble(rotate);
+    //   }
+    //   // convert to proper units
+    //   rotate = rotate * DriveConstants.maxRotationSpeedRadSecond;
+    //   driveX = driveX * DriveConstants.maxSpeedMetersPerSecond;
+    //   driveY = driveY * DriveConstants.maxSpeedMetersPerSecond;
 
-      // ready to drive!
-      if ((driveX == 0) && (driveY == 0) && (rotate == 0)) {
-        stop();
-      } else {
-        Rotation2d robotAngle;
-          robotAngle = gyro.getRotation2d();
+    //   // ready to drive!
+    //   if ((driveX == 0) && (driveY == 0) && (rotate == 0)) {
+    //     stop();
+    //   } else {
+    //     Rotation2d robotAngle;
+    //       robotAngle = gyro.getRotation2d();
 
-        // create SwerveModuleStates inversely from the kinematics
-        var swerveModuleStates = kinematics.toSwerveModuleStates(
-            ChassisSpeeds.fromFieldRelativeSpeeds(driveX, driveY, rotate, robotAngle));
-        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates,
-            Constants.DriveConstants.maxSpeedMetersPerSecond);
-        for (int i = 0; i < swerveModules.length; i++) {
-          swerveModules[i].setDesiredState(swerveModuleStates[i]);
-        }
-      }
-    }
+    //     // create SwerveModuleStates inversely from the kinematics
+    //     var swerveModuleStates = kinematics.toSwerveModuleStates(
+    //         ChassisSpeeds.fromFieldRelativeSpeeds(driveX, driveY, rotate, robotAngle));
+    //     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates,
+    //         Constants.DriveConstants.maxSpeedMetersPerSecond);
+    //     for (int i = 0; i < swerveModules.length; i++) {
+    //       swerveModules[i].setDesiredState(swerveModuleStates[i]);
+    //     }
+    //   }
+    // }
   }
 
   // Uses a PID Controller to rotate the robot to a certain degree
@@ -407,14 +407,14 @@ public class Drive extends SubsystemBase {
   }
 
   public void setModuleStates(SwerveModuleState[] states) {
-    if (Constants.driveEnabled) {
-      SwerveDriveKinematics.desaturateWheelSpeeds(states, DriveConstants.maxSpeedMetersPerSecond);
-      int i = 0;
-      for (SwerveModuleState s : states) {
-        swerveModules[i].setDesiredState(s);
-        i++;
-      }
-    }
+    // if (Constants.driveEnabled) {
+    //   SwerveDriveKinematics.desaturateWheelSpeeds(states, DriveConstants.maxSpeedMetersPerSecond);
+    //   int i = 0;
+    //   for (SwerveModuleState s : states) {
+    //     swerveModules[i].setDesiredState(s);
+    //     i++;
+    //   }
+    // }
   }
 
   public SwerveModulePosition[] getModulePostitions() {
@@ -454,10 +454,11 @@ public class Drive extends SubsystemBase {
   private void setFollowDrive() {
     if (Constants.driveEnabled) {
       WPI_TalonFX primary = swerveModules[WheelPosition.FRONT_LEFT.wheelNumber].getDriveMotor();
-      CanBusUtil.dualTalon(primary);
+      CanBusUtil.dualTalonFX(primary);
       swerveModules[WheelPosition.FRONT_RIGHT.wheelNumber].getDriveMotor().follow(primary);
       swerveModules[WheelPosition.FRONT_RIGHT.wheelNumber].getDriveMotor().setInverted(InvertType.OpposeMaster);
       swerveModules[WheelPosition.BACK_LEFT.wheelNumber].getDriveMotor().follow(primary);
+      swerveModules[WheelPosition.BACK_LEFT.wheelNumber].getDriveMotor().setInverted(InvertType.OpposeMaster);
       swerveModules[WheelPosition.BACK_RIGHT.wheelNumber].getDriveMotor().follow(primary);
       swerveModules[WheelPosition.BACK_RIGHT.wheelNumber].getDriveMotor().setInverted(InvertType.OpposeMaster);
     }
