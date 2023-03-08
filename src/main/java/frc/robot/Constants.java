@@ -178,11 +178,11 @@ public class Constants {
 
       public static final double wheelDiameterInches = 4.0;
       public static final double gearRatio = 7.8;
-      public static final double kP = 0.045;
-      public static final double kI = 0.000065;
+      public static final double kP = 0.05;
+      public static final double kI = 0.0002;
       public static final double kD = 0.0;
       public static final double kIz = 500;
-      public static final double kFF = 0.05;
+      public static final double kFF = 0.054;
       
     }
 
