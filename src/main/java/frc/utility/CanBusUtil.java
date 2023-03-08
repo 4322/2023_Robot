@@ -156,9 +156,8 @@ public class CanBusUtil {
     }
   }
 
-  // Increase frame rates for a Talon that is being followed after initialization
-  // when velocity control is in use.
-  public static void dualTalon(WPI_TalonFX mainMotor) {
+  // Increase frame rates for a Talon that is being followed after initialization.
+  public static void dualTalonFX(WPI_TalonFX mainMotor) {
     // applied output for follower
     mainMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 
         nextFastStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
