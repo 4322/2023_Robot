@@ -233,7 +233,7 @@ public class Constants {
     public static final double rampRate = 0.3; // good range: 0.3 to 0.5
     public static final double logIntervalSeconds = 0.5;
   
-    public static final int maxPosition = 70;
+    public static final int maxPosition = 72;
     public static final int minPosition = 0;
 
     public static final double manualDeadband = 0;
@@ -241,7 +241,7 @@ public class Constants {
     public static final double kMaxRange = 0;
 
     public static final double LoadPosition = 2;
-    public static final double MidScoringPosition = 64;
+    public static final double MidScoringPosition = 68;
     public static final double HighScoringPosition = 60;
     
     public static final double ArmHomingPower = -0.1;
