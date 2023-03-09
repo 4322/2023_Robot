@@ -216,7 +216,7 @@ public class Constants {
 
     public static final double intakePower = 0.4; // don't exceed 0.6 if you don't want to smoke the motor!
     public static final double outtakePower = -0.4; 
-    public static final double stallIntakePower = 0.06; // don't exceed 0.07 if you don't want to smoke the motor!
+    public static final double stallIntakePower = 0.07; // don't exceed 0.07 if you don't want to smoke the motor!
     public static final double stallOuttakePower = -0.06;
 
     public static final double stallTime = 0.2; // 200 ms
@@ -241,6 +241,7 @@ public class Constants {
     public static final double kMaxRange = 0;
 
     public static final double LoadPosition = 2;
+    public static final double LoadHighPosition = 10;
     public static final double MidScoringPosition = 68;
     public static final double HighScoringPosition = 60;
     

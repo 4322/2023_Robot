@@ -37,6 +37,8 @@ public class RobotContainer {
   // Arm commands
   private final ArmRotateToPosition armRotateToLoadPosition =
       new ArmRotateToPosition(arm, Constants.ArmConstants.LoadPosition);
+  private final ArmRotateToPosition armRotateToLoadHighPosition =
+      new ArmRotateToPosition(arm, Constants.ArmConstants.LoadHighPosition);
   private final ArmRotateToPosition armRotateToMidPosition =
       new ArmRotateToPosition(arm, Constants.ArmConstants.MidScoringPosition);
   private final ArmSetCoastMode armSetCoastMode = new ArmSetCoastMode(arm);
@@ -97,17 +99,18 @@ public class RobotContainer {
       driveTrigger.whileTrue(clawOuttake);
       driveButtonThree.onTrue(changeYellow);
       driveButtonFour.onTrue(changePurple);
-      driveButtonFive.whileTrue(clawIntake);
+      driveButtonFive.onTrue(clawIntake);
       driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
       rotateTrigger.whileTrue(armRotateToMidPosition);
     }
 
     if (Constants.xboxEnabled) {
-      xbox.leftTrigger().whileTrue(clawIntake);
+      xbox.leftTrigger().onTrue(clawIntake);
       xbox.rightTrigger().whileTrue(clawOuttake);
       xbox.back().onTrue(armSetCoastMode);
       xbox.leftBumper().onTrue(changeYellow);
       xbox.rightBumper().onTrue(changePurple);
+      xbox.a().whileTrue(armRotateToLoadHighPosition);
     }
   }
 
