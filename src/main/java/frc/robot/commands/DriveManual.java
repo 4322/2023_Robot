@@ -17,7 +17,7 @@ public class DriveManual extends CommandBase {
 
   private final Drive drive;
   private final Double targetHeadingDeg;
-  private boolean done = false;
+  private boolean done;
 
   public DriveManual(Drive drivesubsystem, Double targetHeadingDeg) {
     drive = drivesubsystem;
@@ -29,7 +29,10 @@ public class DriveManual extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    drive.resetRotatePID();
+    done = false;  // make command reusable
+  }
 
   @Override
   public void execute() {
