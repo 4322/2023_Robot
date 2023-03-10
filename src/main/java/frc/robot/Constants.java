@@ -40,8 +40,6 @@ public class Constants {
   public static final int slowStatusPeriodMaxMs = 255;
   public static final int controllerConfigTimeoutMs = 50;
 
-  
-
   public static final class DriveConstants {
     
     public static final int frontRightDriveID = 3;
@@ -86,6 +84,8 @@ public class Constants {
 
       public static final double xboxDriveDeadband = 0.1;
       public static final double xboxRotateDeadband = 0.2;
+      public static final double rotateToleranceDegrees = 1.5;
+
     }
 
     public static final class Auto {
@@ -98,9 +98,9 @@ public class Constants {
           OrangeMath.inchesToMeters(OrangeMath.getCircumference(Drive.wheelDiameterInches)),
           Drive.gearRatio);
 
-      public static final double autoRotkP = 0.08;
-      public static final double autoRotkD = 0.004;
-      public static final double minAutoRotateSpeed = 0.03;
+      public static final double autoRotkP = 0.005;
+      public static final double autoRotkD = 0.0002;
+      public static final double minAutoRotateSpeed = 0.0;  // 0.03
       public static final double maxAutoRotateSpeed = 0.5;
 
     }

@@ -25,6 +25,7 @@ public class RobotContainer {
   private JoystickButton driveButtonFour;
   private JoystickButton driveButtonFive;
   private JoystickButton driveButtonSeven;
+  private JoystickButton rotateButtonFive;
 
   private JoystickButton rotateTrigger;
 
@@ -48,7 +49,11 @@ public class RobotContainer {
   private final ClawOuttake clawOuttake = new ClawOuttake(claw);
 
   // Drive Commands
-  private final DriveManual driveManual = new DriveManual(drive);
+  private final DriveManual driveManualDefault = new DriveManual(drive, null);
+  private final DriveManual driveManualForward = new DriveManual(drive, 0.0);
+  private final DriveManual driveManualLeft = new DriveManual(drive, 90.0);
+  private final DriveManual driveManualRight = new DriveManual(drive, -90.0);
+
   //LED Commands
   private final ChangeYellow changeYellow = new ChangeYellow(LED);
   private final ChangePurple changePurple = new ChangePurple(LED);
@@ -66,7 +71,7 @@ public class RobotContainer {
     configureButtonBindings();
 
     if (Constants.driveEnabled) {
-      drive.setDefaultCommand(driveManual);
+      drive.setDefaultCommand(driveManualDefault);
     }
 
     if (Constants.armEnabled) {
@@ -74,7 +79,6 @@ public class RobotContainer {
     }
 
   }
-
 
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
@@ -95,6 +99,7 @@ public class RobotContainer {
       driveButtonFive = new JoystickButton(driveStick, 5);
       driveButtonSeven = new JoystickButton(driveStick, 7);
       rotateTrigger = new JoystickButton(rotateStick, 1);
+      rotateButtonFive = new JoystickButton(rotateStick, 5);
 
       driveTrigger.whileTrue(clawOuttake);
       driveButtonThree.onTrue(changeYellow);
@@ -102,6 +107,7 @@ public class RobotContainer {
       driveButtonFive.onTrue(clawIntake);
       driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
       rotateTrigger.whileTrue(armRotateToMidPosition);
+      rotateButtonFive.onTrue(driveManualForward);
     }
 
     if (Constants.xboxEnabled) {
@@ -111,6 +117,8 @@ public class RobotContainer {
       xbox.leftBumper().onTrue(changeYellow);
       xbox.rightBumper().onTrue(changePurple);
       xbox.a().whileTrue(armRotateToLoadHighPosition);
+      xbox.x().onTrue(driveManualLeft);
+      xbox.b().onTrue(driveManualRight);
     }
   }
 
