@@ -16,9 +16,12 @@ public class DriveManual extends CommandBase {
    */
 
   private final Drive drive;
+  private final Double targetHeadingDeg;
+  private boolean done;
 
-  public DriveManual(Drive drivesubsystem) {
+  public DriveManual(Drive drivesubsystem, Double targetHeadingDeg) {
     drive = drivesubsystem;
+    this.targetHeadingDeg = targetHeadingDeg;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drive);
@@ -26,7 +29,10 @@ public class DriveManual extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    drive.resetRotatePID();
+    done = false;  // make command reusable
+  }
 
   @Override
   public void execute() {
@@ -145,7 +151,16 @@ public class DriveManual extends CommandBase {
         rotatePower = -1;
       }
 
-      drive.drive(driveX, driveY, rotatePower);
+      if (targetHeadingDeg == null) {
+        drive.drive(driveX, driveY, rotatePower);
+      } else if (rotatePower == 0) {
+        drive.driveAutoRotate(driveX, driveY, targetHeadingDeg,
+            Constants.DriveConstants.Manual.rotateToleranceDegrees);
+      } else {
+        // break out of auto-rotate and return to default command
+       drive.drive(driveX, driveY, rotatePower);
+       done = true;
+      }
     }
   }
 
@@ -156,6 +171,6 @@ public class DriveManual extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return done;
   }
 }

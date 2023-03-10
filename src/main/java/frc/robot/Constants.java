@@ -50,8 +50,6 @@ public class Constants {
   public static final int slowStatusPeriodMaxMs = 255;
   public static final int controllerConfigTimeoutMs = 50;
 
-  
-
   public static final class DriveConstants {
     
     public static final int frontRightDriveID = 3;
@@ -111,6 +109,8 @@ public class Constants {
 
       public static final double xboxDriveDeadband = 0.1;
       public static final double xboxRotateDeadband = 0.2;
+      public static final double rotateToleranceDegrees = 1.5;
+
     }
 
     public static final class Auto {
@@ -123,9 +123,9 @@ public class Constants {
           OrangeMath.inchesToMeters(OrangeMath.getCircumference(Drive.wheelDiameterInches)),
           Drive.gearRatio);
 
-      public static final double autoRotkP = 0.08;
-      public static final double autoRotkD = 0.004;
-      public static final double minAutoRotateSpeed = 0.03;
+      public static final double autoRotkP = 0.005;
+      public static final double autoRotkD = 0.0002;
+      public static final double minAutoRotateSpeed = 0.0;  // 0.03
       public static final double maxAutoRotateSpeed = 0.5;
 
     }
@@ -240,7 +240,7 @@ public class Constants {
 
     public static final double intakePower = 0.4; // don't exceed 0.6 if you don't want to smoke the motor!
     public static final double outtakePower = -0.4; 
-    public static final double stallIntakePower = 0.06; // don't exceed 0.07 if you don't want to smoke the motor!
+    public static final double stallIntakePower = 0.07; // don't exceed 0.07 if you don't want to smoke the motor!
     public static final double stallOuttakePower = -0.06;
 
     public static final double stallTime = 0.2; // 200 ms
@@ -257,7 +257,7 @@ public class Constants {
     public static final double rampRate = 0.3; // good range: 0.3 to 0.5
     public static final double logIntervalSeconds = 0.5;
   
-    public static final int maxPosition = 70;
+    public static final int maxPosition = 72;
     public static final int minPosition = 0;
 
     public static final double manualDeadband = 0;
@@ -265,7 +265,8 @@ public class Constants {
     public static final double kMaxRange = 0;
 
     public static final double LoadPosition = 2;
-    public static final double MidScoringPosition = 64;
+    public static final double LoadHighPosition = 10;
+    public static final double MidScoringPosition = 68;
     public static final double HighScoringPosition = 60;
     
     public static final double ArmHomingPower = -0.1;

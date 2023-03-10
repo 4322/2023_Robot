@@ -45,4 +45,12 @@ public class OrangeMath {
     return Math.sqrt(hypotenuse * hypotenuse - leg * leg);  // don't use inefficient Math.pow()
   }
 
+  // convert angle to range of +/- 180 degrees
+  public static double boundDegrees(double angleDegrees) {
+    double x = ((angleDegrees + 180) % 360) - 180;
+    if (x < -180) {
+      x += 360;
+    }
+    return x;
+  }
 }
