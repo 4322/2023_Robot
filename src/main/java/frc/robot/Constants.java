@@ -89,12 +89,6 @@ public class Constants {
 
     public static final double manualRotateToleranceDegrees = 1.5;
 
-    // Values for auto balance
-    public static final double autoBalanceStartingVelocity = 1;
-    public static final double autoBalanceApproachingVelocity = 0.3; // slower speed when approaching midpoint of charging station
-    public static final double chargeStationOffSet = 11;
-    public static final double chargeStationTolerance = 2;
-
     // 1 degree
     public static final Pose2d poseError =
         new Pose2d(new Translation2d(0.1, 0.1), new Rotation2d(0.0174533));
@@ -219,6 +213,7 @@ public class Constants {
     }
 
     public static final class Trajectory {
+
       public static final class PIDXY {
         public static final double kP = 0;
         public static final double kI = 0;
@@ -230,6 +225,7 @@ public class Constants {
         public static final double kI = 0;
         public static final double kD = 0;
       }
+      
     }
   }
 

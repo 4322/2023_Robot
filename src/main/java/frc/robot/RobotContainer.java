@@ -67,8 +67,8 @@ public class RobotContainer {
   private final ChangePurple changePurple = new ChangePurple(LED);
 
   // Auto Commands
-  private final AutoBalance autoBalance = new AutoBalance(drive);
   private final ScoreCone scoreCone = new ScoreCone(arm, claw);
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
 
   public RobotContainer() {
@@ -99,13 +99,23 @@ public class RobotContainer {
 
     ppManager = new PathPlannerManager(drive);
 
-    ppManager.addEvent("autoBalance", autoBalance);
+    ppManager.addEvent("armHoming", 
+      new ArmHoming(arm).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming));
     ppManager.addEvent("scoreCone", scoreCone);
     
-    autoChooser.addOption("Test Path Rotation", 
-      ppManager.loadAuto("Test Path Rotation", false));
-    autoChooser.addOption("Test Auto Balance Blue", 
-      ppManager.loadAuto("Test Auto Balance", false));
+    autoChooser.addOption("AroundCharge1Blue", 
+      ppManager.loadAuto("AroundCharge1", false));
+    autoChooser.addOption("AroundCharge1Red", 
+      ppManager.loadAuto("AroundCharge1", true));
+    autoChooser.addOption("OverCharge4Blue", 
+      ppManager.loadAuto("OverCharge4", false));
+    autoChooser.addOption("OverCharge4Red", 
+      ppManager.loadAuto("OverCharge4", true));
+    autoChooser.addOption("AroundCharge9Blue", 
+      ppManager.loadAuto("AroundCharge9", false));
+    autoChooser.addOption("AroundCharge9Red", 
+      ppManager.loadAuto("AroundCharge9", false));
+    
 
   }
 
