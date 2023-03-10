@@ -21,10 +21,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  * project.
  */
 public class Robot extends TimedRobot {
-  private static final String kDefaultAuto = "Default";
-  private static final String kCustomAuto = "My Auto";
   private static final PowerDistribution PDH = new PowerDistribution();
-  private String m_autoSelected;
   private Command m_autonomousCommand;
   private ShuffleboardTab tab;
   private ShuffleboardTab PDHTab;

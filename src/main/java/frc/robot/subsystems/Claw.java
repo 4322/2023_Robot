@@ -43,16 +43,21 @@ public class Claw extends SubsystemBase {
     }
   }
 
-  public void changeState(ClawMode mode) {
-    clawMode = mode;
-    if (clawMode == ClawMode.intaking) {
-      DataLogManager.log("Claw intaking");
-    }
-    if (clawMode == ClawMode.outtaking) {
-      DataLogManager.log("Claw outtaking");
-    }
-    if (clawMode == ClawMode.stopped) {
-      DataLogManager.log("Claw stopped");
+  public boolean changeState(ClawMode mode) {
+    if (Constants.clawEnabled) {
+      clawMode = mode;
+      if (clawMode == ClawMode.intaking) {
+        DataLogManager.log("Claw intaking");
+      }
+      if (clawMode == ClawMode.outtaking) {
+        DataLogManager.log("Claw outtaking");
+      }
+      if (clawMode == ClawMode.stopped) {
+        DataLogManager.log("Claw stopped");
+      }
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -62,7 +67,7 @@ public class Claw extends SubsystemBase {
       clawMotor.set(ClawConstants.stallIntakePower);
     } else {
       clawMotor.set(ClawConstants.intakePower);
-    }     
+    }   
   }
 
   private void outtake() {
