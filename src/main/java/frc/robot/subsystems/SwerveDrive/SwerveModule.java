@@ -15,7 +15,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.subsystems.Drive;
 import frc.utility.OrangeMath;
 import frc.utility.CanBusUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -156,7 +155,7 @@ public class SwerveModule extends ControlModule {
   }
 
   public double getInternalRotationDegrees() {
-    return Drive.boundDegrees(getInternalRotationCount() * DriveConstants.Rotation.countToDegrees);
+    return OrangeMath.boundDegrees(getInternalRotationCount() * DriveConstants.Rotation.countToDegrees);
   }
 
   @Override
@@ -202,7 +201,7 @@ public class SwerveModule extends ControlModule {
 
     // Calculate the change in degrees and add that to the current position
     turningMotor.set(ControlMode.Position,
-        (currentDeg + Drive.boundDegrees(state.angle.getDegrees() - currentDeg))
+        (currentDeg + OrangeMath.boundDegrees(state.angle.getDegrees() - currentDeg))
             / DriveConstants.Rotation.countToDegrees);
 
   }

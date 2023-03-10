@@ -29,6 +29,7 @@ public class RobotContainer {
   private JoystickButton driveButtonFour;
   private JoystickButton driveButtonFive;
   private JoystickButton driveButtonSeven;
+  private JoystickButton rotateButtonFive;
 
   private JoystickButton rotateTrigger;
 
@@ -45,6 +46,8 @@ public class RobotContainer {
   // Arm commands
   private final ArmRotateToPosition armRotateToLoadPosition =
       new ArmRotateToPosition(arm, Constants.ArmConstants.LoadPosition);
+  private final ArmRotateToPosition armRotateToLoadHighPosition =
+      new ArmRotateToPosition(arm, Constants.ArmConstants.LoadHighPosition);
   private final ArmRotateToPosition armRotateToMidPosition =
       new ArmRotateToPosition(arm, Constants.ArmConstants.MidScoringPosition);
   private final ArmSetCoastMode armSetCoastMode = new ArmSetCoastMode(arm);
@@ -54,7 +57,11 @@ public class RobotContainer {
   private final ClawOuttake clawOuttake = new ClawOuttake(claw);
 
   // Drive Commands
-  private final DriveManual driveManual = new DriveManual(drive);
+  private final DriveManual driveManualDefault = new DriveManual(drive, null);
+  private final DriveManual driveManualForward = new DriveManual(drive, 0.0);
+  private final DriveManual driveManualLeft = new DriveManual(drive, 90.0);
+  private final DriveManual driveManualRight = new DriveManual(drive, -90.0);
+
   //LED Commands
   private final ChangeYellow changeYellow = new ChangeYellow(LED);
   private final ChangePurple changePurple = new ChangePurple(LED);
@@ -83,7 +90,7 @@ public class RobotContainer {
       .withSize(4, 2);
 
     if (Constants.driveEnabled) {
-      drive.setDefaultCommand(driveManual);
+      drive.setDefaultCommand(driveManualDefault);
     }
 
     if (Constants.armEnabled) {
@@ -101,7 +108,6 @@ public class RobotContainer {
       ppManager.loadAuto("Test Auto Balance", false));
 
   }
-
 
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
@@ -121,21 +127,24 @@ public class RobotContainer {
       driveButtonFive = new JoystickButton(driveStick, 5);
       driveButtonSeven = new JoystickButton(driveStick, 7);
       rotateTrigger = new JoystickButton(rotateStick, 1);
+      rotateButtonFive = new JoystickButton(rotateStick, 5);
 
       driveTrigger.whileTrue(clawOuttake);
       driveButtonThree.onTrue(changeYellow);
       driveButtonFour.onTrue(changePurple);
-      driveButtonFive.whileTrue(clawIntake);
+      driveButtonFive.onTrue(clawIntake);
       driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
       rotateTrigger.whileTrue(armRotateToMidPosition);
+      rotateButtonFive.onTrue(driveManualForward);
     }
 
     if (Constants.xboxEnabled) {
-      xbox.leftTrigger().whileTrue(clawIntake);
+      xbox.leftTrigger().onTrue(clawIntake);
       xbox.rightTrigger().whileTrue(clawOuttake);
       xbox.back().onTrue(armSetCoastMode);
-      xbox.leftBumper().onTrue(changeYellow);
-      xbox.rightBumper().onTrue(changePurple);
+      xbox.leftBumper().onTrue(driveManualLeft);
+      xbox.rightBumper().onTrue(driveManualRight);
+      xbox.a().whileTrue(armRotateToLoadHighPosition);
     }
   }
 
