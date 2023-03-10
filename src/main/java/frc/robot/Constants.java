@@ -98,9 +98,9 @@ public class Constants {
           OrangeMath.inchesToMeters(OrangeMath.getCircumference(Drive.wheelDiameterInches)),
           Drive.gearRatio);
 
-      public static final double autoRotkP = 0.08;
-      public static final double autoRotkD = 0.004;
-      public static final double minAutoRotateSpeed = 0.03;
+      public static final double autoRotkP = 0.005;
+      public static final double autoRotkD = 0.0002;
+      public static final double minAutoRotateSpeed = 0.0;  // 0.03
       public static final double maxAutoRotateSpeed = 0.5;
 
     }
