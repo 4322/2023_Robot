@@ -114,24 +114,27 @@ public class RobotContainer {
       )
     );
     
-    autoChooser.addOption("AroundCharge1Blue", 
-      ppManager.loadAuto("AroundCharge1", false));
-    autoChooser.addOption("AroundCharge1Red", 
-      ppManager.loadAuto("AroundCharge1", true));
-    autoChooser.addOption("OverCharge4Blue", 
-      ppManager.loadAuto("OverCharge4", false));
-    autoChooser.addOption("OverCharge4Red", 
-      ppManager.loadAuto("OverCharge4", true));
-    autoChooser.addOption("OverCharge6Blue", 
-      ppManager.loadAuto("OverCharge6", false));
-    autoChooser.addOption("OverCharge6Red", 
-      ppManager.loadAuto("OverCharge6", true));
-    autoChooser.addOption("AroundCharge9Blue", 
-      ppManager.loadAuto("AroundCharge9", false));
-    autoChooser.addOption("AroundCharge9Red", 
-      ppManager.loadAuto("AroundCharge9", false));
-    autoChooser.addOption("ScorePreload", 
+    autoChooser.addOption("DockCharge", 
+      new SequentialCommandGroup(
+        ppManager.loadAuto("DockCharge", false),
+        new AutoDriveRotateWheels(drive, 0.25)
+      )
+    );
+
+    autoChooser.addOption("ScorePreloadMobility", 
       ppManager.loadAuto("ScorePreload", false));
+      
+    autoChooser.addOption("ScorePreloadOnly", 
+      new SequentialCommandGroup(
+        new ArmHoming(arm),
+        new ParallelRaceGroup(
+          new AutoArmRotateToPosition(arm, Constants.ArmConstants.MidScoringPosition), 
+          new ClawIntake(claw)
+        ),
+        new TimedClawOuttake(claw, 0.5),
+        new AutoArmRotateToPosition(arm, Constants.ArmConstants.LoadPosition)
+      )
+    );
     
   }
 
