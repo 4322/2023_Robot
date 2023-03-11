@@ -172,9 +172,7 @@ public class RobotContainer {
       xbox.rightTrigger().whileTrue(clawOuttake);
       xbox.back().onTrue(armSetCoastMode);
       xbox.leftBumper().onTrue(driveManualLeft);
-      xbox.leftBumper().onTrue(clawIntake);
       xbox.rightBumper().onTrue(driveManualRight);
-      xbox.rightBumper().onTrue(clawIntake);
       xbox.a().whileTrue(armRotateToLoadHighPosition);
     }
   }
