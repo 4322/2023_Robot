@@ -7,7 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 public class Constants {
-  public static final boolean debug = false;
+  public static final boolean debug = true;
   public static final boolean inDemoMode = false;
   public static final class demo {
     public enum DriveMode {
@@ -91,13 +91,13 @@ public class Constants {
 
     // Values for auto balance
     public static final double autoBalanceFlatPower = 0.25;
-    public static final double autoBalanceRampPower = 0.175; // slower speed when approaching midpoint of charging station
+    public static final double autoBalanceRampPower = 0.075; // slower speed when approaching midpoint of charging station
     public static final double autoBalanceYawTolerance = 0.5;
-    public static final double chargeStationTiltedMinDeg = 4.0;
-    public static final double chargeStationBalancedMaxDeg = 4.0;
+    public static final double chargeStationTiltedMinDeg = 7.5;
+    public static final double chargeStationBalancedMaxDeg = 7.5;
     public static final double autoDriveOverChargeFlatMaxDeg = 3.0;
     public static final double autoDriveOverChargeFlatSec = 0.5;
-    public static final double autoBalanceTimeoutSec = 4.0;
+    public static final double autoBalanceTimeoutSec = 99;
     public static final double autoDriveOverChargeTimeoutSec = 6.0;
 
     // 1 degree

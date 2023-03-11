@@ -209,9 +209,9 @@ public class Drive extends SubsystemBase {
   }
 
   // Get roll in degrees. Positive angle is the front of the robot raised.
-  public double getRoll() {
+  public double getPitch() {
     if (gyro != null && gyro.isConnected() && !gyro.isCalibrating() && Constants.gyroEnabled) {
-      return gyro.getRoll() - rollOffset;
+      return gyro.getPitch() - rollOffset;
     } else {
       return 0;
     }
@@ -260,7 +260,7 @@ public class Drive extends SubsystemBase {
       if (gyro != null) {
         gyro.setAngleAdjustment(0);
         gyro.setAngleAdjustment(-gyro.getAngle() + offset);
-        rollOffset = gyro.getRoll();
+        rollOffset = gyro.getPitch();
       }
       setDriveMode(DriveMode.fieldCentric);
     }

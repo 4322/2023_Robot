@@ -33,8 +33,7 @@ public class AutoBalance extends CommandBase{
   @Override
   public void initialize() {
     currentMode = autoBalanceMode.flat;
-    drive.driveAutoRotate(driveSign * Constants.DriveConstants.autoBalanceFlatPower, 0, 0, 
-      DriveConstants.autoBalanceYawTolerance);
+    drive.drive(driveSign * Constants.DriveConstants.autoBalanceFlatPower, 0, 0);
     timer.reset();
     timer.start();
   }
@@ -47,14 +46,13 @@ public class AutoBalance extends CommandBase{
       }
       switch (currentMode) {
         case flat:
-          if (Math.abs(drive.getRoll()) > Constants.DriveConstants.chargeStationTiltedMinDeg) {
-            drive.driveAutoRotate(driveSign * Constants.DriveConstants.autoBalanceRampPower, 0, 0, 
-              DriveConstants.autoBalanceYawTolerance);
+          if (Math.abs(drive.getPitch()) > Constants.DriveConstants.chargeStationTiltedMinDeg) {
+            drive.drive(driveSign * Constants.DriveConstants.autoBalanceRampPower, 0, 0);
             currentMode = autoBalanceMode.onRamp;
           }
           break;
         case onRamp:
-          if (Math.abs(drive.getRoll()) < Constants.DriveConstants.chargeStationBalancedMaxDeg) {
+          if (Math.abs(drive.getPitch()) < Constants.DriveConstants.chargeStationBalancedMaxDeg) {
             drive.stop();
             currentMode = autoBalanceMode.balanced;
           }
