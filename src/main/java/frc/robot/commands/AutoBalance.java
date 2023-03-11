@@ -33,7 +33,8 @@ public class AutoBalance extends CommandBase{
   @Override
   public void initialize() {
     currentMode = autoBalanceMode.flat;
-    drive.drive(driveSign * Constants.DriveConstants.autoBalanceFlatPower, 0, 0);
+    drive.driveAutoRotate(driveSign * Constants.DriveConstants.autoBalanceFlatPower, 0, 0, 
+      DriveConstants.autoBalanceYawTolerance);
     timer.reset();
     timer.start();
   }

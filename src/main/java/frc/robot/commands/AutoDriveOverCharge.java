@@ -32,7 +32,8 @@ public class AutoDriveOverCharge extends CommandBase{
   @Override
   public void initialize() {
     currentMode = autoDriveOverChargeMode.flatBeforeRamp;
-    drive.drive(Constants.DriveConstants.autoBalanceFlatPower, 0, 0);
+    drive.driveAutoRotate(Constants.DriveConstants.autoBalanceFlatPower, 0, 0, 
+      DriveConstants.autoBalanceYawTolerance);
     commandTimer.reset();
     commandTimer.start();
   }
