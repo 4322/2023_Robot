@@ -38,6 +38,7 @@ public class Drive extends SubsystemBase {
 
   private double latestVelocity;
   private double latestAcceleration;
+  private double rollOffset;
 
   private ArrayList<SnapshotTranslation2D> velocityHistory = new ArrayList<SnapshotTranslation2D>();
 
@@ -210,7 +211,7 @@ public class Drive extends SubsystemBase {
   // Get roll in degrees. Positive angle is the front of the robot raised.
   public double getRoll() {
     if (gyro != null && gyro.isConnected() && !gyro.isCalibrating() && Constants.gyroEnabled) {
-      return gyro.getRoll();
+      return gyro.getRoll() - rollOffset;
     } else {
       return 0;
     }
@@ -259,6 +260,7 @@ public class Drive extends SubsystemBase {
       if (gyro != null) {
         gyro.setAngleAdjustment(0);
         gyro.setAngleAdjustment(-gyro.getAngle() + offset);
+        rollOffset = gyro.getRoll();
       }
       setDriveMode(DriveMode.fieldCentric);
     }
