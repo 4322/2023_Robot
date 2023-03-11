@@ -94,7 +94,7 @@ public class Constants {
     public static final double autoBalanceRampPower = 0.075; // slower speed when approaching midpoint of charging station
     public static final double autoBalanceYawTolerance = 0.5;
     public static final double chargeStationTiltedMinDeg = 7.5;
-    public static final double chargeStationBalancedMaxDeg = 7.5;
+    public static final double chargeStationBalancedMaxDeg = 12;
     public static final double autoDriveOverChargeFlatMaxDeg = 3.0;
     public static final double autoDriveOverChargeFlatSec = 0.5;
     public static final double autoBalanceTimeoutSec = 99;
