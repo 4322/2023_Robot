@@ -67,7 +67,7 @@ public class RobotContainer {
   private final ChangePurple changePurple = new ChangePurple(LED);
 
   // Auto Commands
-  private final AutoBalance autoBalance = new AutoBalance(drive);
+  private final AutoBalance autoBalance = new AutoBalance(drive, false);
   private final ScoreCone scoreCone = new ScoreCone(arm, claw);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
 
