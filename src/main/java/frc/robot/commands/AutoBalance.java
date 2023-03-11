@@ -9,24 +9,30 @@ public class AutoBalance extends CommandBase{
   private Drive drive;
   private autoBalanceMode currentMode;
   private Timer timer = new Timer();
+  private int driveSign;
 
   public enum autoBalanceMode {
-    driving, 
-    approaching, //when deg over 9
-    stop, // stop when deg under 9
-    done, 
+    flat, 
+    onRamp,
+    balanced, 
     abort;
   }
 
-  public AutoBalance(Drive driveSubsystem) {
+  public AutoBalance(Drive driveSubsystem, boolean forward) {
     drive = driveSubsystem;
+    if (forward) {
+      driveSign = 1;
+    } else {
+      driveSign = -1;
+    }
 
     addRequirements(drive);
   }
 
   @Override
   public void initialize() {
-    currentMode = autoBalanceMode.driving;
+    currentMode = autoBalanceMode.flat;
+    drive.drive(driveSign * Constants.DriveConstants.autoBalanceFlatPower, 0, 0);
     timer.reset();
     timer.start();
   }
@@ -34,23 +40,23 @@ public class AutoBalance extends CommandBase{
   @Override
   public void execute() {
     if (Constants.driveEnabled) {
+      if (timer.hasElapsed(Constants.DriveConstants.autoBalanceTimeoutSec)) {
+        currentMode = autoBalanceMode.abort;
+      }
       switch (currentMode) {
-        case driving:
-          drive.drive(-Constants.DriveConstants.autoBalanceStartingVelocity, 0, 0);
-          if (Math.abs(drive.getPitch()) > (Constants.DriveConstants.chargeStationOffSet - 
-                                            Constants.DriveConstants.chargeStationTolerance)) {
-            currentMode = autoBalanceMode.approaching;
+        case flat:
+          if (Math.abs(drive.getRoll()) > Constants.DriveConstants.chargeStationTiltedMinDeg) {
+            drive.drive(driveSign * Constants.DriveConstants.autoBalanceRampPower, 0, 0);
+            currentMode = autoBalanceMode.onRamp;
           }
-        case approaching:
-          drive.drive(-Constants.DriveConstants.autoBalanceApproachingVelocity, 0, 0);
-          if (Math.abs(drive.getPitch()) < (Constants.DriveConstants.chargeStationOffSet - 
-                                            Constants.DriveConstants.chargeStationTolerance)) {
-            currentMode = autoBalanceMode.stop;
+          break;
+        case onRamp:
+          if (Math.abs(drive.getRoll()) < Constants.DriveConstants.chargeStationBalancedMaxDeg) {
+            drive.stop();
+            currentMode = autoBalanceMode.balanced;
           }
-        case stop:
-          drive.stop();
-          currentMode = autoBalanceMode.done;
-        case done: // fall through to break
+          break;
+        case balanced: // fall through to break
         case abort:
           break;
       }
@@ -61,11 +67,10 @@ public class AutoBalance extends CommandBase{
   @Override
   public void end(boolean interrupted) {
     drive.stop();
-    currentMode = autoBalanceMode.done;
   }
 
   @Override
   public boolean isFinished() {
-    return ((currentMode == autoBalanceMode.done) || (currentMode == autoBalanceMode.abort));
+    return ((currentMode == autoBalanceMode.balanced) || (currentMode == autoBalanceMode.abort));
   }
 }
