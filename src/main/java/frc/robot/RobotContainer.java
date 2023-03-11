@@ -31,6 +31,8 @@ public class RobotContainer {
   private JoystickButton driveButtonFour;
   private JoystickButton driveButtonFive;
   private JoystickButton driveButtonSeven;
+  private JoystickButton driveButtonEleven;
+  private JoystickButton driveButtonTwelve;
   private JoystickButton rotateButtonFive;
 
   private JoystickButton rotateTrigger;
@@ -69,7 +71,8 @@ public class RobotContainer {
   private final ChangePurple changePurple = new ChangePurple(LED);
 
   // Auto Commands
-  private final AutoBalance autoBalance = new AutoBalance(drive, false);
+  private final AutoBalance autoBalanceBackward = new AutoBalance(drive, false);
+  private final AutoDriveOverCharge autoDriveOverChargeForward = new AutoDriveOverCharge(drive);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
 
@@ -153,6 +156,8 @@ public class RobotContainer {
       driveButtonFour = new JoystickButton(driveStick, 4); //cube
       driveButtonFive = new JoystickButton(driveStick, 5);
       driveButtonSeven = new JoystickButton(driveStick, 7);
+      driveButtonEleven = new JoystickButton(driveStick, 11);
+      driveButtonTwelve = new JoystickButton(driveStick, 12);
       rotateTrigger = new JoystickButton(rotateStick, 1);
       rotateButtonFive = new JoystickButton(rotateStick, 5);
 
@@ -161,6 +166,8 @@ public class RobotContainer {
       driveButtonFour.onTrue(changePurple);
       driveButtonFive.onTrue(clawIntake);
       driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
+      driveButtonEleven.onTrue(autoBalanceBackward);
+      driveButtonTwelve.onTrue(autoDriveOverChargeForward);
       rotateTrigger.whileTrue(armRotateToMidPosition);
       rotateButtonFive.onTrue(driveManualForward);
     }
