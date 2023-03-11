@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Arm;
@@ -68,7 +70,7 @@ public class RobotContainer {
 
   // Auto Commands
   private final AutoBalance autoBalance = new AutoBalance(drive, false);
-  private final ScoreCone scoreCone = new ScoreCone(arm, claw);
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
 
   public RobotContainer() {
@@ -99,14 +101,39 @@ public class RobotContainer {
 
     ppManager = new PathPlannerManager(drive);
 
-    ppManager.addEvent("autoBalance", autoBalance);
-    ppManager.addEvent("scoreCone", scoreCone);
+    ppManager.addEvent("initialize", new SequentialCommandGroup(
+        new ArmHoming(arm)
+      )
+    );
+    ppManager.addEvent("scoreCone", new SequentialCommandGroup(
+        new ParallelRaceGroup(
+          new AutoArmRotateToPosition(arm, Constants.ArmConstants.MidScoringPosition), 
+          new ClawIntake(claw)
+        ),
+        new TimedClawOuttake(claw, 0.5),
+        new AutoArmRotateToPosition(arm, Constants.ArmConstants.LoadPosition)
+      )
+    );
     
-    autoChooser.addOption("Test Path Rotation", 
-      ppManager.loadAuto("Test Path Rotation", false));
-    autoChooser.addOption("Test Auto Balance Blue", 
-      ppManager.loadAuto("Test Auto Balance", false));
-
+    autoChooser.addOption("AroundCharge1Blue", 
+      ppManager.loadAuto("AroundCharge1", false));
+    autoChooser.addOption("AroundCharge1Red", 
+      ppManager.loadAuto("AroundCharge1", true));
+    autoChooser.addOption("OverCharge4Blue", 
+      ppManager.loadAuto("OverCharge4", false));
+    autoChooser.addOption("OverCharge4Red", 
+      ppManager.loadAuto("OverCharge4", true));
+    autoChooser.addOption("OverCharge6Blue", 
+      ppManager.loadAuto("OverCharge6", false));
+    autoChooser.addOption("OverCharge6Red", 
+      ppManager.loadAuto("OverCharge6", true));
+    autoChooser.addOption("AroundCharge9Blue", 
+      ppManager.loadAuto("AroundCharge9", false));
+    autoChooser.addOption("AroundCharge9Red", 
+      ppManager.loadAuto("AroundCharge9", false));
+    autoChooser.addOption("ScorePreload", 
+      ppManager.loadAuto("ScorePreload", false));
+    
   }
 
   /**
@@ -122,8 +149,8 @@ public class RobotContainer {
       rotateStick = new Joystick(1);
 
       driveTrigger = new JoystickButton(driveStick, 1);
-      driveButtonThree = new JoystickButton(driveStick, 3);//cone
-      driveButtonFour = new JoystickButton(driveStick, 4);//cube
+      driveButtonThree = new JoystickButton(driveStick, 3); //cone
+      driveButtonFour = new JoystickButton(driveStick, 4); //cube
       driveButtonFive = new JoystickButton(driveStick, 5);
       driveButtonSeven = new JoystickButton(driveStick, 7);
       rotateTrigger = new JoystickButton(rotateStick, 1);
@@ -143,7 +170,9 @@ public class RobotContainer {
       xbox.rightTrigger().whileTrue(clawOuttake);
       xbox.back().onTrue(armSetCoastMode);
       xbox.leftBumper().onTrue(driveManualLeft);
+      xbox.leftBumper().onTrue(clawIntake);
       xbox.rightBumper().onTrue(driveManualRight);
+      xbox.rightBumper().onTrue(clawIntake);
       xbox.a().whileTrue(armRotateToLoadHighPosition);
     }
   }
@@ -187,7 +216,10 @@ public class RobotContainer {
       return null;
     }
 
-    return autoChooser.getSelected();
+    return new SequentialCommandGroup(
+      new ResetFieldCentric(drive, 0, true),
+      autoChooser.getSelected()
+    );
   }
 
   public void armReset() {

@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
@@ -14,8 +15,12 @@ public class ScoreCone extends CommandBase{
   private Timer timer = new Timer();
 
   public enum scoreMode {
-    rotating,
+    setRotatingForward,
+    rotatingForward,
     atPosition,
+    outtaking,
+    setRotatingBack,
+    rotatingBack,
     done,
     abort;
   }
@@ -29,31 +34,51 @@ public class ScoreCone extends CommandBase{
 
   @Override
   public void initialize() {
-    currentMode = scoreMode.rotating;
+    currentMode = scoreMode.rotatingForward;
     timer.reset();
-    timer.start();
+    timer.stop();
   }
 
   @Override
   public void execute() {
     switch (currentMode) {
-      case rotating:
-        if (Constants.armEnabled) {
-          arm.rotateToPosition(Constants.ArmConstants.MidScoringPosition);
-          if (arm.isAtTarget()) {
-            currentMode = scoreMode.atPosition;
-          }
+      case setRotatingForward:
+        if (!arm.rotateToPosition(Constants.ArmConstants.MidScoringPosition)) {
+          currentMode = scoreMode.abort;
         } else {
-          currentMode = scoreMode.done;
+          currentMode = scoreMode.rotatingForward;
         }
+        break;
+      case rotatingForward:
+        if (arm.isAtTarget()) {
+          currentMode = scoreMode.atPosition;
+        }
+        break;
       case atPosition:
-        if (Constants.clawEnabled) {
-          claw.changeState(ClawMode.outtaking);
+        if (!claw.changeState(ClawMode.outtaking)) {
+          currentMode = scoreMode.abort;
+        } else {
+          currentMode = scoreMode.outtaking;
+          timer.start();
         }
-
-        if (timer.hasElapsed(1)) {
+        break;
+      case outtaking:
+        if (timer.hasElapsed(0.5)) {
+          currentMode = scoreMode.setRotatingBack;
+        }
+        break;
+      case setRotatingBack:
+        if (!arm.rotateToPosition(Constants.ArmConstants.LoadPosition)) {
+          currentMode = scoreMode.abort;
+        } else {
+          currentMode = scoreMode.rotatingBack;
+        }
+        break;
+      case rotatingBack:
+        if (arm.isAtTarget()) {
           currentMode = scoreMode.done;
         }
+        break;
       case done: // falls to break
       case abort:
         break;
@@ -66,7 +91,9 @@ public class ScoreCone extends CommandBase{
   public void end(boolean interrupted) {
     arm.stop();
     claw.changeState(ClawMode.stopped);
-    currentMode = scoreMode.done;
+    if (currentMode == scoreMode.abort) {
+      DataLogManager.log("Aborted Piece Score");
+    }
   }
 
   @Override
