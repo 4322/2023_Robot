@@ -5,12 +5,11 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drive;
 
-// This command currently only works driving backwards onto the charge station.
-
 public class AutoBalance extends CommandBase{
   private Drive drive;
   private autoBalanceMode currentMode;
   private Timer timer = new Timer();
+  private int driveSign;
 
   public enum autoBalanceMode {
     flat, 
@@ -19,8 +18,13 @@ public class AutoBalance extends CommandBase{
     abort;
   }
 
-  public AutoBalance(Drive driveSubsystem) {
+  public AutoBalance(Drive driveSubsystem, boolean forward) {
     drive = driveSubsystem;
+    if (forward) {
+      driveSign = 1;
+    } else {
+      driveSign = -1;
+    }
 
     addRequirements(drive);
   }
@@ -28,7 +32,7 @@ public class AutoBalance extends CommandBase{
   @Override
   public void initialize() {
     currentMode = autoBalanceMode.flat;
-    drive.drive(-Constants.DriveConstants.autoBalanceFlatPower, 0, 0);
+    drive.drive(driveSign * Constants.DriveConstants.autoBalanceFlatPower, 0, 0);
     timer.reset();
     timer.start();
   }
@@ -41,13 +45,13 @@ public class AutoBalance extends CommandBase{
       }
       switch (currentMode) {
         case flat:
-          if (Math.abs(drive.getPitch()) > Constants.DriveConstants.chargeStationTiltedMinDeg) {
-            drive.drive(-Constants.DriveConstants.autoBalanceRampPower, 0, 0);
+          if (Math.abs(drive.getRoll()) > Constants.DriveConstants.chargeStationTiltedMinDeg) {
+            drive.drive(driveSign * Constants.DriveConstants.autoBalanceRampPower, 0, 0);
             currentMode = autoBalanceMode.onRamp;
           }
           break;
         case onRamp:
-          if (Math.abs(drive.getPitch()) < Constants.DriveConstants.chargeStationBalancedMaxDeg) {
+          if (Math.abs(drive.getRoll()) < Constants.DriveConstants.chargeStationBalancedMaxDeg) {
             drive.stop();
             currentMode = autoBalanceMode.balanced;
           }

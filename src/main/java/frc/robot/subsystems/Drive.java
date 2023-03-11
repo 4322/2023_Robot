@@ -207,10 +207,10 @@ public class Drive extends SubsystemBase {
     }
   }
 
-  // get the pitch
-  public double getPitch() {
+  // Get roll in degrees. Positive angle is the front of the robot raised.
+  public double getRoll() {
     if (gyro != null && gyro.isConnected() && !gyro.isCalibrating() && Constants.gyroEnabled) {
-      return gyro.getPitch();
+      return gyro.getRoll();
     } else {
       return 0;
     }
