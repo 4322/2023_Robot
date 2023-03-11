@@ -16,24 +16,27 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
+        "names": [
+          "initialize",
+          "scoreCone"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "deadline",
+        "waitTime": 5.0
       }
     },
     {
       "anchorPoint": {
         "x": 5.936953445335462,
-        "y": 3.4212235567328277
+        "y": 3.32
       },
       "prevControl": {
         "x": 4.936953445335462,
-        "y": 3.4212235567328277
+        "y": 3.32
       },
       "nextControl": {
         "x": 4.936953445335462,
-        "y": 3.4212235567328277
+        "y": 3.32
       },
       "holonomicAngle": 0,
       "isReversal": true,
@@ -49,12 +52,12 @@
     },
     {
       "anchorPoint": {
-        "x": 3.818371493885845,
-        "y": 3.392594070902428
+        "x": 3.847000979716245,
+        "y": 3.32
       },
       "prevControl": {
-        "x": 5.13448700795146,
-        "y": 3.392594070902428
+        "x": 5.16311649378186,
+        "y": 3.32
       },
       "nextControl": null,
       "holonomicAngle": 0,
