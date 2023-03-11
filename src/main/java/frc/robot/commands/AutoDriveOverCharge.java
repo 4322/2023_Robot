@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.Drive;
 
 // Drive over the charge station forward.
@@ -45,7 +46,8 @@ public class AutoDriveOverCharge extends CommandBase{
       switch (currentMode) {
         case flatBeforeRamp:
           if (drive.getRoll() > Constants.DriveConstants.chargeStationTiltedMinDeg) {
-            drive.drive(Constants.DriveConstants.autoBalanceRampPower, 0, 0);
+            drive.driveAutoRotate(Constants.DriveConstants.autoBalanceRampPower, 0, 0, 
+              DriveConstants.autoBalanceYawTolerance);
             currentMode = autoDriveOverChargeMode.upRamp;
           }
           break;
