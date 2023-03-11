@@ -100,7 +100,7 @@ public class Drive extends SubsystemBase {
       }
 
       if (Constants.gyroEnabled) {
-        gyro = new AHRS(SPI.Port.kMXP);
+        gyro = new AHRS(SPI.Port.kMXP, (byte) 66);
         odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2d(), getModulePostitions());
 
         // wait for first gyro reading to be received
