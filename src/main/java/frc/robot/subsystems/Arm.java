@@ -109,18 +109,18 @@ public class Arm extends SubsystemBase {
     return (Math.abs(getPosition() - currentTarget) <= ArmConstants.positionToleranceInternal);
   }
 
-  public void rotateToPosition(double targetPosition) {
-    if (Constants.armEnabled && homed) {
-      if (!Constants.armTuningMode) {
-        if ((targetPosition > ArmConstants.minPosition)
-            && (targetPosition < ArmConstants.maxPosition)) {
-          pidController.setReference(targetPosition, ControlType.kPosition);
-          currentTarget = targetPosition;
-          DataLogManager
-              .log("Rotating to position " + currentTarget + " from position " + getPosition());
-        }
+  public boolean rotateToPosition(double targetPosition) {
+    if (Constants.armEnabled && homed && !Constants.armTuningMode) {
+      if ((targetPosition > ArmConstants.minPosition)
+          && (targetPosition < ArmConstants.maxPosition)) {
+        pidController.setReference(targetPosition, ControlType.kPosition);
+        currentTarget = targetPosition;
+        DataLogManager
+            .log("Rotating to position " + currentTarget + " from position " + getPosition());
+        return true;
       }
     }
+    return false;
   }
 
   public boolean getArmSensorPressed() {

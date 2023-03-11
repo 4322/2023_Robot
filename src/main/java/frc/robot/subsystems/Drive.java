@@ -100,7 +100,7 @@ public class Drive extends SubsystemBase {
       }
 
       if (Constants.gyroEnabled) {
-        gyro = new AHRS(SPI.Port.kMXP);
+        gyro = new AHRS(SPI.Port.kMXP, (byte) 66);
         odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2d(), getModulePostitions());
 
         // wait for first gyro reading to be received
@@ -198,9 +198,19 @@ public class Drive extends SubsystemBase {
     }
   }
 
-  public double getAngle() {
+  // get the yaw angle
+  public double getAngle() { 
     if (gyro != null && gyro.isConnected() && !gyro.isCalibrating() && Constants.gyroEnabled) {
         return -gyro.getAngle();
+    } else {
+      return 0;
+    }
+  }
+
+  // get the pitch
+  public double getPitch() {
+    if (gyro != null && gyro.isConnected() && !gyro.isCalibrating() && Constants.gyroEnabled) {
+      return gyro.getPitch();
     } else {
       return 0;
     }

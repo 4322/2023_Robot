@@ -3,7 +3,13 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Arm;
@@ -29,11 +35,15 @@ public class RobotContainer {
 
   private JoystickButton rotateTrigger;
 
+  private ShuffleboardTab tab;
+  private SendableChooser<Command> autoChooser = new SendableChooser<Command>();
+
   // The robot's subsystems and commands are defined here...
   private final Arm arm = new Arm();
   private final Claw claw = new Claw();
   private final Drive drive = new Drive();
   private final LED LED = new LED();
+  private final PathPlannerManager ppManager;
 
   // Arm commands
   private final ArmRotateToPosition armRotateToLoadPosition =
@@ -57,6 +67,9 @@ public class RobotContainer {
   //LED Commands
   private final ChangeYellow changeYellow = new ChangeYellow(LED);
   private final ChangePurple changePurple = new ChangePurple(LED);
+
+  // Auto Commands
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
 
   public RobotContainer() {
@@ -70,6 +83,13 @@ public class RobotContainer {
     // Conifigure the button bindings
     configureButtonBindings();
 
+    tab = Shuffleboard.getTab("Auto");
+    
+    tab.add("Auto Mode", autoChooser)
+      .withWidget(BuiltInWidgets.kSplitButtonChooser)
+      .withPosition(0, 0)
+      .withSize(4, 2);
+
     if (Constants.driveEnabled) {
       drive.setDefaultCommand(driveManualDefault);
     }
@@ -78,6 +98,44 @@ public class RobotContainer {
       arm.setDefaultCommand(armRotateToLoadPosition);
     }
 
+    ppManager = new PathPlannerManager(drive);
+
+    ppManager.addEvent("initialize", new SequentialCommandGroup(
+        new ArmHoming(arm)
+      )
+    );
+    ppManager.addEvent("scoreCone", new SequentialCommandGroup(
+        new ParallelRaceGroup(
+          new AutoArmRotateToPosition(arm, Constants.ArmConstants.MidScoringPosition), 
+          new ClawIntake(claw)
+        ),
+        new TimedClawOuttake(claw, 0.5),
+        new AutoArmRotateToPosition(arm, Constants.ArmConstants.LoadPosition)
+      )
+    );
+    
+    autoChooser.addOption("DockCharge", 
+      new SequentialCommandGroup(
+        ppManager.loadAuto("DockCharge", false),
+        new AutoDriveRotateWheels(drive, 0.25)
+      )
+    );
+
+    autoChooser.addOption("ScorePreloadMobility", 
+      ppManager.loadAuto("ScorePreload", false));
+      
+    autoChooser.addOption("ScorePreloadOnly", 
+      new SequentialCommandGroup(
+        new ArmHoming(arm),
+        new ParallelRaceGroup(
+          new AutoArmRotateToPosition(arm, Constants.ArmConstants.MidScoringPosition), 
+          new ClawIntake(claw)
+        ),
+        new TimedClawOuttake(claw, 0.5),
+        new AutoArmRotateToPosition(arm, Constants.ArmConstants.LoadPosition)
+      )
+    );
+    
   }
 
   /**
@@ -87,15 +145,14 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
 
-  private void configureButtonBindings() {
-
+  private void configureButtonBindings() {  
     if (Constants.joysticksEnabled) {
       driveStick = new Joystick(0);
       rotateStick = new Joystick(1);
 
       driveTrigger = new JoystickButton(driveStick, 1);
-      driveButtonThree = new JoystickButton(driveStick, 3);//cone
-      driveButtonFour = new JoystickButton(driveStick, 4);//cube
+      driveButtonThree = new JoystickButton(driveStick, 3); //cone
+      driveButtonFour = new JoystickButton(driveStick, 4); //cube
       driveButtonFive = new JoystickButton(driveStick, 5);
       driveButtonSeven = new JoystickButton(driveStick, 7);
       rotateTrigger = new JoystickButton(rotateStick, 1);
@@ -114,11 +171,11 @@ public class RobotContainer {
       xbox.leftTrigger().onTrue(clawIntake);
       xbox.rightTrigger().whileTrue(clawOuttake);
       xbox.back().onTrue(armSetCoastMode);
-      xbox.leftBumper().onTrue(changeYellow);
-      xbox.rightBumper().onTrue(changePurple);
+      xbox.leftBumper().onTrue(driveManualLeft);
+      xbox.leftBumper().onTrue(clawIntake);
+      xbox.rightBumper().onTrue(driveManualRight);
+      xbox.rightBumper().onTrue(clawIntake);
       xbox.a().whileTrue(armRotateToLoadHighPosition);
-      xbox.x().onTrue(driveManualLeft);
-      xbox.b().onTrue(driveManualRight);
     }
   }
 
@@ -156,7 +213,18 @@ public class RobotContainer {
     disableTimer.start();
   }
 
+  public Command getAutonomousCommand() {
+    if (Constants.demo.inDemoMode) {
+      return null;
+    }
+
+    return new SequentialCommandGroup(
+      new ResetFieldCentric(drive, 0, true),
+      autoChooser.getSelected()
+    );
+  }
+
   public void armReset() {
-    new ArmHoming(arm).withInterruptBehavior(InterruptionBehavior.kCancelIncoming).schedule();
+    new ArmHoming(arm).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming).schedule();
   }
 }
