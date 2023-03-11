@@ -21,10 +21,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  * project.
  */
 public class Robot extends TimedRobot {
-  private static final String kDefaultAuto = "Default";
-  private static final String kCustomAuto = "My Auto";
   private static final PowerDistribution PDH = new PowerDistribution();
-  private String m_autoSelected;
   private Command m_autonomousCommand;
   private ShuffleboardTab tab;
   private ShuffleboardTab PDHTab;
@@ -106,7 +103,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_robotContainer.enableSubsystems();
 
-    //m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -118,15 +115,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    switch (m_autoSelected) {
-      case kCustomAuto:
-        // Put custom auto code here
-        break;
-      case kDefaultAuto:
-      default:
-        // Put default auto code here
-        break;
-    }
+
   }
 
   /** This function is called once when teleop is enabled. */

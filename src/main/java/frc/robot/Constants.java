@@ -9,7 +9,17 @@ import edu.wpi.first.math.geometry.Translation2d;
 public class Constants {
   public static final boolean debug = false;
   public static final boolean inDemoMode = false;
+  public static final class demo {
+    public enum DriveMode {
+      OFF, SLOW_ROTATE_ONLY, SLOW_DRIVE
+    }
 
+    public static final boolean inDemoMode = false;
+    public static final DriveMode driveMode = DriveMode.SLOW_DRIVE;
+
+    public static final double driveScaleFactor = 0.15;
+    public static final double rotationScaleFactor = 0.1;
+  }
   public static final boolean armEnabled = true;
   public static final boolean armSensorEnabled = true;
   public static final boolean clawEnabled = true;
@@ -69,6 +79,15 @@ public class Constants {
     public static final double maxRotationSpeedRadSecond = 12.2718;
 
     public static final double movingVelocityThresholdFtPerSec = 0.2;
+
+    public static final double minAutoRotateSpeed = 0.03;
+    public static final double maxAutoRotateSpeed = Constants.demo.inDemoMode? Constants.demo.rotationScaleFactor : 0.5;
+
+    public static final double drivePolarDeadband = 0.06;
+    public static final double rotatePolarDeadband = 0.5;
+    public static final double twistDeadband = 0.08;
+
+    public static final double manualRotateToleranceDegrees = 1.5;
 
     // 1 degree
     public static final Pose2d poseError =
@@ -194,19 +213,20 @@ public class Constants {
     }
 
     public static final class Trajectory {
+
       public static final class PIDXY {
-        public static final double kP = 0.5;
+        public static final double kP = 0;
         public static final double kI = 0;
         public static final double kD = 0;
       }
 
       public static final class PIDR {
-        public static final double kP = 4;
+        public static final double kP = 0;
         public static final double kI = 0;
-        public static final double kD = 0.5;
+        public static final double kD = 0;
       }
+      
     }
-
   }
 
   public static final class ClawConstants {// all temp values
