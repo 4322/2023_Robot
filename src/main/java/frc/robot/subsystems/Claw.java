@@ -4,6 +4,8 @@ import frc.robot.Constants;
 import frc.robot.Constants.ClawConstants;
 import frc.utility.CanBusUtil;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -12,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Claw extends SubsystemBase {
   private CANSparkMax clawMotor;
+  private SparkMaxPIDController pidController;
 
   public static enum ClawMode {
     intaking,
@@ -38,10 +41,23 @@ public class Claw extends SubsystemBase {
     if (Constants.clawEnabled) {
       clawMotor.restoreFactoryDefaults();
       clawMotor.setOpenLoopRampRate(Constants.ClawConstants.rampRate);
+      pidController = clawMotor.getPIDController();
+
+      pidController.setP(ClawConstants.kP);
+      pidController.setFF(ClawConstants.kF);
+      pidController.setOutputRange(ClawConstants.kMinOutput, ClawConstants.kMaxOutput);
+
       CanBusUtil.fastVelocity(clawMotor);
       clawMotor.burnFlash();
     }
   }
+  public static final double kP = 0.000812;
+  public static final double kF = 0.00451;
+  public static final double kMaxOutput = 0.2;
+  public static final double kMinOutput = -0.2;
+  public static final double stallIntakeCurrent = 16.4;  // controller setpoint, draws 2A from PDH, 15A phase
+  public static final double stallOuttakeCurrent = -16.4;
+
 
   public boolean changeState(ClawMode mode) {
     if (Constants.clawEnabled) {
@@ -64,7 +80,7 @@ public class Claw extends SubsystemBase {
   private void intake() {
     resetStalledOut();
     if (stalledIn) {
-      clawMotor.set(ClawConstants.stallIntakePower);
+      pidController.setReference(Constants.ClawConstants.stallIntakeCurrent, ControlType.kCurrent);
     } else {
       clawMotor.set(ClawConstants.intakePower);
     }   
@@ -73,7 +89,7 @@ public class Claw extends SubsystemBase {
   private void outtake() {
     resetStalledIn();
     if (stalledOut) {
-      clawMotor.set(ClawConstants.stallOuttakePower);
+      pidController.setReference(Constants.ClawConstants.stallOuttakeCurrent, ControlType.kCurrent);
     } else {
       clawMotor.set(ClawConstants.outtakePower);
     }  

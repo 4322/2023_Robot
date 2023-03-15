@@ -244,14 +244,18 @@ public class Constants {
     public static final int motorID = 16; // temp value
     public static final double rampRate = 0.8; // temp value
 
-
     public static final double intakePower = 0.4; // don't exceed 0.6 if you don't want to smoke the motor!
-    public static final double outtakePower = -0.4; 
-    public static final double stallIntakePower = 0.07; // don't exceed 0.07 if you don't want to smoke the motor!
-    public static final double stallOuttakePower = -0.06;
+    public static final double outtakePower = -1; // capapult!
 
     public static final double stallTime = 0.2; // 200 ms
     public static final double stallRPMLimit = 1000;
+
+    public static final double kP = 0.000812;
+    public static final double kF = 0.00451;
+    public static final double kMaxOutput = 0.2;
+    public static final double kMinOutput = -0.2;
+    public static final double stallIntakeCurrent = 16.4;  // controller setpoint, draws 2A from PDH, 15A phase
+    public static final double stallOuttakeCurrent = -16.4;
 
     public static enum ClawMode {
       ejecting, stationary, intaking
@@ -282,12 +286,12 @@ public class Constants {
     public static final double positionToleranceInternal = 0.3;
 
     public static final class SmartMotion { // SmartMotion values need to be checked (not k values), currently not using
-      public static final double kP = 0.1;
+      public static final double kP = 0.04375;
       public static final double kI = 0;
       public static final double kD = 0;
       public static final double kIz = 0;
-      public static final double kMaxOutput = 0.5;
-      public static final double kMinOutput = -0.5;
+      public static final double kMaxOutput = 1;
+      public static final double kMinOutput = -1;
       public static final double minVel = 0;
       public static final double maxVel = 3000; // rpm
       public static final double maxAcc = 10000;
