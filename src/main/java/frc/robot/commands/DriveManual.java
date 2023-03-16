@@ -24,14 +24,10 @@ public class DriveManual extends CommandBase {
 
   public enum spinoutMode {
     none,
-    frontLeftCW,
-    frontLeftCCW,
-    backLeftCW,
-    backLeftCCW,
-    backRightCW,
-    backRightCCW,
-    frontRightCW,
-    frontRightCCW,
+    frontLeft,
+    backLeft,
+    backRight,
+    frontRight,
     done,
     abort;
   }
@@ -213,14 +209,10 @@ public class DriveManual extends CommandBase {
             //      reset rotation back to normal
             switch (currentMode) {
               case none:
-              case frontLeftCW:
-              case frontLeftCCW:
-              case backLeftCW:
-              case backLeftCCW:
-              case backRightCW:
-              case backRightCCW:
-              case frontRightCW:
-              case frontRightCCW:
+              case frontLeft:
+              case backLeft:
+              case backRight:
+              case frontRight:
               case done:
               case abort:
             } // pain :(
