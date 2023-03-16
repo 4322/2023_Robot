@@ -105,6 +105,9 @@ public class Constants {
         new Pose2d(new Translation2d(0.1, 0.1), new Rotation2d(0.0174533));
 
     public static final double disableBreakSec = 2.0;
+    public static final double DebounceTime = 0.2;
+    public static final double LevelChargeStationDeg = 3;
+    public static final double autoBalanceAdjustment = 0.1;
 
     public static final class Manual {
 

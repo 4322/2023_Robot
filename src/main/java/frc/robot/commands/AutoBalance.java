@@ -5,17 +5,15 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drive;
 
-public class AutoBalance extends CommandBase{
+public class AutoBalance extends CommandBase {
   private Drive drive;
   private autoBalanceMode currentMode;
   private Timer timer = new Timer();
+  private Timer debounceTimer = new Timer();
   private int driveSign;
 
   public enum autoBalanceMode {
-    flat, 
-    onRamp,
-    balanced, 
-    abort;
+    flat, onRamp, balanced, finished, abort, adjusting;
   }
 
   public AutoBalance(Drive driveSubsystem, boolean forward) {
@@ -35,6 +33,7 @@ public class AutoBalance extends CommandBase{
     drive.drive(driveSign * Constants.DriveConstants.autoBalanceFlatPower, 0, 0);
     timer.reset();
     timer.start();
+    debounceTimer.reset();
   }
 
   @Override
@@ -46,17 +45,63 @@ public class AutoBalance extends CommandBase{
       switch (currentMode) {
         case flat:
           if (Math.abs(drive.getPitch()) > Constants.DriveConstants.chargeStationTiltedMinDeg) {
+            debounceTimer.start();
+          } else {
+            debounceTimer.reset();
+            debounceTimer.stop();
+          }
+          if (debounceTimer.hasElapsed(Constants.DriveConstants.DebounceTime)) {
             drive.drive(driveSign * Constants.DriveConstants.autoBalanceRampPower, 0, 0);
             currentMode = autoBalanceMode.onRamp;
+            debounceTimer.reset();
+            debounceTimer.stop();
           }
           break;
         case onRamp:
           if (Math.abs(drive.getPitch()) < Constants.DriveConstants.chargeStationBalancedMaxDeg) {
+            debounceTimer.start();
+          }
+          else {
+            debounceTimer.reset();
+            debounceTimer.stop();
+          }
+          if (debounceTimer.hasElapsed(Constants.DriveConstants.DebounceTime)) {
             drive.stop();
             currentMode = autoBalanceMode.balanced;
+            debounceTimer.reset();
+            debounceTimer.stop();
           }
           break;
         case balanced: // fall through to break
+          if ((Math.abs(drive.getPitch())) <= Constants.DriveConstants.LevelChargeStationDeg) {
+            debounceTimer.start();
+          } else if ((drive.getPitch() >= Constants.DriveConstants.LevelChargeStationDeg)) {
+            debounceTimer.reset();
+            debounceTimer.stop();
+            drive.drive(Constants.DriveConstants.autoBalanceAdjustment, 0, 0);
+            currentMode = autoBalanceMode.adjusting;
+          } else {
+            debounceTimer.reset();
+            debounceTimer.stop();
+            drive.drive(-Constants.DriveConstants.autoBalanceAdjustment, 0, 0);
+            currentMode = autoBalanceMode.adjusting;
+
+          }
+          if (debounceTimer.hasElapsed(Constants.DriveConstants.DebounceTime)) {
+            currentMode = autoBalanceMode.finished;
+            drive.drive(Constants.DriveConstants.autoBalanceAdjustment, 0, 0);
+          }
+          break;
+
+        case adjusting:
+          if ((Math.abs(drive.getPitch())) <= Constants.DriveConstants.LevelChargeStationDeg)
+          {
+            drive.stop();
+            debounceTimer.start();
+            currentMode = autoBalanceMode.balanced;
+          }
+        case finished:
+          break;
         case abort:
           break;
       }
