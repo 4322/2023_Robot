@@ -216,6 +216,15 @@ public class Drive extends SubsystemBase {
     }
   }
 
+  // get the velocity
+  public double getAngleVelocity() {
+    if (gyro != null && gyro.isConnected() && !gyro.isCalibrating() && Constants.gyroEnabled) {
+      return gyro.getVelocityZ();
+    } else {
+      return 0;
+    }
+  }
+
   @Override
   public void periodic() {
     if (Constants.driveEnabled) {

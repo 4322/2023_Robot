@@ -166,6 +166,8 @@ public class DriveManual extends CommandBase {
     // detect if not rotating and if rotate stick past second deadband for certain amount of time
     //    (first deadband is rotateToleranceDegrees/xboxRotateDeadband)
     //    (second deadband is past first deadband in rotation) (close to max rotation)
+    if (drive.getAngleVelocity() < Constants.DriveConstants.Manual.spinoutMinAngleVelocity &&
+        )
 
     // from this, figure out which swerve module to lock onto to rotate off of (use drive stick direction and robotAngle)
     //    How to use drive stick: module closest to direction of drivestick. 
