@@ -44,6 +44,7 @@ public class DriveManual extends CommandBase {
   @Override
   public void initialize() {
     drive.resetRotatePID();
+    currentMode = spinoutMode.none;
     done = false;  // make command reusable
   }
 
@@ -202,6 +203,30 @@ public class DriveManual extends CommandBase {
             //        if drivestick angle -180 < x < -90 , in quadrant 3 (back right module)
             //        if drivestick angle -90 < x < 0 , in quadrant 4 (front right module)
 
+            // Quad 1
+            if ((drive1Mag - drive.getAngle() > 0 && drive1Mag - drive.getAngle() < 90) || 
+                 drive2Mag - drive.getAngle() > 0 && drive2Mag - drive.getAngle() < 90) {
+                  currentMode = spinoutMode.frontLeft;
+            }
+
+            // Quad 2
+            if ((drive1Mag - drive.getAngle() > 90 && drive1Mag - drive.getAngle() < 180) || 
+                 drive2Mag - drive.getAngle() > 90 && drive2Mag - drive.getAngle() < 180) {
+                  currentMode = spinoutMode.backLeft;
+            }
+
+            // Quad 3
+            if ((drive1Mag - drive.getAngle() > -180 && drive1Mag - drive.getAngle() < -90) || 
+                 drive2Mag - drive.getAngle() > -180 && drive2Mag - drive.getAngle() < -90) {
+                  currentMode = spinoutMode.backRight;
+            }
+
+            //Quad 4
+            if ((drive1Mag - drive.getAngle() > -90 && drive1Mag - drive.getAngle() < 0) || 
+                 drive2Mag - drive.getAngle() > -90 && drive2Mag - drive.getAngle() < 0) {
+                  currentMode = spinoutMode.frontRight;
+            }
+              
 
             // use state machine for rotating each wheel in each direction (8 cases)
             //    each module rotating CW and CCW
