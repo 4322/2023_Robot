@@ -1,19 +1,26 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Claw;
 
-public class ClawOuttake extends CommandBase {
+public class TimedClawOuttake extends CommandBase {
   private Claw claw;
 
-  public ClawOuttake(Claw clawSubsystem) {
+  private double timeLimit;
+  private Timer timer = new Timer();
+
+  public TimedClawOuttake(Claw clawSubsystem, double time) {
     claw = clawSubsystem;
+    timeLimit = time;
     addRequirements(claw);
   }
 
   @Override
   public void initialize() {
     claw.changeState(Claw.ClawMode.outtaking);
+    timer.reset();
+    timer.start();
   }
 
   @Override
@@ -29,6 +36,6 @@ public class ClawOuttake extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return false;
+    return timer.hasElapsed(timeLimit);
   }
 }

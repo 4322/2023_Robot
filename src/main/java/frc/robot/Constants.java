@@ -1,6 +1,7 @@
 package frc.robot;
 
 import frc.robot.subsystems.SwerveDrive.ControlModule.WheelPosition;
+import frc.utility.OrangeMath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -8,7 +9,17 @@ import edu.wpi.first.math.geometry.Translation2d;
 public class Constants {
   public static final boolean debug = false;
   public static final boolean inDemoMode = false;
+  public static final class demo {
+    public enum DriveMode {
+      OFF, SLOW_ROTATE_ONLY, SLOW_DRIVE
+    }
 
+    public static final boolean inDemoMode = false;
+    public static final DriveMode driveMode = DriveMode.SLOW_DRIVE;
+
+    public static final double driveScaleFactor = 0.15;
+    public static final double rotationScaleFactor = 0.1;
+  }
   public static final boolean armEnabled = true;
   public static final boolean armSensorEnabled = true;
   public static final boolean clawEnabled = true;
@@ -25,7 +36,7 @@ public class Constants {
   // the REV library will continuously send the same command, thereby overriding
   // tuning commands from the REV Hardware CLient.
   public static final boolean armTuningMode = false;
-  public static final boolean clawTuningMode = true;
+  public static final boolean clawTuningMode = false;
 
   public static final int falconEncoderUnits = 2048;
   public static final double inchesToMeters = 0.0254;
@@ -38,8 +49,6 @@ public class Constants {
   public static final int shuffleboardStatusPeriodMaxMs = 90;  // for interactive response
   public static final int slowStatusPeriodMaxMs = 255;
   public static final int controllerConfigTimeoutMs = 50;
-
-  
 
   public static final class DriveConstants {
     
@@ -62,7 +71,11 @@ public class Constants {
     public static final double distWheelMetersX = 0.62865; // 24.75 in
     public static final double distWheelMetersY = 0.62865; // 24.75 in
 
-    public static final double maxSpeedMetersPerSecond = 3.6576;
+    // Max speed is 200000 ticks / 1 s
+
+    public static final double maxSpeedMetersPerSecond = 10 * OrangeMath.falconEncoderToMeters(20000,
+        OrangeMath.inchesToMeters(OrangeMath.getCircumference(Drive.wheelDiameterInches)),
+        Drive.gearRatio);
     public static final double maxRotationSpeedRadSecond = 12.2718;
 
     public static final double movingVelocityThresholdFtPerSec = 0.2;
@@ -94,25 +107,29 @@ public class Constants {
 
     public static final class Manual {
 
-      public static final double joystickDriveDeadband = 0.06;
-      public static final double joystickRotateDeadband = 0.1;
+      public static final double joystickDriveDeadband = 0.1;
+      public static final double joystickRotateLeftDeadband = 0.4;  // both joysticks have a huge left twist deadzone
+      public static final double joystickRotateRightDeadband = 0.2;
 
-      public static final double xboxDriveDeadband = 0.06;
-      public static final double xboxRotateDeadband = 0.1;
+      public static final double xboxDriveDeadband = 0.1;
+      public static final double xboxRotateDeadband = 0.2;
+      public static final double rotateToleranceDegrees = 1.5;
 
     }
 
     public static final class Auto {
 
-      // Values for autonomous path finding
-      public static final double autoMaxSpeedMetersPerSecond = 3.5;
-      public static final double autoMaxAccelerationMetersPerSec2 = 2.5;
-      public static final double autoMaxRotationRadPerSecond = Math.PI * 2;
-      public static final double autoMaxRotationAccelerationRadPerSec2 = Math.PI * 4;
+      // Max acceleration is 180000 ticks / s^2
 
-      public static final double autoRotkP = 0.08;
-      public static final double autoRotkD = 0.004;
-      public static final double minAutoRotateSpeed = 0.03;
+      // Values for autonomous path finding
+      public static final double autoMaxSpeedMetersPerSecond = 0.75 * DriveConstants.maxSpeedMetersPerSecond;
+      public static final double autoMaxAccelerationMetersPerSec2 = 0.75 * OrangeMath.falconEncoderToMeters(180000,
+          OrangeMath.inchesToMeters(OrangeMath.getCircumference(Drive.wheelDiameterInches)),
+          Drive.gearRatio);
+
+      public static final double autoRotkP = 0.005;
+      public static final double autoRotkD = 0.0002;
+      public static final double minAutoRotateSpeed = 0.0;  // 0.03
       public static final double maxAutoRotateSpeed = 0.5;
 
     }
@@ -195,44 +212,53 @@ public class Constants {
       public static final double supplyThreshold = 45;
       public static final double supplyTime = 0.5;
 
-      public static final double wheelDiameterInches = 4.0;
+      public static final double wheelDiameterInches = 3.95;
       public static final double gearRatio = 7.8;
-      public static final double kP = 0.045;
-      public static final double kI = 0.000065;
+      public static final double kP = 0.05;
+      public static final double kI = 0.0002;
       public static final double kD = 0.0;
       public static final double kIz = 500;
-      public static final double kFF = 0.05;
-
+      public static final double kFF = 0.054;
       
     }
 
     public static final class Trajectory {
+
       public static final class PIDXY {
-        public static final double kP = 0.5;
+        public static final double kP = 0;
         public static final double kI = 0;
         public static final double kD = 0;
       }
 
       public static final class PIDR {
-        public static final double kP = 4;
+        public static final double kP = 0;
         public static final double kI = 0;
-        public static final double kD = 0.5;
+        public static final double kD = 0;
       }
+      
     }
   }
 
   public static final class ClawConstants {// all temp values
     public static final int motorID = 16; // temp value
     public static final double rampRate = 0.8; // temp value
-    public static final double IntakePower = 0.3; // normally 1.0
-    public static final double EjectionPower = -0.3; // normally -0.75
 
-    public static final double stallCurrentAmps = 3;
-    public static final double stallRPMLimit = 500;
+    public static final double intakePower = 0.4; // don't exceed 0.6 if you don't want to smoke the motor!
+    public static final double outtakePower = -1; // capapult!
+
+    public static final double stallTime = 0.2; // 200 ms
+    public static final double stallRPMLimit = 1000;
+
+    public static final double kP = 0.000812;
+    public static final double kF = 0.00451;
+    public static final double kMaxOutput = 0.2;
+    public static final double kMinOutput = -0.2;
+    public static final double stallIntakeCurrent = 16.4;  // controller setpoint, draws 2A from PDH, 15A phase
+    public static final double stallOuttakeCurrent = -16.4;
 
     public static enum ClawMode {
       ejecting, stationary, intaking
-    };
+    }
   }
 
   public static final class ArmConstants {
@@ -241,7 +267,7 @@ public class Constants {
     public static final double rampRate = 0.3; // good range: 0.3 to 0.5
     public static final double logIntervalSeconds = 0.5;
   
-    public static final int maxPosition = 70;
+    public static final int maxPosition = 72;
     public static final int minPosition = 0;
 
     public static final double manualDeadband = 0;
@@ -249,19 +275,22 @@ public class Constants {
     public static final double kMaxRange = 0;
 
     public static final double LoadPosition = 2;
-    public static final double MidScoringPosition = 64;
+    public static final double LoadHighPosition = 10;
+    public static final double MidScoringPosition = 68;
     public static final double HighScoringPosition = 60;
-    public static final double ArmHomingSpeed = 0;
+    
+    public static final double ArmHomingPower = -0.1;
+    public static double homingTimeout = 3; // seconds
 
     public static final double positionToleranceInternal = 0.3;
 
     public static final class SmartMotion { // SmartMotion values need to be checked (not k values), currently not using
-      public static final double kP = 0.1;
+      public static final double kP = 0.04375;
       public static final double kI = 0;
       public static final double kD = 0;
       public static final double kIz = 0;
-      public static final double kMaxOutput = 0.5;
-      public static final double kMinOutput = -0.5;
+      public static final double kMaxOutput = 1;
+      public static final double kMinOutput = -1;
       public static final double minVel = 0;
       public static final double maxVel = 3000; // rpm
       public static final double maxAcc = 10000;

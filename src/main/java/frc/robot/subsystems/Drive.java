@@ -15,6 +15,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.SwerveDrive.SwerveModule;
 import frc.robot.subsystems.SwerveDrive.ControlModule.WheelPosition;
+import frc.utility.OrangeMath;
 import frc.utility.SnapshotTranslation2D;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -54,8 +55,6 @@ public class Drive extends SubsystemBase {
 
   private SwerveDriveOdometry odometry;
   private ShuffleboardTab tab;
-  private double robotCentricOffsetDegrees;
-  private boolean fieldRelative = true;
 
   private GenericEntry rotErrorTab;
   private GenericEntry rotSpeedTab;
@@ -101,7 +100,7 @@ public class Drive extends SubsystemBase {
       }
 
       if (Constants.gyroEnabled) {
-        gyro = new AHRS(SPI.Port.kMXP);
+        gyro = new AHRS(SPI.Port.kMXP, (byte) 66);
         odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2d(), getModulePostitions());
 
         // wait for first gyro reading to be received
@@ -199,9 +198,19 @@ public class Drive extends SubsystemBase {
     }
   }
 
-  public double getAngle() {
+  // get the yaw angle
+  public double getAngle() { 
     if (gyro != null && gyro.isConnected() && !gyro.isCalibrating() && Constants.gyroEnabled) {
         return -gyro.getAngle();
+    } else {
+      return 0;
+    }
+  }
+
+  // get the pitch
+  public double getPitch() {
+    if (gyro != null && gyro.isConnected() && !gyro.isCalibrating() && Constants.gyroEnabled) {
+      return gyro.getPitch();
     } else {
       return 0;
     }
@@ -312,19 +321,22 @@ public class Drive extends SubsystemBase {
     }
   }
 
-  // Uses a PID Controller to rotate the robot to a certain degree
-  // Must be periodically updated to work
-  public void driveAutoRotate(double driveX, double driveY, double rotateDeg, double toleranceDeg) {
+  // Rotate the robot to a specific heading while driving.
+  // Must be invoked periodically to reach the desired heading.
+  public void driveAutoRotate(double driveX, double driveY, double targetDeg, double toleranceDeg) {
     if (Constants.driveEnabled) {
+ 
       if (Constants.debug) {
         rotPID.setP(rotkP.getDouble(DriveConstants.Auto.autoRotkP));
         rotPID.setD(rotkD.getDouble(DriveConstants.Auto.autoRotkD));
       }
 
-      double rotPIDSpeed = rotPID.calculate(0, rotateDeg);
+      // Don't use absolute heading for PID controller to avoid discontinuity at +/- 180 degrees
+      double headingChangeDeg = OrangeMath.boundDegrees(targetDeg - getAngle());
+      double rotPIDSpeed = rotPID.calculate(0, headingChangeDeg);
 
-      if (Math.abs(rotateDeg) <= toleranceDeg) {
-        rotPIDSpeed = 0;
+      if (Math.abs(headingChangeDeg) <= toleranceDeg) {
+        rotPIDSpeed = 0;  // don't wiggle
       } else if (Math.abs(rotPIDSpeed) < DriveConstants.Auto.minAutoRotateSpeed) {
         rotPIDSpeed = Math.copySign(DriveConstants.Auto.minAutoRotateSpeed, rotPIDSpeed);
       } else if (rotPIDSpeed > DriveConstants.Auto.maxAutoRotateSpeed) {
@@ -336,7 +348,7 @@ public class Drive extends SubsystemBase {
       drive(driveX, driveY, rotPIDSpeed);
 
       if (Constants.debug) {
-        rotErrorTab.setDouble(rotateDeg);
+        rotErrorTab.setDouble(headingChangeDeg);
         rotSpeedTab.setDouble(rotPIDSpeed);
       }
     }
@@ -357,14 +369,6 @@ public class Drive extends SubsystemBase {
   public void resetOdometry(Pose2d pose) {
     if (Constants.gyroEnabled) {
       odometry.resetPosition(gyro.getRotation2d(), getModulePostitions(), pose);
-    }
-  }
-
-  public void setToFieldCentric() {
-    if (Constants.driveEnabled) {
-      fieldRelative = true;
-      robotCentricOffsetDegrees = 0;
-      DataLogManager.log("Robot Mode = Field Centric");
     }
   }
 
@@ -393,11 +397,7 @@ public class Drive extends SubsystemBase {
   }
 
   public Pose2d getPose2d() {
-    if (Constants.gyroEnabled) {
-      return odometry.getPoseMeters();
-    } else {
-      return null;
-    }
+    return odometry.getPoseMeters();
   }
 
   public void setModuleStates(SwerveModuleState[] states) {
@@ -421,19 +421,6 @@ public class Drive extends SubsystemBase {
           swerveModules[WheelPosition.BACK_RIGHT.wheelNumber].getPosition() };
     } else {
       return null;
-    }
-  }
-
-  // convert angle to range of +/- 180 degrees
-  public static double boundDegrees(double angleDegrees) {
-    if (Constants.driveEnabled) {
-      double x = ((angleDegrees + 180) % 360) - 180;
-      if (x < -180) {
-        x += 360;
-      }
-      return x;
-    } else {
-      return 0;
     }
   }
 
