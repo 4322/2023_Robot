@@ -20,6 +20,21 @@ public class DriveManual extends CommandBase {
   private final Double targetHeadingDeg;
   private boolean done;
   Timer secondDeadBandTimer = new Timer();
+  private spinoutMode currentMode;
+
+  public enum spinoutMode {
+    none,
+    frontLeftCW,
+    frontLeftCCW,
+    backLeftCW,
+    backLeftCCW,
+    backRightCW,
+    backRightCCW,
+    frontRightCW,
+    frontRightCCW,
+    done,
+    abort;
+  }
 
   public DriveManual(Drive drivesubsystem, Double targetHeadingDeg) {
     drive = drivesubsystem;
@@ -176,12 +191,12 @@ public class DriveManual extends CommandBase {
         secondDeadBandTimer.restart();
       }
 
+      
       // detect if not rotating and if rotate stick past second deadband for certain amount of time
       //    (first deadband is rotateToleranceDegrees/xboxRotateDeadband)
       //    (second deadband is past first deadband in rotation) (close to max rotation)
       if (drive.getAngleVelocity() < Constants.DriveConstants.Manual.spinoutMinAngleVelocity &&
           secondDeadBandTimer.hasElapsed(Constants.DriveConstants.Manual.spinoutSecondDeadBandThreshold)) {
-
             // from this, figure out which swerve module to lock onto to rotate off of (use drive stick direction and robotAngle)
             //    How to use drive stick: module closest to direction of drivestick. 
             //      use gyro to find orientation
@@ -191,11 +206,24 @@ public class DriveManual extends CommandBase {
             //        if drivestick angle -180 < x < -90 , in quadrant 3 (back right module)
             //        if drivestick angle -90 < x < 0 , in quadrant 4 (front right module)
 
+
             // use state machine for rotating each wheel in each direction (8 cases)
             //    each module rotating CW and CCW
             //      if rotation stick falls under second deadband or robot rotates 90 degrees, 
             //      reset rotation back to normal
-
+            switch (currentMode) {
+              case none:
+              case frontLeftCW:
+              case frontLeftCCW:
+              case backLeftCW:
+              case backLeftCCW:
+              case backRightCW:
+              case backRightCCW:
+              case frontRightCW:
+              case frontRightCCW:
+              case done:
+              case abort:
+            } // pain :(
             // SPECIAL CASE: if driveStickAngle - robotAngle is exactly 0, 90, 180, -180, then use the rotate angle to determine wheel:
             //                  0: if CW, quadrant 1 (front left); if CCW, quadrant 4 (front right)
             //                  90: if CW, quadrant 2 (back left); if CCW, quadrant 1 (front left)
