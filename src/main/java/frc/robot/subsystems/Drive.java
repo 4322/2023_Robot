@@ -38,7 +38,7 @@ public class Drive extends SubsystemBase {
 
   private double latestVelocity;
   private double latestAcceleration;
-  private double rollOffset;
+  private double pitchOffset;
 
   private ArrayList<SnapshotTranslation2D> velocityHistory = new ArrayList<SnapshotTranslation2D>();
 
@@ -61,8 +61,9 @@ public class Drive extends SubsystemBase {
   private GenericEntry rotSpeedTab;
   private GenericEntry rotkP;
   private GenericEntry rotkD;
-  private GenericEntry roll;
-  private GenericEntry pitch;
+  private GenericEntry yawTab;
+  private GenericEntry rollTab;
+  private GenericEntry pitchTab;
   private GenericEntry botVelocityMag;
   private GenericEntry botAccelerationMag;
   private GenericEntry botVelocityAngle;
@@ -126,9 +127,11 @@ public class Drive extends SubsystemBase {
         rotkD = tab.add("Rotation kD", DriveConstants.Auto.autoRotkD).withPosition(2, 0).withSize(1, 1)
             .getEntry();
 
-        roll = tab.add("Roll", 0).withPosition(1, 1).withSize(1, 1).getEntry();
+        yawTab = tab.add("Yaw", 0).withPosition(0, 3).withSize(1, 1).getEntry();
 
-        pitch = tab.add("Pitch", 0).withPosition(2, 1).withSize(1, 1).getEntry();
+        rollTab = tab.add("Roll", 0).withPosition(1, 1).withSize(1, 1).getEntry();
+
+        pitchTab = tab.add("Pitch", 0).withPosition(2, 1).withSize(1, 1).getEntry();
 
         botVelocityMag = tab.add("Bot Vel Mag", 0).withPosition(3, 0).withSize(1, 1).getEntry();
 
@@ -208,10 +211,10 @@ public class Drive extends SubsystemBase {
     }
   }
 
-  // Get roll in degrees. Positive angle is the front of the robot raised.
+  // Get pitch in degrees. Positive angle is the front of the robot raised.
   public double getPitch() {
     if (gyro != null && gyro.isConnected() && !gyro.isCalibrating() && Constants.gyroEnabled) {
-      return gyro.getPitch() - rollOffset;
+      return gyro.getPitch() - pitchOffset;
     } else {
       return 0;
     }
@@ -231,8 +234,9 @@ public class Drive extends SubsystemBase {
 
     if (Constants.debug) { // don't combine if statements to avoid dead code warning
       if (Constants.gyroEnabled) {
-        roll.setDouble(gyro.getRoll());
-        pitch.setDouble(gyro.getPitch());
+        yawTab.setDouble(getAngle());
+        rollTab.setDouble(gyro.getRoll());
+        pitchTab.setDouble(getPitch());
         odometryX.setDouble(getPose2d().getX());
         odometryY.setDouble(getPose2d().getY());
         odometryDegrees.setDouble(getPose2d().getRotation().getDegrees());
@@ -260,7 +264,7 @@ public class Drive extends SubsystemBase {
       if (gyro != null) {
         gyro.setAngleAdjustment(0);
         gyro.setAngleAdjustment(-gyro.getAngle() + offset);
-        rollOffset = gyro.getPitch();
+        pitchOffset = gyro.getPitch();
       }
       setDriveMode(DriveMode.fieldCentric);
     }

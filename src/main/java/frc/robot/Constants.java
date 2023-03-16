@@ -71,6 +71,8 @@ public class Constants {
     public static final double distWheelMetersX = 0.62865; // 24.75 in
     public static final double distWheelMetersY = 0.62865; // 24.75 in
 
+    public static final double disableBreakSec = 2.0;
+
     // Max speed is 200000 ticks / 1 s
 
     public static final double maxSpeedMetersPerSecond = 10 * OrangeMath.falconEncoderToMeters(20000,
@@ -90,24 +92,23 @@ public class Constants {
     public static final double manualRotateToleranceDegrees = 1.5;
 
     // Values for auto balance
-    public static final double autoBalanceFlatPower = 0.4;
-    public static final double autoBalanceRampPower = 0.1; // slower speed when approaching midpoint of charging station
-    public static final double autoBalanceYawTolerance = 0.5;
-    public static final double chargeStationTiltedMinDeg = 15;
-    public static final double chargeStationBalancedMaxDeg = 12;
+    public static final double autoBalanceFlatPower = 0.5;
+    public static final double autoBalanceRampPower = 0.15; // slower speed when approaching midpoint of charging station
+    public static final double autoBalanceAdjustmentPower = 0.02;
+    public static final double chargeStationTiltedMinDeg = 10.0;
+    public static final double chargeStationDroppingDeg = 7.0;
+    public static final double chargeStationBalancedMaxDeg = 3.0;
+    public static final double autoBalanceTimeoutSec = 15.0;
+
     public static final double autoDriveOverChargeFlatMaxDeg = 3.0;
     public static final double autoDriveOverChargeFlatSec = 0.5;
-    public static final double autoBalanceTimeoutSec = 99;
     public static final double autoDriveOverChargeTimeoutSec = 6.0;
 
     // 1 degree
     public static final Pose2d poseError =
         new Pose2d(new Translation2d(0.1, 0.1), new Rotation2d(0.0174533));
 
-    public static final double disableBreakSec = 2.0;
-    public static final double DebounceTime = 0.2;
-    public static final double LevelChargeStationDeg = 3;
-    public static final double autoBalanceAdjustment = 0.1;
+    public static final double debounceSec = 0.2;
 
     public static final class Manual {
 
@@ -269,7 +270,7 @@ public class Constants {
     public static final int leftMotorID = 15;
     public static final int rightMotorID = 14;
     public static final double rampRate = 0.3; // good range: 0.3 to 0.5
-    public static final double logIntervalSeconds = 0.5;
+    public static final double logIntervalSeconds = 5.0;
   
     public static final int maxPosition = 72;
     public static final int minPosition = 0;

@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drive;
+import frc.utility.OrangeMath;
 
 public class AutoBalance extends CommandBase {
   private Drive drive;
@@ -11,6 +12,8 @@ public class AutoBalance extends CommandBase {
   private Timer abortTimer = new Timer();
   private Timer debounceTimer = new Timer();
   private int driveSign;
+  private double poseDeg;
+  private double poseSign;
 
   public enum autoBalanceMode {
     flat, onRamp, balanced, finished, abort, adjusting;
@@ -30,10 +33,20 @@ public class AutoBalance extends CommandBase {
   @Override
   public void initialize() {
     currentMode = autoBalanceMode.flat;
-    drive.driveAutoRotate(driveSign * Constants.DriveConstants.autoBalanceFlatPower, 0, 0, Constants.DriveConstants.manualRotateToleranceDegrees);
+    drive.resetRotatePID();
     abortTimer.reset();
     abortTimer.start();
     debounceTimer.reset();
+    debounceTimer.stop();
+
+    // align to charge station by rotating the least amount
+    if (Math.abs(OrangeMath.boundDegrees(drive.getAngle())) <= 90) {
+      poseDeg = 0;
+      poseSign = 1;
+    } else {
+      poseDeg = 180;
+      poseSign = -1;
+    }
   }
 
   @Override
@@ -44,60 +57,48 @@ public class AutoBalance extends CommandBase {
       }
       switch (currentMode) {
         case flat:
-          if (Math.abs(drive.getPitch()) > Constants.DriveConstants.chargeStationTiltedMinDeg) {
-            debounceTimer.start();
+          if (Math.abs(drive.getPitch()) < Constants.DriveConstants.chargeStationTiltedMinDeg) {
+            // need to keep making the drive call to maintain heading
+            drive.driveAutoRotate(driveSign * Constants.DriveConstants.autoBalanceFlatPower, 0, poseDeg,
+                Constants.DriveConstants.manualRotateToleranceDegrees);
           } else {
-            debounceTimer.reset();
-            debounceTimer.stop();
-          }
-          if (debounceTimer.hasElapsed(Constants.DriveConstants.DebounceTime)) {
-            drive.driveAutoRotate(driveSign * Constants.DriveConstants.autoBalanceRampPower, 0, 0,Constants.DriveConstants.manualRotateToleranceDegrees);
             currentMode = autoBalanceMode.onRamp;
-            debounceTimer.reset();
-            debounceTimer.stop();
           }
           break;
         case onRamp:
-          if (Math.abs(drive.getPitch()) < Constants.DriveConstants.chargeStationBalancedMaxDeg) {
-            debounceTimer.start();
-          }
-          else {
-            debounceTimer.reset();
-            debounceTimer.stop();
-          }
-          if (debounceTimer.hasElapsed(Constants.DriveConstants.DebounceTime)) {
+          if (Math.abs(drive.getPitch()) > Constants.DriveConstants.chargeStationDroppingDeg) {
+            // need to keep making the drive call to maintain heading
+            drive.driveAutoRotate(driveSign * Constants.DriveConstants.autoBalanceRampPower, 0, poseDeg,
+                Constants.DriveConstants.manualRotateToleranceDegrees);
+          } else {
             drive.stop();
             currentMode = autoBalanceMode.balanced;
-            debounceTimer.reset();
-            debounceTimer.stop();
+            debounceTimer.start();
           }
           break;
         case balanced:
-          if ((Math.abs(drive.getPitch())) <= Constants.DriveConstants.LevelChargeStationDeg) {
+          if (Math.abs(drive.getPitch()) <= Constants.DriveConstants.chargeStationBalancedMaxDeg) {
             debounceTimer.start();
-          } else if ((drive.getPitch() >= Constants.DriveConstants.LevelChargeStationDeg)) {
-            debounceTimer.reset();
-            debounceTimer.stop();
-            drive.driveAutoRotate(Constants.DriveConstants.autoBalanceAdjustment, 0, 0,Constants.DriveConstants.manualRotateToleranceDegrees);
-            currentMode = autoBalanceMode.adjusting;
           } else {
             debounceTimer.reset();
             debounceTimer.stop();
-            drive.driveAutoRotate(-Constants.DriveConstants.autoBalanceAdjustment, 0, 0,Constants.DriveConstants.manualRotateToleranceDegrees);
             currentMode = autoBalanceMode.adjusting;
-
           }
-          if (debounceTimer.hasElapsed(Constants.DriveConstants.DebounceTime)) {
+          if (debounceTimer.hasElapsed(Constants.DriveConstants.debounceSec)) {
             currentMode = autoBalanceMode.finished;
           }
           break;
-
         case adjusting:
-          if ((Math.abs(drive.getPitch())) <= Constants.DriveConstants.LevelChargeStationDeg)
-          {
+          if ((Math.abs(drive.getPitch())) <= Constants.DriveConstants.chargeStationBalancedMaxDeg) {
             drive.stop();
             debounceTimer.start();
             currentMode = autoBalanceMode.balanced;
+          } else {
+            // need to keep making the drive call to maintain heading
+            drive.driveAutoRotate(
+                poseSign * Math.copySign(Constants.DriveConstants.autoBalanceAdjustmentPower, drive.getPitch()), 0,
+                poseDeg,
+                Constants.DriveConstants.manualRotateToleranceDegrees);
           }
           break;
         case finished:

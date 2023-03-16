@@ -7,11 +7,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 public class DriveStop extends InstantCommand{
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
 
-  /**
-   * Creates a new Drive_Manual.
-   *
-   * @param subsystem The subsystem used by this command.
-   */
+  // Used to interrupt all other drive commands and stop the drive
 
   private final Drive drive;
 
@@ -31,4 +27,9 @@ public class DriveStop extends InstantCommand{
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {}
+
+  @Override
+  public boolean runsWhenDisabled() {
+    return true;  // allow drive to be stopped before re-enabling
+  }
 }
