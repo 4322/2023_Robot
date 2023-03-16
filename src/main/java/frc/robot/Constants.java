@@ -104,6 +104,9 @@ public class Constants {
       public static final double xboxDriveDeadband = 0.1;
       public static final double xboxRotateDeadband = 0.2;
       public static final double rotateToleranceDegrees = 1.5;
+      
+      public static final double spinoutRotateToleranceDegrees = 20.0;
+      public static final double spinoutMinAngleVelocity = 3.0;
 
     }
 
