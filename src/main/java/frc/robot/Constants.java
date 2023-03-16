@@ -107,7 +107,7 @@ public class Constants {
       
       public static final double spinoutRotateToleranceDegrees = 20.0;
       public static final double spinoutMinAngleVelocity = 3.0;
-      public static final double spinoutSecondDeadbandThreshold = 0.05;
+      public static final double spinoutSecondDeadBandThreshold = 0.05;
     }
 
     public static final class Auto {
