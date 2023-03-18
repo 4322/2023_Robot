@@ -67,9 +67,10 @@ public class Constants {
     public static final int rearLeftEncoderID = 13;
 
     public static final int encoderResolution = 2048;
-
-    public static final double distWheelMetersX = 0.62865; // 24.75 in
-    public static final double distWheelMetersY = 0.62865; // 24.75 in
+    
+    // full length of drivebase divided by 2 for distance between wheels
+    public static final double distWheelMetersX = OrangeMath.inchesToMeters(29.5/2); // 29.5 in
+    public static final double distWheelMetersY = OrangeMath.inchesToMeters(29.5/2); // 29.5 in
 
     // Max speed is 200000 ticks / 1 s
 
