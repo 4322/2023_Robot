@@ -263,11 +263,12 @@ public class Drive extends SubsystemBase {
       setDriveMode(DriveMode.fieldCentric);
     }
   }
-
+  //this drive function is for regular driving when pivot point is at robot center point
   public void drive(double driveX, double driveY, double rotate) {
     drive(driveX, driveY, rotate, new Translation2d());
   }
 
+  // main drive function accounts for spinout when center point is on swerve modules
   public void drive(double driveX, double driveY, double rotate, Translation2d centerOfRotation) {
     if (Constants.driveEnabled && Constants.gyroEnabled) {
       double clock = runTime.get(); // cache value to reduce CPU usage
