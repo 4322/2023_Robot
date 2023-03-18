@@ -109,6 +109,7 @@ public class RobotContainer {
     ppManager = new PathPlannerManager(drive);
 
     ppManager.addEvent("initialize", new SequentialCommandGroup(
+        new TelescopeHoming(telescope),
         new ArmHoming(arm)
       )
     );
@@ -132,6 +133,7 @@ public class RobotContainer {
       
     autoChooser.addOption("ScorePreloadOnly", 
       new SequentialCommandGroup(
+        new TelescopeHoming(telescope),
         new ArmHoming(arm),
         new ParallelRaceGroup(
           new ArmMove(arm, telescope, 
