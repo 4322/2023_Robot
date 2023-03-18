@@ -72,6 +72,12 @@ public class Constants {
     public static final double distWheelMetersX = OrangeMath.inchesToMeters(29.5/2); // 29.5 in
     public static final double distWheelMetersY = OrangeMath.inchesToMeters(29.5/2); // 29.5 in
 
+    // wheel location constants
+    public static final Translation2d frontLeftWheelLocation = new Translation2d(distWheelMetersX, distWheelMetersY);
+    public static final Translation2d frontRightWheelLocation = new Translation2d(distWheelMetersX, -distWheelMetersY);
+    public static final Translation2d backLeftWheelLocation = new Translation2d(-distWheelMetersX, distWheelMetersY);
+    public static final Translation2d backRightWheelLocation = new Translation2d(-distWheelMetersX, -distWheelMetersY);
+
     // Max speed is 200000 ticks / 1 s
 
     public static final double maxSpeedMetersPerSecond = 10 * OrangeMath.falconEncoderToMeters(20000,
