@@ -104,6 +104,7 @@ public class RobotContainer {
         new ArmHoming(arm)
       )
     );
+    
     ppManager.addEvent("scoreCone", new SequentialCommandGroup(
         new ParallelRaceGroup(
           new AutoArmRotateToPosition(arm, Constants.ArmConstants.MidScoringPosition), 
@@ -114,6 +115,7 @@ public class RobotContainer {
       )
     );
     
+    
     autoChooser.addOption("DockCharge", 
       new SequentialCommandGroup(
         ppManager.loadAuto("DockCharge", false),
@@ -123,7 +125,8 @@ public class RobotContainer {
 
     autoChooser.addOption("ScorePreloadMobility", 
       ppManager.loadAuto("ScorePreload", false));
-      
+    autoChooser.addOption("PreloadMobilityEngage",
+      ppManager.loadAuto("ScoreMobilityCharge",false));
     autoChooser.addOption("ScorePreloadOnly", 
       new SequentialCommandGroup(
         new ArmHoming(arm),
