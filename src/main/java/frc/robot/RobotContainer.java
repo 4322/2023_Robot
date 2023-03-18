@@ -245,6 +245,9 @@ public class RobotContainer {
   }
 
   public void armReset() {
-    new ArmHoming(arm).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming).schedule();
+    new SequentialCommandGroup(
+      new TelescopeHoming(telescope).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming),
+      new ArmHoming(arm).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming)
+    ).schedule();
   }
 }
