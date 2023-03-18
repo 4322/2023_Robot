@@ -20,7 +20,7 @@
           "initialize",
           "scoreCone"
         ],
-        "executionBehavior": "parallel",
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
@@ -52,12 +52,12 @@
     },
     {
       "anchorPoint": {
-        "x": 5.41735339109776,
-        "y": 2.7624942467930063
+        "x": 5.3671262229742505,
+        "y": 2.7424033795436027
       },
       "prevControl": {
-        "x": 5.668489231715306,
-        "y": 3.0337209546599557
+        "x": 5.618262063591796,
+        "y": 3.013630087410552
       },
       "nextControl": null,
       "holonomicAngle": 0,

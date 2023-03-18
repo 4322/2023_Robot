@@ -111,7 +111,7 @@ public class RobotContainer {
         new ArmHoming(arm)
       )
     );
-    
+    ppManager.addEvent("autoBalance", new AutoBalance(drive, false));
     ppManager.addEvent("scoreCone", new SequentialCommandGroup(
         new ParallelRaceGroup(
           new AutoArmRotateToPosition(arm, Constants.ArmConstants.MidScoringPosition), 
