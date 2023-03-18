@@ -44,17 +44,20 @@ public class AutoDriveOverCharge extends CommandBase{
       }
       switch (currentMode) {
         case flatBeforeRamp:
+          drive.driveAutoRotate(Constants.DriveConstants.autoBalanceFlatPower, 0, 0, Constants.DriveConstants.manualRotateToleranceDegrees);
           if (drive.getPitch() > Constants.DriveConstants.chargeStationTiltedMinDeg) {
-            drive.drive(Constants.DriveConstants.autoBalanceRampPower, 0, 0);
+           
             currentMode = autoDriveOverChargeMode.upRamp;
           }
           break;
         case upRamp:
+          drive.driveAutoRotate(Constants.DriveConstants.autoChargePower, 0, 0,Constants.DriveConstants.manualRotateToleranceDegrees);
           if (drive.getPitch() < -Constants.DriveConstants.chargeStationTiltedMinDeg) {
             currentMode = autoDriveOverChargeMode.downRamp;
           }
           break;
         case downRamp: 
+          drive.driveAutoRotate(Constants.DriveConstants.autoChargePower, 0, 0,Constants.DriveConstants.manualRotateToleranceDegrees);
           if (drive.getPitch() > -Constants.DriveConstants.autoDriveOverChargeFlatMaxDeg) {
             flatTimer.reset();
             flatTimer.start();
@@ -62,6 +65,7 @@ public class AutoDriveOverCharge extends CommandBase{
           }
           break;
         case flatAfterRamp:
+          drive.driveAutoRotate(Constants.DriveConstants.autoChargePower, 0, 0,Constants.DriveConstants.manualRotateToleranceDegrees);
           if (flatTimer.hasElapsed(Constants.DriveConstants.autoDriveOverChargeFlatSec)) {
             drive.stop();
             currentMode = autoDriveOverChargeMode.done;

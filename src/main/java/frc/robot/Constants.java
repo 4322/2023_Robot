@@ -109,6 +109,7 @@ public class Constants {
         new Pose2d(new Translation2d(0.1, 0.1), new Rotation2d(0.0174533));
 
     public static final double debounceSec = 0.2;
+    public static final double autoChargePower = 0.5;
 
     public static final class Manual {
 
