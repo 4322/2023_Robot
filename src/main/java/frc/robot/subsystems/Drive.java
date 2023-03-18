@@ -41,17 +41,8 @@ public class Drive extends SubsystemBase {
 
   private ArrayList<SnapshotTranslation2D> velocityHistory = new ArrayList<SnapshotTranslation2D>();
 
-  private final Translation2d frontLeftLocation = new Translation2d(
-      Constants.DriveConstants.distWheelMetersX, Constants.DriveConstants.distWheelMetersY);
-  private final Translation2d frontRightLocation = new Translation2d(
-      Constants.DriveConstants.distWheelMetersX, -Constants.DriveConstants.distWheelMetersY);
-  private final Translation2d backLeftLocation = new Translation2d(
-      -Constants.DriveConstants.distWheelMetersX, Constants.DriveConstants.distWheelMetersY);
-  private final Translation2d backRightLocation = new Translation2d(
-      -Constants.DriveConstants.distWheelMetersX, -Constants.DriveConstants.distWheelMetersY);
-
-  private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontRightLocation,
-      frontLeftLocation, backLeftLocation, backRightLocation);
+  private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(DriveConstants.frontRightWheelLocation, 
+  DriveConstants.frontLeftWheelLocation, DriveConstants.backLeftWheelLocation, DriveConstants.backRightWheelLocation);
 
   private SwerveDriveOdometry odometry;
   private ShuffleboardTab tab;
@@ -274,6 +265,10 @@ public class Drive extends SubsystemBase {
   }
 
   public void drive(double driveX, double driveY, double rotate) {
+    drive(driveX, driveY, rotate, new Translation2d());
+  }
+
+  public void drive(double driveX, double driveY, double rotate, Translation2d centerOfRotation) {
     if (Constants.driveEnabled && Constants.gyroEnabled) {
       double clock = runTime.get(); // cache value to reduce CPU usage
       double[] currentAngle = new double[4];
@@ -319,6 +314,7 @@ public class Drive extends SubsystemBase {
           robotAngle = gyro.getRotation2d();
 
         // create SwerveModuleStates inversely from the kinematics
+
         var swerveModuleStates = kinematics.toSwerveModuleStates(
             ChassisSpeeds.fromFieldRelativeSpeeds(driveX, driveY, rotate, robotAngle));
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates,
