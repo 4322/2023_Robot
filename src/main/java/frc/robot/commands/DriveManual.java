@@ -226,6 +226,12 @@ public class DriveManual extends CommandBase {
                  drive2Mag - drive.getAngle() > -90 && drive2Mag - drive.getAngle() < 0) {
                   currentMode = spinoutMode.frontRight;
             }
+
+            //done
+            if ((rotate1Raw < Constants.DriveConstants.Manual.spinoutRotateToleranceDegrees) ||
+              rotate2Raw < Constants.DriveConstants.Manual.spinoutRotateToleranceDegrees) {
+                currentMode = spinoutMode.done;
+              }
               
 
             // use state machine for rotating each wheel in each direction (8 cases)
@@ -234,16 +240,24 @@ public class DriveManual extends CommandBase {
             //      reset rotation back to normal
             switch (currentMode) {
               case none:
+                break;
               case frontLeft:
                 drive.drive(driveX, driveY, rotatePower, Constants.DriveConstants.frontLeftWheelLocation);
+                break;
               case backLeft:
                 drive.drive(driveX, driveY, rotatePower, Constants.DriveConstants.backLeftWheelLocation);
+                break;
               case backRight:
                 drive.drive(driveX, driveY, rotatePower, Constants.DriveConstants.backRightWheelLocation);
+                break;
               case frontRight:
                 drive.drive(driveX, driveY, rotatePower, Constants.DriveConstants.frontRightWheelLocation);
+                break;
               case done:
+                drive.drive(driveX, driveY, rotatePower);
+                break;
               case abort:
+                break;
             } // pain :(
             // SPECIAL CASE: if driveStickAngle - robotAngle is exactly 0, 90, 180, -180, then use the rotate angle to determine wheel:
             //                  0: if CW, quadrant 1 (front left); if CCW, quadrant 4 (front right)
