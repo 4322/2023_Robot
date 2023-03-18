@@ -52,11 +52,11 @@ public class RobotContainer {
 
   // Arm commands
   private final ArmRotateToPosition armRotateToLoadPosition =
-      new ArmRotateToPosition(arm, Constants.ArmConstants.LoadPosition);
+      new ArmRotateToPosition(arm, Constants.ArmConstants.loadPosition);
   private final ArmRotateToPosition armRotateToLoadHighPosition =
-      new ArmRotateToPosition(arm, Constants.ArmConstants.LoadHighPosition);
+      new ArmRotateToPosition(arm, Constants.ArmConstants.loadHighPosition);
   private final ArmRotateToPosition armRotateToMidPosition =
-      new ArmRotateToPosition(arm, Constants.ArmConstants.MidScoringPosition);
+      new ArmRotateToPosition(arm, Constants.ArmConstants.midScoringPosition);
   private final ArmSetCoastMode armSetCoastMode = new ArmSetCoastMode(arm);
 
   // Claw commands
@@ -115,11 +115,11 @@ public class RobotContainer {
     );
     ppManager.addEvent("scoreCone", new SequentialCommandGroup(
         new ParallelRaceGroup(
-          new AutoArmRotateToPosition(arm, Constants.ArmConstants.MidScoringPosition), 
+          new AutoArmRotateToPosition(arm, Constants.ArmConstants.midScoringPosition), 
           new ClawIntake(claw)
         ),
         new TimedClawOuttake(claw, 0.5),
-        new AutoArmRotateToPosition(arm, Constants.ArmConstants.LoadPosition)
+        new AutoArmRotateToPosition(arm, Constants.ArmConstants.loadPosition)
       )
     );
     
@@ -137,11 +137,11 @@ public class RobotContainer {
       new SequentialCommandGroup(
         new ArmHoming(arm),
         new ParallelRaceGroup(
-          new AutoArmRotateToPosition(arm, Constants.ArmConstants.MidScoringPosition), 
+          new AutoArmRotateToPosition(arm, Constants.ArmConstants.midScoringPosition), 
           new ClawIntake(claw)
         ),
         new TimedClawOuttake(claw, 0.5),
-        new AutoArmRotateToPosition(arm, Constants.ArmConstants.LoadPosition)
+        new AutoArmRotateToPosition(arm, Constants.ArmConstants.loadPosition)
       )
     );
     

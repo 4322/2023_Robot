@@ -22,6 +22,7 @@ public class Constants {
   }
   public static final boolean armEnabled = true;
   public static final boolean armSensorEnabled = true;
+  public static final boolean telescopeEnabled = true;
   public static final boolean clawEnabled = true;
   public static final boolean driveEnabled = true;
   public static final boolean gyroEnabled = true;
@@ -36,6 +37,7 @@ public class Constants {
   // the REV library will continuously send the same command, thereby overriding
   // tuning commands from the REV Hardware CLient.
   public static final boolean armTuningMode = false;
+  public static final boolean telescopeTuningMode = true;
   public static final boolean clawTuningMode = false;
 
   public static final int falconEncoderUnits = 2048;
@@ -275,21 +277,17 @@ public class Constants {
     public static final int maxPosition = 72;
     public static final int minPosition = 0;
 
-    public static final double manualDeadband = 0;
-
-    public static final double kMaxRange = 0;
-
-    public static final double LoadPosition = 2;
-    public static final double LoadHighPosition = 10;
-    public static final double MidScoringPosition = 68;
-    public static final double HighScoringPosition = 60;
+    public static final double loadPosition = 2;
+    public static final double loadHighPosition = 10;
+    public static final double midScoringPosition = 68;
+    public static final double highScoringPosition = 60;
     
-    public static final double ArmHomingPower = -0.1;
-    public static double homingTimeout = 3; // seconds
+    public static final double homingPower = -0.1;
+    public static double homingTimeoutSec = 3;
 
-    public static final double positionToleranceInternal = 0.3;
+    public static final double positionTolerance = 0.2;
 
-    public static final class SmartMotion { // SmartMotion values need to be checked (not k values), currently not using
+    public static final class SmartMotion {
       public static final double kP = 0.04375;
       public static final double kI = 0;
       public static final double kD = 0;
@@ -299,7 +297,35 @@ public class Constants {
       public static final double minVel = 0;
       public static final double maxVel = 3000; // rpm
       public static final double maxAcc = 10000;
-      public static final double positionTolerance = 0.2;
+    }
+  }
+
+  public static final class Telescope {
+    public static final int motorID = 17;
+    public static final double rampRate = 0.2;
+  
+    public static final int maxPosition = 72;
+    public static final int minPosition = 0;
+
+    public static final double loadPosition = 2;
+    public static final double midScoringPosition = 3;
+    public static final double highScoringPosition = 60;
+    
+    public static final double homingPower = -0.1;
+    public static double homingTimeoutSec = 3;
+
+    public static final double positionTolerance = 0.2;
+
+    public static final class SmartMotion {
+      public static final double kP = 0.04375;
+      public static final double kI = 0;
+      public static final double kD = 0;
+      public static final double kIz = 0;
+      public static final double kMaxOutput = 1;
+      public static final double kMinOutput = -1;
+      public static final double minVel = 0;
+      public static final double maxVel = 3000; // rpm
+      public static final double maxAcc = 10000;
     }
   }
 

@@ -47,7 +47,7 @@ public class Claw extends SubsystemBase {
       pidController.setFF(ClawConstants.kF);
       pidController.setOutputRange(ClawConstants.kMinOutput, ClawConstants.kMaxOutput);
 
-      CanBusUtil.fastVelocity(clawMotor);
+      CanBusUtil.fastVelocitySparkMax(clawMotor);
       clawMotor.burnFlash();
     }
   }

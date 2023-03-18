@@ -47,6 +47,6 @@ public class ArmHoming extends CommandBase{
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return arm.isHomed() || timeout.hasElapsed(ArmConstants.homingTimeout);
+    return arm.isHomed() || timeout.hasElapsed(ArmConstants.homingTimeoutSec);
   }
 }
