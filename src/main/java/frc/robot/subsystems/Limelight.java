@@ -126,41 +126,40 @@ public class Limelight extends SubsystemBase {
   // All distances assume coordinate plane from top view (where y is perpendicular to the grid and x
   // is parallel to the grid)
   public Translation2d getTargetPosRobotRelative() {
+    double distanceX = 0;
+    double distanceY = 0;
     if (Constants.limeLightEnabled) {
-      double distanceX = 0;
-      double distanceY = 0;
       double yDeg = getVerticalDegToTarget();
       double xDeg = getHorizontalDegToTarget();
-      int pipelineIdx = (int) pipeline.getInteger(0); // Note: long is a longer integer
+      int pipelineIdx = (int) pipeline.getInteger(0);
+      // Note: long (which this method returns) is a longer integer
+      // this is why it is typecasted to an int
       List<Integer> tapeList = Arrays.asList(LimelightConstants.tapePipelines);
 
       if (getTargetVisible()) {
 
         double angleToTarget = LimelightConstants.limelightAngle + yDeg;
-        
+
         if (tapeList.contains(pipelineIdx)) {
 
           if (yDeg > LimelightConstants.targetHeightThresholdDeg) {
             distanceY = (LimelightConstants.highTapeHeight - LimelightConstants.limelightHeight)
-              / Math.tan(Math.toRadians(angleToTarget));
+                / Math.tan(Math.toRadians(angleToTarget));
           } else {
             distanceY = (LimelightConstants.middleTapeHeight - LimelightConstants.limelightHeight)
-              / Math.tan(Math.toRadians(angleToTarget));
-          } 
+                / Math.tan(Math.toRadians(angleToTarget));
+          }
 
-        } else {
-          distanceY = (LimelightConstants.gridAprilTagHeight - LimelightConstants.limelightHeight)
-            / Math.tan(Math.toRadians(angleToTarget));
+        } else if (LimelightConstants.tagPipelinesHeights.containsKey(pipelineIdx)) {
+          distanceY = (LimelightConstants.tagPipelinesHeights.get(pipelineIdx)
+              - LimelightConstants.limelightHeight) / Math.tan(Math.toRadians(angleToTarget));
         }
 
         distanceX = distanceY * Math.tan(Math.toRadians(xDeg));
-
       }
-
-      return new Translation2d(distanceX, distanceY);
-    } else {
-      return null;
     }
+
+    return new Translation2d(distanceX, distanceY);
   }
 
   public void enableLed() {

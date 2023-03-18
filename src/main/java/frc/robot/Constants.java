@@ -2,6 +2,7 @@ package frc.robot;
 
 import frc.robot.subsystems.SwerveDrive.ControlModule.WheelPosition;
 import frc.utility.OrangeMath;
+import java.util.Map;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -125,6 +126,11 @@ public class Constants {
       public static final double autoRotkD = 0.0002;
       public static final double minAutoRotateSpeed = 0.0;  // 0.03
       public static final double maxAutoRotateSpeed = 0.5;
+
+      public static final double autoDriveYkP = 0;
+      public static final double autoDriveYkD = 0;
+      public static final double minAutoDriveYSpeed = 0.05;
+      public static final double maxAutoDriveYSpeed = 0.5;
 
     }
 
@@ -308,7 +314,11 @@ public class Constants {
 
   public static final class LimelightConstants {
     public static final Integer[] tapePipelines = {0};
-    public static final Integer[] tagPipelines = {1};
+
+    // Map of pipelines and tag heights
+    public static final Map<Integer, Double> tagPipelinesHeights = Map.ofEntries(
+      Map.entry(1, 50.)
+    );
 
     public static final double limelightAngle = 0;
     public static final double limelightHeight = 26.125;
