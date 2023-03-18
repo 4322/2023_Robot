@@ -34,7 +34,9 @@ public class RobotContainer {
   private JoystickButton driveButtonNine;
   private JoystickButton driveButtonEleven;
   private JoystickButton driveButtonTwelve;
+  private JoystickButton rotateButtonFour;
   private JoystickButton rotateButtonFive;
+  private JoystickButton rotateButtonSix;
 
   private JoystickButton rotateTrigger;
 
@@ -166,7 +168,9 @@ public class RobotContainer {
       driveButtonEleven = new JoystickButton(driveStick, 11);
       driveButtonTwelve = new JoystickButton(driveStick, 12);
       rotateTrigger = new JoystickButton(rotateStick, 1);
+      rotateButtonFour = new JoystickButton(rotateStick, 4);
       rotateButtonFive = new JoystickButton(rotateStick, 5);
+      rotateButtonSix = new JoystickButton(rotateStick, 6);
 
       driveTrigger.whileTrue(clawOuttake);
       driveButtonThree.onTrue(changeYellow);
@@ -177,7 +181,9 @@ public class RobotContainer {
       driveButtonEleven.onTrue(autoBalanceBackward);
       driveButtonTwelve.onTrue(autoDriveOverChargeForward);
       rotateTrigger.whileTrue(armRotateToMidPosition);
+      rotateButtonFour.onTrue(() -> armSetMidTarget());
       rotateButtonFive.onTrue(driveManualForward);
+      rotateButtonSix.onTrue(armSetHighTarget);
     }
 
     if (Constants.xboxEnabled) {
@@ -188,6 +194,10 @@ public class RobotContainer {
       xbox.rightBumper().onTrue(driveManualRight);
       xbox.a().whileTrue(armRotateToLoadHighPosition);
     }
+  }
+
+  private void armSetMidTarget() {
+
   }
 
   public void disabledPeriodic() {
