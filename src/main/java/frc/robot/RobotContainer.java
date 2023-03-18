@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -16,6 +17,7 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.LED;
+import frc.robot.subsystems.Telescope;
 import frc.robot.commands.*;
 
 public class RobotContainer {
@@ -45,18 +47,13 @@ public class RobotContainer {
 
   // The robot's subsystems and commands are defined here...
   private final Arm arm = new Arm();
+  private final Telescope telescope = new Telescope();
   private final Claw claw = new Claw();
   private final Drive drive = new Drive();
   private final LED LED = new LED();
   private final PathPlannerManager ppManager;
 
   // Arm commands
-  private final ArmRotateToPosition armRotateToLoadPosition =
-      new ArmRotateToPosition(arm, Constants.ArmConstants.loadPosition);
-  private final ArmRotateToPosition armRotateToLoadHighPosition =
-      new ArmRotateToPosition(arm, Constants.ArmConstants.loadHighPosition);
-  private final ArmRotateToPosition armRotateToMidPosition =
-      new ArmRotateToPosition(arm, Constants.ArmConstants.midScoringPosition);
   private final ArmSetCoastMode armSetCoastMode = new ArmSetCoastMode(arm);
 
   // Claw commands
@@ -87,6 +84,7 @@ public class RobotContainer {
     // constructors lower CAN bus utilization to make configuration reliable.
     drive.init();
     arm.init();
+    telescope.init();
     claw.init();
 
     // Conifigure the button bindings
@@ -104,7 +102,8 @@ public class RobotContainer {
     }
 
     if (Constants.armEnabled) {
-      arm.setDefaultCommand(armRotateToLoadPosition);
+      arm.setDefaultCommand(new ArmMove(arm, telescope, Constants.ArmConstants.loadPosition,
+          Constants.Telescope.loadPosition, false, false));
     }
 
     ppManager = new PathPlannerManager(drive);
@@ -113,15 +112,13 @@ public class RobotContainer {
         new ArmHoming(arm)
       )
     );
-    ppManager.addEvent("scoreCone", new SequentialCommandGroup(
-        new ParallelRaceGroup(
-          new AutoArmRotateToPosition(arm, Constants.ArmConstants.midScoringPosition), 
-          new ClawIntake(claw)
-        ),
-        new TimedClawOuttake(claw, 0.5),
-        new AutoArmRotateToPosition(arm, Constants.ArmConstants.loadPosition)
-      )
-    );
+    ppManager.addEvent("scoreCone",
+        new SequentialCommandGroup(
+            new ParallelRaceGroup(new ArmMove(arm, telescope,
+                Constants.ArmConstants.midScoringPosition, Constants.Telescope.midScoringPosition, true, false),
+                new ClawIntake(claw)),
+            new TimedClawOuttake(claw, 0.5), new ArmMove(arm, telescope, 
+                Constants.ArmConstants.loadPosition, Constants.Telescope.loadPosition, true, false)));
     
     autoChooser.addOption("DockCharge", 
       new SequentialCommandGroup(
@@ -137,11 +134,14 @@ public class RobotContainer {
       new SequentialCommandGroup(
         new ArmHoming(arm),
         new ParallelRaceGroup(
-          new AutoArmRotateToPosition(arm, Constants.ArmConstants.midScoringPosition), 
+          new ArmMove(arm, telescope, 
+            Constants.ArmConstants.midScoringPosition, Constants.Telescope.midScoringPosition,
+              true, false),
           new ClawIntake(claw)
         ),
         new TimedClawOuttake(claw, 0.5),
-        new AutoArmRotateToPosition(arm, Constants.ArmConstants.loadPosition)
+        new ArmMove(arm, telescope, 
+          Constants.ArmConstants.loadPosition, Constants.Telescope.loadPosition, true, false)
       )
     );
     
@@ -180,10 +180,12 @@ public class RobotContainer {
       driveButtonNine.onTrue(autoBalanceForward);
       driveButtonEleven.onTrue(autoBalanceBackward);
       driveButtonTwelve.onTrue(autoDriveOverChargeForward);
-      rotateTrigger.whileTrue(armRotateToMidPosition);
-      rotateButtonFour.onTrue(() -> armSetMidTarget());
+      rotateTrigger.whileTrue(new RepeatCommand(new ArmMove(arm, telescope)));
+      rotateButtonFour.onTrue(new ArmMove(arm, telescope, Constants.ArmConstants.midScoringPosition,
+          Constants.Telescope.midScoringPosition, false, true));
       rotateButtonFive.onTrue(driveManualForward);
-      rotateButtonSix.onTrue(armSetHighTarget);
+      rotateButtonSix.onTrue(new ArmMove(arm, telescope, Constants.ArmConstants.highScoringPosition,
+          Constants.Telescope.highScoringPosition, false, true));
     }
 
     if (Constants.xboxEnabled) {
@@ -192,12 +194,9 @@ public class RobotContainer {
       xbox.back().onTrue(armSetCoastMode);
       xbox.leftBumper().onTrue(driveManualLeft);
       xbox.rightBumper().onTrue(driveManualRight);
-      xbox.a().whileTrue(armRotateToLoadHighPosition);
+      xbox.a().whileTrue(new ArmMove(arm, telescope, Constants.ArmConstants.loadHighPosition,
+          Constants.Telescope.loadPosition, false, false));
     }
-  }
-
-  private void armSetMidTarget() {
-
   }
 
   public void disabledPeriodic() {
