@@ -235,9 +235,13 @@ public class DriveManual extends CommandBase {
             switch (currentMode) {
               case none:
               case frontLeft:
+                drive.drive(driveX, driveY, rotatePower, Constants.DriveConstants.frontLeftWheelLocation);
               case backLeft:
+                drive.drive(driveX, driveY, rotatePower, Constants.DriveConstants.backLeftWheelLocation);
               case backRight:
+                drive.drive(driveX, driveY, rotatePower, Constants.DriveConstants.backRightWheelLocation);
               case frontRight:
+                drive.drive(driveX, driveY, rotatePower, Constants.DriveConstants.frontRightWheelLocation);
               case done:
               case abort:
             } // pain :(
