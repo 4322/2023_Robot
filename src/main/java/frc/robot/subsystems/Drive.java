@@ -317,7 +317,7 @@ public class Drive extends SubsystemBase {
         // create SwerveModuleStates inversely from the kinematics
 
         var swerveModuleStates = kinematics.toSwerveModuleStates(
-            ChassisSpeeds.fromFieldRelativeSpeeds(driveX, driveY, rotate, robotAngle));
+            ChassisSpeeds.fromFieldRelativeSpeeds(driveX, driveY, rotate, robotAngle), centerOfRotation);
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates,
             Constants.DriveConstants.maxSpeedMetersPerSecond);
         for (int i = 0; i < swerveModules.length; i++) {
