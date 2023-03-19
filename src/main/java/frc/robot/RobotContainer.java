@@ -111,6 +111,7 @@ public class RobotContainer {
         new ArmHoming(arm)
       )
     );
+
     ppManager.addEvent("scoreCone", new SequentialCommandGroup(
         new ParallelRaceGroup(
           new AutoArmRotateToPosition(arm, Constants.ArmConstants.MidScoringPosition), 
@@ -121,37 +122,32 @@ public class RobotContainer {
       )
     );
     
-    
-    autoChooser.addOption("DockCharge", 
-      new SequentialCommandGroup(
-        ppManager.loadAuto("DockCharge", false),
-        new AutoDriveRotateWheels(drive, 0.25)
-      )
-    );
+    autoChooser.addOption("Dock on Charge Station",
+        new SequentialCommandGroup(
+            ppManager.loadAuto("Dock on Charge Station", false),
+            new AutoDriveRotateWheels(drive, 0.25)));
 
-    autoChooser.addOption("ScorePreloadMobility", 
-      ppManager.loadAuto("ScorePreload", false));
-    autoChooser.addOption("PreloadMobilityEngageBlue9",
-      new SequentialCommandGroup(
-        ppManager.loadAuto("ScoreMobilityCharge",false),
-        new AutoBalance(drive, false)
-        ));
-        autoChooser.addOption("PreloadMobilityEngageRed9",
-      new SequentialCommandGroup(
-        ppManager.loadAuto("ScoreMobilityCharge",true),
-        new AutoBalance(drive, false)
-        ));
-    autoChooser.addOption("ScorePreloadOnly", 
-      new SequentialCommandGroup(
-        new ArmHoming(arm),
-        new ParallelRaceGroup(
-          new AutoArmRotateToPosition(arm, Constants.ArmConstants.MidScoringPosition), 
-          new ClawIntake(claw)
-        ),
-        new TimedClawOuttake(claw, 0.5),
-        new AutoArmRotateToPosition(arm, Constants.ArmConstants.LoadPosition)
-      )
-    );
+    autoChooser.addOption("Score Preload & Mobility",
+        ppManager.loadAuto("ScorePreload", false));
+
+    autoChooser.addOption("Preload Mobility Engage Blue 9",
+        new SequentialCommandGroup(
+            ppManager.loadAuto("ScoreMobilityCharge", false),
+            new AutoBalance(drive, false)));
+
+    autoChooser.addOption("Preload Mobility Engage Red 9",
+        new SequentialCommandGroup(
+            ppManager.loadAuto("ScoreMobilityCharge", true),
+            new AutoBalance(drive, false)));
+
+    autoChooser.addOption("Score Preload Only",
+        new SequentialCommandGroup(
+            new ArmHoming(arm),
+            new ParallelRaceGroup(
+                new AutoArmRotateToPosition(arm, Constants.ArmConstants.MidScoringPosition),
+                new ClawIntake(claw)),
+            new TimedClawOuttake(claw, 0.5),
+            new AutoArmRotateToPosition(arm, Constants.ArmConstants.LoadPosition)));
     
   }
 
