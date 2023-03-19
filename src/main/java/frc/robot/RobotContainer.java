@@ -131,12 +131,12 @@ public class RobotContainer {
 
     autoChooser.addOption("ScorePreloadMobility", 
       ppManager.loadAuto("ScorePreload", false));
-    autoChooser.addOption("BluePreloadMobilityEngage",
+    autoChooser.addOption("PreloadMobilityEngageBlue9",
       new SequentialCommandGroup(
         ppManager.loadAuto("ScoreMobilityCharge",false),
         new AutoBalance(drive, false)
         ));
-        autoChooser.addOption("RedPreloadMobilityEngage",
+        autoChooser.addOption("PreloadMobilityEngageRed9",
       new SequentialCommandGroup(
         ppManager.loadAuto("ScoreMobilityCharge",true),
         new AutoBalance(drive, false)
