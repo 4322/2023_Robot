@@ -54,7 +54,7 @@ public class RobotContainer {
   private final PathPlannerManager ppManager;
 
   // Arm commands
-  private final ArmSetCoastMode armSetCoastMode = new ArmSetCoastMode(arm);
+  private final ArmSetCoastMode armSetCoastMode = new ArmSetCoastMode(arm, telescope);
 
   // Claw commands
   private final ClawIntake clawIntake = new ClawIntake(claw);
@@ -242,22 +242,18 @@ public class RobotContainer {
     drive.setDriveMode(Drive.getDriveMode()); // reset limelight LED state
     drive.setBrakeMode();
     arm.setBrakeMode();
+    telescope.setBrakeMode();
     claw.setBrakeMode();
     disableTimer.stop();
     disableTimer.reset();
   }
 
   public void disableSubsystems() {
-    if (Constants.armEnabled) {
-      arm.stop();
-    }
-    if (Constants.clawEnabled) {
-      claw.changeState(Claw.ClawMode.stopped);
-      claw.setCoastMode();
-    }
-    if (Constants.driveEnabled) {
-      driveStop.schedule();  // interrupt all drive commands
-    }
+    arm.stop();
+    telescope.stop();
+    claw.changeState(Claw.ClawMode.stopped);
+    claw.setCoastMode();
+    driveStop.schedule();  // interrupt all drive commands
     disableTimer.reset();
     disableTimer.start();
   }
