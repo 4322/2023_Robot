@@ -71,7 +71,7 @@ public class Arm extends SubsystemBase {
       pidController.setSmartMotionMinOutputVelocity(ArmConstants.SmartMotion.minVel, 0);
       pidController.setSmartMotionMaxVelocity(ArmConstants.SmartMotion.maxVel, 0);
       pidController.setSmartMotionMaxAccel(ArmConstants.SmartMotion.maxAcc, 0);
-      pidController.setSmartMotionAllowedClosedLoopError(ArmConstants.SmartMotion.positionTolerance, 0);
+      pidController.setSmartMotionAllowedClosedLoopError(ArmConstants.positionTolerance, 0);
       CanBusUtil.dualSparkMaxPosCtrl(leftMotor, Constants.armTuningMode);
 
       if (Constants.armSensorEnabled) {
@@ -106,7 +106,7 @@ public class Arm extends SubsystemBase {
     if (!Constants.armEnabled) {
       return true;
     }
-    return (Math.abs(getPosition() - currentTarget) <= ArmConstants.positionToleranceInternal);
+    return (Math.abs(getPosition() - currentTarget) <= ArmConstants.positionTolerance);
   }
 
   public boolean rotateToPosition(double targetPosition) {
@@ -142,7 +142,7 @@ public class Arm extends SubsystemBase {
   public void setHoming() {
     if (Constants.armEnabled) {
       if (!Constants.armTuningMode) {
-        leftMotor.set(ArmConstants.ArmHomingPower);
+        leftMotor.set(ArmConstants.homingPower);
       }
     }
   }

@@ -124,7 +124,12 @@ public class CanBusUtil {
     spark.setPeriodicFramePeriod(PeriodicFrame.kStatus6, nextVerySlowStatusPeriodSparkMs());
   }
 
-  public static void fastVelocity(CANSparkMax spark) {
+  public static void fastPositionSparkMax(CANSparkMax spark) {
+    spark.setPeriodicFramePeriod(PeriodicFrame.kStatus2,
+        nextFastStatusPeriodMs());
+  }
+
+  public static void fastVelocitySparkMax(CANSparkMax spark) {
     spark.setPeriodicFramePeriod(PeriodicFrame.kStatus1,
         nextFastStatusPeriodMs());
   }
