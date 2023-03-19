@@ -112,6 +112,7 @@ public class RobotContainer {
         new ArmHoming(arm)
       )
     );
+    
     ppManager.addEvent("scoreCone", new SequentialCommandGroup(
         new ParallelRaceGroup(
           new ArmMove(arm, telescope, Constants.ArmConstants.midScoringPosition, Constants.Telescope.midScoringPosition, true, false), 
@@ -121,11 +122,6 @@ public class RobotContainer {
         new ArmMove(arm, telescope, Constants.ArmConstants.loadPosition, Constants.Telescope.loadPosition, true, false)
       )
     );
-    
-    autoChooser.addOption("Dock on Charge Station",
-        new SequentialCommandGroup(
-            ppManager.loadAuto("DockCharge", false),
-            new AutoDriveRotateWheels(drive, 0.25)));
 
     autoChooser.addOption("Score Preload & Mobility",
         ppManager.loadAuto("ScoreMobilityOnly", false));
@@ -133,12 +129,16 @@ public class RobotContainer {
     autoChooser.addOption("Engage Blue 9",
         new SequentialCommandGroup(
             ppManager.loadAuto("ScoreMobilityCharge9", false),
-            new AutoBalance(drive, false)));
+            new AutoBalance(drive, false),
+            new AutoDriveRotateWheels(drive, 0.25)
+          ));
 
     autoChooser.addOption("Engage Red 9",
         new SequentialCommandGroup(
             ppManager.loadAuto("ScoreMobilityCharge9", true),
-            new AutoBalance(drive, false)));    
+            new AutoBalance(drive, false),
+            new AutoDriveRotateWheels(drive, 0.25)
+          ));    
       
     autoChooser.addOption("Score Preload Only", 
       new SequentialCommandGroup(
@@ -153,6 +153,24 @@ public class RobotContainer {
         new TimedClawOuttake(claw, 0.5),
         new ArmMove(arm, telescope, 
           Constants.ArmConstants.loadPosition, Constants.Telescope.loadPosition, true, false)
+      )
+    );
+
+    autoChooser.addOption("Auto Balance Forward", 
+      new SequentialCommandGroup(
+        new TelescopeHoming(telescope),
+        new ArmHoming(arm),
+        new ParallelRaceGroup(
+          new ArmMove(arm, telescope, 
+            Constants.ArmConstants.midScoringPosition, Constants.Telescope.midScoringPosition,
+              true, false),
+          new ClawIntake(claw)
+        ),
+        new TimedClawOuttake(claw, 0.5),
+        new ArmMove(arm, telescope, 
+          Constants.ArmConstants.loadPosition, Constants.Telescope.loadPosition, true, false),
+        new AutoBalance(drive, true),
+        new AutoDriveRotateWheels(drive, 0.25)
       )
     );
     
