@@ -7,7 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 public class Constants {
-  public static final boolean debug = false;
+  public static final boolean debug = true;
   public static final boolean inDemoMode = false;
   public static final class demo {
     public enum DriveMode {
@@ -36,7 +36,7 @@ public class Constants {
   // in the application to enable it and no set() commands can be issued because
   // the REV library will continuously send the same command, thereby overriding
   // tuning commands from the REV Hardware CLient.
-  public static final boolean armTuningMode = false;
+  public static final boolean armTuningMode = true;
   public static final boolean telescopeTuningMode = true;
   public static final boolean clawTuningMode = false;
 

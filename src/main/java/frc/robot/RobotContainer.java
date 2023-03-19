@@ -140,7 +140,7 @@ public class RobotContainer {
             ppManager.loadAuto("ScoreMobilityCharge9", true),
             new AutoBalance(drive, false)));    
       
-    autoChooser.addOption("ScorePreloadOnly", 
+    autoChooser.addOption("Score Preload Only", 
       new SequentialCommandGroup(
         new TelescopeHoming(telescope),
         new ArmHoming(arm),
