@@ -336,5 +336,8 @@ public class Constants {
     // Threshold for limelight target height
     // above = high tape, below = middle tape
     public static final double targetHeightThresholdDeg = 0;
+
+    // Tolerance for when close enough, horizontally, to the April Tag
+    public static final double aprilTagHorizontalTolerance = .5;
   }
 }
