@@ -23,6 +23,7 @@ public class Constants {
   }
   public static final boolean armEnabled = true;
   public static final boolean armSensorEnabled = true;
+  public static final boolean telescopeEnabled = true;
   public static final boolean clawEnabled = true;
   public static final boolean driveEnabled = true;
   public static final boolean gyroEnabled = true;
@@ -37,6 +38,7 @@ public class Constants {
   // the REV library will continuously send the same command, thereby overriding
   // tuning commands from the REV Hardware CLient.
   public static final boolean armTuningMode = false;
+  public static final boolean telescopeTuningMode = true;
   public static final boolean clawTuningMode = false;
 
   public static final int falconEncoderUnits = 2048;
@@ -73,11 +75,20 @@ public class Constants {
     public static final double distWheelMetersX = OrangeMath.inchesToMeters(29.5/2); // 29.5 in
     public static final double distWheelMetersY = OrangeMath.inchesToMeters(29.5/2); // 29.5 in
 
+    // wheel location constants
+    public static final Translation2d frontLeftWheelLocation = new Translation2d(distWheelMetersX, distWheelMetersY);
+    public static final Translation2d frontRightWheelLocation = new Translation2d(distWheelMetersX, -distWheelMetersY);
+    public static final Translation2d backLeftWheelLocation = new Translation2d(-distWheelMetersX, distWheelMetersY);
+    public static final Translation2d backRightWheelLocation = new Translation2d(-distWheelMetersX, -distWheelMetersY);
+
+    public static final double disableBreakSec = 2.0;
+
     // Max speed is 200000 ticks / 1 s
 
     public static final double maxSpeedMetersPerSecond = 10 * OrangeMath.falconEncoderToMeters(20000,
         OrangeMath.inchesToMeters(OrangeMath.getCircumference(Drive.wheelDiameterInches)),
         Drive.gearRatio);
+
     public static final double maxRotationSpeedRadSecond = 12.2718;
 
     public static final double movingVelocityThresholdFtPerSec = 0.2;
@@ -91,11 +102,27 @@ public class Constants {
 
     public static final double manualRotateToleranceDegrees = 1.5;
 
+    // Values for auto balance
+    public static final double autoBalanceFlatPower = 0.4;
+    public static final double autoBalanceRampPower = 0.4;
+    public static final double autoBalanceAdjustmentPower = 0.05;
+    public static final double chargeStationTiltedMinDeg = 10.0;
+    public static final double chargeStationDroppingDeg = 2.0;
+    public static final double rampImpulseSec = 0.5;  // time for gyro to stabilize
+    public static final double droppingSec = 0.2;
+    public static final double levelingSec = 0.2;
+    public static final double chargeStationBalancedMaxDeg = 3.0;
+    public static final double autoBalanceTimeoutSec = 15.0;
+
+    public static final double autoDriveOverChargeFlatMaxDeg = 3.0;
+    public static final double autoDriveOverChargeFlatSec = 0.5;
+    public static final double autoDriveOverChargeTimeoutSec = 6.0;
+
     // 1 degree
     public static final Pose2d poseError =
         new Pose2d(new Translation2d(0.1, 0.1), new Rotation2d(0.0174533));
 
-    public static final double disableBreakSec = 2.0;
+    public static final double autoChargePower = 0.5;
 
     public static final class Manual {
 
@@ -107,9 +134,9 @@ public class Constants {
       public static final double xboxRotateDeadband = 0.2;
       public static final double rotateToleranceDegrees = 1.5;
       
-      public static final double spinoutRotateToleranceDegrees = 20.0;
-      public static final double spinoutMinAngleVelocity = 3.0;
-      public static final double spinoutSecondDeadBandThreshold = 0.05;
+      public static final double spinoutRotateDeadBand = 0.9;
+      public static final double spinoutMinAngularVelocity = 0.2; // looks like radians per second but we don't know
+      public static final double spinoutActivationSec = 0.5;
     }
 
     public static final class Auto {
@@ -225,13 +252,13 @@ public class Constants {
     public static final class Trajectory {
 
       public static final class PIDXY {
-        public static final double kP = 0;
+        public static final double kP = 0.5;
         public static final double kI = 0;
         public static final double kD = 0;
       }
 
       public static final class PIDR {
-        public static final double kP = 0;
+        public static final double kP = 0.5;
         public static final double kI = 0;
         public static final double kD = 0;
       }
@@ -265,26 +292,25 @@ public class Constants {
     public static final int leftMotorID = 15;
     public static final int rightMotorID = 14;
     public static final double rampRate = 0.3; // good range: 0.3 to 0.5
-    public static final double logIntervalSeconds = 0.5;
+    public static final double logIntervalSeconds = 5.0;
   
     public static final int maxPosition = 72;
     public static final int minPosition = 0;
 
-    public static final double manualDeadband = 0;
-
-    public static final double kMaxRange = 0;
-
-    public static final double LoadPosition = 2;
-    public static final double LoadHighPosition = 10;
-    public static final double MidScoringPosition = 68;
-    public static final double HighScoringPosition = 60;
+    public static final double loadPosition = 2;
+    public static final double loadHighPosition = 10;
+    public static final double telescopeExtendablePosition = 45;
+    public static final double midScoringPosition = 68;
+    public static final double highScoringPosition = 60;
     
-    public static final double ArmHomingPower = -0.1;
-    public static double homingTimeout = 3; // seconds
+    public static final double homingPower = -0.2;
+    public static final double homingNotMovingSec = 0.05;
+    public static final double homingNotMovingRevs = 1.0;
+    public static final double homingTimeoutSec = 3;
 
-    public static final double positionToleranceInternal = 0.3;
+    public static final double positionTolerance = 0.2;
 
-    public static final class SmartMotion { // SmartMotion values need to be checked (not k values), currently not using
+    public static final class SmartMotion {
       public static final double kP = 0.04375;
       public static final double kI = 0;
       public static final double kD = 0;
@@ -294,7 +320,38 @@ public class Constants {
       public static final double minVel = 0;
       public static final double maxVel = 3000; // rpm
       public static final double maxAcc = 10000;
-      public static final double positionTolerance = 0.2;
+    }
+  }
+
+  public static final class Telescope {
+    public static final int motorID = 17;
+    public static final double rampRate = 0.2;
+  
+    public static final int maxPosition = 72;
+    public static final int minPosition = 0;
+
+    public static final double loadPosition = 1;
+    public static final double safePosition = 3;  // safe for overhead/hopper clearance
+    public static final double midScoringPosition = 3;
+    public static final double highScoringPosition = 60;
+    
+    public static final double homingPower = -0.1;
+    public static final double homingNotMovingSec = 0.05;
+    public static final double homingNotMovingRevs = 1.0;
+    public static final double homingTimeoutSec = 3;
+
+    public static final double positionTolerance = 0.2;
+
+    public static final class SmartMotion {
+      public static final double kP = 0.04375;
+      public static final double kI = 0;
+      public static final double kD = 0;
+      public static final double kIz = 0;
+      public static final double kMaxOutput = 1;
+      public static final double kMinOutput = -1;
+      public static final double minVel = 0;
+      public static final double maxVel = 3000; // rpm
+      public static final double maxAcc = 10000;
     }
   }
 

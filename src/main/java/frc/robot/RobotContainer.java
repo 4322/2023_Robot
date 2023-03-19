@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -16,6 +17,7 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.LED;
+import frc.robot.subsystems.Telescope;
 import frc.robot.commands.*;
 
 public class RobotContainer {
@@ -31,7 +33,12 @@ public class RobotContainer {
   private JoystickButton driveButtonFour;
   private JoystickButton driveButtonFive;
   private JoystickButton driveButtonSeven;
+  private JoystickButton driveButtonNine;
+  private JoystickButton driveButtonEleven;
+  private JoystickButton driveButtonTwelve;
+  private JoystickButton rotateButtonFour;
   private JoystickButton rotateButtonFive;
+  private JoystickButton rotateButtonSix;
 
   private JoystickButton rotateTrigger;
 
@@ -40,18 +47,13 @@ public class RobotContainer {
 
   // The robot's subsystems and commands are defined here...
   private final Arm arm = new Arm();
+  private final Telescope telescope = new Telescope();
   private final Claw claw = new Claw();
   private final Drive drive = new Drive();
   private final LED LED = new LED();
   private final PathPlannerManager ppManager;
 
   // Arm commands
-  private final ArmRotateToPosition armRotateToLoadPosition =
-      new ArmRotateToPosition(arm, Constants.ArmConstants.LoadPosition);
-  private final ArmRotateToPosition armRotateToLoadHighPosition =
-      new ArmRotateToPosition(arm, Constants.ArmConstants.LoadHighPosition);
-  private final ArmRotateToPosition armRotateToMidPosition =
-      new ArmRotateToPosition(arm, Constants.ArmConstants.MidScoringPosition);
   private final ArmSetCoastMode armSetCoastMode = new ArmSetCoastMode(arm);
 
   // Claw commands
@@ -63,12 +65,15 @@ public class RobotContainer {
   private final DriveManual driveManualForward = new DriveManual(drive, 0.0);
   private final DriveManual driveManualLeft = new DriveManual(drive, 90.0);
   private final DriveManual driveManualRight = new DriveManual(drive, -90.0);
+  private final DriveStop driveStop = new DriveStop(drive);
 
   //LED Commands
   private final ChangeYellow changeYellow = new ChangeYellow(LED);
   private final ChangePurple changePurple = new ChangePurple(LED);
 
   // Auto Commands
+  private final AutoBalance autoBalanceForward = new AutoBalance(drive, true);
+  private final AutoBalance autoBalanceBackward = new AutoBalance(drive, false);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
 
@@ -76,8 +81,9 @@ public class RobotContainer {
 
     // Initialize subsystems that use CAN after all of them have been constructed because the
     // constructors lower CAN bus utilization to make configuration reliable.
-    drive.init();
+    drive.init();  // must be first to initialize the CANcoders
     arm.init();
+    telescope.init();
     claw.init();
 
     // Conifigure the button bindings
@@ -95,44 +101,58 @@ public class RobotContainer {
     }
 
     if (Constants.armEnabled) {
-      arm.setDefaultCommand(armRotateToLoadPosition);
+      arm.setDefaultCommand(new ArmMove(arm, telescope, Constants.ArmConstants.loadPosition,
+          Constants.Telescope.loadPosition, false, false));
     }
 
     ppManager = new PathPlannerManager(drive);
 
     ppManager.addEvent("initialize", new SequentialCommandGroup(
+        new TelescopeHoming(telescope),
         new ArmHoming(arm)
       )
     );
     ppManager.addEvent("scoreCone", new SequentialCommandGroup(
         new ParallelRaceGroup(
-          new AutoArmRotateToPosition(arm, Constants.ArmConstants.MidScoringPosition), 
+          new ArmMove(arm, telescope, Constants.ArmConstants.midScoringPosition, Constants.Telescope.midScoringPosition, true, false), 
           new ClawIntake(claw)
         ),
         new TimedClawOuttake(claw, 0.5),
-        new AutoArmRotateToPosition(arm, Constants.ArmConstants.LoadPosition)
+        new ArmMove(arm, telescope, Constants.ArmConstants.loadPosition, Constants.Telescope.loadPosition, true, false)
       )
     );
     
-    autoChooser.addOption("DockCharge", 
-      new SequentialCommandGroup(
-        ppManager.loadAuto("DockCharge", false),
-        new AutoDriveRotateWheels(drive, 0.25)
-      )
-    );
+    autoChooser.addOption("Dock on Charge Station",
+        new SequentialCommandGroup(
+            ppManager.loadAuto("DockCharge", false),
+            new AutoDriveRotateWheels(drive, 0.25)));
 
-    autoChooser.addOption("ScorePreloadMobility", 
-      ppManager.loadAuto("ScorePreload", false));
+    autoChooser.addOption("Score Preload & Mobility",
+        ppManager.loadAuto("ScoreMobilityOnly", false));
+
+    autoChooser.addOption("Engage Blue 9",
+        new SequentialCommandGroup(
+            ppManager.loadAuto("ScoreMobilityCharge9", false)
+            ));
+
+    autoChooser.addOption("Engage Red 9",
+        new SequentialCommandGroup(
+            ppManager.loadAuto("ScoreMobilityCharge9", true),
+            new AutoBalance(drive, false)));    
       
     autoChooser.addOption("ScorePreloadOnly", 
       new SequentialCommandGroup(
+        new TelescopeHoming(telescope),
         new ArmHoming(arm),
         new ParallelRaceGroup(
-          new AutoArmRotateToPosition(arm, Constants.ArmConstants.MidScoringPosition), 
+          new ArmMove(arm, telescope, 
+            Constants.ArmConstants.midScoringPosition, Constants.Telescope.midScoringPosition,
+              true, false),
           new ClawIntake(claw)
         ),
         new TimedClawOuttake(claw, 0.5),
-        new AutoArmRotateToPosition(arm, Constants.ArmConstants.LoadPosition)
+        new ArmMove(arm, telescope, 
+          Constants.ArmConstants.loadPosition, Constants.Telescope.loadPosition, true, false)
       )
     );
     
@@ -155,16 +175,28 @@ public class RobotContainer {
       driveButtonFour = new JoystickButton(driveStick, 4); //cube
       driveButtonFive = new JoystickButton(driveStick, 5);
       driveButtonSeven = new JoystickButton(driveStick, 7);
+      driveButtonNine = new JoystickButton(driveStick, 9);
+      driveButtonEleven = new JoystickButton(driveStick, 11);
+      driveButtonTwelve = new JoystickButton(driveStick, 12);
       rotateTrigger = new JoystickButton(rotateStick, 1);
+      rotateButtonFour = new JoystickButton(rotateStick, 4);
       rotateButtonFive = new JoystickButton(rotateStick, 5);
+      rotateButtonSix = new JoystickButton(rotateStick, 6);
 
       driveTrigger.whileTrue(clawOuttake);
       driveButtonThree.onTrue(changeYellow);
       driveButtonFour.onTrue(changePurple);
       driveButtonFive.onTrue(clawIntake);
       driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
-      rotateTrigger.whileTrue(armRotateToMidPosition);
+      driveButtonNine.onTrue(autoBalanceForward);
+      driveButtonEleven.onTrue(autoBalanceBackward);
+      driveButtonTwelve.onTrue(driveStop);
+      rotateTrigger.whileTrue(new RepeatCommand(new ArmMove(arm, telescope)));
+      rotateButtonFour.onTrue(new ArmMove(arm, telescope, Constants.ArmConstants.midScoringPosition,
+          Constants.Telescope.midScoringPosition, false, true));
       rotateButtonFive.onTrue(driveManualForward);
+      rotateButtonSix.onTrue(new ArmMove(arm, telescope, Constants.ArmConstants.highScoringPosition,
+          Constants.Telescope.highScoringPosition, false, true));
     }
 
     if (Constants.xboxEnabled) {
@@ -173,7 +205,8 @@ public class RobotContainer {
       xbox.back().onTrue(armSetCoastMode);
       xbox.leftBumper().onTrue(driveManualLeft);
       xbox.rightBumper().onTrue(driveManualRight);
-      xbox.a().whileTrue(armRotateToLoadHighPosition);
+      xbox.a().whileTrue(new ArmMove(arm, telescope, Constants.ArmConstants.loadHighPosition,
+          Constants.Telescope.loadPosition, false, false));
     }
   }
 
@@ -205,7 +238,7 @@ public class RobotContainer {
       claw.setCoastMode();
     }
     if (Constants.driveEnabled) {
-      drive.stop();
+      driveStop.schedule();  // interrupt all drive commands
     }
     disableTimer.reset();
     disableTimer.start();
@@ -223,6 +256,9 @@ public class RobotContainer {
   }
 
   public void armReset() {
-    new ArmHoming(arm).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming).schedule();
+    new SequentialCommandGroup(
+      new TelescopeHoming(telescope),
+      new ArmHoming(arm)
+    ).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming).schedule();
   }
 }

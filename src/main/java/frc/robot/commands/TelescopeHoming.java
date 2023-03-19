@@ -4,43 +4,39 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
-import frc.robot.Constants.ArmConstants;
-import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Telescope;
 
-public class ArmHoming extends CommandBase{
+public class TelescopeHoming extends CommandBase{
   
-  private final Arm arm;
+  private final Telescope telescope;
 
   private final Timer timeout = new Timer();
   private final Timer homeTimer = new Timer();
   private double lastPos;
 
-  public ArmHoming(Arm armSubsystem) {
-    arm = armSubsystem;
+  public TelescopeHoming(Telescope telescope) {
+    this.telescope = telescope;
 
-    addRequirements(arm);
+    addRequirements(telescope);
   }
 
-  
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     timeout.restart();
     homeTimer.restart();
-    lastPos = arm.getPosition();
-    arm.setLimitSwitch(false);  // hold tight against the rubbery hard stop
-    arm.setHoming();
+    lastPos = telescope.getPosition();
+    telescope.setHoming();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (homeTimer.hasElapsed(Constants.ArmConstants.homingNotMovingSec)) {
-      double currentPos = arm.getPosition();
-      if ((lastPos - currentPos < Constants.ArmConstants.homingNotMovingRevs) ||
-          arm.getArmSensorPressed()) {
-        arm.setPosition(0);
-        arm.setHomed();
+    if (homeTimer.hasElapsed(Constants.Telescope.homingNotMovingSec)) {
+      double currentPos = telescope.getPosition();
+      if (lastPos - currentPos < Constants.Telescope.homingNotMovingRevs) {
+        telescope.setPosition(0);
+        telescope.setHomed();
       } else {
         homeTimer.restart();
         lastPos = currentPos;
@@ -51,18 +47,17 @@ public class ArmHoming extends CommandBase{
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    arm.stop();
-    arm.setHomed();
-    arm.setLimitSwitch(true);
+    telescope.stop();
+    telescope.setHomed();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (timeout.hasElapsed(ArmConstants.homingTimeoutSec)) {
-      DriverStation.reportError("Arm homing timed out!", null);
+    if (timeout.hasElapsed(Constants.Telescope.homingTimeoutSec)) {
+      DriverStation.reportError("Telescope homing timed out!", null);
       return true;
     }
-    return arm.isHomed();
+    return telescope.isHomed();
   }
 }
