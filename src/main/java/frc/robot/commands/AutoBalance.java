@@ -42,8 +42,7 @@ public class AutoBalance extends CommandBase {
     currentMode = autoBalanceMode.flat;
     drive.resetRotatePID();
     maxAbsPitch = 0;
-    abortTimer.reset();
-    abortTimer.start();
+    abortTimer.restart();
     rampTimer.reset();
     rampTimer.stop();
 
@@ -85,8 +84,7 @@ public class AutoBalance extends CommandBase {
               ((driveSign * poseSign < 0) && (pitch >= -Constants.DriveConstants.chargeStationBalancedMaxDeg))) {
             // charge station has started to drop, give it a chance to level out
             drive.stop();
-            debounceTimer.reset();
-            debounceTimer.start();
+            debounceTimer.restart();
             currentMode = autoBalanceMode.dropping;
             DataLogManager.log("maxAbsPitch: " + maxAbsPitch + ", dropAbsPitch: " + absPitch);
             if (Constants.debug) {
@@ -100,8 +98,7 @@ public class AutoBalance extends CommandBase {
           break;
         case dropping:
           if (absPitch <= Constants.DriveConstants.chargeStationBalancedMaxDeg) {
-            debounceTimer.reset();
-            debounceTimer.start();
+            debounceTimer.restart();
             currentMode = autoBalanceMode.leveling;
           } else if (debounceTimer.hasElapsed(Constants.DriveConstants.droppingSec)) {
             startAdjustPitch = pitch;
@@ -125,8 +122,7 @@ public class AutoBalance extends CommandBase {
               || ((startAdjustPitch < 0) && (pitch > startAdjustPitch
                   + Constants.DriveConstants.chargeStationDroppingDeg))) {
             drive.stop();
-            debounceTimer.reset();
-            debounceTimer.start();
+            debounceTimer.restart();
             currentMode = autoBalanceMode.dropping;
           } else {
             // need to keep making the drive call to maintain heading
