@@ -235,13 +235,13 @@ public class Constants {
     public static final class Trajectory {
 
       public static final class PIDXY {
-        public static final double kP = 0;
+        public static final double kP = 0.5;
         public static final double kI = 0;
         public static final double kD = 0;
       }
 
       public static final class PIDR {
-        public static final double kP = 0;
+        public static final double kP = 0.5;
         public static final double kI = 0;
         public static final double kD = 0;
       }

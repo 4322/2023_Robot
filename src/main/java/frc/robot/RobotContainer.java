@@ -124,20 +124,20 @@ public class RobotContainer {
     
     autoChooser.addOption("Dock on Charge Station",
         new SequentialCommandGroup(
-            ppManager.loadAuto("Dock on Charge Station", false),
+            ppManager.loadAuto("DockCharge", false),
             new AutoDriveRotateWheels(drive, 0.25)));
 
     autoChooser.addOption("Score Preload & Mobility",
-        ppManager.loadAuto("ScorePreload", false));
+        ppManager.loadAuto("ScoreMobilityOnly", false));
 
-    autoChooser.addOption("Preload Mobility Engage Blue 9",
+    autoChooser.addOption("Engage Blue 9",
         new SequentialCommandGroup(
-            ppManager.loadAuto("ScoreMobilityCharge", false),
-            new AutoBalance(drive, false)));
+            ppManager.loadAuto("ScoreMobilityCharge9", false)
+            ));
 
-    autoChooser.addOption("Preload Mobility Engage Red 9",
+    autoChooser.addOption("Engage Red 9",
         new SequentialCommandGroup(
-            ppManager.loadAuto("ScoreMobilityCharge", true),
+            ppManager.loadAuto("ScoreMobilityCharge9", true),
             new AutoBalance(drive, false)));
 
     autoChooser.addOption("Score Preload Only",
