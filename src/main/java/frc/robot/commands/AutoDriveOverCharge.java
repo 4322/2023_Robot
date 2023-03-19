@@ -66,7 +66,7 @@ public class AutoDriveOverCharge extends CommandBase{
           break;
         case flatAfterRamp:
           drive.driveAutoRotate(Constants.DriveConstants.autoChargePower, 0, 0,Constants.DriveConstants.manualRotateToleranceDegrees);
-          if (flatTimer.hasElapsed(Constants.DriveConstants.autoDriveOverChargeFlatSec)) {
+          if (Math.abs(drive.getPitch()) < 1) {
             drive.stop();
             currentMode = autoDriveOverChargeMode.done;
           }

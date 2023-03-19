@@ -181,7 +181,7 @@ public class RobotContainer {
       driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
       driveButtonNine.onTrue(autoBalanceForward);
       driveButtonEleven.onTrue(autoBalanceBackward);
-      driveButtonTwelve.onTrue(autoDriveOverChargeForward);
+      driveButtonTwelve.onTrue(driveStop);
       rotateTrigger.whileTrue(armRotateToMidPosition);
       rotateButtonFive.onTrue(driveManualForward);
     }
