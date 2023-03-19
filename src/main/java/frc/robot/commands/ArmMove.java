@@ -1,6 +1,8 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Telescope;
 
@@ -13,6 +15,8 @@ public class ArmMove extends CommandBase {
   private double telescopeTarget;
   private boolean presetTargets;
   private boolean autonomous;
+  private boolean armCommandedToTarget;
+  private boolean telescopeCommandedToTarget;
 
   // all parameters
   public ArmMove(Arm arm, Telescope telescope, double armTarget, double telescopeTarget, boolean autonomous, boolean presetTargets) {
@@ -40,15 +44,37 @@ public class ArmMove extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    armCommandedToTarget = false;
+    telescopeCommandedToTarget = false;
+
     if (!presetTargets) {
-      arm.rotateToPosition(armTarget);
-      telescope.moveToPosition(telescopeTarget);
+      moveToTargets(true);
     }
   }
 
   @Override
   public void execute() {
     if (!presetTargets) {
+      moveToTargets(false);
+    }
+  }
+
+  private void moveToTargets(boolean init) {
+    if (!telescopeCommandedToTarget) {
+      if ((telescopeTarget <= Constants.Telescope.safePosition) || 
+          (arm.getPosition() >= ArmConstants.telescopeExtendablePosition)) {
+        telescope.moveToPosition(telescopeTarget);
+        telescopeCommandedToTarget = true;
+      } 
+    }
+    if (!armCommandedToTarget) {
+      if ((armTarget >= ArmConstants.telescopeExtendablePosition) || 
+          (telescope.getPosition() <= Constants.Telescope.safePosition)) {
+            arm.rotateToPosition(armTarget);
+            armCommandedToTarget = true;
+      } else if (init) {
+        arm.rotateToPosition(ArmConstants.telescopeExtendablePosition);
+      }
     }
   }
 
@@ -70,9 +96,9 @@ public class ArmMove extends CommandBase {
       return true;
     }
     if (autonomous) {
-      return arm.isAtTarget() && telescope.isAtTarget();
+      return armCommandedToTarget && telescopeCommandedToTarget && arm.isAtTarget() && telescope.isAtTarget();
     }
-    // continue teleop activation until cancelled
+    // continue holding position until cancelled in teleop
     return false;
   }
 }

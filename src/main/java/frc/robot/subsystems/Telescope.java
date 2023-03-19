@@ -22,7 +22,6 @@ public class Telescope extends SubsystemBase {
   private SparkMaxPIDController pidController;
   private RelativeEncoder encoder;
   private Double currentTarget = null;
-  private double scoringPosition = Constants.Telescope.midScoringPosition;
   private Timer logTimer = new Timer();
 
   private ShuffleboardTab tab;
@@ -32,7 +31,6 @@ public class Telescope extends SubsystemBase {
   public Telescope() {
     if (Constants.telescopeEnabled) {
       motor = new CANSparkMax(Constants.Telescope.motorID, MotorType.kBrushless);
-
       CanBusUtil.staggerSparkMax(motor);
 
       if (Constants.debug) {
@@ -106,14 +104,6 @@ public class Telescope extends SubsystemBase {
       }
     }
     return false;
-  }
-
-  public void setScoringPosition(double scoringPosition) {
-    this.scoringPosition = scoringPosition;
-  }
-
-  public double getScoringPosition() {
-    return scoringPosition;
   }
 
   public void stop() {

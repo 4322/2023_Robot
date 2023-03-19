@@ -82,7 +82,7 @@ public class RobotContainer {
 
     // Initialize subsystems that use CAN after all of them have been constructed because the
     // constructors lower CAN bus utilization to make configuration reliable.
-    drive.init();
+    drive.init();  // must be first to initialize the CANcoders
     arm.init();
     telescope.init();
     claw.init();
@@ -248,8 +248,8 @@ public class RobotContainer {
 
   public void armReset() {
     new SequentialCommandGroup(
-      new TelescopeHoming(telescope).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming),
-      new ArmHoming(arm).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming)
-    ).schedule();
+      new TelescopeHoming(telescope),
+      new ArmHoming(arm)
+    ).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming).schedule();
   }
 }

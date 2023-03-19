@@ -279,11 +279,14 @@ public class Constants {
 
     public static final double loadPosition = 2;
     public static final double loadHighPosition = 10;
+    public static final double telescopeExtendablePosition = 45;
     public static final double midScoringPosition = 68;
     public static final double highScoringPosition = 60;
     
-    public static final double homingPower = -0.1;
-    public static double homingTimeoutSec = 3;
+    public static final double homingPower = -0.2;
+    public static final double homingNotMovingSec = 0.05;
+    public static final double homingNotMovingRevs = 1.0;
+    public static final double homingTimeoutSec = 3;
 
     public static final double positionTolerance = 0.2;
 
@@ -307,12 +310,15 @@ public class Constants {
     public static final int maxPosition = 72;
     public static final int minPosition = 0;
 
-    public static final double loadPosition = 2;
+    public static final double loadPosition = 1;
+    public static final double safePosition = 3;  // safe for overhead/hopper clearance
     public static final double midScoringPosition = 3;
     public static final double highScoringPosition = 60;
     
     public static final double homingPower = -0.1;
-    public static double homingTimeoutSec = 3;
+    public static final double homingNotMovingSec = 0.05;
+    public static final double homingNotMovingRevs = 1.0;
+    public static final double homingTimeoutSec = 3;
 
     public static final double positionTolerance = 0.2;
 
