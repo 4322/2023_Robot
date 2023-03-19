@@ -94,8 +94,6 @@ public class DriveManual extends CommandBase {
       final double drive1RawTheta = Math.atan2(drive1RawY, drive1RawX);
       final double drive2RawTheta = Math.atan2(drive2RawY, drive2RawX);
 
-      final double drivebaseAngle = drive.getAngle();
-
       // Normalize the drive inputs over deadband in polar coordinates.
       // Process each set of inputs separately to avoid a discontinuity
       // when the second input suddenly exceeds deadband.
@@ -154,7 +152,6 @@ public class DriveManual extends CommandBase {
       }
       rotatePower2 = rotatePower2 * rotatePower2 * rotatePower2; // Increase sensitivity efficiently
 
-      double driveTheta = Math.atan2(driveY, driveX);
       // Cap the combined rotation power
       double rotatePower = rotatePower1 + rotatePower2;
       if (rotatePower > 1) {
@@ -205,7 +202,8 @@ public class DriveManual extends CommandBase {
           // 180/-180: if CW, quadrant 3 (back right); if CCW, quadrant 2 (back left)
           // -90: if CW, quadrant 4 (front right); if CCW, quadrant 3 (back right)
 
-          double robotCentricDriveTheta = OrangeMath.boundDegrees(driveTheta - drivebaseAngle);
+          //drivestick angle - robot angle
+          double robotCentricDriveTheta = OrangeMath.boundDegrees(Math.atan2(driveY, driveX) - drive.getAngle());
 
           // Quad 1
           if (robotCentricDriveTheta > 0 && robotCentricDriveTheta < 90) {
