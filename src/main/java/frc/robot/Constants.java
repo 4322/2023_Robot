@@ -112,7 +112,7 @@ public class Constants {
       public static final double xboxRotateDeadband = 0.2;
       public static final double rotateToleranceDegrees = 1.5;
       
-      public static final double spinoutRotateDeadBand = 0.1;
+      public static final double spinoutRotateDeadBand = 0.3;
       public static final double spinoutMinAngleVelocity = 3.0;
       public static final double spinoutSecondDeadBandThreshold = 0.05;
     }

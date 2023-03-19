@@ -185,7 +185,7 @@ public class DriveManual extends CommandBase {
         // (first deadband is rotateToleranceDegrees/xboxRotateDeadband)
         // (second deadband is past first deadband in rotation) (close to max rotation)
         if (
-        // drive.getAngleVelocity() < Constants.DriveConstants.Manual.spinoutMinAngleVelocity &&
+        drive.getAngleVelocity() < Constants.DriveConstants.Manual.spinoutMinAngleVelocity &&
         secondDeadBandTimer
             .hasElapsed(Constants.DriveConstants.Manual.spinoutSecondDeadBandThreshold)) {
           // from this, figure out which swerve module to lock onto to rotate off of (use drive
@@ -205,29 +205,29 @@ public class DriveManual extends CommandBase {
           // 180/-180: if CW, quadrant 3 (back right); if CCW, quadrant 2 (back left)
           // -90: if CW, quadrant 4 (front right); if CCW, quadrant 3 (back right)
 
-          double angleChange = driveTheta - drivebaseAngle;
+          double robotCentricDriveTheta = OrangeMath.boundDegrees(driveTheta - drivebaseAngle);
 
           // Quad 1
-          if (angleChange > 0 && angleChange < 90) {
+          if (robotCentricDriveTheta > 0 && robotCentricDriveTheta < 90) {
             currentMode = spinoutMode.frontLeft;
           }
 
           // Quad 2
-          if (angleChange > 90 && angleChange < 180) {
+          if (robotCentricDriveTheta > 90 && robotCentricDriveTheta < 180) {
             currentMode = spinoutMode.backLeft;
           }
 
           // Quad 3
-          if (angleChange > -180 && angleChange < -90) {
+          if (robotCentricDriveTheta > -180 && robotCentricDriveTheta < -90) {
             currentMode = spinoutMode.backRight;
           }
 
           // Quad 4
-          if (angleChange > -90 && angleChange < 0) {
+          if (robotCentricDriveTheta > -90 && robotCentricDriveTheta < 0) {
             currentMode = spinoutMode.frontRight;
           }
 
-          // done
+          // default
           if (Math.abs(rotatePower) < Manual.spinoutRotateDeadBand) {
             currentMode = spinoutMode.none;
           }
