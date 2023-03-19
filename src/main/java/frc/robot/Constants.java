@@ -92,11 +92,14 @@ public class Constants {
     public static final double manualRotateToleranceDegrees = 1.5;
 
     // Values for auto balance
-    public static final double autoBalanceFlatPower = 0.5;
-    public static final double autoBalanceRampPower = 0.15; // slower speed when approaching midpoint of charging station
-    public static final double autoBalanceAdjustmentPower = 0.02;
+    public static final double autoBalanceFlatPower = 0.4;
+    public static final double autoBalanceRampPower = 0.4;
+    public static final double autoBalanceAdjustmentPower = 0.05;
     public static final double chargeStationTiltedMinDeg = 10.0;
-    public static final double chargeStationDroppingDeg = 7.0;
+    public static final double chargeStationDroppingDeg = 2.0;
+    public static final double rampImpulseSec = 0.5;  // time for gyro to stabilize
+    public static final double droppingSec = 0.2;
+    public static final double levelingSec = 0.2;
     public static final double chargeStationBalancedMaxDeg = 3.0;
     public static final double autoBalanceTimeoutSec = 15.0;
 
@@ -108,7 +111,6 @@ public class Constants {
     public static final Pose2d poseError =
         new Pose2d(new Translation2d(0.1, 0.1), new Rotation2d(0.0174533));
 
-    public static final double debounceSec = 0.2;
     public static final double autoChargePower = 0.5;
 
     public static final class Manual {
