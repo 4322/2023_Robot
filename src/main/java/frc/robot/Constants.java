@@ -113,9 +113,9 @@ public class Constants {
       public static final double xboxRotateDeadband = 0.2;
       public static final double rotateToleranceDegrees = 1.5;
       
-      public static final double spinoutRotateDeadBand = 0.85;
+      public static final double spinoutRotateDeadBand = 0.9;
       public static final double spinoutMinAngularVelocity = 0.2; // looks like radians per second but we don't know
-      public static final double spinoutActivationSec = 0.33;
+      public static final double spinoutActivationSec = 0.5;
     }
 
     public static final class Auto {
