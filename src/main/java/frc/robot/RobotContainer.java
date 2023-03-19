@@ -132,8 +132,8 @@ public class RobotContainer {
 
     autoChooser.addOption("Engage Blue 9",
         new SequentialCommandGroup(
-            ppManager.loadAuto("ScoreMobilityCharge9", false)
-            ));
+            ppManager.loadAuto("ScoreMobilityCharge9", false),
+            new AutoBalance(drive, false)));
 
     autoChooser.addOption("Engage Red 9",
         new SequentialCommandGroup(
