@@ -31,6 +31,9 @@ public class RobotContainer {
   private JoystickButton driveButtonFour;
   private JoystickButton driveButtonFive;
   private JoystickButton driveButtonSeven;
+  private JoystickButton driveButtonNine;
+  private JoystickButton driveButtonEleven;
+  private JoystickButton driveButtonTwelve;
   private JoystickButton rotateButtonFive;
 
   private JoystickButton rotateTrigger;
@@ -63,12 +66,16 @@ public class RobotContainer {
   private final DriveManual driveManualForward = new DriveManual(drive, 0.0);
   private final DriveManual driveManualLeft = new DriveManual(drive, 90.0);
   private final DriveManual driveManualRight = new DriveManual(drive, -90.0);
+  private final DriveStop driveStop = new DriveStop(drive);
 
   //LED Commands
   private final ChangeYellow changeYellow = new ChangeYellow(LED);
   private final ChangePurple changePurple = new ChangePurple(LED);
 
   // Auto Commands
+  private final AutoBalance autoBalanceForward = new AutoBalance(drive, true);
+  private final AutoBalance autoBalanceBackward = new AutoBalance(drive, false);
+  private final AutoDriveOverCharge autoDriveOverChargeForward = new AutoDriveOverCharge(drive);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
 
@@ -104,6 +111,7 @@ public class RobotContainer {
         new ArmHoming(arm)
       )
     );
+
     ppManager.addEvent("scoreCone", new SequentialCommandGroup(
         new ParallelRaceGroup(
           new AutoArmRotateToPosition(arm, Constants.ArmConstants.MidScoringPosition), 
@@ -114,27 +122,32 @@ public class RobotContainer {
       )
     );
     
-    autoChooser.addOption("DockCharge", 
-      new SequentialCommandGroup(
-        ppManager.loadAuto("DockCharge", false),
-        new AutoDriveRotateWheels(drive, 0.25)
-      )
-    );
+    autoChooser.addOption("Dock on Charge Station",
+        new SequentialCommandGroup(
+            ppManager.loadAuto("DockCharge", false),
+            new AutoDriveRotateWheels(drive, 0.25)));
 
-    autoChooser.addOption("ScorePreloadMobility", 
-      ppManager.loadAuto("ScorePreload", false));
-      
-    autoChooser.addOption("ScorePreloadOnly", 
-      new SequentialCommandGroup(
-        new ArmHoming(arm),
-        new ParallelRaceGroup(
-          new AutoArmRotateToPosition(arm, Constants.ArmConstants.MidScoringPosition), 
-          new ClawIntake(claw)
-        ),
-        new TimedClawOuttake(claw, 0.5),
-        new AutoArmRotateToPosition(arm, Constants.ArmConstants.LoadPosition)
-      )
-    );
+    autoChooser.addOption("Score Preload & Mobility",
+        ppManager.loadAuto("ScoreMobilityOnly", false));
+
+    autoChooser.addOption("Engage Blue 9",
+        new SequentialCommandGroup(
+            ppManager.loadAuto("ScoreMobilityCharge9", false)
+            ));
+
+    autoChooser.addOption("Engage Red 9",
+        new SequentialCommandGroup(
+            ppManager.loadAuto("ScoreMobilityCharge9", true),
+            new AutoBalance(drive, false)));
+
+    autoChooser.addOption("Score Preload Only",
+        new SequentialCommandGroup(
+            new ArmHoming(arm),
+            new ParallelRaceGroup(
+                new AutoArmRotateToPosition(arm, Constants.ArmConstants.MidScoringPosition),
+                new ClawIntake(claw)),
+            new TimedClawOuttake(claw, 0.5),
+            new AutoArmRotateToPosition(arm, Constants.ArmConstants.LoadPosition)));
     
   }
 
@@ -155,6 +168,9 @@ public class RobotContainer {
       driveButtonFour = new JoystickButton(driveStick, 4); //cube
       driveButtonFive = new JoystickButton(driveStick, 5);
       driveButtonSeven = new JoystickButton(driveStick, 7);
+      driveButtonNine = new JoystickButton(driveStick, 9);
+      driveButtonEleven = new JoystickButton(driveStick, 11);
+      driveButtonTwelve = new JoystickButton(driveStick, 12);
       rotateTrigger = new JoystickButton(rotateStick, 1);
       rotateButtonFive = new JoystickButton(rotateStick, 5);
 
@@ -163,6 +179,9 @@ public class RobotContainer {
       driveButtonFour.onTrue(changePurple);
       driveButtonFive.onTrue(clawIntake);
       driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
+      driveButtonNine.onTrue(autoBalanceForward);
+      driveButtonEleven.onTrue(autoBalanceBackward);
+      driveButtonTwelve.onTrue(autoDriveOverChargeForward);
       rotateTrigger.whileTrue(armRotateToMidPosition);
       rotateButtonFive.onTrue(driveManualForward);
     }
@@ -205,7 +224,7 @@ public class RobotContainer {
       claw.setCoastMode();
     }
     if (Constants.driveEnabled) {
-      drive.stop();
+      driveStop.schedule();  // interrupt all drive commands
     }
     disableTimer.reset();
     disableTimer.start();
