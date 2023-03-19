@@ -243,7 +243,8 @@ public class DriveManual extends CommandBase {
           lockedWheelState = LockedWheel.none;
         }
 
-      } else if (Math.abs(initialSpinoutAngle - driveAngle) >= 90) {
+      } else if ((Math.abs(initialSpinoutAngle - driveAngle) >= 90) && 
+        (lockedWheelState != LockedWheel.none)) {
         lockedWheelState = LockedWheel.none;
         spinoutActivationTimer.stop();
         spinoutActivationTimer.reset();
