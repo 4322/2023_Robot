@@ -207,10 +207,10 @@ public class Drive extends SubsystemBase {
     }
   }
 
-  // get the velocity
-  public double getAngleVelocity() {
+  // get the change of robot heading in degrees per sec
+  public double getAngularVelocity() {
     if (gyro != null && gyro.isConnected() && !gyro.isCalibrating() && Constants.gyroEnabled) {
-      return gyro.getVelocityZ();
+      return gyro.getRate();
     } else {
       return 0;
     }
@@ -230,7 +230,7 @@ public class Drive extends SubsystemBase {
 
     if (Constants.debug) { // don't combine if statements to avoid dead code warning
       if (Constants.gyroEnabled) {
-        roll.setDouble(gyro.getRoll());
+        roll.setDouble(getAngularVelocity());
         pitch.setDouble(gyro.getPitch());
         odometryX.setDouble(getPose2d().getX());
         odometryY.setDouble(getPose2d().getY());

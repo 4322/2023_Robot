@@ -7,7 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 public class Constants {
-  public static final boolean debug = false;
+  public static final boolean debug = true;
   public static final boolean inDemoMode = false;
   public static final class demo {
     public enum DriveMode {
@@ -83,6 +83,7 @@ public class Constants {
     public static final double maxSpeedMetersPerSecond = 10 * OrangeMath.falconEncoderToMeters(20000,
         OrangeMath.inchesToMeters(OrangeMath.getCircumference(Drive.wheelDiameterInches)),
         Drive.gearRatio);
+
     public static final double maxRotationSpeedRadSecond = 12.2718;
 
     public static final double movingVelocityThresholdFtPerSec = 0.2;
@@ -112,9 +113,9 @@ public class Constants {
       public static final double xboxRotateDeadband = 0.2;
       public static final double rotateToleranceDegrees = 1.5;
       
-      public static final double spinoutRotateDeadBand = 0.3;
-      public static final double spinoutMinAngleVelocity = 3.0;
-      public static final double spinoutSecondDeadBandThreshold = 0.05;
+      public static final double spinoutRotateDeadBand = 0;
+      public static final double spinoutMinAngularVelocity = 5; // degrees per second
+      public static final double spinoutActivationSec = 0.33;
     }
 
     public static final class Auto {
