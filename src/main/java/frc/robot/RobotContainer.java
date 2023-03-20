@@ -36,11 +36,11 @@ public class RobotContainer {
   private JoystickButton driveButtonNine;
   private JoystickButton driveButtonEleven;
   private JoystickButton driveButtonTwelve;
-  private JoystickButton rotateButtonFour;
-  private JoystickButton rotateButtonFive;
-  private JoystickButton rotateButtonSix;
 
   private JoystickButton rotateTrigger;
+  private JoystickButton rotateButtonThree;
+  private JoystickButton rotateButtonFour;
+  private JoystickButton rotateButtonFive;
 
   private ShuffleboardTab tab;
   private SendableChooser<Command> autoChooser = new SendableChooser<Command>();
@@ -102,7 +102,7 @@ public class RobotContainer {
 
     if (Constants.armEnabled) {
       arm.setDefaultCommand(new ArmMove(arm, telescope, Constants.ArmConstants.loadPosition,
-          Constants.Telescope.loadPosition, false, false));
+          Constants.Telescope.loadPosition, false));
     }
 
     ppManager = new PathPlannerManager(drive);
@@ -115,11 +115,11 @@ public class RobotContainer {
     
     ppManager.addEvent("scoreCone", new SequentialCommandGroup(
         new ParallelRaceGroup(
-          new ArmMove(arm, telescope, Constants.ArmConstants.midScoringPosition, Constants.Telescope.midScoringPosition, true, false), 
+          new ArmMove(arm, telescope, Constants.ArmConstants.midScoringPosition, Constants.Telescope.midScoringPosition, true), 
           new ClawIntake(claw)
         ),
         new TimedClawOuttake(claw, 0.5),
-        new ArmMove(arm, telescope, Constants.ArmConstants.loadPosition, Constants.Telescope.loadPosition, true, false)
+        new ArmMove(arm, telescope, Constants.ArmConstants.loadPosition, Constants.Telescope.loadPosition, true)
       )
     );
     autoChooser.setDefaultOption("nothing", new Nothing());
@@ -147,12 +147,12 @@ public class RobotContainer {
         new ParallelRaceGroup(
           new ArmMove(arm, telescope, 
             Constants.ArmConstants.midScoringPosition, Constants.Telescope.midScoringPosition,
-              true, false),
+              true),
           new ClawIntake(claw)
         ),
         new TimedClawOuttake(claw, 0.5),
         new ArmMove(arm, telescope, 
-          Constants.ArmConstants.loadPosition, Constants.Telescope.loadPosition, true, false)
+          Constants.ArmConstants.loadPosition, Constants.Telescope.loadPosition, true)
       )
     );
     
@@ -163,12 +163,12 @@ public class RobotContainer {
         new ParallelRaceGroup(
           new ArmMove(arm, telescope, 
             Constants.ArmConstants.midScoringPosition, Constants.Telescope.midScoringPosition,
-              true, false),
+              true),
           new ClawIntake(claw)
         ),
         new TimedClawOuttake(claw, 0.5),
         new ArmMove(arm, telescope, 
-          Constants.ArmConstants.loadPosition, Constants.Telescope.loadPosition, true, false),
+          Constants.ArmConstants.loadPosition, Constants.Telescope.loadPosition, true),
         new AutoBalance(drive, true),
         new AutoDriveRotateWheels(drive, 0.25)
       )
@@ -197,9 +197,9 @@ public class RobotContainer {
       driveButtonEleven = new JoystickButton(driveStick, 11);
       driveButtonTwelve = new JoystickButton(driveStick, 12);
       rotateTrigger = new JoystickButton(rotateStick, 1);
+      rotateButtonThree = new JoystickButton(rotateStick, 3);
       rotateButtonFour = new JoystickButton(rotateStick, 4);
       rotateButtonFive = new JoystickButton(rotateStick, 5);
-      rotateButtonSix = new JoystickButton(rotateStick, 6);
 
       driveTrigger.whileTrue(clawOuttake);
       driveButtonThree.onTrue(changeYellow);
@@ -209,12 +209,12 @@ public class RobotContainer {
       driveButtonNine.onTrue(autoBalanceForward);
       driveButtonEleven.onTrue(autoBalanceBackward);
       driveButtonTwelve.onTrue(driveStop);
-      //rotateTrigger.whileTrue(new RepeatCommand(new ArmMove(arm, telescope)));
-      rotateButtonFour.whileTrue(new ArmMove(arm, telescope, Constants.ArmConstants.midScoringPosition,
-          Constants.Telescope.midScoringPosition, false, false));
+      rotateTrigger.whileTrue(new RepeatCommand(new ArmMove(arm, telescope)));
+      rotateButtonThree.onTrue(new SetScoringTargets(arm, telescope, Constants.ArmConstants.midScoringPosition,
+        Constants.Telescope.midScoringPosition));
+      rotateButtonFour.onTrue(new SetScoringTargets(arm, telescope, Constants.ArmConstants.highScoringPosition,
+        Constants.Telescope.highScoringPosition));
       rotateButtonFive.onTrue(driveManualForward);
-      rotateButtonSix.whileTrue(new ArmMove(arm, telescope, Constants.ArmConstants.highScoringPosition,
-          Constants.Telescope.highScoringPosition, false, false));
     }
 
     if (Constants.xboxEnabled) {
@@ -224,7 +224,7 @@ public class RobotContainer {
       xbox.leftBumper().onTrue(driveManualLeft);
       xbox.rightBumper().onTrue(driveManualRight);
       xbox.a().whileTrue(new ArmMove(arm, telescope, Constants.ArmConstants.loadHighPosition,
-          Constants.Telescope.loadPosition, false, false));
+          Constants.Telescope.loadPosition, false));
     }
   }
 
@@ -272,9 +272,7 @@ public class RobotContainer {
   public void armReset() {
     new SequentialCommandGroup(
       new TelescopeHoming(telescope),
-      new ArmHoming(arm),
-      new ArmMove(arm, telescope, Constants.ArmConstants.midScoringPosition,
-          Constants.Telescope.midScoringPosition, false, true)
+      new ArmHoming(arm)
     ).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming).schedule();
   }
 }

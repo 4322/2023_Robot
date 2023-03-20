@@ -294,7 +294,7 @@ public class Constants {
     public static final double loadPosition = 2;
     public static final double loadHighPosition = 10;
     public static final double telescopeExtendablePosition = 57.0;
-    public static final double midScoringPosition = 67.8;
+    public static final double midScoringPosition = 69.0;
     public static final double highScoringPosition = 63.3;
     
     public static final double homingPower = -0.3;
