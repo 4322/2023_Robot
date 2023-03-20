@@ -288,13 +288,13 @@ public class Constants {
     public static final double rampRate = 0.3; // good range: 0.3 to 0.5
     public static final double logIntervalSeconds = 5.0;
   
-    public static final double maxPosition = 72;
+    public static final double maxPosition = 73;
     public static final double minPosition = 0;
 
     public static final double loadPosition = 2;
     public static final double loadHighPosition = 10;
     public static final double telescopeExtendablePosition = 57.0;
-    public static final double midScoringPosition = 69.0;
+    public static final double midScoringPosition = 72.0;
     public static final double highScoringPosition = 63.3;
     
     public static final double homingPower = -0.3;

@@ -9,19 +9,22 @@ import frc.robot.subsystems.Telescope;
 public class ArmMove extends CommandBase {
   private Arm arm;
   private Telescope telescope;
-  private double armTarget;
-  private double telescopeTarget;
+  private Double armTarget;
+  private Double telescopeTarget;
   private boolean autonomous;
   private boolean armCommandedToTarget;
   private boolean telescopeCommandedToTarget;
+  private boolean usePresetTargets = false;
 
-  // all parameters
-  public ArmMove(Arm arm, Telescope telescope, double armTarget, double telescopeTarget, boolean autonomous) {
+  public ArmMove(Arm arm, Telescope telescope, Double armTarget, Double telescopeTarget, boolean autonomous) {
     this.arm = arm;
     this.telescope = telescope;
     this.armTarget = armTarget;
     this.telescopeTarget = telescopeTarget;
     this.autonomous = autonomous;
+    if (armTarget == null) {
+      usePresetTargets = true;
+    }
 
     // interupt existing command even when presetting targets so it can be restarted with the new targets
     addRequirements(arm, telescope);
@@ -29,12 +32,16 @@ public class ArmMove extends CommandBase {
 
   // for trigger button using previously set targets
   public ArmMove(Arm arm, Telescope telescope) {
-    this(arm, telescope, arm.getScoringTarget(), telescope.getScoringTarget(), false);
+    this(arm, telescope, null, null, false);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    if (usePresetTargets) {
+      armTarget = arm.getScoringTarget();
+      telescopeTarget = telescope.getScoringTarget();
+    }
     armCommandedToTarget = false;
     telescopeCommandedToTarget = false;
     moveToTargets(true);
@@ -51,7 +58,10 @@ public class ArmMove extends CommandBase {
           (arm.getPosition() >= ArmConstants.telescopeExtendablePosition)) {
         telescope.moveToPosition(telescopeTarget);
         telescopeCommandedToTarget = true;
-      } 
+      } else if (init) {
+        // positively hold telescope in so it doesn't fling out as the arm moves up
+        telescope.moveToPosition(Constants.Telescope.loadPosition);
+      }
     }
     if (!armCommandedToTarget) {
       if ((armTarget >= ArmConstants.telescopeExtendablePosition) || 
@@ -59,6 +69,7 @@ public class ArmMove extends CommandBase {
             arm.rotateToPosition(armTarget);
             armCommandedToTarget = true;
       } else if (init) {
+        // rotate arm back only to the safe point
         arm.rotateToPosition(ArmConstants.telescopeExtendablePosition);
       }
     }

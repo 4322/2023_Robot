@@ -209,7 +209,7 @@ public class RobotContainer {
       driveButtonNine.onTrue(autoBalanceForward);
       driveButtonEleven.onTrue(autoBalanceBackward);
       driveButtonTwelve.onTrue(driveStop);
-      rotateTrigger.whileTrue(new RepeatCommand(new ArmMove(arm, telescope)));
+      rotateTrigger.whileTrue(new ArmMove(arm, telescope));
       rotateButtonThree.onTrue(new SetScoringTargets(arm, telescope, Constants.ArmConstants.midScoringPosition,
         Constants.Telescope.midScoringPosition));
       rotateButtonFour.onTrue(new SetScoringTargets(arm, telescope, Constants.ArmConstants.highScoringPosition,
