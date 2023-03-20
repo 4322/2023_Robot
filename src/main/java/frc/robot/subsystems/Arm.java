@@ -26,6 +26,7 @@ public class Arm extends SubsystemBase {
   private SparkMaxPIDController pidController;
   private RelativeEncoder encoder;
   private Double currentTarget = null;
+  private double scoringTarget = Constants.ArmConstants.midScoringPosition;
   private Timer logTimer = new Timer();
 
   private ShuffleboardTab tab;
@@ -53,7 +54,7 @@ public class Arm extends SubsystemBase {
       leftMotor.setIdleMode(IdleMode.kBrake);
       leftMotor.setOpenLoopRampRate(ArmConstants.rampRate);
       leftMotor.setClosedLoopRampRate(ArmConstants.rampRate);
-      leftMotor.setSoftLimit(SoftLimitDirection.kForward, Constants.ArmConstants.maxPosition);
+      leftMotor.setSoftLimit(SoftLimitDirection.kForward, (float) Constants.ArmConstants.maxPosition);
       leftMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
       rightMotor.restoreFactoryDefaults();
       rightMotor.setIdleMode(IdleMode.kBrake);
@@ -102,8 +103,16 @@ public class Arm extends SubsystemBase {
     }
   }
 
+  public void setScoringTarget(double target) {
+    scoringTarget = target;
+  }
+
+  public double getScoringTarget() {
+    return scoringTarget;
+  }
+
   public boolean isAtTarget() {
-    if (!Constants.armEnabled) {
+    if (!Constants.armEnabled || currentTarget == null) {
       return true;
     }
     return (Math.abs(getPosition() - currentTarget) <= ArmConstants.positionTolerance);
