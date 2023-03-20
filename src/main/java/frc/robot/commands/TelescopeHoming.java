@@ -55,7 +55,7 @@ public class TelescopeHoming extends CommandBase{
   @Override
   public boolean isFinished() {
     if (timeout.hasElapsed(Constants.Telescope.homingTimeoutSec)) {
-      DriverStation.reportError("Telescope homing timed out!", null);
+      DriverStation.reportError("Telescope homing timed out!", false);
       return true;
     }
     return telescope.isHomed();

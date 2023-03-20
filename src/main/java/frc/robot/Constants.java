@@ -36,8 +36,8 @@ public class Constants {
   // in the application to enable it and no set() commands can be issued because
   // the REV library will continuously send the same command, thereby overriding
   // tuning commands from the REV Hardware CLient.
-  public static final boolean armTuningMode = true;
-  public static final boolean telescopeTuningMode = true;
+  public static final boolean armTuningMode = false;
+  public static final boolean telescopeTuningMode = false;
   public static final boolean clawTuningMode = false;
 
   public static final int falconEncoderUnits = 2048;
@@ -297,9 +297,9 @@ public class Constants {
     public static final double midScoringPosition = 67.8;
     public static final double highScoringPosition = 63.3;
     
-    public static final double homingPower = -0.2;
-    public static final double homingNotMovingSec = 0.05;
-    public static final double homingNotMovingRevs = 1.0;
+    public static final double homingPower = -0.3;
+    public static final double homingNotMovingSec = 0.1;
+    public static final double homingNotMovingRevs = 0.5;
     public static final double homingTimeoutSec = 3;
 
     public static final double positionTolerance = 0.2;
@@ -329,9 +329,9 @@ public class Constants {
     public static final double midScoringPosition = 0;
     public static final double highScoringPosition = 10.9;
     
-    public static final double homingPower = -0.1;
-    public static final double notMovingSec = 0.05;
-    public static final double notMovingRevs = 1.0;
+    public static final double homingPower = -0.35;
+    public static final double notMovingSec = 0.1;
+    public static final double notMovingRevs = 0.1;
     public static final double homingTimeoutSec = 3;
     public static final double positionTolerance = 0.2;
 

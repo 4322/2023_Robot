@@ -98,14 +98,11 @@ public class Telescope extends SubsystemBase {
 
   public boolean moveToPosition(double targetPosition) {
     if (Constants.telescopeEnabled && homed && !Constants.telescopeTuningMode) {
-      if ((targetPosition > Constants.Telescope.minPosition)
-          && (targetPosition < Constants.Telescope.maxPosition)) {
-        pidController.setReference(targetPosition, ControlType.kPosition, Constants.Telescope.movePidSlot);
-        currentTarget = targetPosition;
-        DataLogManager
-            .log("Telescoping to position " + currentTarget + " from position " + getPosition());
-        return true;
-      }
+      pidController.setReference(targetPosition, ControlType.kPosition, Constants.Telescope.movePidSlot);
+      currentTarget = targetPosition;
+      DataLogManager
+          .log("Telescoping to position " + currentTarget + " from position " + getPosition());
+      return true;
     }
     return false;
   }

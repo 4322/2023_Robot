@@ -209,12 +209,12 @@ public class RobotContainer {
       driveButtonNine.onTrue(autoBalanceForward);
       driveButtonEleven.onTrue(autoBalanceBackward);
       driveButtonTwelve.onTrue(driveStop);
-      rotateTrigger.whileTrue(new RepeatCommand(new ArmMove(arm, telescope)));
-      rotateButtonFour.onTrue(new ArmMove(arm, telescope, Constants.ArmConstants.midScoringPosition,
-          Constants.Telescope.midScoringPosition, false, true));
+      //rotateTrigger.whileTrue(new RepeatCommand(new ArmMove(arm, telescope)));
+      rotateButtonFour.whileTrue(new ArmMove(arm, telescope, Constants.ArmConstants.midScoringPosition,
+          Constants.Telescope.midScoringPosition, false, false));
       rotateButtonFive.onTrue(driveManualForward);
-      rotateButtonSix.onTrue(new ArmMove(arm, telescope, Constants.ArmConstants.highScoringPosition,
-          Constants.Telescope.highScoringPosition, false, true));
+      rotateButtonSix.whileTrue(new ArmMove(arm, telescope, Constants.ArmConstants.highScoringPosition,
+          Constants.Telescope.highScoringPosition, false, false));
     }
 
     if (Constants.xboxEnabled) {
@@ -272,7 +272,9 @@ public class RobotContainer {
   public void armReset() {
     new SequentialCommandGroup(
       new TelescopeHoming(telescope),
-      new ArmHoming(arm)
+      new ArmHoming(arm),
+      new ArmMove(arm, telescope, Constants.ArmConstants.midScoringPosition,
+          Constants.Telescope.midScoringPosition, false, true)
     ).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming).schedule();
   }
 }

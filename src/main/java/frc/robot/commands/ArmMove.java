@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
@@ -27,18 +28,13 @@ public class ArmMove extends CommandBase {
     this.autonomous = autonomous;
     this.presetTargets = presetTargets;
 
-    if (presetTargets) {
-      presetArmTarget = armTarget;
-      presetTelescopeTarget = telescopeTarget;
-    }
-
     // interupt existing command even when presetting targets so it can be restarted with the new targets
     addRequirements(arm, telescope);
   }
 
   // for trigger button using previously set targets
   public ArmMove(Arm arm, Telescope telescope) {
-    this(arm, telescope, presetArmTarget, presetTelescopeTarget, false, false);
+    this(arm, telescope, ArmMove.presetArmTarget, ArmMove.presetTelescopeTarget, false, false);
   }
 
   // Called when the command is initially scheduled.
@@ -47,7 +43,10 @@ public class ArmMove extends CommandBase {
     armCommandedToTarget = false;
     telescopeCommandedToTarget = false;
 
-    if (!presetTargets) {
+    if (presetTargets) {
+      ArmMove.presetArmTarget = armTarget;
+      ArmMove.presetTelescopeTarget = telescopeTarget;
+    } else {
       moveToTargets(true);
     }
   }
