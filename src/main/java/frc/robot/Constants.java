@@ -7,7 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 public class Constants {
-  public static final boolean debug = true;
+  public static final boolean debug = false;
   public static final boolean inDemoMode = false;
   public static final class demo {
     public enum DriveMode {
