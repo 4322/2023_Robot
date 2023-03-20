@@ -122,7 +122,7 @@ public class RobotContainer {
         new ArmMove(arm, telescope, Constants.ArmConstants.loadPosition, Constants.Telescope.loadPosition, true, false)
       )
     );
-
+    autoChooser.setDefaultOption("nothing", new Nothing());
     autoChooser.addOption("Score Preload & Mobility",
         ppManager.loadAuto("ScoreMobilityOnly", false));
 
@@ -155,7 +155,7 @@ public class RobotContainer {
           Constants.ArmConstants.loadPosition, Constants.Telescope.loadPosition, true, false)
       )
     );
-
+    
     autoChooser.addOption("Auto Balance Forward", 
       new SequentialCommandGroup(
         new TelescopeHoming(telescope),
