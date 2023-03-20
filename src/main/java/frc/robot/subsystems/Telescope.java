@@ -27,7 +27,6 @@ public class Telescope extends SubsystemBase {
   private ShuffleboardTab tab;
   private GenericEntry posTab;
   private boolean homed = false;
-  private boolean stalled = false;
 
   public Telescope() {
     if (Constants.telescopeEnabled) {
@@ -66,10 +65,6 @@ public class Telescope extends SubsystemBase {
       pidController.setSmartMotionAllowedClosedLoopError(Constants.Telescope.positionTolerance,
           Constants.Telescope.movePidSlot);
 
-      pidController.setP(Constants.Telescope.holdPid.kP, Constants.Telescope.holdPidSlot);
-      pidController.setFF(Constants.Telescope.holdPid.kF, Constants.Telescope.holdPidSlot);
-      pidController.setOutputRange(Constants.Telescope.holdPid.kMinOutput, Constants.Telescope.holdPid.kMaxOutput, Constants.Telescope.holdPidSlot);
-
       CanBusUtil.fastPositionSparkMax(motor);
 
       motor.burnFlash();
@@ -107,7 +102,6 @@ public class Telescope extends SubsystemBase {
           && (targetPosition < Constants.Telescope.maxPosition)) {
         pidController.setReference(targetPosition, ControlType.kPosition, Constants.Telescope.movePidSlot);
         currentTarget = targetPosition;
-        stalled = false;
         DataLogManager
             .log("Telescoping to position " + currentTarget + " from position " + getPosition());
         return true;
@@ -156,12 +150,6 @@ public class Telescope extends SubsystemBase {
   public void periodic() {
     // separate tests to avoid dead code warnings
     if (Constants.telescopeEnabled) {
-      if (homed && !stalled && (currentTarget != null) && (currentTarget <= Constants.Telescope.safePosition)
-          && (getPosition() <= Constants.Telescope.safePosition)) {
-        pidController.setReference(Constants.Telescope.stallRetractCurrent, CANSparkMax.ControlType.kCurrent,
-            Constants.Telescope.holdPidSlot);
-        stalled = true;
-      }
       if (Constants.debug) {
         posTab.setDouble(getPosition());
       }
