@@ -80,7 +80,7 @@ public class Claw extends SubsystemBase {
   private void intake() {
     resetStalledOut();
     if (stalledIn) {
-      pidController.setReference(Constants.ClawConstants.stallIntakeCurrent, ControlType.kCurrent);
+      pidController.setReference(Constants.ClawConstants.stallIntakeCurrent, CANSparkMax.ControlType.kCurrent);
     } else {
       clawMotor.set(ClawConstants.intakePower);
     }   

@@ -53,7 +53,7 @@ public class Arm extends SubsystemBase {
       leftMotor.setIdleMode(IdleMode.kBrake);
       leftMotor.setOpenLoopRampRate(ArmConstants.rampRate);
       leftMotor.setClosedLoopRampRate(ArmConstants.rampRate);
-      leftMotor.setSoftLimit(SoftLimitDirection.kForward, Constants.ArmConstants.maxPosition);
+      leftMotor.setSoftLimit(SoftLimitDirection.kForward, (float) Constants.ArmConstants.maxPosition);
       leftMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
       rightMotor.restoreFactoryDefaults();
       rightMotor.setIdleMode(IdleMode.kBrake);
@@ -103,7 +103,7 @@ public class Arm extends SubsystemBase {
   }
 
   public boolean isAtTarget() {
-    if (!Constants.armEnabled) {
+    if (!Constants.armEnabled || currentTarget == null) {
       return true;
     }
     return (Math.abs(getPosition() - currentTarget) <= ArmConstants.positionTolerance);

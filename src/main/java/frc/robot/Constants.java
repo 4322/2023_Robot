@@ -288,14 +288,14 @@ public class Constants {
     public static final double rampRate = 0.3; // good range: 0.3 to 0.5
     public static final double logIntervalSeconds = 5.0;
   
-    public static final int maxPosition = 72;
-    public static final int minPosition = 0;
+    public static final double maxPosition = 72;
+    public static final double minPosition = 0;
 
     public static final double loadPosition = 2;
     public static final double loadHighPosition = 10;
-    public static final double telescopeExtendablePosition = 45;
-    public static final double midScoringPosition = 68;
-    public static final double highScoringPosition = 60;
+    public static final double telescopeExtendablePosition = 57.0;
+    public static final double midScoringPosition = 67.8;
+    public static final double highScoringPosition = 63.3;
     
     public static final double homingPower = -0.2;
     public static final double homingNotMovingSec = 0.05;
@@ -321,22 +321,25 @@ public class Constants {
     public static final int motorID = 17;
     public static final double rampRate = 0.2;
   
-    public static final int maxPosition = 72;
-    public static final int minPosition = 0;
+    public static final double maxPosition = 13.0;
+    public static final double minPosition = 0;
 
-    public static final double loadPosition = 1;
-    public static final double safePosition = 3;  // safe for overhead/hopper clearance
-    public static final double midScoringPosition = 3;
-    public static final double highScoringPosition = 60;
+    public static final double loadPosition = 0;
+    public static final double safePosition = 0.5;  // safe for overhead/hopper clearance
+    public static final double midScoringPosition = 0;
+    public static final double highScoringPosition = 10.9;
     
     public static final double homingPower = -0.1;
-    public static final double homingNotMovingSec = 0.05;
-    public static final double homingNotMovingRevs = 1.0;
+    public static final double notMovingSec = 0.05;
+    public static final double notMovingRevs = 1.0;
     public static final double homingTimeoutSec = 3;
-
+    public static final double stallRetractCurrent = -16.4;  // controller setpoint, draws 2A from PDH, 15A phase
     public static final double positionTolerance = 0.2;
 
-    public static final class SmartMotion {
+    public static final int movePidSlot = 0;
+    public static final int holdPidSlot = 1;
+
+    public static final class movePid {
       public static final double kP = 0.04375;
       public static final double kI = 0;
       public static final double kD = 0;
@@ -346,6 +349,13 @@ public class Constants {
       public static final double minVel = 0;
       public static final double maxVel = 3000; // rpm
       public static final double maxAcc = 10000;
+    }
+
+    public static final class holdPid {
+      public static final double kP = 0.000812;
+      public static final double kF = 0.00451;
+      public static final double kMaxOutput = 0.2;
+      public static final double kMinOutput = -0.2;
     }
   }
 
