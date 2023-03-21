@@ -16,11 +16,15 @@ public class ArmMove extends CommandBase {
   private boolean autonomous;
   private boolean armCommandedToTarget;
   private boolean telescopeCommandedToTarget;
-  private boolean usePresetTargets = false;
+  private position presetPosition;
   private Timer timer = new Timer();
   private boolean timePrinted;
 
-  public ArmMove(Arm arm, Telescope telescope, Double armTarget, Double telescopeTarget, boolean autonomous) {
+  public enum position {
+    load, loadHigh, scoreLow, scoreMid, scoreHigh, scorePreset
+  }
+
+  public ArmMove(Arm arm, Telescope telescope, position pos, boolean autonomous) {
     this.arm = arm;
     this.telescope = telescope;
     this.armTarget = armTarget;
@@ -30,13 +34,11 @@ public class ArmMove extends CommandBase {
       usePresetTargets = true;
     }
 
-    // interupt existing command even when presetting targets so it can be restarted with the new targets
     addRequirements(arm, telescope);
   }
 
-  // for trigger button using previously set targets
-  public ArmMove(Arm arm, Telescope telescope) {
-    this(arm, telescope, null, null, false);
+  public void setScorePreset(position pos) {
+    presetPosition = pos;
   }
 
   // Called when the command is initially scheduled.
@@ -73,13 +75,13 @@ public class ArmMove extends CommandBase {
     double telescopePosition = telescope.getPosition();
 
     if (!telescopeCommandedToTarget) {
-      if ((telescopeTarget <= Constants.Telescope.safePosition) || 
-          ((armPosition >= ArmConstants.telescopeExtendablePosition) &&
+      if ((telescopeTarget <= Constants.Telescope.earlyArmRetractPosition) || 
+          ((armPosition >= ArmConstants.earlyTelescopeExtendPosition) &&
            (armPosition <= ArmConstants.highScoringPosition + ArmConstants.atTargetTolerance))) {
         telescope.moveToPosition(telescopeTarget);
         telescopeCommandedToTarget = true;
       } else if (init) {
-        if (armTarget >= ArmConstants.telescopeExtendablePosition) {
+        if (armTarget >= ArmConstants.earlyTelescopeExtendPosition) {
           // Moving from mid to high, so don't hit the high pole.
           telescope.moveToPosition(Constants.Telescope.clearHighPolePosition);
         } else {
@@ -90,12 +92,12 @@ public class ArmMove extends CommandBase {
       }
     }
     if (!armCommandedToTarget) {
-      if ((armTarget >= ArmConstants.telescopeExtendablePosition) || 
-          (telescopePosition <= Constants.Telescope.safePosition)) {
+      if ((armTarget >= ArmConstants.earlyTelescopeExtendPosition) || 
+          (telescopePosition <= Constants.Telescope.earlyArmRetractPosition)) {
             arm.rotateToPosition(armTarget);
             armCommandedToTarget = true;
       } else if (init) {
-        if (armTarget >= ArmConstants.telescopeExtendablePosition) {
+        if (armTarget >= ArmConstants.earlyTelescopeExtendPosition) {
           
         }
         // rotate arm back only to the safe point

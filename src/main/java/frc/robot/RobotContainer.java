@@ -104,19 +104,18 @@ public class RobotContainer {
     }
 
     if (Constants.armEnabled) {
-      arm.setDefaultCommand(new ArmMove(arm, telescope, Constants.ArmConstants.loadPosition,
-          Constants.Telescope.loadPosition, false));
+      arm.setDefaultCommand(new ArmMove(arm, telescope, ArmMove.position.load, false));
     }
 
     ppManager = new PathPlannerManager(drive);
     
     ppManager.addEvent("scoreCone", new SequentialCommandGroup(
         new ParallelRaceGroup(
-          new ArmMove(arm, telescope, Constants.ArmConstants.highScoringPosition, Constants.Telescope.highScoringPosition, true), 
+          new ArmMove(arm, telescope, ArmMove.position.scoreHigh, true), 
           new ClawIntake(claw)
         ),
         new TimedClawOuttake(claw, 0.5),
-        new ArmMove(arm, telescope, Constants.ArmConstants.loadPosition, Constants.Telescope.loadPosition, true)
+        new ArmMove(arm, telescope, ArmMove.position.load, true)
       )
     );
 
@@ -188,7 +187,7 @@ public class RobotContainer {
       driveButtonNine.onTrue(autoBalanceForward);
       driveButtonEleven.onTrue(autoBalanceBackward);
       driveButtonTwelve.onTrue(driveStop);
-      rotateTrigger.whileTrue(new ArmMove(arm, telescope));
+      rotateTrigger.whileTrue(new ArmMove(arm, telescope, ArmMove.position.scorePreset, false));
       rotateButtonThree.onTrue(new SetScoringTargets(arm, telescope, Constants.ArmConstants.midScoringPosition,
         Constants.Telescope.midScoringPosition));
       rotateButtonFour.onTrue(new SetScoringTargets(arm, telescope, Constants.ArmConstants.highScoringPosition,
@@ -202,8 +201,7 @@ public class RobotContainer {
       xbox.back().onTrue(armSetCoastMode);
       xbox.leftBumper().onTrue(driveManualLeft);
       xbox.rightBumper().onTrue(driveManualRight);
-      xbox.a().whileTrue(new ArmMove(arm, telescope, Constants.ArmConstants.loadHighPosition,
-          Constants.Telescope.loadPosition, false));
+      xbox.a().whileTrue(new ArmMove(arm, telescope, ArmMove.position.loadHigh, false));
     }
   }
 
