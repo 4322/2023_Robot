@@ -115,14 +115,16 @@ public class RobotContainer {
     
     ppManager.addEvent("scoreCone", new SequentialCommandGroup(
         new ParallelRaceGroup(
-          new ArmMove(arm, telescope, Constants.ArmConstants.midScoringPosition, Constants.Telescope.midScoringPosition, true), 
+          new ArmMove(arm, telescope, Constants.ArmConstants.highScoringPosition, Constants.Telescope.highScoringPosition, true), 
           new ClawIntake(claw)
         ),
         new TimedClawOuttake(claw, 0.5),
         new ArmMove(arm, telescope, Constants.ArmConstants.loadPosition, Constants.Telescope.loadPosition, true)
       )
     );
-    autoChooser.setDefaultOption("nothing", new Nothing());
+
+    autoChooser.setDefaultOption("Nothing", new Nothing());
+
     autoChooser.addOption("Score Preload & Mobility",
         ppManager.loadAuto("ScoreMobilityOnly", false));
 
