@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
@@ -15,6 +17,8 @@ public class ArmMove extends CommandBase {
   private boolean armCommandedToTarget;
   private boolean telescopeCommandedToTarget;
   private boolean usePresetTargets = false;
+  private Timer timer = new Timer();
+  private boolean timePrinted;
 
   public ArmMove(Arm arm, Telescope telescope, Double armTarget, Double telescopeTarget, boolean autonomous) {
     this.arm = arm;
@@ -38,6 +42,8 @@ public class ArmMove extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    timer.restart();
+    timePrinted = false;
     if (usePresetTargets) {
       armTarget = arm.getScoringTarget();
       telescopeTarget = telescope.getScoringTarget();
@@ -96,9 +102,15 @@ public class ArmMove extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (autonomous) {
-      return armCommandedToTarget && telescopeCommandedToTarget && arm.isAtTarget() && telescope.isAtTarget();
+    if (armCommandedToTarget && telescopeCommandedToTarget && arm.isAtTarget() && telescope.isAtTarget()) {
+      if (autonomous) {
+        return true;
+      } else if (Constants.debug && !timePrinted) {
+        DriverStation.reportError("Arm move time: " + timer.get(), false);
+        timePrinted = true;
+      }
     }
+
     // continue holding position until cancelled in teleop
     return false;
   }

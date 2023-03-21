@@ -102,7 +102,7 @@ public class Telescope extends SubsystemBase {
     if (!Constants.telescopeEnabled || currentTarget == null) {
       return true;
     }
-    return (Math.abs(getPosition() - currentTarget) <= Constants.Telescope.positionTolerance * Constants.encoderRoundOffError);
+    return (Math.abs(getPosition() - currentTarget) <= Constants.Telescope.atTargetTolerance);
   }
 
   public boolean moveToPosition(double targetPosition) {

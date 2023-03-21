@@ -115,7 +115,7 @@ public class Arm extends SubsystemBase {
     if (!Constants.armEnabled || currentTarget == null) {
       return true;
     }
-    return (Math.abs(getPosition() - currentTarget) <= ArmConstants.positionTolerance * Constants.encoderRoundOffError);
+    return (Math.abs(getPosition() - currentTarget) <= ArmConstants.atTargetTolerance);
   }
 
   public boolean rotateToPosition(double targetPosition) {
