@@ -76,6 +76,8 @@ public class AutoBalance extends CommandBase {
           } else {
             currentMode = autoBalanceMode.onRamp;
             rampTimer.start();
+            drive.driveAutoRotate(driveSign * Constants.DriveConstants.autoBalanceRampPower, 0, poseDeg,
+            Constants.DriveConstants.manualRotateToleranceDegrees);
           }
           break;
         case onRamp:

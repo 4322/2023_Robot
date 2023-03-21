@@ -108,7 +108,7 @@ public class Constants {
     public static final double autoBalanceAdjustmentPower = 0.035;
     public static final double chargeStationTiltedMinDeg = 10.0;
     public static final double chargeStationDroppingDeg = 1.5;
-    public static final double rampImpulseSec = 0.7;  // time for gyro to stabilize
+    public static final double rampImpulseSec = 0.9;  // time for gyro to stabilize
     public static final double droppingSec = 0.35;
     public static final double levelingSec = 0.3;
     public static final double chargeStationBalancedMaxDeg = 2.0;
