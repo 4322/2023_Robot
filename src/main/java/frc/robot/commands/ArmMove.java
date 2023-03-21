@@ -9,25 +9,30 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Telescope;
 
 public class ArmMove extends CommandBase {
-  private Arm arm;
-  private Telescope telescope;
-  private Double armTarget;
-  private Double telescopeTarget;
-  private boolean autonomous;
-  private boolean armCommandedToTarget;
-  private boolean telescopeCommandedToTarget;
-  private Timer timer = new Timer();
-  private boolean timePrinted;
 
   public enum position {
-    load, loadHigh, scoreLow, scoreMid, scoreHigh, scorePreset
+    unknown, load, loadHigh, scoreLow, scoreMid, scoreHigh, scorePreset
   }
 
   private static position presetPos = position.scoreMid;
-  private static position lastPos;
+  private static position lastPos = position.unknown;
+
+  private Arm arm;
+  private Telescope telescope;
+  private boolean autonomous;
   private position invokePos;
   private position targetPos;
+  private boolean armCommandedToTarget;
+  private boolean telescopeCommandedToTarget;
+  private boolean armAtTarget;
+  private boolean telescopeAtTarget;
   private boolean done;
+  private Timer timer = new Timer();
+  private boolean timePrinted;
+
+  public static void setScorePreset(position pos) {
+    ArmMove.presetPos = pos;
+  }
 
   public ArmMove(Arm arm, Telescope telescope, position invokePos, boolean autonomous) {
     this.arm = arm;
@@ -38,33 +43,32 @@ public class ArmMove extends CommandBase {
     addRequirements(arm, telescope);
   }
 
-  public static void setScorePreset(position pos) {
-    ArmMove.presetPos = pos;
-  }
-
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     if (invokePos == position.scorePreset) {
-      targetPos = presetPos;
+      targetPos = ArmMove.presetPos;
     } else {
       targetPos = invokePos;
     }
-    timer.restart();
-    timePrinted = false;
     armCommandedToTarget = false;
     telescopeCommandedToTarget = false;
+    armAtTarget = false;
+    telescopeAtTarget = false;
     done = false;
+    timer.restart();
+    timePrinted = false;
+
     moveToTargets(true);
   }
 
   @Override
   public void execute() {
-    if (usePresetTargets && ((armTarget != arm.getScoringTarget()) || 
-        telescopeTarget != telescope.getScoringTarget())) {
-      // target(s) changed, restart command without interrupting to keep the trigger command running
-      armTarget = arm.getScoringTarget();
-      telescopeTarget = telescope.getScoringTarget();   
+    if ((invokePos == position.scorePreset) && (targetPos != ArmMove.presetPos)) {
+      // target changed, restart command without interrupting to keep the trigger command running
+      if (!done) {
+        ArmMove.lastPos = position.unknown;
+      }
       initialize();       
     } else {
       moveToTargets(false);
@@ -78,23 +82,54 @@ public class ArmMove extends CommandBase {
     double telescopePosition = telescope.getPosition();
 
     if (!telescopeCommandedToTarget) {
-      if ((telescopeTarget <= Constants.Telescope.earlyArmRetractPosition) || 
-          ((armPosition >= ArmConstants.earlyTelescopeExtendPosition) &&
-           (armPosition <= ArmConstants.highScoringPosition + ArmConstants.atTargetTolerance))) {
-        telescope.moveToPosition(telescopeTarget);
-        telescopeCommandedToTarget = true;
-      } else if (init) {
-        if (armTarget >= ArmConstants.earlyTelescopeExtendPosition) {
-          // Moving from mid to high, so don't hit the high pole.
-          telescope.moveToPosition(Constants.Telescope.clearHighPolePosition);
-        } else {
-          // Positively hold telescope in so it doesn't fling out as the arm moves up.
-          // Needed because the telescope is stopped when the default command is interrupted.
+      switch (targetPos) {
+        case load:
+        case loadHigh:
           telescope.moveToPosition(Constants.Telescope.loadPosition);
-        }
+          telescopeCommandedToTarget = true;
+          break;
+        case scoreLow:
+          if (armAtTarget) {
+            telescope.moveToPosition(Constants.Telescope.lowScoringPosition);
+            telescopeCommandedToTarget = true;  
+          }
+          break;
+        case scoreMid:
+          telescope.moveToPosition(Constants.Telescope.midScoringPosition);
+          telescopeCommandedToTarget = true;
+          break;
+        case scoreHigh:
+          switch (ArmMove.lastPos) {
+            case load:
+            case loadHigh:
+            case scoreLow:
+              if (armPosition >= Constants.ArmConstants.earlyTelescopeExtendPosition) {
+                telescope.moveToPosition(Constants.Telescope.highScoringPosition);
+                telescopeCommandedToTarget = true;
+              }
+              break;
+            default:
+              if (armAtTarget) {
+                telescope.moveToPosition(Constants.Telescope.highScoringPosition);
+                telescopeCommandedToTarget = true;
+              }
+              break;
+          }
+        default:
+          break;
       }
-    }
+      if (init && !telescopeCommandedToTarget) {
+        // Positively hold telescope in so it doesn't fling out as the arm moves.
+        // Needed because the telescope is stopped when the previous command is interrupted.
+        telescope.moveToPosition(Constants.Telescope.loadPosition);            
+      }
+
     if (!armCommandedToTarget) {
+      switch (targetPos) {
+        case load:
+        case loadHigh:
+
+
       if ((armTarget >= ArmConstants.earlyTelescopeExtendPosition) || 
           (telescopePosition <= Constants.Telescope.earlyArmRetractPosition)) {
             arm.rotateToPosition(armTarget);
@@ -117,17 +152,22 @@ public class ArmMove extends CommandBase {
       arm.stop();
       telescope.stop();
     }
-    if (done) {
-      ArmMove.lastPos = targetPos;
-    } else {
-      ArmMove.lastPos = null;
+    if (!done) {
+      ArmMove.lastPos = position.unknown;
     }
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (armCommandedToTarget && telescopeCommandedToTarget && arm.isAtTarget() && telescope.isAtTarget()) {
+    if (!armAtTarget && armCommandedToTarget && arm.isAtTarget()) {
+      armAtTarget = true;
+    } 
+    if (!telescopeAtTarget && telescopeCommandedToTarget && telescope.isAtTarget()) {
+      telescopeAtTarget = true;
+    }
+    if (armAtTarget && telescopeAtTarget) {
+      ArmMove.lastPos = targetPos;
       done = true;
       if (autonomous) {
         return true;
@@ -137,7 +177,7 @@ public class ArmMove extends CommandBase {
       }
     }
 
-    // continue holding position until cancelled in teleop
+    // continue holding position in teleop until cancelled
     return false;
   }
 }

@@ -189,7 +189,8 @@ public class RobotContainer {
       driveButtonNine.onTrue(autoBalanceForward);
       driveButtonEleven.onTrue(autoBalanceBackward);
       driveButtonTwelve.onTrue(driveStop);
-      rotateTrigger.whileTrue(new ArmMove(arm, telescope, ArmMove.position.scorePreset, false));
+      rotateTrigger.whileTrue(new ArmMove(arm, telescope, ArmMove.position.scorePreset, false)
+          .withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming));
       rotateButtonThree.onTrue(new SetScoringPosition(ArmMove.position.scoreMid));
       rotateButtonFour.onTrue(new SetScoringPosition(ArmMove.position.scoreHigh));
       rotateButtonSix.onTrue(new SetScoringPosition(ArmMove.position.scoreLow));
