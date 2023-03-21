@@ -160,9 +160,9 @@ public class SwerveModule extends ControlModule {
 
   @Override
   public double getDistance() {
-    return driveMotor.getSelectedSensorPosition(0) / DriveConstants.encoderResolution
-        / Constants.DriveConstants.Drive.gearRatio * Math.PI
-        * DriveConstants.Drive.wheelDiameterInches / 12;
+    return OrangeMath.falconEncoderToMeters(driveMotor.getSelectedSensorPosition(0),
+        OrangeMath.getCircumference(OrangeMath.inchesToMeters(DriveConstants.Drive.wheelDiameterInches)),
+        DriveConstants.Drive.gearRatio);
   }
 
   @Override

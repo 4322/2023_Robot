@@ -141,13 +141,13 @@ public class RobotContainer {
       
     autoChooser.addOption("Score Preload Only", 
       new SequentialCommandGroup(
-        ppManager.getEvent("scoreCone")
+        ppManager.loadAuto("ScoreConeOnly", false)
       )
     );
     
     autoChooser.addOption("Auto Balance Forward", 
       new SequentialCommandGroup(
-        ppManager.getEvent("scoreCone"),
+        ppManager.loadAuto("ScoreConeOnly", false),
         new AutoBalance(drive, true),
         new AutoDriveRotateWheels(drive, 0.25)
       )

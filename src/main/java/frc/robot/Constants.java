@@ -7,7 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 public class Constants {
-  public static final boolean debug = false;
+  public static final boolean debug = true;
   public static final boolean inDemoMode = false;
   public static final class demo {
     public enum DriveMode {
@@ -246,13 +246,13 @@ public class Constants {
     public static final class Trajectory {
 
       public static final class PIDXY {
-        public static final double kP = 0.5;
+        public static final double kP = 0;
         public static final double kI = 0;
         public static final double kD = 0;
       }
 
       public static final class PIDR {
-        public static final double kP = 0.5;
+        public static final double kP = 0;
         public static final double kI = 0;
         public static final double kD = 0;
       }
