@@ -27,9 +27,10 @@ public class Robot extends TimedRobot {
   private ShuffleboardTab PDHTab;
   private RobotContainer m_robotContainer;
 
-  private GenericEntry leftArmMotor;
-  private GenericEntry rightArmMotor;
-  private GenericEntry clawMotor;
+  private GenericEntry leftArmCurrent;
+  private GenericEntry rightArmCurrent;
+  private GenericEntry clawCurrent;
+  private GenericEntry telescopeCurrent;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -54,9 +55,10 @@ public class Robot extends TimedRobot {
     subsystemEnabled("XBOX Controller", 3, 1, Constants.xboxEnabled);
     subsystemEnabled("Color Sensor", 4, 1, Constants.colorSensorEnabled);
 
-    leftArmMotor = PDHTab.add("Left Arm Motor", 0).getEntry();
-    rightArmMotor = PDHTab.add("Right Arm Motor", 0).getEntry();
-    clawMotor = PDHTab.add("Claw Motor", 0).getEntry();
+    leftArmCurrent = PDHTab.add("Left Arm Current", 0).getEntry();
+    rightArmCurrent = PDHTab.add("Right Arm Current", 0).getEntry();
+    clawCurrent = PDHTab.add("Claw Current", 0).getEntry();
+    telescopeCurrent = PDHTab.add("Telescope Current", 0).getEntry();
 
     m_robotContainer = new RobotContainer();
   }
@@ -85,9 +87,10 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     if (Constants.debug) {
-      leftArmMotor.setDouble(PDH.getCurrent(6));
-      rightArmMotor.setDouble(PDH.getCurrent(9));
-      clawMotor.setDouble(PDH.getCurrent(13));
+      leftArmCurrent.setDouble(PDH.getCurrent(6));
+      rightArmCurrent.setDouble(PDH.getCurrent(9));
+      clawCurrent.setDouble(PDH.getCurrent(5));
+      telescopeCurrent.setDouble(PDH.getCurrent(13));
     }
   }
 
