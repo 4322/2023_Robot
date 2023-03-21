@@ -28,12 +28,23 @@ public class ColorSensor extends SubsystemBase {
   private final Color kYellowTarget = new Color(0.992, 0.792, 0.329);
   private final Color kPurpleTarget = new Color(0.298, 0.086, 0.761);
   private final Color kOrangeTarget = new Color(1, 0.576, 0.020);
-
+  private ColorMatchResult match;
+  private Color detectedColor;
   public ColorSensor() {
     if (Constants.colorSensorEnabled) {
-      Color detectedColor = colorSensor.getColor();
+      colorMatcher.addColorMatch(kYellowTarget);
+      colorMatcher.addColorMatch(kPurpleTarget);
+      colorMatcher.addColorMatch(kOrangeTarget);
+      
+     
+    }
+  }
 
-      ColorMatchResult match = colorMatcher.matchClosestColor(detectedColor);
+  public void init() {
+    if (Constants.colorSensorEnabled) {
+      detectedColor = colorSensor.getColor();
+
+      match = colorMatcher.matchClosestColor(detectedColor);
 
       if (match.color == kOrangeTarget) {
         ObjectString = "Nothing";
@@ -55,14 +66,6 @@ public class ColorSensor extends SubsystemBase {
     }
   }
 
-  public void init() {
-    if (Constants.colorSensorEnabled) {
-      colorMatcher.addColorMatch(kYellowTarget);
-      colorMatcher.addColorMatch(kPurpleTarget);
-      colorMatcher.addColorMatch(kOrangeTarget);
-    }
-  }
-
   private Color getColor() {
     if (Constants.colorSensorEnabled) {
       return colorSensor.getColor();
@@ -73,6 +76,26 @@ public class ColorSensor extends SubsystemBase {
 
   public String getObject() {
     if (Constants.colorSensorEnabled) {
+      detectedColor = colorSensor.getColor();
+
+      match = colorMatcher.matchClosestColor(detectedColor);
+      if (match.color == kOrangeTarget) {
+        ObjectString = "Nothing";
+      } else if (match.color == kYellowTarget) {
+        ObjectString = "Cone";
+      } else if (match.color == kPurpleTarget) {
+        ObjectString = "Cube";
+      }
+
+
+      if (Constants.debug) {
+        tab = Shuffleboard.getTab("Detected Object");
+        Red = tab.add("Red Value", detectedColor.red).getEntry();
+        Green = tab.add("Green Value", detectedColor.green).getEntry();
+        Blue = tab.add("Blue Value", detectedColor.blue).getEntry();
+        Confidence = tab.add("Confidence", match.confidence).getEntry();
+        DetectedObject = tab.add("Detected Object", ObjectString).getEntry();
+      }
       return ObjectString;
     } else {
       return null;

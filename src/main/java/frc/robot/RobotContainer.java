@@ -17,6 +17,7 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.LED;
+import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Telescope;
 import frc.robot.commands.*;
 
@@ -70,6 +71,7 @@ public class RobotContainer {
   //LED Commands
   private final ChangeYellow changeYellow = new ChangeYellow(LED);
   private final ChangePurple changePurple = new ChangePurple(LED);
+  private final LEDControl ledControl = new LEDControl(LED, null);
 
   // Auto Commands
   private final AutoBalance autoBalanceForward = new AutoBalance(drive, true);
@@ -202,7 +204,7 @@ public class RobotContainer {
       rotateButtonFive = new JoystickButton(rotateStick, 5);
 
       driveTrigger.whileTrue(clawOuttake);
-      driveButtonThree.onTrue(changeYellow);
+      driveButtonThree.onTrue(new SequentialCommandGroup(changeYellow,ledControl));
       driveButtonFour.onTrue(changePurple);
       driveButtonFive.onTrue(clawIntake);
       driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));

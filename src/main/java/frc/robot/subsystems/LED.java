@@ -37,6 +37,14 @@ public class LED extends SubsystemBase {
       ledColor = LEDColor.purple;
     }
   }
+  public void color(boolean red, boolean green, boolean blue)
+  {
+    if (Constants.ledEnabled)
+    {
+      led1.setColor(red, green, blue);
+      led2.setColor(red, green, blue);
+    }
+  }
   public LEDColor ledColor() {
     if (Constants.ledEnabled) {
       return ledColor;
@@ -80,6 +88,14 @@ public class LED extends SubsystemBase {
         red.set(true);
         green.set(false);
         blue.set(true);
+      }
+    }
+    public void setColor(boolean redB, boolean greenB, boolean blueB)
+    {
+      if (Constants.ledEnabled){
+        red.set(redB);
+       green.set(greenB);
+        blue.set(blueB);
       }
     }
   }

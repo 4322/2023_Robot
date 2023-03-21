@@ -51,6 +51,7 @@ public class Constants {
   public static final int shuffleboardStatusPeriodMaxMs = 90;  // for interactive response
   public static final int slowStatusPeriodMaxMs = 255;
   public static final int controllerConfigTimeoutMs = 50;
+  public static final double FlashTime = 0.1;
 
   public static final class DriveConstants {
     
@@ -363,6 +364,8 @@ public class Constants {
     public static final int pPort2=4;
     
   }
+  public enum LEDControlState 
+    {selected, RightofSubstation,LeftOfSubstation, substationAligned,transportObject, leftOfGrid,rightOfGrid,gridAligned};
 
   public static final class LimelightConstants {
     public static final Integer[] tapePipelines = {0};
