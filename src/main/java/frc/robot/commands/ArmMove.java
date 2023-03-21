@@ -67,22 +67,37 @@ public class ArmMove extends CommandBase {
   }
 
   private void moveToTargets(boolean init) {
+
+    // cache values for logic consistency
+    double armPosition = arm.getPosition();
+    double telescopePosition = telescope.getPosition();
+
     if (!telescopeCommandedToTarget) {
       if ((telescopeTarget <= Constants.Telescope.safePosition) || 
-          (arm.getPosition() >= ArmConstants.telescopeExtendablePosition)) {
+          ((armPosition >= ArmConstants.telescopeExtendablePosition) &&
+           (armPosition <= ArmConstants.highScoringPosition + ArmConstants.positionTolerance * Constants.encoderRoundOffError))) {
         telescope.moveToPosition(telescopeTarget);
         telescopeCommandedToTarget = true;
       } else if (init) {
-        // positively hold telescope in so it doesn't fling out as the arm moves up
-        telescope.moveToPosition(Constants.Telescope.loadPosition);
+        if (armTarget >= ArmConstants.telescopeExtendablePosition) {
+          // Moving from mid to high, so don't hit the high pole.
+          telescope.moveToPosition(Constants.Telescope.clearHighPolePosition);
+        } else {
+          // Positively hold telescope in so it doesn't fling out as the arm moves up.
+          // Needed because the telescope is stopped when the default command is interrupted.
+          telescope.moveToPosition(Constants.Telescope.loadPosition);
+        }
       }
     }
     if (!armCommandedToTarget) {
       if ((armTarget >= ArmConstants.telescopeExtendablePosition) || 
-          (telescope.getPosition() <= Constants.Telescope.safePosition)) {
+          (telescopePosition <= Constants.Telescope.safePosition)) {
             arm.rotateToPosition(armTarget);
             armCommandedToTarget = true;
       } else if (init) {
+        if (armTarget >= ArmConstants.telescopeExtendablePosition) {
+          
+        }
         // rotate arm back only to the safe point
         //arm.rotateToPosition(ArmConstants.telescopeExtendablePosition);
       }
