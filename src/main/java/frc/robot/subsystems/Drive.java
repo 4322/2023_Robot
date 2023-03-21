@@ -229,17 +229,14 @@ public class Drive extends SubsystemBase {
       }
       if (Constants.gyroEnabled) {
         updateOdometry();
-      }
-    }
-
-    if (Constants.debug) { // don't combine if statements to avoid dead code warning
-      if (Constants.gyroEnabled) {
-        yawTab.setDouble(getAngle());
-        rollTab.setDouble(gyro.getRoll());
-        pitchTab.setDouble(getPitch());
-        odometryX.setDouble(getPose2d().getX());
-        odometryY.setDouble(getPose2d().getY());
-        odometryDegrees.setDouble(getPose2d().getRotation().getDegrees());
+        if (Constants.debug) { // don't combine if statements to avoid dead code warning
+          yawTab.setDouble(getAngle());
+          rollTab.setDouble(gyro.getRoll());
+          pitchTab.setDouble(getPitch());
+          odometryX.setDouble(getPose2d().getX());
+          odometryY.setDouble(getPose2d().getY());
+          odometryDegrees.setDouble(getPose2d().getRotation().getDegrees());
+        }
       }
     }
   }

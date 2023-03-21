@@ -9,27 +9,21 @@ import frc.robot.subsystems.Telescope;
 public class ArmMove extends CommandBase {
   private Arm arm;
   private Telescope telescope;
-  private static double presetArmTarget;
-  private static double presetTelescopeTarget;
-  private double armTarget;
-  private double telescopeTarget;
-  private boolean presetTargets;
+  private Double armTarget;
+  private Double telescopeTarget;
   private boolean autonomous;
   private boolean armCommandedToTarget;
   private boolean telescopeCommandedToTarget;
+  private boolean usePresetTargets = false;
 
-  // all parameters
-  public ArmMove(Arm arm, Telescope telescope, double armTarget, double telescopeTarget, boolean autonomous, boolean presetTargets) {
+  public ArmMove(Arm arm, Telescope telescope, Double armTarget, Double telescopeTarget, boolean autonomous) {
     this.arm = arm;
     this.telescope = telescope;
     this.armTarget = armTarget;
     this.telescopeTarget = telescopeTarget;
     this.autonomous = autonomous;
-    this.presetTargets = presetTargets;
-
-    if (presetTargets) {
-      presetArmTarget = armTarget;
-      presetTelescopeTarget = telescopeTarget;
+    if (armTarget == null) {
+      usePresetTargets = true;
     }
 
     // interupt existing command even when presetting targets so it can be restarted with the new targets
@@ -38,25 +32,24 @@ public class ArmMove extends CommandBase {
 
   // for trigger button using previously set targets
   public ArmMove(Arm arm, Telescope telescope) {
-    this(arm, telescope, presetArmTarget, presetTelescopeTarget, false, false);
+    this(arm, telescope, null, null, false);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    if (usePresetTargets) {
+      armTarget = arm.getScoringTarget();
+      telescopeTarget = telescope.getScoringTarget();
+    }
     armCommandedToTarget = false;
     telescopeCommandedToTarget = false;
-
-    if (!presetTargets) {
-      moveToTargets(true);
-    }
+    moveToTargets(true);
   }
 
   @Override
   public void execute() {
-    if (!presetTargets) {
-      moveToTargets(false);
-    }
+    moveToTargets(false);
   }
 
   private void moveToTargets(boolean init) {
@@ -65,7 +58,10 @@ public class ArmMove extends CommandBase {
           (arm.getPosition() >= ArmConstants.telescopeExtendablePosition)) {
         telescope.moveToPosition(telescopeTarget);
         telescopeCommandedToTarget = true;
-      } 
+      } else if (init) {
+        // positively hold telescope in so it doesn't fling out as the arm moves up
+        telescope.moveToPosition(Constants.Telescope.loadPosition);
+      }
     }
     if (!armCommandedToTarget) {
       if ((armTarget >= ArmConstants.telescopeExtendablePosition) || 
@@ -73,6 +69,7 @@ public class ArmMove extends CommandBase {
             arm.rotateToPosition(armTarget);
             armCommandedToTarget = true;
       } else if (init) {
+        // rotate arm back only to the safe point
         arm.rotateToPosition(ArmConstants.telescopeExtendablePosition);
       }
     }
@@ -91,10 +88,6 @@ public class ArmMove extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (presetTargets) {
-      // complete instant command to set target positions
-      return true;
-    }
     if (autonomous) {
       return armCommandedToTarget && telescopeCommandedToTarget && arm.isAtTarget() && telescope.isAtTarget();
     }

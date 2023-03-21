@@ -7,7 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 public class Constants {
-  public static final boolean debug = true;
+  public static final boolean debug = false;
   public static final boolean inDemoMode = false;
   public static final class demo {
     public enum DriveMode {
@@ -36,8 +36,8 @@ public class Constants {
   // in the application to enable it and no set() commands can be issued because
   // the REV library will continuously send the same command, thereby overriding
   // tuning commands from the REV Hardware CLient.
-  public static final boolean armTuningMode = true;
-  public static final boolean telescopeTuningMode = true;
+  public static final boolean armTuningMode = false;
+  public static final boolean telescopeTuningMode = false;
   public static final boolean clawTuningMode = false;
 
   public static final int falconEncoderUnits = 2048;
@@ -288,18 +288,18 @@ public class Constants {
     public static final double rampRate = 0.3; // good range: 0.3 to 0.5
     public static final double logIntervalSeconds = 5.0;
   
-    public static final int maxPosition = 72;
-    public static final int minPosition = 0;
+    public static final double maxPosition = 73;
+    public static final double minPosition = 0;
 
     public static final double loadPosition = 2;
     public static final double loadHighPosition = 10;
-    public static final double telescopeExtendablePosition = 45;
-    public static final double midScoringPosition = 68;
-    public static final double highScoringPosition = 60;
+    public static final double telescopeExtendablePosition = 57.0;
+    public static final double midScoringPosition = 72.0;
+    public static final double highScoringPosition = 63.3;
     
-    public static final double homingPower = -0.2;
-    public static final double homingNotMovingSec = 0.05;
-    public static final double homingNotMovingRevs = 1.0;
+    public static final double homingPower = -0.3;
+    public static final double homingNotMovingSec = 0.1;
+    public static final double homingNotMovingRevs = 0.5;
     public static final double homingTimeoutSec = 3;
 
     public static final double positionTolerance = 0.2;
@@ -321,28 +321,29 @@ public class Constants {
     public static final int motorID = 17;
     public static final double rampRate = 0.2;
   
-    public static final int maxPosition = 72;
-    public static final int minPosition = 0;
+    public static final double maxPosition = 13.0;
+    public static final double minPosition = 0;
 
-    public static final double loadPosition = 1;
-    public static final double safePosition = 3;  // safe for overhead/hopper clearance
-    public static final double midScoringPosition = 3;
-    public static final double highScoringPosition = 60;
+    public static final double loadPosition = 0;
+    public static final double safePosition = 0.5;  // safe for overhead/hopper clearance
+    public static final double midScoringPosition = 0;
+    public static final double highScoringPosition = 10.9;
     
-    public static final double homingPower = -0.1;
-    public static final double homingNotMovingSec = 0.05;
-    public static final double homingNotMovingRevs = 1.0;
+    public static final double homingPower = -0.35;
+    public static final double notMovingSec = 0.1;
+    public static final double notMovingRevs = 0.1;
     public static final double homingTimeoutSec = 3;
-
     public static final double positionTolerance = 0.2;
 
-    public static final class SmartMotion {
-      public static final double kP = 0.04375;
+    public static final int movePidSlot = 0;
+
+    public static final class movePid {
+      public static final double kP = 0.2;
       public static final double kI = 0;
-      public static final double kD = 0;
+      public static final double kD = 3.0;  // 3.0 max
       public static final double kIz = 0;
-      public static final double kMaxOutput = 1;
-      public static final double kMinOutput = -1;
+      public static final double kMaxOutput = 0.6;
+      public static final double kMinOutput = -0.35;
       public static final double minVel = 0;
       public static final double maxVel = 3000; // rpm
       public static final double maxAcc = 10000;

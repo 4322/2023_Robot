@@ -22,6 +22,7 @@ public class Telescope extends SubsystemBase {
   private SparkMaxPIDController pidController;
   private RelativeEncoder encoder;
   private Double currentTarget = null;
+  private double scoringTarget = Constants.Telescope.midScoringPosition;
   private Timer logTimer = new Timer();
 
   private ShuffleboardTab tab;
@@ -46,21 +47,25 @@ public class Telescope extends SubsystemBase {
       motor.setIdleMode(IdleMode.kBrake);
       motor.setOpenLoopRampRate(Constants.Telescope.rampRate);
       motor.setClosedLoopRampRate(Constants.Telescope.rampRate);
-      motor.setSoftLimit(SoftLimitDirection.kForward, Constants.Telescope.maxPosition);
+      motor.setSoftLimit(SoftLimitDirection.kForward, (float) Constants.Telescope.maxPosition);
       motor.enableSoftLimit(SoftLimitDirection.kForward, true);
       
       encoder = motor.getEncoder();
       pidController = motor.getPIDController();
 
-      pidController.setP(Constants.Telescope.SmartMotion.kP);
-      pidController.setI(Constants.Telescope.SmartMotion.kI);
-      pidController.setD(Constants.Telescope.SmartMotion.kD);
-      pidController.setIZone(Constants.Telescope.SmartMotion.kIz);
-      pidController.setOutputRange(Constants.Telescope.SmartMotion.kMinOutput, Constants.Telescope.SmartMotion.kMaxOutput);
-      pidController.setSmartMotionMinOutputVelocity(Constants.Telescope.SmartMotion.minVel, 0);
-      pidController.setSmartMotionMaxVelocity(Constants.Telescope.SmartMotion.maxVel, 0);
-      pidController.setSmartMotionMaxAccel(Constants.Telescope.SmartMotion.maxAcc, 0);
-      pidController.setSmartMotionAllowedClosedLoopError(Constants.Telescope.positionTolerance, 0);
+      pidController.setP(Constants.Telescope.movePid.kP, Constants.Telescope.movePidSlot);
+      pidController.setI(Constants.Telescope.movePid.kI, Constants.Telescope.movePidSlot);
+      pidController.setD(Constants.Telescope.movePid.kD, Constants.Telescope.movePidSlot);
+      pidController.setIZone(Constants.Telescope.movePid.kIz, Constants.Telescope.movePidSlot);
+      pidController.setOutputRange(Constants.Telescope.movePid.kMinOutput, Constants.Telescope.movePid.kMaxOutput,
+          Constants.Telescope.movePidSlot);
+      pidController.setSmartMotionMinOutputVelocity(Constants.Telescope.movePid.minVel,
+          Constants.Telescope.movePidSlot);
+      pidController.setSmartMotionMaxVelocity(Constants.Telescope.movePid.maxVel, Constants.Telescope.movePidSlot);
+      pidController.setSmartMotionMaxAccel(Constants.Telescope.movePid.maxAcc, Constants.Telescope.movePidSlot);
+      pidController.setSmartMotionAllowedClosedLoopError(Constants.Telescope.positionTolerance,
+          Constants.Telescope.movePidSlot);
+
       CanBusUtil.fastPositionSparkMax(motor);
 
       motor.burnFlash();
@@ -85,8 +90,16 @@ public class Telescope extends SubsystemBase {
     }
   }
 
+  public void setScoringTarget(double target) {
+    scoringTarget = target;
+  }
+
+  public double getScoringTarget() {
+    return scoringTarget;
+  }
+
   public boolean isAtTarget() {
-    if (!Constants.telescopeEnabled) {
+    if (!Constants.telescopeEnabled || currentTarget == null) {
       return true;
     }
     return (Math.abs(getPosition() - currentTarget) <= Constants.Telescope.positionTolerance);
@@ -94,14 +107,11 @@ public class Telescope extends SubsystemBase {
 
   public boolean moveToPosition(double targetPosition) {
     if (Constants.telescopeEnabled && homed && !Constants.telescopeTuningMode) {
-      if ((targetPosition > Constants.Telescope.minPosition)
-          && (targetPosition < Constants.Telescope.maxPosition)) {
-        pidController.setReference(targetPosition, ControlType.kPosition);
-        currentTarget = targetPosition;
-        DataLogManager
-            .log("Telescoping to position " + currentTarget + " from position " + getPosition());
-        return true;
-      }
+      pidController.setReference(targetPosition, ControlType.kPosition, Constants.Telescope.movePidSlot);
+      currentTarget = targetPosition;
+      DataLogManager
+          .log("Telescoping to position " + currentTarget + " from position " + getPosition());
+      return true;
     }
     return false;
   }
