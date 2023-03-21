@@ -84,7 +84,7 @@ public class ArmMove extends CommandBase {
             armCommandedToTarget = true;
       } else if (init) {
         // rotate arm back only to the safe point
-        arm.rotateToPosition(ArmConstants.telescopeExtendablePosition);
+        //arm.rotateToPosition(ArmConstants.telescopeExtendablePosition);
       }
     }
   }

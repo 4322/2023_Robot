@@ -293,7 +293,7 @@ public class Constants {
 
     public static final double loadPosition = 2;
     public static final double loadHighPosition = 10;
-    public static final double telescopeExtendablePosition = 57.0;
+    public static final double telescopeExtendablePosition = 40; //57.0;
     public static final double midScoringPosition = 72.0;
     public static final double highScoringPosition = 65.5;
     
@@ -326,7 +326,7 @@ public class Constants {
     public static final double minPosition = 0;
 
     public static final double loadPosition = 0;
-    public static final double safePosition = 0.5;  // safe for overhead/hopper clearance
+    public static final double safePosition = 9; //0.5;  // safe for overhead/hopper clearance
     public static final double midScoringPosition = 0;
     public static final double highScoringPosition = 10.9;
     public static final double clearHighPolePosition = 6.0;
