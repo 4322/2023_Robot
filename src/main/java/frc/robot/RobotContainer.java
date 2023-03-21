@@ -111,15 +111,7 @@ public class RobotContainer {
 
     ppManager = new PathPlannerManager(drive);
     
-    ppManager.addEvent("scoreCone", new SequentialCommandGroup(
-        new ParallelRaceGroup(
-          new ArmMove(arm, telescope, Constants.ArmConstants.highScoringPosition, Constants.Telescope.highScoringPosition, true), 
-          new ClawIntake(claw)
-        ),
-        new TimedClawOuttake(claw, 0.5),
-        new ArmMove(arm, telescope, Constants.ArmConstants.loadPosition, Constants.Telescope.loadPosition, true)
-      )
-    );
+    ppManager.addEvent("scoreCone", getScoreHigh());
 
     autoChooser.setDefaultOption("Nothing", new Nothing());
 
@@ -140,15 +132,11 @@ public class RobotContainer {
             new AutoDriveRotateWheels(drive, 0.25)
           ));    
       
-    autoChooser.addOption("Score Preload Only", 
-      new SequentialCommandGroup(
-        ppManager.loadAuto("ScoreConeOnly", false)
-      )
-    );
+    autoChooser.addOption("Score Preload Only", getScoreHigh());
     
     autoChooser.addOption("Auto Balance Forward", 
       new SequentialCommandGroup(
-        ppManager.loadAuto("ScoreConeOnly", false),
+        getScoreHigh(),
         new AutoBalance(drive, true),
         new AutoDriveRotateWheels(drive, 0.25)
       )
@@ -248,9 +236,7 @@ public class RobotContainer {
     }
 
     return new SequentialCommandGroup(
-      new ResetFieldCentric(drive, 0, true),
-      new TelescopeHoming(telescope),
-      new ArmHoming(arm),
+      getAutoInitialize(),
       autoChooser.getSelected()
     );
   }
@@ -260,5 +246,28 @@ public class RobotContainer {
       new TelescopeHoming(telescope),
       new ArmHoming(arm)
     ).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming).schedule();
+  }
+
+  // AUTO COMMANDS
+
+  // Command that should always start off every auto
+  public Command getAutoInitialize() {
+    return new SequentialCommandGroup(
+      new ResetFieldCentric(drive, 0, true),
+      new TelescopeHoming(telescope),
+      new ArmHoming(arm) 
+    );
+  }
+
+  // Score a game piece high
+  public Command getScoreHigh() {
+    return new SequentialCommandGroup(
+      new ParallelRaceGroup(
+        new ArmMove(arm, telescope, Constants.ArmConstants.highScoringPosition, Constants.Telescope.highScoringPosition, true), 
+        new ClawIntake(claw)
+      ),
+      new TimedClawOuttake(claw, 0.5),
+      new ArmMove(arm, telescope, Constants.ArmConstants.loadPosition, Constants.Telescope.loadPosition, true)
+    );
   }
 }
