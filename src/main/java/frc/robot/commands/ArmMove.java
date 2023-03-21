@@ -49,7 +49,15 @@ public class ArmMove extends CommandBase {
 
   @Override
   public void execute() {
-    moveToTargets(false);
+    if (usePresetTargets && ((armTarget != arm.getScoringTarget()) || 
+        telescopeTarget != telescope.getScoringTarget())) {
+      // target(s) changed, restart command without interrupting to keep the trigger command running
+      armTarget = arm.getScoringTarget();
+      telescopeTarget = telescope.getScoringTarget();   
+      initialize();       
+    } else {
+      moveToTargets(false);
+    }
   }
 
   private void moveToTargets(boolean init) {

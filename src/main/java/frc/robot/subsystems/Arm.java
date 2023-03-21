@@ -172,7 +172,9 @@ public class Arm extends SubsystemBase {
 
   // enable/disable limit switch
   public void setLimitSwitch(boolean status) {
-    armSensor.enableLimitSwitch(status);
+    if (Constants.armEnabled) {
+      armSensor.enableLimitSwitch(status);
+    }
   }
 
   public void setHomed() {

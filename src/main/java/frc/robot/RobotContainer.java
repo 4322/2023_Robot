@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -71,9 +70,13 @@ public class RobotContainer {
   private final ChangeYellow changeYellow = new ChangeYellow(LED);
   private final ChangePurple changePurple = new ChangePurple(LED);
 
-  // Auto Commands
-  private final AutoBalance autoBalanceForward = new AutoBalance(drive, true);
-  private final AutoBalance autoBalanceBackward = new AutoBalance(drive, false);
+  // Auto Balance Commands
+  private final SequentialCommandGroup autoBalanceForward = new SequentialCommandGroup(
+      new AutoBalance(drive, true),
+      new AutoDriveRotateWheels(drive, 0.25));
+  private final SequentialCommandGroup autoBalanceBackward = new SequentialCommandGroup(
+      new AutoBalance(drive, false),
+      new AutoDriveRotateWheels(drive, 0.25));
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
 
@@ -269,7 +272,7 @@ public class RobotContainer {
     );
   }
 
-  public void armReset() {
+  public void homeArm() {
     new SequentialCommandGroup(
       new TelescopeHoming(telescope),
       new ArmHoming(arm)

@@ -130,7 +130,7 @@ public class Robot extends TimedRobot {
     }
     
     m_robotContainer.enableSubsystems();
-    m_robotContainer.armReset();
+    m_robotContainer.homeArm();
   }
 
   /** This function is called periodically during operator control. */

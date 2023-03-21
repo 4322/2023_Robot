@@ -17,8 +17,7 @@ public class SetScoringTargets extends InstantCommand {
     this.armTarget = armTarget;
     this.telescopeTarget = telescopeTarget;
 
-    // interupt existing command even when presetting targets so it can be restarted with the new targets
-    addRequirements(arm, telescope);
+    // don't interrupt existing command because the trigger command won't restart
   }
 
   // Called when the command is initially scheduled.

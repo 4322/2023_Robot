@@ -7,7 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 public class Constants {
-  public static final boolean debug = false;
+  public static final boolean debug = true;
   public static final boolean inDemoMode = false;
   public static final class demo {
     public enum DriveMode {
@@ -20,9 +20,9 @@ public class Constants {
     public static final double driveScaleFactor = 0.15;
     public static final double rotationScaleFactor = 0.1;
   }
-  public static final boolean armEnabled = true;
+  public static final boolean armEnabled = false;
   public static final boolean armSensorEnabled = true;
-  public static final boolean telescopeEnabled = true;
+  public static final boolean telescopeEnabled = false;
   public static final boolean clawEnabled = true;
   public static final boolean driveEnabled = true;
   public static final boolean gyroEnabled = true;
@@ -102,15 +102,15 @@ public class Constants {
     public static final double manualRotateToleranceDegrees = 1.5;
 
     // Values for auto balance
-    public static final double autoBalanceFlatPower = 0.4;
-    public static final double autoBalanceRampPower = 0.4;
-    public static final double autoBalanceAdjustmentPower = 0.05;
+    public static final double autoBalanceFlatPower = 0.3;
+    public static final double autoBalanceRampPower = 0.15;
+    public static final double autoBalanceAdjustmentPower = 0.035;
     public static final double chargeStationTiltedMinDeg = 10.0;
-    public static final double chargeStationDroppingDeg = 2.0;
-    public static final double rampImpulseSec = 0.5;  // time for gyro to stabilize
-    public static final double droppingSec = 0.2;
-    public static final double levelingSec = 0.2;
-    public static final double chargeStationBalancedMaxDeg = 3.0;
+    public static final double chargeStationDroppingDeg = 1.5;
+    public static final double rampImpulseSec = 0.7;  // time for gyro to stabilize
+    public static final double droppingSec = 0.35;
+    public static final double levelingSec = 0.3;
+    public static final double chargeStationBalancedMaxDeg = 2.0;
     public static final double autoBalanceTimeoutSec = 15.0;
 
     public static final double autoDriveOverChargeFlatMaxDeg = 3.0;
@@ -295,7 +295,7 @@ public class Constants {
     public static final double loadHighPosition = 10;
     public static final double telescopeExtendablePosition = 57.0;
     public static final double midScoringPosition = 72.0;
-    public static final double highScoringPosition = 63.3;
+    public static final double highScoringPosition = 65.5;
     
     public static final double homingPower = -0.3;
     public static final double homingNotMovingSec = 0.1;
@@ -328,6 +328,7 @@ public class Constants {
     public static final double safePosition = 0.5;  // safe for overhead/hopper clearance
     public static final double midScoringPosition = 0;
     public static final double highScoringPosition = 10.9;
+    public static final double clearHighPolePosition = 6.0;
     
     public static final double homingPower = -0.35;
     public static final double notMovingSec = 0.1;
