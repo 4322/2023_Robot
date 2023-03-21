@@ -111,7 +111,8 @@ public class Constants {
     public static final double droppingSec = 0.35;
     public static final double levelingSec = 0.3;
     public static final double chargeStationBalancedMaxDeg = 2.0;
-    public static final double autoBalanceTimeoutSec = 15.0;
+    public static final double autoBalanceFlatTimeoutSec = 2.5;
+    public static final double autoBalanceTotalTimeoutSec = 10.0;
 
     public static final double autoDriveOverChargeFlatMaxDeg = 3.0;
     public static final double autoDriveOverChargeFlatSec = 0.5;

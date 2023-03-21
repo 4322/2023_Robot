@@ -12,6 +12,7 @@ public class AutoBalance extends CommandBase {
   private Drive drive;
   private autoBalanceMode currentMode;
   private Timer abortTimer = new Timer();
+  private Timer flatTimer = new Timer();
   private Timer rampTimer = new Timer();
   private Timer debounceTimer = new Timer();
   private int driveSign;
@@ -43,6 +44,7 @@ public class AutoBalance extends CommandBase {
     drive.resetRotatePID();
     maxAbsPitch = 0;
     abortTimer.restart();
+    flatTimer.restart();
     rampTimer.reset();
     rampTimer.stop();
 
@@ -59,7 +61,7 @@ public class AutoBalance extends CommandBase {
   @Override
   public void execute() {
     if (Constants.driveEnabled) {
-      if (abortTimer.hasElapsed(Constants.DriveConstants.autoBalanceTimeoutSec)) {
+      if (abortTimer.hasElapsed(Constants.DriveConstants.autoBalanceTotalTimeoutSec)) {
         currentMode = autoBalanceMode.abort;
       }
       pitch = drive.getPitch();
@@ -70,9 +72,14 @@ public class AutoBalance extends CommandBase {
       switch (currentMode) {
         case flat:
           if (absPitch < Constants.DriveConstants.chargeStationTiltedMinDeg) {
-            // need to keep making the drive call to maintain heading
-            drive.driveAutoRotate(driveSign * Constants.DriveConstants.autoBalanceFlatPower, 0, poseDeg,
-                Constants.DriveConstants.manualRotateToleranceDegrees);
+            if (flatTimer.hasElapsed(Constants.DriveConstants.autoBalanceFlatTimeoutSec)) {
+              currentMode = autoBalanceMode.abort;
+              drive.stop();
+            } else {
+              // need to keep making the drive call to maintain heading
+              drive.driveAutoRotate(driveSign * Constants.DriveConstants.autoBalanceFlatPower, 0, poseDeg,
+                  Constants.DriveConstants.manualRotateToleranceDegrees);
+            }
           } else {
             currentMode = autoBalanceMode.onRamp;
             rampTimer.start();
@@ -137,6 +144,7 @@ public class AutoBalance extends CommandBase {
         case finished:
           break;
         case abort:
+          drive.stop();
           break;
       }
     }
