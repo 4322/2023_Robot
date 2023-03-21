@@ -84,9 +84,11 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    leftArmMotor.setDouble(PDH.getCurrent(6));
-    rightArmMotor.setDouble(PDH.getCurrent(9));
-    clawMotor.setDouble(PDH.getCurrent(13));
+    if (Constants.debug) {
+      leftArmMotor.setDouble(PDH.getCurrent(6));
+      rightArmMotor.setDouble(PDH.getCurrent(9));
+      clawMotor.setDouble(PDH.getCurrent(13));
+    }
   }
 
   /**

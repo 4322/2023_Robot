@@ -7,7 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 public class Constants {
-  public static final boolean debug = true;
+  public static final boolean debug = false;
   public static final boolean inDemoMode = false;
   public static final class demo {
     public enum DriveMode {
@@ -20,9 +20,9 @@ public class Constants {
     public static final double driveScaleFactor = 0.15;
     public static final double rotationScaleFactor = 0.1;
   }
-  public static final boolean armEnabled = false;
+  public static final boolean armEnabled = true;
   public static final boolean armSensorEnabled = true;
-  public static final boolean telescopeEnabled = false;
+  public static final boolean telescopeEnabled = true;
   public static final boolean clawEnabled = true;
   public static final boolean driveEnabled = true;
   public static final boolean gyroEnabled = true;
