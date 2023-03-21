@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import java.io.Console;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -123,23 +124,47 @@ public class ArmMove extends CommandBase {
         // Needed because the telescope is stopped when the previous command is interrupted.
         telescope.moveToPosition(Constants.Telescope.loadPosition);            
       }
+    }
 
     if (!armCommandedToTarget) {
       switch (targetPos) {
         case load:
-        case loadHigh:
-
-
-      if ((armTarget >= ArmConstants.earlyTelescopeExtendPosition) || 
-          (telescopePosition <= Constants.Telescope.earlyArmRetractPosition)) {
-            arm.rotateToPosition(armTarget);
+          if ((telescopePosition <= Constants.Telescope.safeArmRetractPosition) 
+              || ((lastPos == position.scoreHigh) 
+                  && (telescopePosition <= Constants.Telescope.earlyArmRetractPosition))) {
+            arm.rotateToPosition(Constants.ArmConstants.loadPosition);
             armCommandedToTarget = true;
-      } else if (init) {
-        if (armTarget >= ArmConstants.earlyTelescopeExtendPosition) {
-          
-        }
-        // rotate arm back only to the safe point
-        //arm.rotateToPosition(ArmConstants.telescopeExtendablePosition);
+          }
+          break;
+        case loadHigh:
+          if (telescopePosition <= Constants.Telescope.safeArmRetractPosition) {
+            arm.rotateToPosition(Constants.ArmConstants.loadHighPosition);
+            armCommandedToTarget = true;
+          }
+          break;
+        case scoreLow:
+          if (telescopePosition <= Constants.Telescope.safeArmRetractPosition) {
+            arm.rotateToPosition(Constants.ArmConstants.lowScoringPosition);
+            armCommandedToTarget = true;
+          }
+          break;
+        case scoreMid:
+          if ((telescopePosition <= Constants.Telescope.safeArmRetractPosition) 
+              || ((lastPos == position.scoreHigh) 
+                  && (telescopePosition <= Constants.Telescope.clearHighPolePosition))) {
+              arm.rotateToPosition(Constants.ArmConstants.midScoringPosition);
+              armCommandedToTarget = true;
+          }
+          break;
+        case scoreHigh:
+          if ((telescopePosition <= Constants.Telescope.safeArmRetractPosition) 
+              || (lastPos == position.scoreHigh)) {
+            arm.rotateToPosition(Constants.ArmConstants.highScoringPosition);
+            armCommandedToTarget = true;
+          }
+          break;
+        default:
+          break;
       }
     }
   }
