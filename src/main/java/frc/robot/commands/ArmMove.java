@@ -75,7 +75,7 @@ public class ArmMove extends CommandBase {
     if (!telescopeCommandedToTarget) {
       if ((telescopeTarget <= Constants.Telescope.safePosition) || 
           ((armPosition >= ArmConstants.telescopeExtendablePosition) &&
-           (armPosition <= ArmConstants.highScoringPosition + ArmConstants.positionTolerance * Constants.encoderRoundOffError))) {
+           (armPosition <= ArmConstants.highScoringPosition + ArmConstants.atTargetTolerance))) {
         telescope.moveToPosition(telescopeTarget);
         telescopeCommandedToTarget = true;
       } else if (init) {
