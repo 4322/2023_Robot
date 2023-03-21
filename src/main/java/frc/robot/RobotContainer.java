@@ -109,12 +109,6 @@ public class RobotContainer {
     }
 
     ppManager = new PathPlannerManager(drive);
-
-    ppManager.addEvent("initialize", new SequentialCommandGroup(
-        new TelescopeHoming(telescope),
-        new ArmHoming(arm)
-      )
-    );
     
     ppManager.addEvent("scoreCone", new SequentialCommandGroup(
         new ParallelRaceGroup(
@@ -147,14 +141,12 @@ public class RobotContainer {
       
     autoChooser.addOption("Score Preload Only", 
       new SequentialCommandGroup(
-        ppManager.getEvent("initialize"),
         ppManager.getEvent("scoreCone")
       )
     );
     
     autoChooser.addOption("Auto Balance Forward", 
       new SequentialCommandGroup(
-        ppManager.getEvent("initialize"),
         ppManager.getEvent("scoreCone"),
         new AutoBalance(drive, true),
         new AutoDriveRotateWheels(drive, 0.25)
@@ -252,6 +244,8 @@ public class RobotContainer {
 
     return new SequentialCommandGroup(
       new ResetFieldCentric(drive, 0, true),
+      new TelescopeHoming(telescope),
+      new ArmHoming(arm),
       autoChooser.getSelected()
     );
   }
