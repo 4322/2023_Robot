@@ -16,7 +16,6 @@ public class ArmMove extends CommandBase {
   private boolean autonomous;
   private boolean armCommandedToTarget;
   private boolean telescopeCommandedToTarget;
-  private position presetPosition;
   private Timer timer = new Timer();
   private boolean timePrinted;
 
@@ -24,34 +23,38 @@ public class ArmMove extends CommandBase {
     load, loadHigh, scoreLow, scoreMid, scoreHigh, scorePreset
   }
 
-  public ArmMove(Arm arm, Telescope telescope, position pos, boolean autonomous) {
+  private static position presetPos = position.scoreMid;
+  private static position lastPos;
+  private position invokePos;
+  private position targetPos;
+  private boolean done;
+
+  public ArmMove(Arm arm, Telescope telescope, position invokePos, boolean autonomous) {
     this.arm = arm;
     this.telescope = telescope;
-    this.armTarget = armTarget;
-    this.telescopeTarget = telescopeTarget;
+    this.invokePos = invokePos;
     this.autonomous = autonomous;
-    if (armTarget == null) {
-      usePresetTargets = true;
-    }
 
     addRequirements(arm, telescope);
   }
 
-  public void setScorePreset(position pos) {
-    presetPosition = pos;
+  public static void setScorePreset(position pos) {
+    ArmMove.presetPos = pos;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    if (invokePos == position.scorePreset) {
+      targetPos = presetPos;
+    } else {
+      targetPos = invokePos;
+    }
     timer.restart();
     timePrinted = false;
-    if (usePresetTargets) {
-      armTarget = arm.getScoringTarget();
-      telescopeTarget = telescope.getScoringTarget();
-    }
     armCommandedToTarget = false;
     telescopeCommandedToTarget = false;
+    done = false;
     moveToTargets(true);
   }
 
@@ -114,12 +117,18 @@ public class ArmMove extends CommandBase {
       arm.stop();
       telescope.stop();
     }
+    if (done) {
+      ArmMove.lastPos = targetPos;
+    } else {
+      ArmMove.lastPos = null;
+    }
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     if (armCommandedToTarget && telescopeCommandedToTarget && arm.isAtTarget() && telescope.isAtTarget()) {
+      done = true;
       if (autonomous) {
         return true;
       } else if (Constants.debug && !timePrinted) {

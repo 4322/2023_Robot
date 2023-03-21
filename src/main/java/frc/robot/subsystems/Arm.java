@@ -26,7 +26,6 @@ public class Arm extends SubsystemBase {
   private SparkMaxPIDController pidController;
   private RelativeEncoder encoder;
   private Double currentTarget = null;
-  private double scoringTarget = Constants.ArmConstants.midScoringPosition;
   private Timer logTimer = new Timer();
 
   private ShuffleboardTab tab;
@@ -101,14 +100,6 @@ public class Arm extends SubsystemBase {
         encoder.setPosition(pos);
       }
     }
-  }
-
-  public void setScoringTarget(double target) {
-    scoringTarget = target;
-  }
-
-  public double getScoringTarget() {
-    return scoringTarget;
   }
 
   public boolean isAtTarget() {

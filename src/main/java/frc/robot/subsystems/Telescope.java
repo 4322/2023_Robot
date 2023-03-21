@@ -22,7 +22,6 @@ public class Telescope extends SubsystemBase {
   private SparkMaxPIDController pidController;
   private RelativeEncoder encoder;
   private Double currentTarget = null;
-  private double scoringTarget = Constants.Telescope.midScoringPosition;
   private Timer logTimer = new Timer();
 
   private ShuffleboardTab tab;
@@ -88,14 +87,6 @@ public class Telescope extends SubsystemBase {
         encoder.setPosition(pos);
       }
     }
-  }
-
-  public void setScoringTarget(double target) {
-    scoringTarget = target;
-  }
-
-  public double getScoringTarget() {
-    return scoringTarget;
   }
 
   public boolean isAtTarget() {

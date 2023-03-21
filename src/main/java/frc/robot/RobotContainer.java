@@ -40,6 +40,7 @@ public class RobotContainer {
   private JoystickButton rotateButtonThree;
   private JoystickButton rotateButtonFour;
   private JoystickButton rotateButtonFive;
+  private JoystickButton rotateButtonSix;
 
   private ShuffleboardTab tab;
   private SendableChooser<Command> autoChooser = new SendableChooser<Command>();
@@ -178,6 +179,7 @@ public class RobotContainer {
       rotateButtonThree = new JoystickButton(rotateStick, 3);
       rotateButtonFour = new JoystickButton(rotateStick, 4);
       rotateButtonFive = new JoystickButton(rotateStick, 5);
+      rotateButtonSix = new JoystickButton(rotateStick, 6);
 
       driveTrigger.whileTrue(clawOuttake);
       driveButtonThree.onTrue(changeYellow);
@@ -188,10 +190,9 @@ public class RobotContainer {
       driveButtonEleven.onTrue(autoBalanceBackward);
       driveButtonTwelve.onTrue(driveStop);
       rotateTrigger.whileTrue(new ArmMove(arm, telescope, ArmMove.position.scorePreset, false));
-      rotateButtonThree.onTrue(new SetScoringTargets(arm, telescope, Constants.ArmConstants.midScoringPosition,
-        Constants.Telescope.midScoringPosition));
-      rotateButtonFour.onTrue(new SetScoringTargets(arm, telescope, Constants.ArmConstants.highScoringPosition,
-        Constants.Telescope.highScoringPosition));
+      rotateButtonThree.onTrue(new SetScoringPosition(ArmMove.position.scoreMid));
+      rotateButtonFour.onTrue(new SetScoringPosition(ArmMove.position.scoreHigh));
+      rotateButtonSix.onTrue(new SetScoringPosition(ArmMove.position.scoreLow));
       rotateButtonFive.onTrue(driveManualForward);
     }
 
