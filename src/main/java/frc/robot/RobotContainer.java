@@ -62,6 +62,7 @@ public class RobotContainer {
   // Drive Commands
   private final DriveManual driveManualDefault = new DriveManual(drive, null);
   private final DriveManual driveManualForward = new DriveManual(drive, 0.0);
+  private final DriveManual driveManualBackward = new DriveManual(drive, 180.0);
   private final DriveManual driveManualLeft = new DriveManual(drive, 90.0);
   private final DriveManual driveManualRight = new DriveManual(drive, -90.0);
   private final DriveStop driveStop = new DriveStop(drive);
@@ -189,11 +190,15 @@ public class RobotContainer {
       driveButtonEleven.onTrue(autoBalanceBackward);
       driveButtonTwelve.onTrue(driveStop);
       rotateTrigger.whileTrue(new ArmMove(arm, telescope));
+      rotateButtonThree.onTrue(driveManualForward);
       rotateButtonThree.onTrue(new SetScoringTargets(arm, telescope, Constants.ArmConstants.midScoringPosition,
         Constants.Telescope.midScoringPosition));
+      rotateButtonFour.onTrue(driveManualForward);
       rotateButtonFour.onTrue(new SetScoringTargets(arm, telescope, Constants.ArmConstants.highScoringPosition,
         Constants.Telescope.highScoringPosition));
-      rotateButtonFive.onTrue(driveManualForward);
+      rotateButtonFive.onTrue(driveManualBackward);
+      rotateButtonFive.onTrue(new SetScoringTargets(arm, telescope, Constants.ArmConstants.loadHighPosition,
+        Constants.Telescope.loadPosition));
     }
 
     if (Constants.xboxEnabled) {
