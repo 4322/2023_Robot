@@ -10,18 +10,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 
 public class Constants {
   public static final boolean debug = true;
-  public static final boolean inDemoMode = false;
-  public static final class demo {
-    public enum DriveMode {
-      OFF, SLOW_ROTATE_ONLY, SLOW_DRIVE
-    }
-
-    public static final boolean inDemoMode = false;
-    public static final DriveMode driveMode = DriveMode.SLOW_DRIVE;
-
-    public static final double driveScaleFactor = 0.15;
-    public static final double rotationScaleFactor = 0.1;
-  }
+  
   public static final boolean armEnabled = true;
   public static final boolean armSensorEnabled = true;
   public static final boolean telescopeEnabled = true;
@@ -32,7 +21,21 @@ public class Constants {
   public static final boolean xboxEnabled = true;
   public static final boolean limeLightEnabled = true;
   public static final boolean ledEnabled = true;
+  public static final boolean spinoutCenterEnabled = true;  // center rotate burst of power
+  public static final boolean spinoutCornerEnabled = true;
   public static final boolean colorSensorEnabled = false;
+
+  public static final class Demo {
+    public enum DriveMode {
+      OFF, SLOW_ROTATE_ONLY, SLOW_DRIVE
+    }
+
+    public static final boolean inDemoMode = false;
+    public static final DriveMode driveMode = DriveMode.SLOW_DRIVE;
+
+    public static final double driveScaleFactor = 0.15;
+    public static final double rotationScaleFactor = 0.1;
+  }
 
   // To tune a NEO with the REV Hardware Client, the motor must be initialized
   // in the application to enable it and no set() commands can be issued because
@@ -95,7 +98,7 @@ public class Constants {
     public static final double movingVelocityThresholdFtPerSec = 0.2;
 
     public static final double minAutoRotateSpeed = 0.03;
-    public static final double maxAutoRotateSpeed = Constants.demo.inDemoMode? Constants.demo.rotationScaleFactor : 0.5;
+    public static final double maxAutoRotateSpeed = Constants.Demo.inDemoMode? Constants.Demo.rotationScaleFactor : 0.5;
 
     public static final double drivePolarDeadband = 0.06;
     public static final double rotatePolarDeadband = 0.5;
@@ -104,15 +107,15 @@ public class Constants {
     public static final double manualRotateToleranceDegrees = 1.5;
 
     // Values for auto balance
-    public static final double autoBalanceFlatPower = 0.4;
-    public static final double autoBalanceRampPower = 0.4;
-    public static final double autoBalanceAdjustmentPower = 0.05;
+    public static final double autoBalanceFlatPower = 0.3;
+    public static final double autoBalanceRampPower = 0.15;
+    public static final double autoBalanceAdjustmentPower = 0.035;
     public static final double chargeStationTiltedMinDeg = 10.0;
-    public static final double chargeStationDroppingDeg = 2.0;
-    public static final double rampImpulseSec = 0.5;  // time for gyro to stabilize
-    public static final double droppingSec = 0.2;
-    public static final double levelingSec = 0.2;
-    public static final double chargeStationBalancedMaxDeg = 3.0;
+    public static final double chargeStationDroppingDeg = 1.5;
+    public static final double rampImpulseSec = 0.9;  // time for gyro to stabilize
+    public static final double droppingSec = 0.35;
+    public static final double levelingSec = 0.3;
+    public static final double chargeStationBalancedMaxDeg = 2.0;
     public static final double autoBalanceTimeoutSec = 15.0;
 
     public static final double autoDriveOverChargeFlatMaxDeg = 3.0;
@@ -134,10 +137,11 @@ public class Constants {
       public static final double xboxDriveDeadband = 0.1;
       public static final double xboxRotateDeadband = 0.2;
       public static final double rotateToleranceDegrees = 1.5;
+      public static final double manualRotationScaleFromMax = 0.32;
       
       public static final double spinoutRotateDeadBand = 0.9;
-      public static final double spinoutMinAngularVelocity = 0.2; // looks like radians per second but we don't know
-      public static final double spinoutActivationSec = 0.5;
+      public static final double spinoutMinAngularVelocity = 0.5; // looks like radians per second but we don't know
+      public static final double spinoutActivationSec = 0.35;
     }
 
     public static final class Auto {
@@ -253,13 +257,13 @@ public class Constants {
     public static final class Trajectory {
 
       public static final class PIDXY {
-        public static final double kP = 0.5;
+        public static final double kP = 0;
         public static final double kI = 0;
         public static final double kD = 0;
       }
 
       public static final class PIDR {
-        public static final double kP = 0.5;
+        public static final double kP = 0;
         public static final double kI = 0;
         public static final double kD = 0;
       }
@@ -274,7 +278,7 @@ public class Constants {
     public static final double intakePower = 0.4; // don't exceed 0.6 if you don't want to smoke the motor!
     public static final double outtakePower = -1; // capapult!
 
-    public static final double stallTime = 0.2; // 200 ms
+    public static final double stallTime = 0.4;
     public static final double stallRPMLimit = 1000;
 
     public static final double kP = 0.000812;
@@ -300,16 +304,19 @@ public class Constants {
 
     public static final double loadPosition = 2;
     public static final double loadHighPosition = 10;
-    public static final double telescopeExtendablePosition = 57.0;
-    public static final double midScoringPosition = 72.0;
-    public static final double highScoringPosition = 63.3;
+    public static final double earlyTelescopeExtendPosition = 40;
+    public static final double safeTelescopeExtendPosition = 57.0;
+    public static final double lowScoringPosition = 10; // ideally 6.8, but would need more kP to clear hopper
+    public static final double midScoringPosition = 72;
+    public static final double highScoringPosition = 65.5;
     
     public static final double homingPower = -0.3;
     public static final double homingNotMovingSec = 0.1;
     public static final double homingNotMovingRevs = 0.5;
     public static final double homingTimeoutSec = 3;
 
-    public static final double positionTolerance = 0.2;
+    public static final double positionTolerance = 0.3;
+    public static final double atTargetTolerance = 0.7;
 
     public static final class SmartMotion {
       public static final double kP = 0.04375;
@@ -332,15 +339,19 @@ public class Constants {
     public static final double minPosition = 0;
 
     public static final double loadPosition = 0;
-    public static final double safePosition = 0.5;  // safe for overhead/hopper clearance
+    public static final double earlyArmRetractPosition = 9;
+    public static final double safeArmRetractPosition = 0.5;  // safe for overhead/hopper clearance
+    public static final double lowScoringPosition = 0;
     public static final double midScoringPosition = 0;
     public static final double highScoringPosition = 10.9;
+    public static final double clearHighPolePosition = 6.0;
     
-    public static final double homingPower = -0.35;
+    public static final double homingPower = -0.15;
     public static final double notMovingSec = 0.1;
     public static final double notMovingRevs = 0.1;
     public static final double homingTimeoutSec = 3;
-    public static final double positionTolerance = 0.2;
+    public static final double positionTolerance = 0.12;
+    public static final double atTargetTolerance = 0.2;
 
     public static final int movePidSlot = 0;
 

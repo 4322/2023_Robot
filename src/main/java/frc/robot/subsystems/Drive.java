@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import java.util.ArrayList;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import com.kauailabs.navx.frc.AHRS;
@@ -65,6 +64,7 @@ public class Drive extends SubsystemBase {
   private GenericEntry odometryX;
   private GenericEntry odometryY;
   private GenericEntry odometryDegrees;
+  private GenericEntry angularVel;
 
   public Drive() {
     runTime.start();
@@ -132,14 +132,7 @@ public class Drive extends SubsystemBase {
 
         botAccelerationAngle = tab.add("Bot Acc Angle", 0).withPosition(4, 1).withSize(1, 1).getEntry();
 
-        tab.add("Tip Deceleration", true)
-            .withWidget(BuiltInWidgets.kBooleanBox).withPosition(5, 0).withSize(1, 1).getEntry();
-
-        tab.add("Tip Small Stick", true)
-            .withWidget(BuiltInWidgets.kBooleanBox).withPosition(5, 1).withSize(1, 1).getEntry();
-
-        tab.add("Tip Big Stick", true).withWidget(BuiltInWidgets.kBooleanBox)
-            .withPosition(5, 2).withSize(1, 1).getEntry();
+        angularVel = tab.add("Angular Vel", 0).withPosition(5, 0).withSize(1, 1).getEntry();
 
         driveXTab = tab.add("Drive X", 0).withPosition(0, 2).withSize(1, 1).getEntry();
 
@@ -214,7 +207,7 @@ public class Drive extends SubsystemBase {
   // get the change of robot heading in degrees per sec
   public double getAngularVelocity() {
     if (gyro != null && gyro.isConnected() && !gyro.isCalibrating() && Constants.gyroEnabled) {
-      return gyro.getRate();
+      return -gyro.getRate();
     } else {
       return 0;
     }
@@ -236,6 +229,7 @@ public class Drive extends SubsystemBase {
           odometryX.setDouble(getPose2d().getX());
           odometryY.setDouble(getPose2d().getY());
           odometryDegrees.setDouble(getPose2d().getRotation().getDegrees());
+          angularVel.setDouble(getAngularVelocity());
         }
       }
     }

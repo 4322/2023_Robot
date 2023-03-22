@@ -25,6 +25,9 @@ public class ArmHoming extends CommandBase{
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    if (arm.isHomed()) {
+      return;
+    }
     timeout.restart();
     homeTimer.restart();
     lastPos = arm.getPosition();
@@ -35,6 +38,9 @@ public class ArmHoming extends CommandBase{
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    if (arm.isHomed()) {
+      return;
+    }
     if (homeTimer.hasElapsed(Constants.ArmConstants.homingNotMovingSec)) {
       double currentPos = arm.getPosition();
       if ((lastPos - currentPos < Constants.ArmConstants.homingNotMovingRevs) ||
@@ -59,6 +65,9 @@ public class ArmHoming extends CommandBase{
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    if (arm.isHomed()) {
+      return true;
+    }
     if (timeout.hasElapsed(ArmConstants.homingTimeoutSec)) {
       DriverStation.reportError("Arm homing timed out!", false);
       return true;

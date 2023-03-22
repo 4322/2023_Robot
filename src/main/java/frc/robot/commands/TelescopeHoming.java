@@ -23,6 +23,9 @@ public class TelescopeHoming extends CommandBase{
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    if (telescope.isHomed()) {
+      return;
+    }
     timeout.restart();
     homeTimer.restart();
     lastPos = telescope.getPosition();
@@ -32,6 +35,9 @@ public class TelescopeHoming extends CommandBase{
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    if (telescope.isHomed()) {
+      return;
+    }
     if (homeTimer.hasElapsed(Constants.Telescope.notMovingSec)) {
       double currentPos = telescope.getPosition();
       if (lastPos - currentPos < Constants.Telescope.notMovingRevs) {
@@ -54,6 +60,9 @@ public class TelescopeHoming extends CommandBase{
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    if (telescope.isHomed()) {
+      return true;
+    }
     if (timeout.hasElapsed(Constants.Telescope.homingTimeoutSec)) {
       DriverStation.reportError("Telescope homing timed out!", false);
       return true;

@@ -26,7 +26,6 @@ public class Arm extends SubsystemBase {
   private SparkMaxPIDController pidController;
   private RelativeEncoder encoder;
   private Double currentTarget = null;
-  private double scoringTarget = Constants.ArmConstants.midScoringPosition;
   private Timer logTimer = new Timer();
 
   private ShuffleboardTab tab;
@@ -103,19 +102,11 @@ public class Arm extends SubsystemBase {
     }
   }
 
-  public void setScoringTarget(double target) {
-    scoringTarget = target;
-  }
-
-  public double getScoringTarget() {
-    return scoringTarget;
-  }
-
   public boolean isAtTarget() {
     if (!Constants.armEnabled || currentTarget == null) {
       return true;
     }
-    return (Math.abs(getPosition() - currentTarget) <= ArmConstants.positionTolerance);
+    return (Math.abs(getPosition() - currentTarget) <= ArmConstants.atTargetTolerance);
   }
 
   public boolean rotateToPosition(double targetPosition) {
@@ -172,7 +163,9 @@ public class Arm extends SubsystemBase {
 
   // enable/disable limit switch
   public void setLimitSwitch(boolean status) {
-    armSensor.enableLimitSwitch(status);
+    if (Constants.armEnabled) {
+      armSensor.enableLimitSwitch(status);
+    }
   }
 
   public void setHomed() {
