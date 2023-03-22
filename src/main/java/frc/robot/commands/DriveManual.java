@@ -167,7 +167,7 @@ public class DriveManual extends CommandBase {
       rotatePower = rotatePower * Manual.manualRotationScaleFromMax;
 
       if ((Math.abs(rotatePower) > Manual.spinoutRotateDeadBand * Manual.manualRotationScaleFromMax) && 
-        drive.getAngularVelocity() < Constants.DriveConstants.Manual.spinoutMinAngularVelocity) {
+          (Math.abs(drive.getAngularVelocity()) < Constants.DriveConstants.Manual.spinoutMinAngularVelocity)) {
         spinoutActivationTimer.start();
       } else {
         spinoutActivationTimer.stop();
