@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drive;
 import frc.utility.OrangeMath;
 import frc.robot.Constants;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriveConstants.Manual;
 import frc.robot.RobotContainer;
 
@@ -163,7 +164,9 @@ public class DriveManual extends CommandBase {
         rotatePower = -1;
       }
 
-      if ((Math.abs(rotatePower) > Manual.spinoutRotateDeadBand) && 
+      rotatePower = rotatePower * Manual.manualRotationScaleFromMax;
+
+      if ((Math.abs(rotatePower) > Manual.spinoutRotateDeadBand * Manual.manualRotationScaleFromMax) && 
         drive.getAngularVelocity() < Constants.DriveConstants.Manual.spinoutMinAngularVelocity) {
         spinoutActivationTimer.start();
       } else {
@@ -239,7 +242,7 @@ public class DriveManual extends CommandBase {
         }
 
         // default
-        if (Math.abs(rotatePower) < Manual.spinoutRotateDeadBand) {
+        if (Math.abs(rotatePower) < Manual.spinoutRotateDeadBand * Manual.manualRotationScaleFromMax) {
           lockedWheelState = LockedWheel.none;
         }
 

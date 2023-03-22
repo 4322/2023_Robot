@@ -7,7 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 public class Constants {
-  public static final boolean debug = false;
+  public static final boolean debug = true;
   public static final boolean inDemoMode = false;
   public static final class demo {
     public enum DriveMode {
@@ -132,6 +132,7 @@ public class Constants {
       public static final double xboxDriveDeadband = 0.1;
       public static final double xboxRotateDeadband = 0.2;
       public static final double rotateToleranceDegrees = 1.5;
+      public static final double manualRotationScaleFromMax = 0.5;
       
       public static final double spinoutRotateDeadBand = 0.9;
       public static final double spinoutMinAngularVelocity = 0.2; // looks like radians per second but we don't know
