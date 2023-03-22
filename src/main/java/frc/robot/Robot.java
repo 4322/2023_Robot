@@ -41,8 +41,8 @@ public class Robot extends TimedRobot {
     tab = Shuffleboard.getTab("Enabled Subsystems");
     PDHTab = Shuffleboard.getTab("PDH Currents");
 
-    subsystemEnabled("Comp Mode", 0, 0, !Constants.debug && !Constants.Demo.inDemoMode
-        && !Constants.armTuningMode && !Constants.telescopeTuningMode && !Constants.clawTuningMode);
+    subsystemEnabled("Comp Mode", 0, 0, !Constants.Demo.inDemoMode && !Constants.armTuningMode
+        && !Constants.telescopeTuningMode && !Constants.clawTuningMode && !Constants.debug);
     subsystemEnabled("Drivebase", 1, 0, Constants.driveEnabled);
     subsystemEnabled("Arm", 2, 0, Constants.armEnabled);
     subsystemEnabled("Arm Sensor", 3, 0, Constants.armSensorEnabled);
