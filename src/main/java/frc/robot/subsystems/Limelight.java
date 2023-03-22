@@ -156,7 +156,7 @@ public class Limelight extends SubsystemBase {
   // is parallel to the target)
   public double getTargetHeight(int pipelineIdx, double yDeg) {
     if (LimelightConstants.tapePipelines.contains(pipelineIdx)) {
-      if (yDeg > LimelightConstants.targetHeightThresholdDeg) {
+      if (yDeg > LimelightConstants.tapeTargetHeightThresholdDeg) {
         return LimelightConstants.highTapeHeight;
       } else {
         return LimelightConstants.middleTapeHeight;

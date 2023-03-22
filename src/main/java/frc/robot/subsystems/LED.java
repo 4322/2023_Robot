@@ -18,9 +18,9 @@ public class LED extends SubsystemBase {
 
   public LED() {
     if (Constants.ledEnabled) {
-      power1 = new Solenoid(LEDConstants.pcmID,PneumaticsModuleType.REVPH, LEDConstants.pPort1);
+      power1 = new Solenoid(LEDConstants.pcmID, PneumaticsModuleType.REVPH, LEDConstants.pPort1);
       power1.set(true);
-      power2 = new Solenoid(LEDConstants.pcmID,PneumaticsModuleType.REVPH, LEDConstants.pPort2);
+      power2 = new Solenoid(LEDConstants.pcmID, PneumaticsModuleType.REVPH, LEDConstants.pPort2);
       power2.set(true);
       led1 = new LEDStrip(LEDConstants.pcmID, LEDConstants.rPort1, LEDConstants.gPort1,
           LEDConstants.bPort1);
@@ -37,13 +37,15 @@ public class LED extends SubsystemBase {
       ledColor = LEDColor.purple;
     }
   }
-  public LEDColor ledColor() {
+
+  public LEDColor getLEDColor() {
     if (Constants.ledEnabled) {
       return ledColor;
     } else {
       return null;
     }
   }
+
   public void yellow() {
     if (Constants.ledEnabled) {
       led1.yellow();
@@ -52,10 +54,42 @@ public class LED extends SubsystemBase {
     }
   }
 
-  public enum LEDColor {
-    yellow, purple, none
+  public void blue() {
+    if (Constants.ledEnabled) {
+      led1.blue();
+      led2.blue();
+      ledColor = LEDColor.blue;
+    }
   }
-  
+
+  public void red() {
+    if (Constants.ledEnabled) {
+      led1.red();
+      led2.red();
+      ledColor = LEDColor.red;
+    }
+  }
+
+  public void green() {
+    if (Constants.ledEnabled) {
+      led1.green();
+      led2.green();
+      ledColor = LEDColor.green;
+    }
+  }
+
+  public void none() {
+    if (Constants.ledEnabled) {
+      led1.none();
+      led2.none();
+      ledColor = LEDColor.none;
+    }
+  }
+
+  public enum LEDColor {
+    yellow, purple, blue, red, green, none
+  }
+
   private class LEDStrip {
     private Solenoid red;
     private Solenoid green;
@@ -80,6 +114,38 @@ public class LED extends SubsystemBase {
         red.set(true);
         green.set(false);
         blue.set(true);
+      }
+    }
+
+    public void blue() {
+      if (Constants.ledEnabled) {
+        red.set(false);
+        green.set(false);
+        blue.set(true);
+      }
+    }
+
+    public void red() {
+      if (Constants.ledEnabled) {
+        red.set(true);
+        green.set(false);
+        blue.set(false);
+      }
+    }
+
+    public void green() {
+      if (Constants.ledEnabled) {
+        red.set(false);
+        green.set(true);
+        blue.set(false);
+      }
+    }
+
+    public void none() {
+      if (Constants.ledEnabled) {
+        red.set(false);
+        green.set(false);
+        blue.set(false);
       }
     }
   }

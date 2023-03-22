@@ -386,20 +386,24 @@ public class Constants {
     public static final double doubleSubstationAprilTagHeight = OrangeMath.inchesToMeters(27.375);
     public static final double singleSubstationAprilTagHeight = OrangeMath.inchesToMeters(50);
 
-    // Threshold for limelight target height
+    // Threshold for limelight tape target height
     // above = high tape, below = middle tape
-    public static final double targetHeightThresholdDeg = 0;
+    public static final double tapeTargetHeightThresholdDeg = 0;
 
     // Tolerance for when close enough, horizontally, to the April Tag
     public static final double aprilTagHorizontalTolerance = .5;
+
+    // Distance to start assisted alignment
+    public static final double assistedAlignStartDistanceMeters = 3;
+
+    // Tolerance for horizontal alignment
+    public static final double horizontalAlignToleranceMeters = OrangeMath.inchesToMeters(3);
 
     // List of tape pipelines (should only be 1 for now)
     public static final List<Integer> tapePipelines = List.of(0);
 
     // Map of pipelines and tag heights
-    public static final Map<Integer, Double> tagPipelinesHeights = Map.ofEntries(
-      Map.entry(1, gridAprilTagHeight),
-      Map.entry(2, singleSubstationAprilTagHeight)
-    );
+    public static final Map<Integer, Double> tagPipelinesHeights = Map
+        .ofEntries(Map.entry(1, gridAprilTagHeight), Map.entry(2, singleSubstationAprilTagHeight));
   }
 }
