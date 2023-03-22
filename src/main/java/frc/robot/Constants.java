@@ -7,7 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 public class Constants {
-  public static final boolean debug = true;
+  public static final boolean debug = false;
   public static final boolean inDemoMode = false;
   public static final class demo {
     public enum DriveMode {
@@ -267,7 +267,7 @@ public class Constants {
     public static final double intakePower = 0.4; // don't exceed 0.6 if you don't want to smoke the motor!
     public static final double outtakePower = -1; // capapult!
 
-    public static final double stallTime = 0.2; // 200 ms
+    public static final double stallTime = 0.4;
     public static final double stallRPMLimit = 1000;
 
     public static final double kP = 0.000812;
