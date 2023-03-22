@@ -195,7 +195,7 @@ public class ArmMove extends CommandBase {
       if (autonomous) {
         return true;
       } else if (Constants.debug && !timePrinted) {
-        DriverStation.reportError("Arm move time: " + timer.get(), false);
+        DriverStation.reportWarning("Arm move time: " + timer.get(), false);
         timePrinted = true;
       }
     }

@@ -90,7 +90,7 @@ public class AutoBalance extends CommandBase {
             currentMode = autoBalanceMode.dropping;
             DataLogManager.log("maxAbsPitch: " + maxAbsPitch + ", dropAbsPitch: " + absPitch);
             if (Constants.debug) {
-              DriverStation.reportError("maxAbsPitch: " + maxAbsPitch + ", dropAbsPitch: " + absPitch, false);
+              DriverStation.reportWarning("maxAbsPitch: " + maxAbsPitch + ", dropAbsPitch: " + absPitch, false);
             }
           } else {
             // need to keep making the drive call to maintain heading
@@ -147,7 +147,7 @@ public class AutoBalance extends CommandBase {
   public void end(boolean interrupted) {
     DataLogManager.log("Auto Balance Time: " + abortTimer.get());
     if (Constants.debug) {
-      DriverStation.reportError("Auto Balance Time: " + abortTimer.get(), false);
+      DriverStation.reportWarning("Auto Balance Time: " + abortTimer.get(), false);
     }
     drive.stop();
   }
