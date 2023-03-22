@@ -12,6 +12,12 @@ public class AlignAssist extends CommandBase {
   private Translation2d targetPos;
   private double horizontalOffset;
 
+  private enum TargetState {
+    searching, found
+  }
+
+  private TargetState targetStatus = TargetState.searching;
+
   public AlignAssist(LED ledSubsystem, Limelight gridLimelight) {
     LED = ledSubsystem;
     limelight = gridLimelight;
@@ -27,21 +33,36 @@ public class AlignAssist extends CommandBase {
 
   @Override
   public void execute() {
-    if (limelight.getTargetVisible()) {
-
-      targetPos = limelight.getTargetPosRobotRelative();
-      horizontalOffset = targetPos.getX();
-
-      if (targetPos.getY() < LimelightConstants.assistedAlignStartDistanceMeters) {
-        if (Math.abs(horizontalOffset) < LimelightConstants.horizontalAlignToleranceMeters) {
-          LED.green();
-        } else if (horizontalOffset > LimelightConstants.horizontalAlignToleranceMeters) {
-          LED.red();
-        } else {
-          LED.blue();
+    switch (targetStatus) {
+      case searching:
+        if (limelight.getTargetVisible()) {
+          if (Math.abs(limelight.getTargetPosRobotRelative()
+              .getX()) < LimelightConstants.assistedAlignStartDistanceMeters) {
+            // Broken into 2 if statements so that target is not calculated without a valid target
+            targetStatus = TargetState.found;
+          }
         }
-      }
-
+        break;
+      case found:
+        if (limelight.getTargetVisible()) {
+          targetPos = limelight.getTargetPosRobotRelative();
+          horizontalOffset = targetPos.getY();
+          if (Math.abs(targetPos.getX()) < LimelightConstants.assistedAlignStartDistanceMeters) {
+            if (Math.abs(horizontalOffset) < LimelightConstants.horizontalAlignToleranceMeters) {
+              LED.green();
+            } else if (horizontalOffset > LimelightConstants.horizontalAlignToleranceMeters) {
+              LED.red();
+            } else {
+              LED.blue();
+            }
+          } else {
+            LED.none();
+            targetStatus = TargetState.searching;
+          }
+        } else {
+          LED.none();
+          targetStatus = TargetState.searching;
+        }
     }
   }
 
