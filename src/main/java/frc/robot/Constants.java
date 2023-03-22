@@ -341,7 +341,7 @@ public class Constants {
     public static final double notMovingSec = 0.1;
     public static final double notMovingRevs = 0.1;
     public static final double homingTimeoutSec = 3;
-    public static final double positionTolerance = 0.08;
+    public static final double positionTolerance = 0.12;
     public static final double atTargetTolerance = 0.2;
 
     public static final int movePidSlot = 0;
