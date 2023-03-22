@@ -42,9 +42,9 @@ public class Limelight extends SubsystemBase {
   Translation2d offset;
 
   // TODO: make this nicer with default params
-  public Limelight(String limelightName, double limelightHeightMeters, double limelightAngleDegrees,
+  public Limelight(String limelightName, int defaultPipeline, double limelightHeightMeters, double limelightAngleDegrees,
       double xOffsetMeters, double yOffsetMeters, boolean facingBackward, boolean isTestSubsystem) {
-    if (Constants.limeLightEnabled) {
+    if (Constants.limeLightsEnabled) {
       name = limelightName;
       limeHeight = limelightHeightMeters;
       limeAngle = limelightAngleDegrees;
@@ -68,12 +68,14 @@ public class Limelight extends SubsystemBase {
         distanceToTargetX = tab.add("Target X", 0).withPosition(0, 1).getEntry();
         distanceToTargetY = tab.add("Target Y", 0).withPosition(0, 2).getEntry();
       }
+
+      switchPipeline(defaultPipeline);
     }
   }
 
   @Override
   public void periodic() {
-    if (Constants.limeLightEnabled) {
+    if (Constants.limeLightsEnabled) {
       if (Constants.debug) {
         boolean visible = getTargetVisible();
         targetVisible.setBoolean(visible);
@@ -87,7 +89,7 @@ public class Limelight extends SubsystemBase {
   }
 
   public double getHorizontalDegToTarget() {
-    if (Constants.limeLightEnabled) {
+    if (Constants.limeLightsEnabled) {
       return tx.getDouble(0);
     } else {
       return 0;
@@ -95,7 +97,7 @@ public class Limelight extends SubsystemBase {
   }
 
   public double getVerticalDegToTarget() {
-    if (Constants.limeLightEnabled) {
+    if (Constants.limeLightsEnabled) {
       return ty.getDouble(0);
     } else {
       return 0;
@@ -103,7 +105,7 @@ public class Limelight extends SubsystemBase {
   }
 
   public double getTargetArea() {
-    if (Constants.limeLightEnabled) {
+    if (Constants.limeLightsEnabled) {
       return ta.getDouble(0);
     } else {
       return 0;
@@ -111,7 +113,7 @@ public class Limelight extends SubsystemBase {
   }
 
   public boolean getTargetVisible() {
-    if (Constants.limeLightEnabled) {
+    if (Constants.limeLightsEnabled) {
       return tv.getDouble(0.0) == 1.0;
     } else {
       return false;
@@ -119,13 +121,13 @@ public class Limelight extends SubsystemBase {
   }
 
   public void setLed(LedMode mode) {
-    if (Constants.limeLightEnabled) {
+    if (Constants.limeLightsEnabled) {
       ledMode.setNumber(mode.value);
     }
   }
 
   public void setCamMode(CamMode mode) {
-    if (Constants.limeLightEnabled) {
+    if (Constants.limeLightsEnabled) {
       if (mode == CamMode.VisionProcessor) {
         camMode.setNumber(0);
       } else if (mode == CamMode.DriverCamera) {
@@ -190,7 +192,7 @@ public class Limelight extends SubsystemBase {
   }
 
   public Translation2d getTargetPosRobotRelative() {
-    if (Constants.limeLightEnabled) {
+    if (Constants.limeLightsEnabled) {
       if (getTargetVisible()) {
         double yDeg = getVerticalDegToTarget();
         double xDeg = getHorizontalDegToTarget();
@@ -210,19 +212,19 @@ public class Limelight extends SubsystemBase {
   }
 
   public void enableLed() {
-    if (Constants.limeLightEnabled) {
+    if (Constants.limeLightsEnabled) {
       setLed(LedMode.On);
     }
   }
 
   public void disableLed() {
-    if (Constants.limeLightEnabled) {
+    if (Constants.limeLightsEnabled) {
       setLed(LedMode.Off);
     }
   }
 
   public void switchPipeline(int pipelineIdx) {
-    if (Constants.limeLightEnabled) {
+    if (Constants.limeLightsEnabled) {
       pipeline.setNumber(pipelineIdx);
     }
   }

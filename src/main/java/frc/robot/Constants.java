@@ -10,7 +10,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 
 public class Constants {
   public static final boolean debug = true;
-  
+
   public static final boolean armEnabled = true;
   public static final boolean armSensorEnabled = true;
   public static final boolean telescopeEnabled = true;
@@ -19,7 +19,7 @@ public class Constants {
   public static final boolean gyroEnabled = true;
   public static final boolean joysticksEnabled = true;
   public static final boolean xboxEnabled = true;
-  public static final boolean limeLightEnabled = true;
+  public static final boolean limeLightsEnabled = true;
   public static final boolean ledEnabled = true;
   public static final boolean spinoutCenterEnabled = true;  // center rotate burst of power
   public static final boolean spinoutCornerEnabled = true;
@@ -395,7 +395,7 @@ public class Constants {
     // for height to center of tag
     public static final double gridAprilTagHeight = OrangeMath.inchesToMeters(18.25);
     public static final double doubleSubstationAprilTagHeight = OrangeMath.inchesToMeters(27.375);
-    public static final double singleSubstationAprilTagHeight = OrangeMath.inchesToMeters(50);
+    public static final double singleSubstationAprilTagHeight = OrangeMath.inchesToMeters(50); // TODO: temp value
 
     // Threshold for limelight tape target height
     // above = high tape, below = middle tape

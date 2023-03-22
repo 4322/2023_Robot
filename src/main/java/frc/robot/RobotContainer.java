@@ -16,7 +16,9 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.LED;
+import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Telescope;
+import frc.utility.OrangeMath;
 import frc.robot.commands.*;
 
 public class RobotContainer {
@@ -50,6 +52,13 @@ public class RobotContainer {
   private final Claw claw = new Claw();
   private final Drive drive = new Drive();
   private final LED LED = new LED();
+  // Note: limelight names must match limelight tool
+  private final Limelight gridLimelight =
+      new Limelight("Grid Limelight", 0, OrangeMath.inchesToMeters(26.125), // TODO: tune/measure these
+        0, 0, 0, true, false);
+  private final Limelight substationLimelight =
+      new Limelight("Substation Limelight", 2, OrangeMath.inchesToMeters(50), // TODO: tune/measure these
+        0, 0, 0, false, false);
   private final PathPlannerManager ppManager;
 
   // Arm commands
@@ -68,8 +77,8 @@ public class RobotContainer {
   private final DriveStop driveStop = new DriveStop(drive);
 
   //LED Commands
-  private final ChangeYellow changeYellow = new ChangeYellow(LED);
-  private final ChangePurple changePurple = new ChangePurple(LED);
+  private final ChangeYellow changeYellow = new ChangeYellow(LED, gridLimelight, 0);
+  private final ChangePurple changePurple = new ChangePurple(LED, gridLimelight, 1);
 
   // Auto Balance Commands
   private final SequentialCommandGroup autoBalanceForward = new SequentialCommandGroup(
@@ -106,6 +115,11 @@ public class RobotContainer {
 
     if (Constants.armEnabled) {
       arm.setDefaultCommand(new ArmMove(arm, telescope, ArmMove.position.load, false));
+    }
+
+    if (Constants.limeLightsEnabled) {
+      gridLimelight.setDefaultCommand(new AlignAssist(LED, gridLimelight));
+      substationLimelight.setDefaultCommand(new AlignAssist(LED, substationLimelight));
     }
 
     ppManager = new PathPlannerManager(drive);

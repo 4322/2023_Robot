@@ -51,7 +51,7 @@ public class Robot extends TimedRobot {
 
     subsystemEnabled("Joysticks", 0, 1, Constants.joysticksEnabled);
     subsystemEnabled("Gyro", 1, 1, Constants.gyroEnabled);
-    subsystemEnabled("Limeight", 2, 1, Constants.limeLightEnabled);
+    subsystemEnabled("Limeight", 2, 1, Constants.limeLightsEnabled);
     subsystemEnabled("XBOX Controller", 3, 1, Constants.xboxEnabled);
     subsystemEnabled("Color Sensor", 4, 1, Constants.colorSensorEnabled);
 
