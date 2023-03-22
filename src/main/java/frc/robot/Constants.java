@@ -14,7 +14,7 @@ public class Constants {
       OFF, SLOW_ROTATE_ONLY, SLOW_DRIVE
     }
 
-    public static final boolean inDemoMode = false;
+    public static final boolean inDemoMode = true;
     public static final DriveMode driveMode = DriveMode.SLOW_DRIVE;
 
     public static final double driveScaleFactor = 0.15;
@@ -336,7 +336,7 @@ public class Constants {
     public static final double highScoringPosition = 10.9;
     public static final double clearHighPolePosition = 6.0;
     
-    public static final double homingPower = -0.35;
+    public static final double homingPower = -0.15;
     public static final double notMovingSec = 0.1;
     public static final double notMovingRevs = 0.1;
     public static final double homingTimeoutSec = 3;
