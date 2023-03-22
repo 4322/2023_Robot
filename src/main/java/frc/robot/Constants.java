@@ -365,7 +365,7 @@ public class Constants {
     
   }
   public enum LEDControlState 
-    {selected, RightofSubstation,LeftOfSubstation, substationAligned,transportObject, leftOfGrid,rightOfGrid,gridAligned};
+    {selected, beginSubstationAlignment, substationAligned,transportCube,transportCone, leftOfGrid,rightOfGrid,gridAligned};
 
   public static final class LimelightConstants {
     public static final Integer[] tapePipelines = {0};
