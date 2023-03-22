@@ -2,6 +2,8 @@ package frc.robot;
 
 import frc.robot.subsystems.SwerveDrive.ControlModule.WheelPosition;
 import frc.utility.OrangeMath;
+import java.util.List;
+import java.util.Map;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -153,6 +155,11 @@ public class Constants {
       public static final double autoRotkD = 0.0002;
       public static final double minAutoRotateSpeed = 0.0;  // 0.03
       public static final double maxAutoRotateSpeed = 0.5;
+
+      public static final double autoDriveYkP = 0;
+      public static final double autoDriveYkD = 0;
+      public static final double minAutoDriveYSpeed = 0.05;
+      public static final double maxAutoDriveYSpeed = 0.5;
 
     }
 
@@ -368,24 +375,34 @@ public class Constants {
     {selected, beginSubstationAlignment, substationAligned,transportCube,transportCone, leftOfGrid,rightOfGrid,gridAligned};
 
   public static final class LimelightConstants {
-    public static final Integer[] tapePipelines = {0};
-    public static final Integer[] tagPipelines = {1};
-
     public static final double limelightAngle = 0;
-    public static final double limelightHeight = 26.125;
+    public static final double limelightHeight = OrangeMath.inchesToMeters(26.125);
 
     // Tape heights are 1 inch higher than described in manual to account for
     // height to center of tape
-    public static final double middleTapeHeight = 23.125;
-    public static final double highTapeHeight = 42.875;
+    public static final double middleTapeHeight = OrangeMath.inchesToMeters(23.125);
+    public static final double highTapeHeight = OrangeMath.inchesToMeters(42.875);
 
     // AprilTag heights are 4 inches higher than described in manual to account
     // for height to center of tag
-    public static final double gridAprilTagHeight = 18.25;
-    public static final double doubleSubstationAprilTagHeight = 27.375;
+    public static final double gridAprilTagHeight = OrangeMath.inchesToMeters(18.25);
+    public static final double doubleSubstationAprilTagHeight = OrangeMath.inchesToMeters(27.375);
+    public static final double singleSubstationAprilTagHeight = OrangeMath.inchesToMeters(50);
 
     // Threshold for limelight target height
     // above = high tape, below = middle tape
     public static final double targetHeightThresholdDeg = 0;
+
+    // Tolerance for when close enough, horizontally, to the April Tag
+    public static final double aprilTagHorizontalTolerance = .5;
+
+    // List of tape pipelines (should only be 1 for now)
+    public static final List<Integer> tapePipelines = List.of(0);
+
+    // Map of pipelines and tag heights
+    public static final Map<Integer, Double> tagPipelinesHeights = Map.ofEntries(
+      Map.entry(1, gridAprilTagHeight),
+      Map.entry(2, singleSubstationAprilTagHeight)
+    );
   }
 }

@@ -1,15 +1,15 @@
 package frc.robot.subsystems;
 
-import java.util.Arrays;
-import java.util.List;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.LimelightManager;
 import frc.robot.Constants.LimelightConstants;
 
 public class Limelight extends SubsystemBase {
@@ -121,46 +121,30 @@ public class Limelight extends SubsystemBase {
     VisionProcessor, DriverCamera;
   }
 
-  // distance y formula referenced from:
-  // https://docs.limelightvision.io/en/latest/cs_estimating_distance.html
-  // All distances assume coordinate plane from top view (where y is perpendicular to the grid and x
-  // is parallel to the grid)
+  // All distances use WPILib coordinates (where x is perpendicular to the target and y
+  // is parallel to the target)
   public Translation2d getTargetPosRobotRelative() {
     if (Constants.limeLightEnabled) {
-      double distanceX = 0;
-      double distanceY = 0;
-      double yDeg = getVerticalDegToTarget();
-      double xDeg = getHorizontalDegToTarget();
-      int pipelineIdx = (int) pipeline.getInteger(0); // Note: long is a longer integer
-      List<Integer> tapeList = Arrays.asList(LimelightConstants.tapePipelines);
-
       if (getTargetVisible()) {
+        double yDeg = getVerticalDegToTarget();
+        double xDeg = getHorizontalDegToTarget();
+        int pipelineIdx = (int) pipeline.getInteger(0);
 
+        double targetHeight = LimelightManager.getTargetHeight(pipelineIdx, yDeg);
         double angleToTarget = LimelightConstants.limelightAngle + yDeg;
-        
-        if (tapeList.contains(pipelineIdx)) {
 
-          if (yDeg > LimelightConstants.targetHeightThresholdDeg) {
-            distanceY = (LimelightConstants.highTapeHeight - LimelightConstants.limelightHeight)
-              / Math.tan(Math.toRadians(angleToTarget));
-          } else {
-            distanceY = (LimelightConstants.middleTapeHeight - LimelightConstants.limelightHeight)
-              / Math.tan(Math.toRadians(angleToTarget));
-          } 
-
+        if (targetHeight != -1) {
+          return LimelightManager.calcTargetPos(targetHeight, angleToTarget, xDeg);
         } else {
-          distanceY = (LimelightConstants.gridAprilTagHeight - LimelightConstants.limelightHeight)
-            / Math.tan(Math.toRadians(angleToTarget));
+          DataLogManager.log("Tried to get target pos, but pipline was invalid");
+          return new Translation2d(0, 0);
         }
-
-        distanceX = distanceY * Math.tan(Math.toRadians(xDeg));
-
       }
-
-      return new Translation2d(distanceX, distanceY);
-    } else {
-      return null;
+      DataLogManager.log("Tried to get target pos, but no target found");
+      return new Translation2d(0, 0);
     }
+    DataLogManager.log("Tried to get target pos, but limelight is disabled");
+    return new Translation2d(0, 0);
   }
 
   public void enableLed() {
