@@ -228,7 +228,7 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    if (Constants.demo.inDemoMode) {
+    if (Constants.Demo.inDemoMode) {
       return null;
     }
 

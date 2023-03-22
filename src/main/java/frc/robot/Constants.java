@@ -8,18 +8,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 
 public class Constants {
   public static final boolean debug = true;
-  public static final boolean inDemoMode = false;
-  public static final class demo {
-    public enum DriveMode {
-      OFF, SLOW_ROTATE_ONLY, SLOW_DRIVE
-    }
 
-    public static final boolean inDemoMode = false;
-    public static final DriveMode driveMode = DriveMode.SLOW_DRIVE;
-
-    public static final double driveScaleFactor = 0.15;
-    public static final double rotationScaleFactor = 0.1;
-  }
   public static final boolean armEnabled = true;
   public static final boolean armSensorEnabled = true;
   public static final boolean telescopeEnabled = true;
@@ -31,6 +20,18 @@ public class Constants {
   public static final boolean limeLightEnabled = true;
   public static final boolean ledEnabled = true;
   public static final boolean colorSensorEnabled = false;
+
+  public static final class Demo {
+    public enum DriveMode {
+      OFF, SLOW_ROTATE_ONLY, SLOW_DRIVE
+    }
+
+    public static final boolean inDemoMode = false;
+    public static final DriveMode driveMode = DriveMode.SLOW_DRIVE;
+
+    public static final double driveScaleFactor = 0.15;
+    public static final double rotationScaleFactor = 0.1;
+  }
 
   // To tune a NEO with the REV Hardware Client, the motor must be initialized
   // in the application to enable it and no set() commands can be issued because
@@ -93,7 +94,7 @@ public class Constants {
     public static final double movingVelocityThresholdFtPerSec = 0.2;
 
     public static final double minAutoRotateSpeed = 0.03;
-    public static final double maxAutoRotateSpeed = Constants.demo.inDemoMode? Constants.demo.rotationScaleFactor : 0.5;
+    public static final double maxAutoRotateSpeed = Constants.Demo.inDemoMode? Constants.Demo.rotationScaleFactor : 0.5;
 
     public static final double drivePolarDeadband = 0.06;
     public static final double rotatePolarDeadband = 0.5;
