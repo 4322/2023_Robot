@@ -19,6 +19,8 @@ public class Constants {
   public static final boolean xboxEnabled = true;
   public static final boolean limeLightEnabled = true;
   public static final boolean ledEnabled = true;
+  public static final boolean spinoutCenterEnabled = true;  // center rotate burst of power
+  public static final boolean spinoutCornerEnabled = true;
   public static final boolean colorSensorEnabled = false;
 
   public static final class Demo {

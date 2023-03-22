@@ -208,7 +208,7 @@ public class Drive extends SubsystemBase {
   // get the change of robot heading in degrees per sec
   public double getAngularVelocity() {
     if (gyro != null && gyro.isConnected() && !gyro.isCalibrating() && Constants.gyroEnabled) {
-      return gyro.getRate();
+      return -gyro.getRate();
     } else {
       return 0;
     }
