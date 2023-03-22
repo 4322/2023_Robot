@@ -14,7 +14,7 @@ public class Constants {
       OFF, SLOW_ROTATE_ONLY, SLOW_DRIVE
     }
 
-    public static final boolean inDemoMode = true;
+    public static final boolean inDemoMode = false;
     public static final DriveMode driveMode = DriveMode.SLOW_DRIVE;
 
     public static final double driveScaleFactor = 0.15;
