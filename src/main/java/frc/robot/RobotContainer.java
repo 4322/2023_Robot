@@ -71,9 +71,9 @@ public class RobotContainer {
   //LED Commands
   private final ChangeYellow changeYellow = new ChangeYellow(LED);
   private final ChangePurple changePurple = new ChangePurple(LED);
-  private final LEDControl ledControl = new LEDControl(LED, null);
+  private final LEDControl ledControl = new LEDControl(LED, null,null, null);
 
-  // Auto Commands
+  // Auto Commands,
   private final AutoBalance autoBalanceForward = new AutoBalance(drive, true);
   private final AutoBalance autoBalanceBackward = new AutoBalance(drive, false);
 
