@@ -53,7 +53,7 @@ public class Arm extends SubsystemBase {
       leftMotor.setIdleMode(IdleMode.kBrake);
       leftMotor.setOpenLoopRampRate(ArmConstants.rampRate);
       leftMotor.setClosedLoopRampRate(ArmConstants.rampRate);
-      leftMotor.setSoftLimit(SoftLimitDirection.kForward, Constants.ArmConstants.maxPosition);
+      leftMotor.setSoftLimit(SoftLimitDirection.kForward, (float) Constants.ArmConstants.maxPosition);
       leftMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
       rightMotor.restoreFactoryDefaults();
       rightMotor.setIdleMode(IdleMode.kBrake);
@@ -71,7 +71,7 @@ public class Arm extends SubsystemBase {
       pidController.setSmartMotionMinOutputVelocity(ArmConstants.SmartMotion.minVel, 0);
       pidController.setSmartMotionMaxVelocity(ArmConstants.SmartMotion.maxVel, 0);
       pidController.setSmartMotionMaxAccel(ArmConstants.SmartMotion.maxAcc, 0);
-      pidController.setSmartMotionAllowedClosedLoopError(ArmConstants.SmartMotion.positionTolerance, 0);
+      pidController.setSmartMotionAllowedClosedLoopError(ArmConstants.positionTolerance, 0);
       CanBusUtil.dualSparkMaxPosCtrl(leftMotor, Constants.armTuningMode);
 
       if (Constants.armSensorEnabled) {
@@ -103,10 +103,18 @@ public class Arm extends SubsystemBase {
   }
 
   public boolean isAtTarget() {
-    if (!Constants.armEnabled) {
+    if (!Constants.armEnabled || currentTarget == null) {
       return true;
     }
-    return (Math.abs(getPosition() - currentTarget) <= ArmConstants.positionToleranceInternal);
+    return (Math.abs(getPosition() - currentTarget) <= ArmConstants.atTargetTolerance);
+  }
+
+  public boolean isNearTarget() {
+    if (!Constants.armEnabled || currentTarget == null) {
+      return true;
+    }
+    return (Math.abs(getPosition() - currentTarget) <= 
+      ArmConstants.nearTargetPosition + ArmConstants.atTargetTolerance);
   }
 
   public boolean rotateToPosition(double targetPosition) {
@@ -142,7 +150,7 @@ public class Arm extends SubsystemBase {
   public void setHoming() {
     if (Constants.armEnabled) {
       if (!Constants.armTuningMode) {
-        leftMotor.set(ArmConstants.ArmHomingPower);
+        leftMotor.set(ArmConstants.homingPower);
       }
     }
   }
@@ -163,7 +171,9 @@ public class Arm extends SubsystemBase {
 
   // enable/disable limit switch
   public void setLimitSwitch(boolean status) {
-    armSensor.enableLimitSwitch(status);
+    if (Constants.armEnabled) {
+      armSensor.enableLimitSwitch(status);
+    }
   }
 
   public void setHomed() {

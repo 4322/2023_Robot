@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import java.util.ArrayList;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import com.kauailabs.navx.frc.AHRS;
@@ -38,20 +37,12 @@ public class Drive extends SubsystemBase {
 
   private double latestVelocity;
   private double latestAcceleration;
+  private double pitchOffset;
 
   private ArrayList<SnapshotTranslation2D> velocityHistory = new ArrayList<SnapshotTranslation2D>();
 
-  private final Translation2d frontLeftLocation = new Translation2d(
-      Constants.DriveConstants.distWheelMetersX, Constants.DriveConstants.distWheelMetersY);
-  private final Translation2d frontRightLocation = new Translation2d(
-      Constants.DriveConstants.distWheelMetersX, -Constants.DriveConstants.distWheelMetersY);
-  private final Translation2d backLeftLocation = new Translation2d(
-      -Constants.DriveConstants.distWheelMetersX, Constants.DriveConstants.distWheelMetersY);
-  private final Translation2d backRightLocation = new Translation2d(
-      -Constants.DriveConstants.distWheelMetersX, -Constants.DriveConstants.distWheelMetersY);
-
-  private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontRightLocation,
-      frontLeftLocation, backLeftLocation, backRightLocation);
+  private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(DriveConstants.frontRightWheelLocation, 
+  DriveConstants.frontLeftWheelLocation, DriveConstants.backLeftWheelLocation, DriveConstants.backRightWheelLocation);
 
   private SwerveDriveOdometry odometry;
   private ShuffleboardTab tab;
@@ -60,8 +51,9 @@ public class Drive extends SubsystemBase {
   private GenericEntry rotSpeedTab;
   private GenericEntry rotkP;
   private GenericEntry rotkD;
-  private GenericEntry roll;
-  private GenericEntry pitch;
+  private GenericEntry yawTab;
+  private GenericEntry rollTab;
+  private GenericEntry pitchTab;
   private GenericEntry botVelocityMag;
   private GenericEntry botAccelerationMag;
   private GenericEntry botVelocityAngle;
@@ -72,6 +64,7 @@ public class Drive extends SubsystemBase {
   private GenericEntry odometryX;
   private GenericEntry odometryY;
   private GenericEntry odometryDegrees;
+  private GenericEntry angularVel;
 
   public Drive() {
     runTime.start();
@@ -125,9 +118,11 @@ public class Drive extends SubsystemBase {
         rotkD = tab.add("Rotation kD", DriveConstants.Auto.autoRotkD).withPosition(2, 0).withSize(1, 1)
             .getEntry();
 
-        roll = tab.add("Roll", 0).withPosition(1, 1).withSize(1, 1).getEntry();
+        yawTab = tab.add("Yaw", 0).withPosition(0, 3).withSize(1, 1).getEntry();
 
-        pitch = tab.add("Pitch", 0).withPosition(2, 1).withSize(1, 1).getEntry();
+        rollTab = tab.add("Roll", 0).withPosition(1, 1).withSize(1, 1).getEntry();
+
+        pitchTab = tab.add("Pitch", 0).withPosition(2, 1).withSize(1, 1).getEntry();
 
         botVelocityMag = tab.add("Bot Vel Mag", 0).withPosition(3, 0).withSize(1, 1).getEntry();
 
@@ -137,14 +132,7 @@ public class Drive extends SubsystemBase {
 
         botAccelerationAngle = tab.add("Bot Acc Angle", 0).withPosition(4, 1).withSize(1, 1).getEntry();
 
-        tab.add("Tip Deceleration", true)
-            .withWidget(BuiltInWidgets.kBooleanBox).withPosition(5, 0).withSize(1, 1).getEntry();
-
-        tab.add("Tip Small Stick", true)
-            .withWidget(BuiltInWidgets.kBooleanBox).withPosition(5, 1).withSize(1, 1).getEntry();
-
-        tab.add("Tip Big Stick", true).withWidget(BuiltInWidgets.kBooleanBox)
-            .withPosition(5, 2).withSize(1, 1).getEntry();
+        angularVel = tab.add("Angular Vel", 0).withPosition(5, 0).withSize(1, 1).getEntry();
 
         driveXTab = tab.add("Drive X", 0).withPosition(0, 2).withSize(1, 1).getEntry();
 
@@ -207,10 +195,19 @@ public class Drive extends SubsystemBase {
     }
   }
 
-  // get the pitch
+  // Get pitch in degrees. Positive angle is the front of the robot raised.
   public double getPitch() {
     if (gyro != null && gyro.isConnected() && !gyro.isCalibrating() && Constants.gyroEnabled) {
-      return gyro.getPitch();
+      return gyro.getPitch() - pitchOffset;
+    } else {
+      return 0;
+    }
+  }
+
+  // get the change of robot heading in degrees per sec
+  public double getAngularVelocity() {
+    if (gyro != null && gyro.isConnected() && !gyro.isCalibrating() && Constants.gyroEnabled) {
+      return -gyro.getRate();
     } else {
       return 0;
     }
@@ -225,16 +222,15 @@ public class Drive extends SubsystemBase {
       }
       if (Constants.gyroEnabled) {
         updateOdometry();
-      }
-    }
-
-    if (Constants.debug) { // don't combine if statements to avoid dead code warning
-      if (Constants.gyroEnabled) {
-        roll.setDouble(gyro.getRoll());
-        pitch.setDouble(gyro.getPitch());
-        odometryX.setDouble(getPose2d().getX());
-        odometryY.setDouble(getPose2d().getY());
-        odometryDegrees.setDouble(getPose2d().getRotation().getDegrees());
+        if (Constants.debug) { // don't combine if statements to avoid dead code warning
+          yawTab.setDouble(getAngle());
+          rollTab.setDouble(gyro.getRoll());
+          pitchTab.setDouble(getPitch());
+          odometryX.setDouble(getPose2d().getX());
+          odometryY.setDouble(getPose2d().getY());
+          odometryDegrees.setDouble(getPose2d().getRotation().getDegrees());
+          angularVel.setDouble(getAngularVelocity());
+        }
       }
     }
   }
@@ -259,12 +255,18 @@ public class Drive extends SubsystemBase {
       if (gyro != null) {
         gyro.setAngleAdjustment(0);
         gyro.setAngleAdjustment(-gyro.getAngle() + offset);
+        pitchOffset = gyro.getPitch();
       }
       setDriveMode(DriveMode.fieldCentric);
     }
   }
-
+  //this drive function is for regular driving when pivot point is at robot center point
   public void drive(double driveX, double driveY, double rotate) {
+    drive(driveX, driveY, rotate, new Translation2d());
+  }
+
+  // main drive function accounts for spinout when center point is on swerve modules
+  public void drive(double driveX, double driveY, double rotate, Translation2d centerOfRotation) {
     if (Constants.driveEnabled && Constants.gyroEnabled) {
       double clock = runTime.get(); // cache value to reduce CPU usage
       double[] currentAngle = new double[4];
@@ -310,8 +312,9 @@ public class Drive extends SubsystemBase {
           robotAngle = gyro.getRotation2d();
 
         // create SwerveModuleStates inversely from the kinematics
+
         var swerveModuleStates = kinematics.toSwerveModuleStates(
-            ChassisSpeeds.fromFieldRelativeSpeeds(driveX, driveY, rotate, robotAngle));
+            ChassisSpeeds.fromFieldRelativeSpeeds(driveX, driveY, rotate, robotAngle), centerOfRotation);
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates,
             Constants.DriveConstants.maxSpeedMetersPerSecond);
         for (int i = 0; i < swerveModules.length; i++) {
@@ -337,12 +340,12 @@ public class Drive extends SubsystemBase {
 
       if (Math.abs(headingChangeDeg) <= toleranceDeg) {
         rotPIDSpeed = 0;  // don't wiggle
-      } else if (Math.abs(rotPIDSpeed) < DriveConstants.Auto.minAutoRotateSpeed) {
-        rotPIDSpeed = Math.copySign(DriveConstants.Auto.minAutoRotateSpeed, rotPIDSpeed);
-      } else if (rotPIDSpeed > DriveConstants.Auto.maxAutoRotateSpeed) {
-        rotPIDSpeed = DriveConstants.Auto.maxAutoRotateSpeed;
-      } else if (rotPIDSpeed < -DriveConstants.Auto.maxAutoRotateSpeed) {
-        rotPIDSpeed = -DriveConstants.Auto.maxAutoRotateSpeed;
+      } else if (Math.abs(rotPIDSpeed) < DriveConstants.Auto.minAutoRotatePower) {
+        rotPIDSpeed = Math.copySign(DriveConstants.Auto.minAutoRotatePower, rotPIDSpeed);
+      } else if (rotPIDSpeed > DriveConstants.Auto.maxAutoRotatePower) {
+        rotPIDSpeed = DriveConstants.Auto.maxAutoRotatePower;
+      } else if (rotPIDSpeed < -DriveConstants.Auto.maxAutoRotatePower) {
+        rotPIDSpeed = -DriveConstants.Auto.maxAutoRotatePower;
       }
 
       drive(driveX, driveY, rotPIDSpeed);

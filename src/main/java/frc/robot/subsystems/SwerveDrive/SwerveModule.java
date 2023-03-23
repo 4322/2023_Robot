@@ -160,9 +160,9 @@ public class SwerveModule extends ControlModule {
 
   @Override
   public double getDistance() {
-    return driveMotor.getSelectedSensorPosition(0) / DriveConstants.encoderResolution
-        / Constants.DriveConstants.Drive.gearRatio * Math.PI
-        * DriveConstants.Drive.wheelDiameterInches / 12;
+    return OrangeMath.falconEncoderToMeters(driveMotor.getSelectedSensorPosition(0),
+        OrangeMath.getCircumference(OrangeMath.inchesToMeters(DriveConstants.Drive.wheelDiameterInches)),
+        DriveConstants.Drive.gearRatio);
   }
 
   @Override
@@ -176,13 +176,11 @@ public class SwerveModule extends ControlModule {
   public SwerveModuleState getState() {
     return new SwerveModuleState(getVelocity() * Constants.feetToMeters, Rotation2d.fromDegrees(
         turningMotor.getSelectedSensorPosition() * DriveConstants.Rotation.countToDegrees));
-
   }
 
   public SwerveModulePosition getPosition() {
-    return new SwerveModulePosition(OrangeMath.feetToMeters(getDistance()),
-        Rotation2d.fromDegrees(getAngle()));
-
+    return new SwerveModulePosition(getDistance(), Rotation2d.fromDegrees(
+        turningMotor.getSelectedSensorPosition() * DriveConstants.Rotation.countToDegrees));
   }
 
   public void setDesiredState(SwerveModuleState desiredState) {

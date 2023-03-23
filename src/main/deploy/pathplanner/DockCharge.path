@@ -17,11 +17,10 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "initialize",
           "scoreCone"
         ],
         "executionBehavior": "sequential",
-        "waitBehavior": "deadline",
+        "waitBehavior": "none",
         "waitTime": 5.0
       }
     },

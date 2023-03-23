@@ -5,11 +5,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Telescope;
 
-public class ArmSetCoastMode extends InstantCommand{
+public class ArmSetBrakeMode extends InstantCommand{
   private Arm arm;
   private Telescope telescope;
 
-  public ArmSetCoastMode (Arm arm, Telescope telescope) {
+  public ArmSetBrakeMode (Arm arm, Telescope telescope) {
     this.arm = arm;
     this.telescope = telescope;
     addRequirements(arm, telescope);
@@ -19,8 +19,8 @@ public class ArmSetCoastMode extends InstantCommand{
   public void initialize() {
     if(DriverStation.isDisabled())
     {
-      arm.setCoastMode();
-      telescope.setCoastMode();
+      arm.setBrakeMode();
+      telescope.setBrakeMode();
     }
   }
   @Override

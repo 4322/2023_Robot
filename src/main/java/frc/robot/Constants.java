@@ -8,8 +8,22 @@ import edu.wpi.first.math.geometry.Translation2d;
 
 public class Constants {
   public static final boolean debug = false;
-  public static final boolean inDemoMode = false;
-  public static final class demo {
+
+  public static final boolean armEnabled = true;
+  public static final boolean armSensorEnabled = true;
+  public static final boolean telescopeEnabled = true;
+  public static final boolean clawEnabled = true;
+  public static final boolean driveEnabled = true;
+  public static final boolean gyroEnabled = true;
+  public static final boolean joysticksEnabled = true;
+  public static final boolean xboxEnabled = true;
+  public static final boolean limeLightEnabled = true;
+  public static final boolean ledEnabled = true;
+  public static final boolean spinoutCenterEnabled = true;  // center rotate burst of power
+  public static final boolean spinoutCornerEnabled = true;
+  public static final boolean colorSensorEnabled = false;
+
+  public static final class Demo {
     public enum DriveMode {
       OFF, SLOW_ROTATE_ONLY, SLOW_DRIVE
     }
@@ -20,22 +34,13 @@ public class Constants {
     public static final double driveScaleFactor = 0.15;
     public static final double rotationScaleFactor = 0.1;
   }
-  public static final boolean armEnabled = true;
-  public static final boolean armSensorEnabled = true;
-  public static final boolean clawEnabled = true;
-  public static final boolean driveEnabled = true;
-  public static final boolean gyroEnabled = true;
-  public static final boolean joysticksEnabled = true;
-  public static final boolean xboxEnabled = true;
-  public static final boolean limeLightEnabled = true;
-  public static final boolean ledEnabled = true;
-  public static final boolean colorSensorEnabled = false;
 
   // To tune a NEO with the REV Hardware Client, the motor must be initialized
   // in the application to enable it and no set() commands can be issued because
   // the REV library will continuously send the same command, thereby overriding
   // tuning commands from the REV Hardware CLient.
   public static final boolean armTuningMode = false;
+  public static final boolean telescopeTuningMode = false;
   public static final boolean clawTuningMode = false;
 
   public static final int falconEncoderUnits = 2048;
@@ -67,33 +72,58 @@ public class Constants {
     public static final int rearLeftEncoderID = 13;
 
     public static final int encoderResolution = 2048;
+    
+    // full length of drivebase divided by 2 for distance between wheels
+    public static final double distWheelMetersX = OrangeMath.inchesToMeters(29.5/2); // 29.5 in
+    public static final double distWheelMetersY = OrangeMath.inchesToMeters(29.5/2); // 29.5 in
 
-    public static final double distWheelMetersX = 0.62865; // 24.75 in
-    public static final double distWheelMetersY = 0.62865; // 24.75 in
+    // wheel location constants
+    public static final Translation2d frontLeftWheelLocation = new Translation2d(distWheelMetersX, distWheelMetersY);
+    public static final Translation2d frontRightWheelLocation = new Translation2d(distWheelMetersX, -distWheelMetersY);
+    public static final Translation2d backLeftWheelLocation = new Translation2d(-distWheelMetersX, distWheelMetersY);
+    public static final Translation2d backRightWheelLocation = new Translation2d(-distWheelMetersX, -distWheelMetersY);
+
+    public static final double disableBreakSec = 2.0;
 
     // Max speed is 200000 ticks / 1 s
 
     public static final double maxSpeedMetersPerSecond = 10 * OrangeMath.falconEncoderToMeters(20000,
         OrangeMath.inchesToMeters(OrangeMath.getCircumference(Drive.wheelDiameterInches)),
         Drive.gearRatio);
-    public static final double maxRotationSpeedRadSecond = 12.2718;
+
+    public static final double maxRotationSpeedRadSecond = 12.2718;  // physical limit of the bot
 
     public static final double movingVelocityThresholdFtPerSec = 0.2;
-
-    public static final double minAutoRotateSpeed = 0.03;
-    public static final double maxAutoRotateSpeed = Constants.demo.inDemoMode? Constants.demo.rotationScaleFactor : 0.5;
 
     public static final double drivePolarDeadband = 0.06;
     public static final double rotatePolarDeadband = 0.5;
     public static final double twistDeadband = 0.08;
 
-    public static final double manualRotateToleranceDegrees = 1.5;
+    // Values for auto balance
+    public static final double autoBalanceFlatPower = 0.3;
+    public static final double autoBalanceRampPower = 0.15;
+    public static final double autoBalanceAdjustmentPower = 0.035;
+    public static final double chargeStationTiltedMinDeg = 10.0;
+    public static final double chargeStationDroppingDeg = 1.5;
+    public static final double rampImpulseSec = 0.9;  // time for gyro to stabilize
+    public static final double droppingSec = 0.35;
+    public static final double levelingSec = 0.3;
+    public static final double chargeStationBalancedMaxDeg = 2.0;
+    public static final double autoBalanceFlatTimeoutSec = 2.5;
+    public static final double autoBalanceTimeoutSec = 15.0;
 
+    public static final double autoDriveOverChargeFlatMaxDeg = 3.0;
+    public static final double autoDriveOverChargeFlatSec = 0.5;
+    public static final double autoDriveOverChargeTimeoutSec = 6.0;
+
+    public static final double spinoutCenterPower = 1.0;
+    public static final double spinoutCornerPower = 0.75;
+    
     // 1 degree
     public static final Pose2d poseError =
         new Pose2d(new Translation2d(0.1, 0.1), new Rotation2d(0.0174533));
 
-    public static final double disableBreakSec = 2.0;
+    public static final double autoChargePower = 0.5;
 
     public static final class Manual {
 
@@ -103,8 +133,13 @@ public class Constants {
 
       public static final double xboxDriveDeadband = 0.1;
       public static final double xboxRotateDeadband = 0.2;
-      public static final double rotateToleranceDegrees = 1.5;
-
+      public static final double manualRotationScaleFromMax = 0.32;
+      
+      public static final double spinoutRotateDeadBand = 0.9;
+      public static final double spinoutMinAngularVelocity = 0.5; // looks like radians per second but we don't know
+      public static final double spinoutActivationSec = 0.35;
+      public static final double spinoutMinAngularVelocity2 = 0.25;
+      public static final double spinout2ActivationSec = 0.2;
     }
 
     public static final class Auto {
@@ -117,10 +152,11 @@ public class Constants {
           OrangeMath.inchesToMeters(OrangeMath.getCircumference(Drive.wheelDiameterInches)),
           Drive.gearRatio);
 
-      public static final double autoRotkP = 0.005;
-      public static final double autoRotkD = 0.0002;
-      public static final double minAutoRotateSpeed = 0.0;  // 0.03
-      public static final double maxAutoRotateSpeed = 0.5;
+      public static final double autoRotkP = 0.008;
+      public static final double autoRotkD = 0.0004;
+      public static final double minAutoRotatePower = 0.01;
+      public static final double maxAutoRotatePower = 0.5;
+      public static final double rotateToleranceDegrees = 0.5;
 
     }
 
@@ -215,13 +251,13 @@ public class Constants {
     public static final class Trajectory {
 
       public static final class PIDXY {
-        public static final double kP = 0;
+        public static final double kP = 0.1;
         public static final double kI = 0;
         public static final double kD = 0;
       }
 
       public static final class PIDR {
-        public static final double kP = 0;
+        public static final double kP = 0.1;
         public static final double kI = 0;
         public static final double kD = 0;
       }
@@ -233,14 +269,18 @@ public class Constants {
     public static final int motorID = 16; // temp value
     public static final double rampRate = 0.8; // temp value
 
-
     public static final double intakePower = 0.4; // don't exceed 0.6 if you don't want to smoke the motor!
-    public static final double outtakePower = -0.4; 
-    public static final double stallIntakePower = 0.07; // don't exceed 0.07 if you don't want to smoke the motor!
-    public static final double stallOuttakePower = -0.06;
+    public static final double outtakePower = -1; // capapult!
 
-    public static final double stallTime = 0.2; // 200 ms
+    public static final double stallTime = 0.4;
     public static final double stallRPMLimit = 1000;
+
+    public static final double kP = 0.000812;
+    public static final double kF = 0.00451;
+    public static final double kMaxOutput = 0.2;
+    public static final double kMinOutput = -0.2;
+    public static final double stallIntakeCurrent = 16.4;  // controller setpoint, draws 2A from PDH, 15A phase
+    public static final double stallOuttakeCurrent = -16.4;
 
     public static enum ClawMode {
       ejecting, stationary, intaking
@@ -251,36 +291,75 @@ public class Constants {
     public static final int leftMotorID = 15;
     public static final int rightMotorID = 14;
     public static final double rampRate = 0.3; // good range: 0.3 to 0.5
-    public static final double logIntervalSeconds = 0.5;
+    public static final double logIntervalSeconds = 5.0;
   
-    public static final int maxPosition = 72;
-    public static final int minPosition = 0;
+    public static final double maxPosition = 73;
+    public static final double minPosition = 0;
 
-    public static final double manualDeadband = 0;
-
-    public static final double kMaxRange = 0;
-
-    public static final double LoadPosition = 2;
-    public static final double LoadHighPosition = 10;
-    public static final double MidScoringPosition = 68;
-    public static final double HighScoringPosition = 60;
+    public static final double loadPosition = 2;
+    public static final double loadHighPosition = 10;
+    public static final double earlyTelescopeExtendPosition = 40;
+    public static final double safeTelescopeExtendPosition = 57.0;
+    public static final double lowScoringPosition = 10; // ideally 6.8, but would need more kP to clear hopper
+    public static final double midScoringPosition = 72;
+    public static final double highScoringPosition = 65.5;
+    public static final double nearTargetPosition = 4;
     
-    public static final double ArmHomingPower = -0.1;
-    public static double homingTimeout = 3; // seconds
+    public static final double homingPower = -0.3;
+    public static final double homingNotMovingSec = 0.1;
+    public static final double homingNotMovingRevs = 0.5;
+    public static final double homingTimeoutSec = 3;
 
-    public static final double positionToleranceInternal = 0.3;
+    public static final double positionTolerance = 0.3;
+    public static final double atTargetTolerance = 0.7;
 
-    public static final class SmartMotion { // SmartMotion values need to be checked (not k values), currently not using
-      public static final double kP = 0.1;
+    public static final class SmartMotion {
+      public static final double kP = 0.04375;
       public static final double kI = 0;
       public static final double kD = 0;
       public static final double kIz = 0;
-      public static final double kMaxOutput = 0.5;
-      public static final double kMinOutput = -0.5;
+      public static final double kMaxOutput = 1;
+      public static final double kMinOutput = -1;
       public static final double minVel = 0;
       public static final double maxVel = 3000; // rpm
       public static final double maxAcc = 10000;
-      public static final double positionTolerance = 0.2;
+    }
+  }
+
+  public static final class Telescope {
+    public static final int motorID = 17;
+    public static final double rampRate = 0.2;
+  
+    public static final double maxPosition = 13.0;
+    public static final double minPosition = 0;
+
+    public static final double loadPosition = 0;
+    public static final double earlyArmRetractPosition = 9;
+    public static final double safeArmRetractPosition = 0.5;  // safe for overhead/hopper clearance
+    public static final double lowScoringPosition = 0;
+    public static final double midScoringPosition = 0;
+    public static final double highScoringPosition = 10.9;
+    public static final double clearHighPolePosition = 6.0;
+    
+    public static final double homingPower = -0.15;
+    public static final double notMovingSec = 0.1;
+    public static final double notMovingRevs = 0.1;
+    public static final double homingTimeoutSec = 3;
+    public static final double positionTolerance = 0.12;
+    public static final double atTargetTolerance = 0.2;
+
+    public static final int movePidSlot = 0;
+
+    public static final class movePid {
+      public static final double kP = 0.2;
+      public static final double kI = 0;
+      public static final double kD = 3.0;  // 3.0 max
+      public static final double kIz = 0;
+      public static final double kMaxOutput = 0.6;
+      public static final double kMinOutput = -0.35;
+      public static final double minVel = 0;
+      public static final double maxVel = 3000; // rpm
+      public static final double maxAcc = 10000;
     }
   }
 
