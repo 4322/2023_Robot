@@ -117,19 +117,12 @@ public class RobotContainer {
     autoChooser.addOption("Score Preload & Mobility",
         ppManager.loadAuto("ScoreMobilityOnly", false));
 
-    autoChooser.addOption("Engage Blue 9",
+    autoChooser.addOption("Engage + Mobility (9)",
         new SequentialCommandGroup(
             ppManager.loadAuto("ScoreMobilityCharge9", false),
             new AutoBalance(drive, false),
             new AutoDriveRotateWheels(drive, 0.25)
-          ));
-
-    autoChooser.addOption("Engage Red 9",
-        new SequentialCommandGroup(
-            ppManager.loadAuto("ScoreMobilityCharge9", true),
-            new AutoBalance(drive, false),
-            new AutoDriveRotateWheels(drive, 0.25)
-          ));    
+          ));   
       
     autoChooser.addOption("Score Preload Only", getScoreHigh());
     
