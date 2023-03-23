@@ -143,7 +143,7 @@ public class Constants {
       public static final double spinoutMinAngularVelocity = 0.5; // looks like radians per second but we don't know
       public static final double spinoutActivationSec = 0.35;
       public static final double spinoutMinAngularVelocity2 = 0.25;
-      public static final double spinoutActivationSec2 = 0.2;
+      public static final double spinout2ActivationSec = 0.2;
     }
 
     public static final class Auto {
