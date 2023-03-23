@@ -193,7 +193,9 @@ public class RobotContainer {
       xbox.back().onTrue(armSetCoastMode);
       xbox.start().onTrue(armSetBrakeMode);
       xbox.leftBumper().onTrue(driveManualLeft);
+      xbox.leftBumper().onTrue(clawIntake);
       xbox.rightBumper().onTrue(driveManualRight);
+      xbox.rightBumper().onTrue(clawIntake);
       xbox.a().whileTrue(new ArmMove(arm, telescope, ArmMove.position.loadHigh, false));
     }
   }
