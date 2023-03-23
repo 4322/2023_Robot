@@ -16,7 +16,7 @@ public class AlignAssist extends CommandBase {
     searching, found
   }
 
-  private TargetState targetStatus = TargetState.searching;
+  private TargetState targetStatus;
 
   public AlignAssist(LED ledSubsystem, Limelight gridLimelight) {
     LED = ledSubsystem;
@@ -25,7 +25,7 @@ public class AlignAssist extends CommandBase {
 
   @Override
   public void initialize() {
-
+    targetStatus = TargetState.searching;
   }
 
   // Red: too far to the left (move right)
