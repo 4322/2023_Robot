@@ -54,6 +54,7 @@ public class RobotContainer {
 
   // Arm commands
   private final ArmSetCoastMode armSetCoastMode = new ArmSetCoastMode(arm, telescope);
+  private final ArmSetBrakeMode armSetBrakeMode = new ArmSetBrakeMode(arm, telescope);
 
   // Claw commands
   private final ClawIntake clawIntake = new ClawIntake(claw);
@@ -190,6 +191,7 @@ public class RobotContainer {
       xbox.leftTrigger().onTrue(clawIntake);
       xbox.rightTrigger().whileTrue(clawOuttake);
       xbox.back().onTrue(armSetCoastMode);
+      xbox.start().onTrue(armSetBrakeMode);
       xbox.leftBumper().onTrue(driveManualLeft);
       xbox.rightBumper().onTrue(driveManualRight);
       xbox.a().whileTrue(new ArmMove(arm, telescope, ArmMove.position.loadHigh, false));
