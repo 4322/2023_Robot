@@ -112,9 +112,9 @@ public class RobotContainer {
     
     ppManager.addEvent("scoreCone", getScoreHigh());
 
-    autoChooser.setDefaultOption("Nothing", new Nothing());
+    autoChooser.setDefaultOption("Do Nothing", new Nothing());
 
-    autoChooser.addOption("Score Preload Only", getScoreHigh());
+    autoChooser.addOption("Preload Only", getScoreHigh());
 
     autoChooser.addOption("Mobility",
         ppManager.loadAuto("ScoreMobilityOnly", false)); 
