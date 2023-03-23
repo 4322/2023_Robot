@@ -302,6 +302,7 @@ public class Constants {
     public static final double lowScoringPosition = 10; // ideally 6.8, but would need more kP to clear hopper
     public static final double midScoringPosition = 72;
     public static final double highScoringPosition = 65.5;
+    public static final double nearTargetPosition = 4;
     
     public static final double homingPower = -0.3;
     public static final double homingNotMovingSec = 0.1;

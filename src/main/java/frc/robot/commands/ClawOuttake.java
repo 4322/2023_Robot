@@ -13,7 +13,9 @@ public class ClawOuttake extends CommandBase {
 
   @Override
   public void initialize() {
-    claw.changeState(Claw.ClawMode.outtaking);
+    if (ArmMove.isSafeToOuttake()) {
+      claw.changeState(Claw.ClawMode.outtaking);
+    }
   }
 
   @Override
