@@ -109,6 +109,14 @@ public class Arm extends SubsystemBase {
     return (Math.abs(getPosition() - currentTarget) <= ArmConstants.atTargetTolerance);
   }
 
+  public boolean isNearTarget() {
+    if (!Constants.armEnabled || currentTarget == null) {
+      return true;
+    }
+    return (Math.abs(getPosition() - currentTarget) <= 
+      ArmConstants.nearTargetPosition + ArmConstants.atTargetTolerance);
+  }
+
   public boolean rotateToPosition(double targetPosition) {
     if (Constants.armEnabled && homed && !Constants.armTuningMode) {
       if ((targetPosition > ArmConstants.minPosition)
