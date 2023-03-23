@@ -54,10 +54,10 @@ public class RobotContainer {
   private final LED LED = new LED();
   // Note: limelight names must match limelight tool
   private final Limelight gridLimelight =
-      new Limelight("Grid Limelight", 0, OrangeMath.inchesToMeters(26.125), // TODO: tune/measure these
+      new Limelight("Grid-Limelight", 0, OrangeMath.inchesToMeters(26.125), // TODO: tune/measure these
         0, 0, 0, true, false);
   private final Limelight substationLimelight =
-      new Limelight("Substation Limelight", 2, OrangeMath.inchesToMeters(50), // TODO: tune/measure these
+      new Limelight("Substation-Limelight", 2, OrangeMath.inchesToMeters(50), // TODO: tune/measure these
         0, 0, 0, false, false);
   private final PathPlannerManager ppManager;
 
