@@ -50,7 +50,7 @@ public class RobotContainer {
   private final Claw claw = new Claw();
   private final Drive drive = new Drive();
   private final LED LED = new LED();
-  private final PathPlannerManager ppManager;
+  private PathPlannerManager ppManager;
 
   // Arm commands
   private final ArmSetCoastMode armSetCoastMode = new ArmSetCoastMode(arm, telescope);
@@ -108,6 +108,12 @@ public class RobotContainer {
       arm.setDefaultCommand(new ArmMove(arm, telescope, ArmMove.position.load, false));
     }
 
+    loadAutos();
+  }
+
+  // autos need to be reloaded after each auto test because the commands can't be reused
+  private void loadAutos() {
+
     ppManager = new PathPlannerManager(drive);
     
     ppManager.addEvent("scoreCone", getScoreHigh());
@@ -133,8 +139,7 @@ public class RobotContainer {
           new AutoBalance(drive, false),
           new AutoDriveRotateWheels(drive, 0.25)
       )
-    );  
-    
+    );
   }
 
   /**
@@ -219,6 +224,7 @@ public class RobotContainer {
     driveStop.schedule();  // interrupt all drive commands
     disableTimer.reset();
     disableTimer.start();
+    loadAutos();
   }
 
   public Command getAutonomousCommand() {
