@@ -114,25 +114,26 @@ public class RobotContainer {
 
     autoChooser.setDefaultOption("Nothing", new Nothing());
 
-    autoChooser.addOption("Score Preload & Mobility",
-        ppManager.loadAuto("ScoreMobilityOnly", false));
-
-    autoChooser.addOption("Engage + Mobility (9)",
-        new SequentialCommandGroup(
-            ppManager.loadAuto("ScoreMobilityCharge9", false),
-            new AutoBalance(drive, false),
-            new AutoDriveRotateWheels(drive, 0.25)
-          ));   
-      
     autoChooser.addOption("Score Preload Only", getScoreHigh());
+
+    autoChooser.addOption("Mobility",
+        ppManager.loadAuto("ScoreMobilityOnly", false)); 
     
-    autoChooser.addOption("Auto Balance Forward", 
+    autoChooser.addOption("Engage", 
       new SequentialCommandGroup(
         getScoreHigh(),
         new AutoBalance(drive, true),
         new AutoDriveRotateWheels(drive, 0.25)
       )
     );
+
+    autoChooser.addOption("Engage + Mobility (9)",
+      new SequentialCommandGroup(
+          ppManager.loadAuto("ScoreMobilityCharge9", false),
+          new AutoBalance(drive, false),
+          new AutoDriveRotateWheels(drive, 0.25)
+      )
+    );  
     
   }
 
