@@ -120,6 +120,8 @@ public class Constants {
     public static final double autoDriveOverChargeFlatSec = 0.5;
     public static final double autoDriveOverChargeTimeoutSec = 6.0;
 
+    public static final double spinoutRotatePower = 0.55;
+
     // 1 degree
     public static final Pose2d poseError =
         new Pose2d(new Translation2d(0.1, 0.1), new Rotation2d(0.0174533));
@@ -140,6 +142,8 @@ public class Constants {
       public static final double spinoutRotateDeadBand = 0.9;
       public static final double spinoutMinAngularVelocity = 0.5; // looks like radians per second but we don't know
       public static final double spinoutActivationSec = 0.35;
+      public static final double spinoutMinAngularVelocity2 = 0.25;
+      public static final double spinoutActivationSec2 = 0.2;
     }
 
     public static final class Auto {
