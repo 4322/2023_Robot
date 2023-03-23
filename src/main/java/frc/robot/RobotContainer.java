@@ -53,12 +53,17 @@ public class RobotContainer {
   private final Drive drive = new Drive();
   private final LED LED = new LED();
   // Note: limelight names must match limelight tool
+
+  // Measuring from back of bumpers
   private final Limelight gridLimelight =
-      new Limelight("Grid-Limelight", 0, OrangeMath.inchesToMeters(26.125), // TODO: tune/measure these
-        0, 0, 0, true, false);
+      new Limelight("Grid-Limelight", 0, OrangeMath.inchesToMeters(26), // TODO: tune/measure these
+        0, OrangeMath.inchesToMeters(-5.25), 0, true, false);
+  
+  // Measuring from front of bumpers
   private final Limelight substationLimelight =
-      new Limelight("Substation-Limelight", 2, OrangeMath.inchesToMeters(50), // TODO: tune/measure these
-        0, 0, 0, false, false);
+      new Limelight("Substation-Limelight", 2, OrangeMath.inchesToMeters(42.5 + 3.875), // TODO: tune/measure these
+        0, OrangeMath.inchesToMeters(29.75), OrangeMath.inchesToMeters(3 + 1/4 + 3.875/2), false, false);
+
   private final PathPlannerManager ppManager;
 
   // Arm commands
