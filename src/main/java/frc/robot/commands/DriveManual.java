@@ -169,7 +169,7 @@ public class DriveManual extends CommandBase {
       if (targetHeadingDeg != null) {
         if (rotatePower == 0) {
           drive.driveAutoRotate(driveX, driveY, targetHeadingDeg,
-              Constants.DriveConstants.Manual.rotateToleranceDegrees);
+              Constants.DriveConstants.Auto.rotateToleranceDegrees);
           return;
         } else {
           // break out of auto-rotate
