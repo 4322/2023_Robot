@@ -59,7 +59,9 @@ public class AutoBalance extends CommandBase {
   @Override
   public void execute() {
     if (Constants.driveEnabled) {
-      if (abortTimer.hasElapsed(Constants.DriveConstants.autoBalanceTimeoutSec)) {
+      if (abortTimer.hasElapsed(Constants.DriveConstants.autoBalanceTimeoutSec)
+          || ((abortTimer.hasElapsed(Constants.DriveConstants.autoBalanceFlatTimeoutSec)
+              && currentMode == autoBalanceMode.flat))) {
         currentMode = autoBalanceMode.abort;
       }
       pitch = drive.getPitch();
