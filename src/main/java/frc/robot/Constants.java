@@ -147,11 +147,11 @@ public class Constants {
           OrangeMath.inchesToMeters(OrangeMath.getCircumference(Drive.wheelDiameterInches)),
           Drive.gearRatio);
 
-      public static final double autoRotkP = 0.007;
+      public static final double autoRotkP = 0.008;
       public static final double autoRotkD = 0.0004;
       public static final double minAutoRotatePower = 0.01;
       public static final double maxAutoRotatePower = 0.5;
-      public static final double rotateToleranceDegrees = 0.75;
+      public static final double rotateToleranceDegrees = 0.5;
 
     }
 
