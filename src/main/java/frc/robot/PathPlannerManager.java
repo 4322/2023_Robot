@@ -40,7 +40,7 @@ class PathPlannerManager {
             DriveConstants.Trajectory.PIDXY.kD),
         new PIDConstants(DriveConstants.Trajectory.PIDR.kP, DriveConstants.Trajectory.PIDR.kI,
             DriveConstants.Trajectory.PIDR.kD),
-        drive::setModuleStates, eventMap, drive);
+        drive::setModuleStates, eventMap, true, drive);
 
   }
 
