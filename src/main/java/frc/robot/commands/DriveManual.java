@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drive;
@@ -255,6 +257,7 @@ public class DriveManual extends CommandBase {
             lockedWheelState = LockedWheel.frontRight;
           }
         }
+        DataLogManager.log("Locked wheel: " + lockedWheelState);
 
         // if robot rotates 90 degrees, reset rotation back to normal
       } else if ((Math.abs(initialSpinoutAngle - driveAngle) >= 90)
@@ -264,30 +267,32 @@ public class DriveManual extends CommandBase {
         spinoutActivationTimer2.stop();
         spinoutActivationTimer.reset();
         spinoutActivationTimer2.reset();
+        DataLogManager.log("Unocked wheel due to rotation over 90 degrees");
       }
       // use state machine for rotating each wheel in each direction (8 cases)
       // each module rotating CW and CCW
+      double spinCornerPower = Math.copySign(DriveConstants.spinoutCornerPower, rotatePower);
       switch (lockedWheelState) {
         case none:
           drive.drive(driveX, driveY, rotatePower);
           break;
         case center:
-          drive.drive(driveX, driveY, DriveConstants.spinoutRotatePower);
+          drive.drive(driveX, driveY, Math.copySign(DriveConstants.spinoutCenterPower, rotatePower));
           break;
         case frontLeft:
-          drive.drive(driveX, driveY, DriveConstants.spinoutRotatePower,
+          drive.drive(driveX, driveY, spinCornerPower,
               DriveConstants.frontLeftWheelLocation);
           break;
         case backLeft:
-          drive.drive(driveX, driveY, DriveConstants.spinoutRotatePower,
+          drive.drive(driveX, driveY, spinCornerPower,
               DriveConstants.backLeftWheelLocation);
           break;
         case backRight:
-          drive.drive(driveX, driveY, DriveConstants.spinoutRotatePower,
+          drive.drive(driveX, driveY, spinCornerPower,
               DriveConstants.backRightWheelLocation);
           break;
         case frontRight:
-          drive.drive(driveX, driveY, DriveConstants.spinoutRotatePower,
+          drive.drive(driveX, driveY, spinCornerPower,
               DriveConstants.frontRightWheelLocation);
           break;
       }
