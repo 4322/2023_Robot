@@ -66,13 +66,10 @@ public class AlignAssistSubstation extends CommandBase {
               case Blue:
                 if (Math.abs(horizontalOffset) < LimelightConstants.horizontalAlignToleranceMeters) {
                   LED.green();
-                  DriverStation.reportWarning("seeing target", null);
                 } else if (horizontalOffset > LimelightConstants.horizontalAlignToleranceMeters) {
                   LED.blue();
-                  DriverStation.reportWarning("seeing target", null);
                 } else {
                   LED.red();
-                  DriverStation.reportWarning("seeing target", null);
                 }
                 break;
               case Invalid:
