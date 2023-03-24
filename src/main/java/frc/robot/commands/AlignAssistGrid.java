@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Limelight;
@@ -75,5 +76,14 @@ public class AlignAssistGrid extends CommandBase {
   @Override
   public boolean isFinished() {
     return false;
+  }
+
+  @Override
+  public boolean runsWhenDisabled() {
+    if (Constants.debug) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

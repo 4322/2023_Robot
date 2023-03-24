@@ -23,6 +23,7 @@ public class ArmSetCoastMode extends InstantCommand{
       telescope.setCoastMode();
     }
   }
+  
   @Override
   public boolean runsWhenDisabled()
   {
