@@ -69,6 +69,7 @@ public class RobotContainer {
 
   // Arm commands
   private final ArmSetCoastMode armSetCoastMode = new ArmSetCoastMode(arm, telescope);
+  private final ArmSetBrakeMode armSetBrakeMode = new ArmSetBrakeMode(arm, telescope);
 
   // Claw commands
   private final ClawIntake clawIntake = new ClawIntake(claw);
@@ -129,38 +130,37 @@ public class RobotContainer {
     }
 
     ppManager = new PathPlannerManager(drive);
+
+    loadAutos();
+  }
+
+  // autos need to be reloaded after each auto test because the commands can't be reused
+  private void loadAutos() {
     
     ppManager.addEvent("scoreCone", getScoreHigh());
 
-    autoChooser.setDefaultOption("Nothing", new Nothing());
+    autoChooser.setDefaultOption("Do Nothing", new Nothing());
 
-    autoChooser.addOption("Score Preload & Mobility",
-        ppManager.loadAuto("ScoreMobilityOnly", false));
+    autoChooser.addOption("Preload Only", getScoreHigh());
 
-    autoChooser.addOption("Engage Blue 9",
-        new SequentialCommandGroup(
-            ppManager.loadAuto("ScoreMobilityCharge9", false),
-            new AutoBalance(drive, false),
-            new AutoDriveRotateWheels(drive, 0.25)
-          ));
-
-    autoChooser.addOption("Engage Red 9",
-        new SequentialCommandGroup(
-            ppManager.loadAuto("ScoreMobilityCharge9", true),
-            new AutoBalance(drive, false),
-            new AutoDriveRotateWheels(drive, 0.25)
-          ));    
-      
-    autoChooser.addOption("Score Preload Only", getScoreHigh());
+    autoChooser.addOption("Mobility",
+        ppManager.loadAuto("ScoreMobilityOnly", false)); 
     
-    autoChooser.addOption("Auto Balance Forward", 
+    autoChooser.addOption("Engage", 
       new SequentialCommandGroup(
         getScoreHigh(),
         new AutoBalance(drive, true),
         new AutoDriveRotateWheels(drive, 0.25)
       )
     );
-    
+
+    autoChooser.addOption("Engage + Mobility (9)",
+      new SequentialCommandGroup(
+          ppManager.loadAuto("ScoreMobilityCharge9", false),
+          new AutoBalance(drive, false),
+          new AutoDriveRotateWheels(drive, 0.25)
+      )
+    );
   }
 
   /**
@@ -211,6 +211,7 @@ public class RobotContainer {
       xbox.leftTrigger().onTrue(clawIntake);
       xbox.rightTrigger().whileTrue(clawOuttake);
       xbox.back().onTrue(armSetCoastMode);
+      xbox.start().onTrue(armSetBrakeMode);
       xbox.leftBumper().onTrue(driveManualLeft);
       xbox.rightBumper().onTrue(driveManualRight);
       xbox.a().whileTrue(new ArmMove(arm, telescope, ArmMove.position.loadHigh, false));
@@ -245,6 +246,7 @@ public class RobotContainer {
     driveStop.schedule();  // interrupt all drive commands
     disableTimer.reset();
     disableTimer.start();
+    loadAutos();
   }
 
   public Command getAutonomousCommand() {

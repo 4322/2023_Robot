@@ -15,6 +15,7 @@ public class ArmMove extends CommandBase {
 
   private static position presetPos = position.scoreMid;
   private static position lastPos = position.unknown;
+  private static boolean safeToOuttake = true;
 
   private Arm arm;
   private Telescope telescope;
@@ -31,6 +32,10 @@ public class ArmMove extends CommandBase {
 
   public static void setScorePreset(position pos) {
     ArmMove.presetPos = pos;
+  }
+
+  public static boolean isSafeToOuttake() {
+    return safeToOuttake;
   }
 
   public ArmMove(Arm arm, Telescope telescope, position invokePos, boolean autonomous) {
@@ -57,6 +62,12 @@ public class ArmMove extends CommandBase {
     done = false;
     timer.restart();
     timePrinted = false;
+
+    if ((targetPos == position.scoreMid) || (targetPos == position.scoreHigh)) {
+      safeToOuttake = false;
+    } else {
+      safeToOuttake = true;
+    }
 
     moveToTargets(true);
   }
@@ -191,6 +202,7 @@ public class ArmMove extends CommandBase {
     }
     if (armAtTarget && telescopeAtTarget) {
       ArmMove.lastPos = targetPos;
+      safeToOuttake = true;
       done = true;
       if (autonomous) {
         return true;
@@ -198,6 +210,9 @@ public class ArmMove extends CommandBase {
         DriverStation.reportWarning("Arm move time: " + timer.get(), false);
         timePrinted = true;
       }
+    }
+    if (!autonomous && !armAtTarget && telescopeAtTarget && armCommandedToTarget && arm.isNearTarget()) {
+      safeToOuttake = true;
     }
 
     // continue holding position in teleop until cancelled

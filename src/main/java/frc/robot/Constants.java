@@ -9,7 +9,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 public class Constants {
-  public static final boolean debug = true;
+  public static final boolean debug = false;
 
   public static final boolean armEnabled = true;
   public static final boolean armSensorEnabled = true;
@@ -93,18 +93,13 @@ public class Constants {
         OrangeMath.inchesToMeters(OrangeMath.getCircumference(Drive.wheelDiameterInches)),
         Drive.gearRatio);
 
-    public static final double maxRotationSpeedRadSecond = 12.2718;
+    public static final double maxRotationSpeedRadSecond = 12.2718;  // physical limit of the bot
 
     public static final double movingVelocityThresholdFtPerSec = 0.2;
-
-    public static final double minAutoRotateSpeed = 0.03;
-    public static final double maxAutoRotateSpeed = Constants.Demo.inDemoMode? Constants.Demo.rotationScaleFactor : 0.5;
 
     public static final double drivePolarDeadband = 0.06;
     public static final double rotatePolarDeadband = 0.5;
     public static final double twistDeadband = 0.08;
-
-    public static final double manualRotateToleranceDegrees = 1.5;
 
     // Values for auto balance
     public static final double autoBalanceFlatPower = 0.3;
@@ -116,12 +111,16 @@ public class Constants {
     public static final double droppingSec = 0.35;
     public static final double levelingSec = 0.3;
     public static final double chargeStationBalancedMaxDeg = 2.0;
+    public static final double autoBalanceFlatTimeoutSec = 2.5;
     public static final double autoBalanceTimeoutSec = 15.0;
 
     public static final double autoDriveOverChargeFlatMaxDeg = 3.0;
     public static final double autoDriveOverChargeFlatSec = 0.5;
     public static final double autoDriveOverChargeTimeoutSec = 6.0;
 
+    public static final double spinoutCenterPower = 1.0;
+    public static final double spinoutCornerPower = 0.75;
+    
     // 1 degree
     public static final Pose2d poseError =
         new Pose2d(new Translation2d(0.1, 0.1), new Rotation2d(0.0174533));
@@ -136,12 +135,13 @@ public class Constants {
 
       public static final double xboxDriveDeadband = 0.1;
       public static final double xboxRotateDeadband = 0.2;
-      public static final double rotateToleranceDegrees = 1.5;
       public static final double manualRotationScaleFromMax = 0.32;
       
       public static final double spinoutRotateDeadBand = 0.9;
       public static final double spinoutMinAngularVelocity = 0.5; // looks like radians per second but we don't know
       public static final double spinoutActivationSec = 0.35;
+      public static final double spinoutMinAngularVelocity2 = 0.25;
+      public static final double spinout2ActivationSec = 0.2;
     }
 
     public static final class Auto {
@@ -154,10 +154,11 @@ public class Constants {
           OrangeMath.inchesToMeters(OrangeMath.getCircumference(Drive.wheelDiameterInches)),
           Drive.gearRatio);
 
-      public static final double autoRotkP = 0.005;
-      public static final double autoRotkD = 0.0002;
-      public static final double minAutoRotateSpeed = 0.0;  // 0.03
-      public static final double maxAutoRotateSpeed = 0.5;
+      public static final double autoRotkP = 0.008;
+      public static final double autoRotkD = 0.0004;
+      public static final double minAutoRotatePower = 0.01;
+      public static final double maxAutoRotatePower = 0.5;
+      public static final double rotateToleranceDegrees = 0.5;
 
       public static final double autoDriveYkP = 0;
       public static final double autoDriveYkD = 0;
@@ -257,13 +258,13 @@ public class Constants {
     public static final class Trajectory {
 
       public static final class PIDXY {
-        public static final double kP = 0;
+        public static final double kP = 0.1;
         public static final double kI = 0;
         public static final double kD = 0;
       }
 
       public static final class PIDR {
-        public static final double kP = 0;
+        public static final double kP = 0.1;
         public static final double kI = 0;
         public static final double kD = 0;
       }
@@ -309,6 +310,7 @@ public class Constants {
     public static final double lowScoringPosition = 10; // ideally 6.8, but would need more kP to clear hopper
     public static final double midScoringPosition = 72;
     public static final double highScoringPosition = 65.5;
+    public static final double nearTargetPosition = 4;
     
     public static final double homingPower = -0.3;
     public static final double homingNotMovingSec = 0.1;

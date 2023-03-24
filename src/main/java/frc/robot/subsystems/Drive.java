@@ -340,12 +340,12 @@ public class Drive extends SubsystemBase {
 
       if (Math.abs(headingChangeDeg) <= toleranceDeg) {
         rotPIDSpeed = 0;  // don't wiggle
-      } else if (Math.abs(rotPIDSpeed) < DriveConstants.Auto.minAutoRotateSpeed) {
-        rotPIDSpeed = Math.copySign(DriveConstants.Auto.minAutoRotateSpeed, rotPIDSpeed);
-      } else if (rotPIDSpeed > DriveConstants.Auto.maxAutoRotateSpeed) {
-        rotPIDSpeed = DriveConstants.Auto.maxAutoRotateSpeed;
-      } else if (rotPIDSpeed < -DriveConstants.Auto.maxAutoRotateSpeed) {
-        rotPIDSpeed = -DriveConstants.Auto.maxAutoRotateSpeed;
+      } else if (Math.abs(rotPIDSpeed) < DriveConstants.Auto.minAutoRotatePower) {
+        rotPIDSpeed = Math.copySign(DriveConstants.Auto.minAutoRotatePower, rotPIDSpeed);
+      } else if (rotPIDSpeed > DriveConstants.Auto.maxAutoRotatePower) {
+        rotPIDSpeed = DriveConstants.Auto.maxAutoRotatePower;
+      } else if (rotPIDSpeed < -DriveConstants.Auto.maxAutoRotatePower) {
+        rotPIDSpeed = -DriveConstants.Auto.maxAutoRotatePower;
       }
 
       drive(driveX, driveY, rotPIDSpeed);
