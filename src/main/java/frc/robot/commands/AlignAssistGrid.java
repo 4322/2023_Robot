@@ -22,6 +22,8 @@ public class AlignAssistGrid extends CommandBase {
   public AlignAssistGrid(LED ledSubsystem, Limelight gridLimelight) {
     LED = ledSubsystem;
     limelight = gridLimelight;
+
+    addRequirements(limelight);
   }
 
   @Override

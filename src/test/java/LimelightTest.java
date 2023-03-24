@@ -53,7 +53,7 @@ public class LimelightTest {
 
   @Test
   public void testCalcTargetPos_RealAnswer() {
-    Translation2d expectedAnswer = new Translation2d(2.322815251, 6.381882452);
+    Translation2d expectedAnswer = new Translation2d(2.322815251, 0.8454356111);
     Translation2d calcAnswer = testLime.calcTargetPos(OrangeMath.inchesToMeters(10), -10, 20);
     assertTrue(OrangeMath.equalToTwoDecimal(expectedAnswer.getX(), calcAnswer.getX()));
     assertTrue(OrangeMath.equalToTwoDecimal(expectedAnswer.getY(), calcAnswer.getY()));
@@ -61,7 +61,7 @@ public class LimelightTest {
 
   @Test
   public void testCalcTargetPos_RealAnswerNegative() {
-    Translation2d expectedAnswer = new Translation2d(2.322815251, -6.381882452);
+    Translation2d expectedAnswer = new Translation2d(2.322815251, -0.8454356111);
     Translation2d calcAnswer = testLime.calcTargetPos(OrangeMath.inchesToMeters(10), -10, -20);
     assertTrue(OrangeMath.equalToTwoDecimal(expectedAnswer.getX(), calcAnswer.getX()));
     assertTrue(OrangeMath.equalToTwoDecimal(expectedAnswer.getY(), calcAnswer.getY()));
@@ -69,7 +69,7 @@ public class LimelightTest {
 
   @Test
   public void testCalcTargetPos_Invalid() {
-    Translation2d expectedAnswer = new Translation2d(0, 6.381882452);
+    Translation2d expectedAnswer = new Translation2d(0, 0.8454356111);
     Translation2d calcAnswer = testLime.calcTargetPos(OrangeMath.inchesToMeters(10), 10, -20);
     assertTrue(OrangeMath.equalToTwoDecimal(expectedAnswer.getX(), calcAnswer.getX()));
     assertTrue(OrangeMath.equalToTwoDecimal(expectedAnswer.getY(), calcAnswer.getY()));
@@ -78,7 +78,7 @@ public class LimelightTest {
   @Test
   public void testCalcTargetPosWithHeight_RealAnswer() {
     testLime = new Limelight("Test Limelight", 0, 0.5, 0, 0, 0, false, true);
-    Translation2d expectedAnswer = new Translation2d(1.395135328, 3.83310281);
+    Translation2d expectedAnswer = new Translation2d(1.395135328, 0.5077877322);
     Translation2d calcAnswer = testLime.calcTargetPos(OrangeMath.inchesToMeters(10), -10, 20);
     assertTrue(OrangeMath.equalToTwoDecimal(expectedAnswer.getX(), calcAnswer.getX()));
     assertTrue(OrangeMath.equalToTwoDecimal(expectedAnswer.getY(), calcAnswer.getY()));
@@ -87,7 +87,7 @@ public class LimelightTest {
   @Test
   public void testCalcTargetPosWithAngle_RealAnswer() {
     testLime = new Limelight("Test Limelight", 0, OrangeMath.inchesToMeters(26.125), 20, 0, 0, false, true);
-    Translation2d expectedAnswer = new Translation2d(2.322815251, 6.381882452);
+    Translation2d expectedAnswer = new Translation2d(2.322815251, 0.8454356111);
     Translation2d calcAnswer = testLime.calcTargetPos(OrangeMath.inchesToMeters(10), -30, 20);
     assertTrue(OrangeMath.equalToTwoDecimal(expectedAnswer.getX(), calcAnswer.getX()));
     assertTrue(OrangeMath.equalToTwoDecimal(expectedAnswer.getY(), calcAnswer.getY()));
@@ -96,7 +96,7 @@ public class LimelightTest {
   @Test
   public void testCalcTargetPosWithOffset_RealAnswer() {
     testLime = new Limelight("Test Limelight", 0, OrangeMath.inchesToMeters(26.125), 0, -1, -1, false, true);
-    Translation2d expectedAnswer = new Translation2d(1.322815251, 5.381882452);
+    Translation2d expectedAnswer = new Translation2d(1.322815251, 0.8454356111 - 1);
     Translation2d calcAnswer = testLime.calcTargetPos(OrangeMath.inchesToMeters(10), -10, 20);
     assertTrue(OrangeMath.equalToTwoDecimal(expectedAnswer.getX(), calcAnswer.getX()));
     assertTrue(OrangeMath.equalToTwoDecimal(expectedAnswer.getY(), calcAnswer.getY()));
@@ -105,7 +105,7 @@ public class LimelightTest {
   @Test
   public void testCalcTargetPosFacingBackward_RealAnswer() {
     testLime = new Limelight("Test Limelight", 0, OrangeMath.inchesToMeters(26.125), 0, 0, 0, true, true);
-    Translation2d expectedAnswer = new Translation2d(-2.322815251, -6.381882452);
+    Translation2d expectedAnswer = new Translation2d(-2.322815251, -0.8454356111);
     Translation2d calcAnswer = testLime.calcTargetPos(OrangeMath.inchesToMeters(10), -10, 20);
     assertTrue(OrangeMath.equalToTwoDecimal(expectedAnswer.getX(), calcAnswer.getX()));
     assertTrue(OrangeMath.equalToTwoDecimal(expectedAnswer.getY(), calcAnswer.getY()));
@@ -114,7 +114,7 @@ public class LimelightTest {
   @Test
   public void testCalcTargetPosFacingBackwardWithOffset_RealAnswer() {
     testLime = new Limelight("Test Limelight", 0, OrangeMath.inchesToMeters(26.125), 0, -1, 0, true, true);
-    Translation2d expectedAnswer = new Translation2d(-1.322815251, -6.381882452);
+    Translation2d expectedAnswer = new Translation2d(-1.322815251, -0.8454356111);
     Translation2d calcAnswer = testLime.calcTargetPos(OrangeMath.inchesToMeters(10), -10, 20);
     assertTrue(OrangeMath.equalToTwoDecimal(expectedAnswer.getX(), calcAnswer.getX()));
     assertTrue(OrangeMath.equalToTwoDecimal(expectedAnswer.getY(), calcAnswer.getY()));

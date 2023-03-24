@@ -23,6 +23,8 @@ public class AlignAssistSubstation extends CommandBase {
   public AlignAssistSubstation(LED ledSubsystem, Limelight substationLimelight) {
     LED = ledSubsystem;
     limelight = substationLimelight;
+
+    addRequirements(limelight);
   }
 
   @Override

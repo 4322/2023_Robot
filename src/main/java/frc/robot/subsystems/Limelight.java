@@ -174,7 +174,7 @@ public class Limelight extends SubsystemBase {
   // https://docs.limelightvision.io/en/latest/cs_estimating_distance.html
   public Translation2d calcTargetPos(double targetHeight, double yDeg, double xDeg) {
     double distanceX = (targetHeight - limeHeight) / Math.tan(Math.toRadians(yDeg + limeAngle));
-    double distanceY = distanceX / Math.tan(Math.toRadians(xDeg));
+    double distanceY = distanceX * Math.tan(Math.toRadians(xDeg));
     Translation2d toReturn = new Translation2d(distanceX, distanceY).plus(offset);
     if (toReturn.getX() < 0) {
       DataLogManager
