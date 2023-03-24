@@ -228,4 +228,8 @@ public class Limelight extends SubsystemBase {
       pipeline.setNumber(pipelineIdx);
     }
   }
+
+  public String getAllianceColor() {
+    return name;
+  }
 }

@@ -5,10 +5,12 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -31,6 +33,8 @@ public class Robot extends TimedRobot {
   private GenericEntry rightArmCurrent;
   private GenericEntry clawCurrent;
   private GenericEntry telescopeCurrent;
+
+  private static Alliance allianceColor = Alliance.Invalid;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -59,6 +63,8 @@ public class Robot extends TimedRobot {
     rightArmCurrent = PDHTab.add("Right Arm Current", 0).getEntry();
     clawCurrent = PDHTab.add("Claw Current", 0).getEntry();
     telescopeCurrent = PDHTab.add("Telescope Current", 0).getEntry();
+
+    addPeriodic(() -> updateAllianceColor(), 1);
 
     m_robotContainer = new RobotContainer();
   }
@@ -171,4 +177,17 @@ public class Robot extends TimedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {}
+
+  private void updateAllianceColor() {
+    Alliance temp = DriverStation.getAlliance();
+    if ((temp == Alliance.Red || temp == Alliance.Blue)) {
+      allianceColor = temp;
+    } else {
+      DataLogManager.log("Tried to get alliance color, but was invalid");
+    }
+  }
+
+  public static Alliance getAllianceColor() {
+    return allianceColor;
+  }
 }

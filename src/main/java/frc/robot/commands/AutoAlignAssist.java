@@ -6,7 +6,7 @@ import frc.robot.Constants.LimelightConstants;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Limelight;
 
-public class AlignAssist extends CommandBase {
+public class AutoAlignAssist extends CommandBase {
   private LED LED;
   private Limelight limelight;
   private Translation2d targetPos;
@@ -18,7 +18,7 @@ public class AlignAssist extends CommandBase {
 
   private TargetState targetStatus;
 
-  public AlignAssist(LED ledSubsystem, Limelight gridLimelight) {
+  public AutoAlignAssist(LED ledSubsystem, Limelight gridLimelight) {
     LED = ledSubsystem;
     limelight = gridLimelight;
   }

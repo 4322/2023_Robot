@@ -125,8 +125,8 @@ public class RobotContainer {
     }
 
     if (Constants.limeLightsEnabled) {
-      gridLimelight.setDefaultCommand(new AlignAssist(LED, gridLimelight));
-      substationLimelight.setDefaultCommand(new AlignAssist(LED, substationLimelight));
+      gridLimelight.setDefaultCommand(new AlignAssistGrid(LED, gridLimelight));
+      substationLimelight.setDefaultCommand(new AlignAssistSubstation(LED, substationLimelight));
     }
 
     ppManager = new PathPlannerManager(drive);
