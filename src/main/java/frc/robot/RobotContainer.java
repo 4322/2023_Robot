@@ -161,6 +161,14 @@ public class RobotContainer {
           new AutoDriveRotateWheels(drive, 0.25)
       )
     );
+
+    autoChooser.addOption("Engage + Mobility (8)",
+      new SequentialCommandGroup(
+          ppManager.loadAuto("ScoreMobilityCharge8", false),
+          new AutoBalance(drive, false),
+          new AutoDriveRotateWheels(drive, 0.25)
+      )
+    );
   }
 
   /**
