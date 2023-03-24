@@ -410,7 +410,7 @@ public class Constants {
     public static final double assistedAlignStartDistanceMeters = 3;
 
     // Tolerance for horizontal alignment
-    public static final double horizontalAlignToleranceMeters = OrangeMath.inchesToMeters(12);
+    public static final double horizontalAlignToleranceMeters = OrangeMath.inchesToMeters(3);
 
     // List of tape pipelines (should only be 1 for now)
     public static final List<Integer> tapePipelines = List.of(0);
