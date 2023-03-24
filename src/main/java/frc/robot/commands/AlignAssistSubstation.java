@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
@@ -65,10 +66,13 @@ public class AlignAssistSubstation extends CommandBase {
               case Blue:
                 if (Math.abs(horizontalOffset) < LimelightConstants.horizontalAlignToleranceMeters) {
                   LED.green();
+                  DriverStation.reportWarning("seeing target", null);
                 } else if (horizontalOffset > LimelightConstants.horizontalAlignToleranceMeters) {
                   LED.blue();
+                  DriverStation.reportWarning("seeing target", null);
                 } else {
                   LED.red();
+                  DriverStation.reportWarning("seeing target", null);
                 }
                 break;
               case Invalid:
