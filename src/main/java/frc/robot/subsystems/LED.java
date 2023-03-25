@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.awt.Color;
+
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
@@ -103,6 +105,10 @@ public class LED extends SubsystemBase {
     selectLED();
   }
 
+  public void setAlignment(alignment alignment) {
+    alignmentState = alignment;
+  }
+
   private void selectLED() {
     if (intakeStalled && (alignmentState == alignment.grid) && (lastLoadState == loadState.cone)) {
       switch (lastGridState) {
@@ -133,9 +139,10 @@ public class LED extends SubsystemBase {
       }
     } else if (!intakeStalled && (alignmentState == alignment.substation)) {
       if (Robot.getAllianceColor() == Alliance.Blue) {
-
+        setGamePieceColor(rightLED);
         switch (lastSubstationState) {
           case off:
+            setGamePieceColor(leftLED);
             break;
           case moveRight:
             leftLED.setLED(LEDColor.blue, blinkType.none);
@@ -154,9 +161,53 @@ public class LED extends SubsystemBase {
             break;
         }
       }
+      if (Robot.getAllianceColor() == Alliance.Red) {
+        setGamePieceColor(leftLED);
+        switch (lastSubstationState) {
+          case off:
+            setGamePieceColor(rightLED);
+            break;
+          case moveRight:
+            rightLED.setLED(LEDColor.blue, blinkType.none);
+            break;
+          case moveRightShort:
+            rightLED.setLED(LEDColor.blue, blinkType.fast);
+            break;
+          case moveLeft:
+            rightLED.setLED(LEDColor.red, blinkType.none);
+            break;
+          case moveLeftShort:
+            rightLED.setLED(LEDColor.red, blinkType.fast);
+            break;
+          case aligned:
+            rightLED.setLED(LEDColor.green, blinkType.none);
+            break;
+        }
+      } else {
+        // unknown alliance
+        setGamePieceColor(leftLED);
+        setGamePieceColor(rightLED);
+      }
+    } else if (!intakeStalled) {
+      setGamePieceColor(leftLED);
+      setGamePieceColor(rightLED);
     } else {
       leftLED.setLED(LEDColor.none, blinkType.none);
       rightLED.setLED(LEDColor.none, blinkType.none);
+    }
+  }
+
+  private void setGamePieceColor(LEDStrip led) {
+    switch (lastLoadState) {
+      case cone:
+        led.setLED(LEDColor.yellow, blinkType.none);
+        break;
+      case cube:
+        led.setLED(LEDColor.purple, blinkType.none);
+        break;
+      case none:
+        led.setLED(LEDColor.none, blinkType.none);
+        break;  
     }
   }
 
@@ -178,6 +229,7 @@ public class LED extends SubsystemBase {
     }
 
     private void setLED(LEDColor color, blinkType blink) {
+      if ()
       lastLEDColor = color;
       lastBlinkType = blink;
       blinkOn = true;
