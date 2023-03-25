@@ -63,7 +63,7 @@ public class RobotContainer {
   // Measuring from front of bumpers
   private final Limelight substationLimelight =
       new Limelight("limelight-load", 2, OrangeMath.inchesToMeters(42.5 + 3.875), // TODO: tune/measure these
-        0, OrangeMath.inchesToMeters(29.75), OrangeMath.inchesToMeters(3 + 1/4 + 3.875/2), false, false);
+        0, OrangeMath.inchesToMeters(29.75), OrangeMath.inchesToMeters(-3 - 1/4 - 3.875/2), false, false);
 
   private final PathPlannerManager ppManager;
 

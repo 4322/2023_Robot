@@ -407,7 +407,7 @@ public class Constants {
     public static final double aprilTagHorizontalTolerance = .5;
 
     // Distance to start assisted alignment
-    public static final double assistedAlignStartDistanceMeters = 3;
+    public static final double assistedAlignStartDistanceMeters = 0.5;
 
     // Tolerance for horizontal alignment
     public static final double horizontalAlignToleranceMeters = OrangeMath.inchesToMeters(3);
