@@ -99,7 +99,7 @@ public class RobotContainer {
     tab.add("Auto Mode", autoChooser)
       .withWidget(BuiltInWidgets.kSplitButtonChooser)
       .withPosition(0, 0)
-      .withSize(6, 2);
+      .withSize(9, 2);
 
     if (Constants.driveEnabled) {
       drive.setDefaultCommand(driveManualDefault);
