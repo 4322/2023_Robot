@@ -370,18 +370,19 @@ public class Constants {
     }
   }
 
-  public static final class LEDConstants
+  public static final class LED
   {
-    public static final int pcmID=30;
-    public static final int rPort1=2;
-    public static final int gPort1=1;
-    public static final int bPort1=3;
-    public static final int rPort2=6;
-    public static final int gPort2=5;
-    public static final int bPort2=7;
-    public static final int pPort1=0;
-    public static final int pPort2=4;
-    
+    public static final int pcmID = 30;
+    public static final int rPortLeft = 2;
+    public static final int gPortLeft = 1;
+    public static final int bPortLeft = 3;
+    public static final int rPortRight = 6;
+    public static final int gPortRight = 5;
+    public static final int bPortRight = 7;
+    public static final int pPortLeft = 0;
+    public static final int pPortRight = 4;
+
+    public static final double blinkFastSec = 0.2;
   }
 
   public static final class LimelightConstants {
