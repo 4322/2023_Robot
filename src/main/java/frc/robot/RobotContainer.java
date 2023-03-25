@@ -128,6 +128,14 @@ public class RobotContainer {
 
     autoChooser.addOption("Mobility (2)",
         ppManager.loadAuto("ScoreMobilityOnly2", false));
+
+    autoChooser.addOption("Engage + Mobility (2)",
+        new SequentialCommandGroup(
+            ppManager.loadAuto("ScoreMobilityCharge2", false),
+            new AutoBalance(drive, false),
+            new AutoDriveRotateWheels(drive, 0.25)
+        )
+      );
     
     autoChooser.addOption("Engage (4, 5, 6)", 
       new SequentialCommandGroup(
