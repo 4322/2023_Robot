@@ -8,8 +8,8 @@ import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Limelight;
 
 public class AlignAssistGrid extends CommandBase {
-  private LED LED;
   private Limelight limelight;
+  private final LED led = LED.getInstance();
   private Translation2d targetPos;
   private double horizontalOffset;
 
@@ -19,8 +19,7 @@ public class AlignAssistGrid extends CommandBase {
 
   private TargetState targetStatus;
 
-  public AlignAssistGrid(LED ledSubsystem, Limelight gridLimelight) {
-    LED = ledSubsystem;
+  public AlignAssistGrid(Limelight gridLimelight) {
     limelight = gridLimelight;
 
     addRequirements(limelight);
@@ -52,18 +51,18 @@ public class AlignAssistGrid extends CommandBase {
           horizontalOffset = targetPos.getY();
           if (Math.abs(targetPos.getX()) < LimelightConstants.assistedAlignStartDistanceMeters) {
             if (Math.abs(horizontalOffset) < LimelightConstants.horizontalAlignToleranceMeters) {
-              LED.green();
+              led.setGridState(LED.GridState.aligned);
             } else if (horizontalOffset > LimelightConstants.horizontalAlignToleranceMeters) {
-              LED.red();
+              led.setGridState(LED.GridState.moveLeft);
             } else {
-              LED.blue();
+              led.setGridState(LED.GridState.moveRight);
             }
           } else {
-            LED.none();
+            led.setGridState(LED.GridState.off);
             targetStatus = TargetState.searching;
           }
         } else {
-          LED.none();
+          led.setGridState(LED.GridState.off);
           targetStatus = TargetState.searching;
         }
     }

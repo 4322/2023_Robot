@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import java.awt.Color;
-
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
@@ -17,7 +15,7 @@ public class LED extends SubsystemBase {
 
   // right/left enum directions are relative to the limelight view
 
-  public enum substationState {
+  public enum SubstationState {
     off,  // revert to cone/cube color
     moveRight,  // solid red (toward drivers) or blue (away from drivers)
     moveRightShort,  // blinking red or blue
@@ -26,7 +24,7 @@ public class LED extends SubsystemBase {
     aligned  // green
   }
 
-  public enum gridState {
+  public enum GridState {
     off,
     moveRight,  // solid blue (move to drivers left)
     moveRightShort,  // blinking blue
@@ -35,13 +33,13 @@ public class LED extends SubsystemBase {
     aligned  // green
   }
 
-  public enum loadState {
+  public enum GamePiece {
     none,
     cone,
     cube
   }
 
-  public enum alignment {
+  public enum Alignment {
     none,
     substation,
     grid
@@ -51,7 +49,7 @@ public class LED extends SubsystemBase {
     yellow, purple, blue, red, green, none
   }
 
-  private enum blinkType {
+  private enum BlinkType {
     none, fast
   }
 
@@ -59,14 +57,15 @@ public class LED extends SubsystemBase {
   LEDStrip rightLED;
   Solenoid power1;
   Solenoid power2;
-  private substationState lastSubstationState;
-  private gridState lastGridState;
+  private SubstationState lastSubstationState;
+  private GridState lastGridState;
   private boolean intakeStalled;
-  private loadState lastLoadState;
-  private alignment alignmentState;
+  private GamePiece lastGamePiece;
+  private Alignment currentAlignment;
+  private static LED ledSubsystem;
 
   // LED strip sides are robot relative
-  public LED() {
+  private LED() {
     if (Constants.ledEnabled) {
       power1 = new Solenoid(Constants.LED.pcmID, PneumaticsModuleType.REVPH, Constants.LED.pPortLeft);
       power1.set(true);
@@ -79,65 +78,85 @@ public class LED extends SubsystemBase {
     }
   }
 
+  public static LED getInstance() {
+    if (ledSubsystem == null) {
+      ledSubsystem = new LED();
+    }
+    return ledSubsystem;
+  }
+
   @Override
   public void periodic() {
     leftLED.periodic();
     rightLED.periodic();
   }
 
-  public void setSubstationState(substationState state) {
-    lastSubstationState = state;
-    selectLED();
+  public void setSubstationState(SubstationState state) {
+    if (lastSubstationState != state) {
+      lastSubstationState = state;
+      selectLED();
+    }
   }
 
-  public void setGridState(gridState state) {
-    lastGridState = state;
-    selectLED();
+  public void setGridState(GridState state) {
+    if (lastGridState != state) {
+      lastGridState = state;
+      selectLED();
+    }
   }
 
   public void setIntakeStalled(boolean stalled) {
-    intakeStalled = stalled;
-    selectLED();
+    if (intakeStalled != stalled) {
+      intakeStalled = stalled;
+      selectLED();
+    }
   }
 
-  public void setLoadState(loadState state) {
-    lastLoadState = state;
-    selectLED();
+  public void setGamePiece(GamePiece gamePiece) {
+    if (lastGamePiece != gamePiece) {
+      lastGamePiece = gamePiece;
+      selectLED();
+    }
   }
 
-  public void setAlignment(alignment alignment) {
-    alignmentState = alignment;
+  public void setAlignment(Alignment alignment) {
+    if (currentAlignment != alignment) {
+      currentAlignment = alignment;
+      selectLED();
+    }
   }
 
   private void selectLED() {
-    if (intakeStalled && (alignmentState == alignment.grid) && (lastLoadState == loadState.cone)) {
+    if (intakeStalled && (currentAlignment == Alignment.grid) && (lastGamePiece == GamePiece.cone)) {
+      // TODO: Turn on grid LEDs
       switch (lastGridState) {
         case off:
-          leftLED.setLED(LEDColor.none, blinkType.none);
-          rightLED.setLED(LEDColor.none, blinkType.none);
+          leftLED.setLED(LEDColor.none, BlinkType.none);
+          rightLED.setLED(LEDColor.none, BlinkType.none);
           break;
         case moveRight:
-          leftLED.setLED(LEDColor.blue, blinkType.none);
-          rightLED.setLED(LEDColor.blue, blinkType.none);
+          leftLED.setLED(LEDColor.blue, BlinkType.none);
+          rightLED.setLED(LEDColor.blue, BlinkType.none);
           break;
         case moveRightShort:
-          leftLED.setLED(LEDColor.blue, blinkType.fast);
-          rightLED.setLED(LEDColor.blue, blinkType.fast);
+          leftLED.setLED(LEDColor.blue, BlinkType.fast);
+          rightLED.setLED(LEDColor.blue, BlinkType.fast);
           break;
         case moveLeft:
-          leftLED.setLED(LEDColor.red, blinkType.none);
-          rightLED.setLED(LEDColor.red, blinkType.none);
+          leftLED.setLED(LEDColor.red, BlinkType.none);
+          rightLED.setLED(LEDColor.red, BlinkType.none);
           break;
         case moveLeftShort:
-          leftLED.setLED(LEDColor.red, blinkType.fast);
-          rightLED.setLED(LEDColor.red, blinkType.fast);
+          leftLED.setLED(LEDColor.red, BlinkType.fast);
+          rightLED.setLED(LEDColor.red, BlinkType.fast);
           break;
         case aligned:
-          leftLED.setLED(LEDColor.green, blinkType.none);
-          rightLED.setLED(LEDColor.green, blinkType.none);
+          leftLED.setLED(LEDColor.green, BlinkType.none);
+          rightLED.setLED(LEDColor.green, BlinkType.none);
           break;
       }
-    } else if (!intakeStalled && (alignmentState == alignment.substation)) {
+    } else if (!intakeStalled && (currentAlignment == Alignment.substation)) {
+      // TODO: Deactivate grid LEDs
       if (Robot.getAllianceColor() == Alliance.Blue) {
         setGamePieceColor(rightLED);
         switch (lastSubstationState) {
@@ -145,42 +164,41 @@ public class LED extends SubsystemBase {
             setGamePieceColor(leftLED);
             break;
           case moveRight:
-            leftLED.setLED(LEDColor.blue, blinkType.none);
+            leftLED.setLED(LEDColor.blue, BlinkType.none);
             break;
           case moveRightShort:
-            leftLED.setLED(LEDColor.blue, blinkType.fast);
+            leftLED.setLED(LEDColor.blue, BlinkType.fast);
             break;
           case moveLeft:
-            leftLED.setLED(LEDColor.red, blinkType.none);
+            leftLED.setLED(LEDColor.red, BlinkType.none);
             break;
           case moveLeftShort:
-            leftLED.setLED(LEDColor.red, blinkType.fast);
+            leftLED.setLED(LEDColor.red, BlinkType.fast);
             break;
           case aligned:
-            leftLED.setLED(LEDColor.green, blinkType.none);
+            leftLED.setLED(LEDColor.green, BlinkType.none);
             break;
         }
-      }
-      if (Robot.getAllianceColor() == Alliance.Red) {
+      } else if (Robot.getAllianceColor() == Alliance.Red) {
         setGamePieceColor(leftLED);
         switch (lastSubstationState) {
           case off:
             setGamePieceColor(rightLED);
             break;
           case moveRight:
-            rightLED.setLED(LEDColor.blue, blinkType.none);
+            rightLED.setLED(LEDColor.blue, BlinkType.none);
             break;
           case moveRightShort:
-            rightLED.setLED(LEDColor.blue, blinkType.fast);
+            rightLED.setLED(LEDColor.blue, BlinkType.fast);
             break;
           case moveLeft:
-            rightLED.setLED(LEDColor.red, blinkType.none);
+            rightLED.setLED(LEDColor.red, BlinkType.none);
             break;
           case moveLeftShort:
-            rightLED.setLED(LEDColor.red, blinkType.fast);
+            rightLED.setLED(LEDColor.red, BlinkType.fast);
             break;
           case aligned:
-            rightLED.setLED(LEDColor.green, blinkType.none);
+            rightLED.setLED(LEDColor.green, BlinkType.none);
             break;
         }
       } else {
@@ -189,24 +207,26 @@ public class LED extends SubsystemBase {
         setGamePieceColor(rightLED);
       }
     } else if (!intakeStalled) {
+      // TODO: Deactivate grid LEDs
       setGamePieceColor(leftLED);
       setGamePieceColor(rightLED);
     } else {
-      leftLED.setLED(LEDColor.none, blinkType.none);
-      rightLED.setLED(LEDColor.none, blinkType.none);
+      // TODO: Deactivate grid LEDs
+      leftLED.setLED(LEDColor.none, BlinkType.none);
+      rightLED.setLED(LEDColor.none, BlinkType.none);
     }
   }
 
   private void setGamePieceColor(LEDStrip led) {
-    switch (lastLoadState) {
+    switch (lastGamePiece) {
       case cone:
-        led.setLED(LEDColor.yellow, blinkType.none);
+        led.setLED(LEDColor.yellow, BlinkType.none);
         break;
       case cube:
-        led.setLED(LEDColor.purple, blinkType.none);
+        led.setLED(LEDColor.purple, BlinkType.none);
         break;
       case none:
-        led.setLED(LEDColor.none, blinkType.none);
+        led.setLED(LEDColor.none, BlinkType.none);
         break;  
     }
   }
@@ -217,7 +237,7 @@ public class LED extends SubsystemBase {
     private Solenoid bluePort;
 
     private LEDColor lastLEDColor;
-    private blinkType lastBlinkType;
+    private BlinkType lastBlinkType;
     private boolean blinkOn;
     private Timer blinkTimer = new Timer();
 
@@ -225,20 +245,21 @@ public class LED extends SubsystemBase {
       redPort = new Solenoid(pcmID, PneumaticsModuleType.REVPH, rPort);
       greenPort = new Solenoid(pcmID, PneumaticsModuleType.REVPH, gPort);
       bluePort = new Solenoid(pcmID, PneumaticsModuleType.REVPH, bPort);
-      setLED(LEDColor.none, blinkType.none);
+      setLED(LEDColor.none, BlinkType.none);
     }
 
-    private void setLED(LEDColor color, blinkType blink) {
-      if ()
-      lastLEDColor = color;
-      lastBlinkType = blink;
-      blinkOn = true;
-      activateLED();
-      blinkTimer.restart();
+    private void setLED(LEDColor color, BlinkType blink) {
+      if ((color != lastLEDColor) || (blink != lastBlinkType)) {
+        lastLEDColor = color;
+        lastBlinkType = blink;
+        blinkOn = true;
+        activateLED();
+        blinkTimer.restart();
+      }
     }
 
     private void periodic() {
-      if ((lastBlinkType == blinkType.fast) && blinkTimer.hasElapsed(Constants.LED.blinkFastSec)) {
+      if ((lastBlinkType == BlinkType.fast) && blinkTimer.hasElapsed(Constants.LED.blinkFastSec)) {
         if (blinkOn) {
           deactivateLED();
           blinkOn = false;

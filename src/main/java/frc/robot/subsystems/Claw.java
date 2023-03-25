@@ -156,6 +156,8 @@ public class Claw extends SubsystemBase {
         } else {
           stop();
         }
+
+        LED.getInstance().setIntakeStalled(stalledIn);
       }
     }
   }

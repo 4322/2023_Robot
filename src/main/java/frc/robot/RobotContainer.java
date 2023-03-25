@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
-import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Telescope;
 import frc.utility.OrangeMath;
@@ -51,7 +50,6 @@ public class RobotContainer {
   private final Telescope telescope = new Telescope();
   private final Claw claw = new Claw();
   private final Drive drive = new Drive();
-  private final LED LED = new LED();
 
   // Note: limelight names must match limelight tool
 
@@ -76,16 +74,16 @@ public class RobotContainer {
   private final ClawOuttake clawOuttake = new ClawOuttake(claw);
 
   // Drive Commands
-  private final DriveManual driveManualDefault = new DriveManual(drive, null);
-  private final DriveManual driveManualForward = new DriveManual(drive, 0.0);
-  private final DriveManual driveManualBackward = new DriveManual(drive, 180.0);
-  private final DriveManual driveManualLeft = new DriveManual(drive, 90.0);
-  private final DriveManual driveManualRight = new DriveManual(drive, -90.0);
+  private final DriveManual driveManualDefault = new DriveManual(drive, DriveManual.AutoPose.none);
+  private final DriveManual driveManualForward = new DriveManual(drive, DriveManual.AutoPose.forward);
+  private final DriveManual driveManualBackward = new DriveManual(drive, DriveManual.AutoPose.back);
+  private final DriveManual driveManualLeft = new DriveManual(drive, DriveManual.AutoPose.left);
+  private final DriveManual driveManualRight = new DriveManual(drive, DriveManual.AutoPose.right);
   private final DriveStop driveStop = new DriveStop(drive);
 
   //LED Commands
-  private final ChangeYellow changeYellow = new ChangeYellow(LED, gridLimelight, 0);
-  private final ChangePurple changePurple = new ChangePurple(LED, gridLimelight, 1);
+  private final LoadCone loadCone = new LoadCone(gridLimelight, 0);
+  private final LoadCube loadCube = new LoadCube(gridLimelight, 1);
 
   // Auto Balance Commands
   private final SequentialCommandGroup autoBalanceForward = new SequentialCommandGroup(
@@ -125,8 +123,8 @@ public class RobotContainer {
     }
 
     if (Constants.limeLightsEnabled) {
-      gridLimelight.setDefaultCommand(new AlignAssistGrid(LED, gridLimelight));
-      substationLimelight.setDefaultCommand(new AlignAssistSubstation(LED, substationLimelight));
+      gridLimelight.setDefaultCommand(new AlignAssistGrid(gridLimelight));
+      substationLimelight.setDefaultCommand(new AlignAssistSubstation(substationLimelight));
     }
 
     ppManager = new PathPlannerManager(drive);
@@ -201,8 +199,8 @@ public class RobotContainer {
       rotateButtonFive = new JoystickButton(rotateStick, 5);
 
       driveTrigger.whileTrue(clawOuttake);
-      driveButtonThree.onTrue(changeYellow);
-      driveButtonFour.onTrue(changePurple);
+      driveButtonThree.onTrue(loadCone);
+      driveButtonFour.onTrue(loadCube);
       driveButtonFive.onTrue(clawIntake);
       driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
       driveButtonNine.onTrue(autoBalanceForward);

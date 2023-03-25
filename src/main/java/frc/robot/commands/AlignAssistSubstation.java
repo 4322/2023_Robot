@@ -9,8 +9,8 @@ import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Limelight;
 
 public class AlignAssistSubstation extends CommandBase {
-  private LED LED;
-  private Limelight limelight;
+  private final Limelight limelight;
+  private final LED led = LED.getInstance();
   private Translation2d targetPos;
   private double horizontalOffset;
 
@@ -20,8 +20,7 @@ public class AlignAssistSubstation extends CommandBase {
 
   private TargetState targetStatus;
 
-  public AlignAssistSubstation(LED ledSubsystem, Limelight substationLimelight) {
-    LED = ledSubsystem;
+  public AlignAssistSubstation(Limelight substationLimelight) {
     limelight = substationLimelight;
 
     addRequirements(limelight);
@@ -55,31 +54,31 @@ public class AlignAssistSubstation extends CommandBase {
             switch (Robot.getAllianceColor()) {
               case Red:
                 if (Math.abs(horizontalOffset) < LimelightConstants.horizontalAlignToleranceMeters) {
-                  LED.green();
+                  led.setSubstationState(LED.SubstationState.aligned);
                 } else if (horizontalOffset > LimelightConstants.horizontalAlignToleranceMeters) {
-                  LED.red();
+                  led.setSubstationState(LED.SubstationState.moveLeft);
                 } else {
-                  LED.blue();
+                  led.setSubstationState(LED.SubstationState.moveRight);
                 }
                 break;
               case Blue:
                 if (Math.abs(horizontalOffset) < LimelightConstants.horizontalAlignToleranceMeters) {
-                  LED.green();
+                  led.setSubstationState(LED.SubstationState.aligned);
                 } else if (horizontalOffset > LimelightConstants.horizontalAlignToleranceMeters) {
-                  LED.blue();
+                  led.setSubstationState(LED.SubstationState.moveLeft);
                 } else {
-                  LED.red();
+                  led.setSubstationState(LED.SubstationState.moveRight);
                 }
                 break;
               case Invalid:
                 break;
             }
           } else {
-            LED.none();
+            led.setSubstationState(LED.SubstationState.off);
             targetStatus = TargetState.searching;
           }
         } else {
-          LED.none();
+          led.setSubstationState(LED.SubstationState.off);
           targetStatus = TargetState.searching;
         }
     }

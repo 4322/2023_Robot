@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.LED;
 import frc.utility.OrangeMath;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
@@ -19,20 +20,42 @@ public class DriveManual extends CommandBase {
    */
 
   private final Drive drive;
-  private final Double targetHeadingDeg;
+  private final AutoPose autoPose;
+  private Double targetHeadingDeg;
   private boolean done;
   private Timer spinoutActivationTimer = new Timer();
   private Timer spinoutActivationTimer2 = new Timer();
   private LockedWheel lockedWheelState;
   private double initialSpinoutAngle = 0;
 
+  public enum AutoPose {
+    none, left, forward, right, back
+  }
+  
   public enum LockedWheel {
     none, center, frontLeft, backLeft, backRight, frontRight;
   }
 
-  public DriveManual(Drive drivesubsystem, Double targetHeadingDeg) {
+  public DriveManual(Drive drivesubsystem, AutoPose autoPose) {
     drive = drivesubsystem;
-    this.targetHeadingDeg = targetHeadingDeg;
+    this.autoPose = autoPose;
+
+    switch (autoPose) {
+      case none:
+      targetHeadingDeg = null;
+      case forward:
+        targetHeadingDeg = 0.0;
+        break;
+      case left:
+        targetHeadingDeg = 90.0;
+        break;
+      case back:
+        targetHeadingDeg = 180.0;
+        break;
+      case right:
+        targetHeadingDeg = -90.0;
+        break;
+    }
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drive);
@@ -48,6 +71,12 @@ public class DriveManual extends CommandBase {
     spinoutActivationTimer.reset();
     spinoutActivationTimer2.reset();
     done = false; // make command reusable
+
+    if (autoPose == AutoPose.forward) {
+      LED.getInstance().setAlignment(LED.Alignment.grid);
+    } else if ((autoPose == AutoPose.left) || (autoPose == AutoPose.right)) {
+      LED.getInstance().setAlignment(LED.Alignment.substation);
+    }
   }
 
   @Override

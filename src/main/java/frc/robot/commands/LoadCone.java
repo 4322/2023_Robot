@@ -4,20 +4,18 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Limelight;
 
-public class ChangePurple extends InstantCommand {
-  private LED LED;
+public class LoadCone extends InstantCommand {
   private Limelight limelight;
   private int pipeline;
 
-  public ChangePurple(LED ledSubsystem, Limelight gridLimelight, int limelightPipeline) {
-    LED = ledSubsystem;
+  public LoadCone(Limelight gridLimelight, int limelightPipeline) {
     limelight = gridLimelight;
     pipeline = limelightPipeline;
   }
 
   @Override
   public void initialize() {
-    LED.purple();
+    LED.getInstance().setGamePiece(LED.GamePiece.cone);
     limelight.switchPipeline(pipeline);
   }
 }
