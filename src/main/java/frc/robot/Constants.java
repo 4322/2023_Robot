@@ -397,7 +397,7 @@ public class Constants {
     // for height to center of tag
     public static final double gridAprilTagHeight = OrangeMath.inchesToMeters(18.25);
     public static final double doubleSubstationAprilTagHeight = OrangeMath.inchesToMeters(27.375);
-    public static final double singleSubstationAprilTagHeight = OrangeMath.inchesToMeters(49); // TODO: temp value
+    public static final double singleSubstationAprilTagHeight = OrangeMath.inchesToMeters(52.75); // TODO: temp value
 
     // Threshold for limelight tape target height
     // above = high tape, below = middle tape
