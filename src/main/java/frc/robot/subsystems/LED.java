@@ -92,6 +92,7 @@ public class LED extends SubsystemBase {
   }
 
   public void setSubstationState(SubstationState state) {
+    // only update LEDs upon a change to reduce CAN bus loading
     if (lastSubstationState != state) {
       lastSubstationState = state;
       selectLED();
@@ -99,26 +100,30 @@ public class LED extends SubsystemBase {
   }
 
   public void setGridState(GridState state) {
+    // only update LEDs upon a change to reduce CAN bus loading
     if (lastGridState != state) {
       lastGridState = state;
       selectLED();
     }
   }
 
-  public void setIntakeStalled(boolean stalled) {
-    if (intakeStalled != stalled) {
-      intakeStalled = stalled;
-      selectLED();
-    }
+  public void setIntakeStalled(boolean nowStalled) {
     // reset states after intake or scoring operation is complete
-    if (intakeStalled) {
+    if (nowStalled) {
       lastSubstationState = SubstationState.off;
     } else {
       lastGridState = GridState.off;
     }
-  }
+
+    // only update LEDs upon a change to reduce CAN bus loading
+    if (intakeStalled != nowStalled) {
+      intakeStalled = nowStalled;
+      selectLED();
+    }
+ }
 
   public void setGamePiece(GamePiece gamePiece) {
+    // only update LEDs upon a change to reduce CAN bus loading
     if (lastGamePiece != gamePiece) {
       lastGamePiece = gamePiece;
       selectLED();
@@ -126,6 +131,7 @@ public class LED extends SubsystemBase {
   }
 
   public void setAlignment(Alignment alignment) {
+    // only update LEDs upon a change to reduce CAN bus loading
     if (currentAlignment != alignment) {
       currentAlignment = alignment;
       selectLED();

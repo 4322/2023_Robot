@@ -56,12 +56,14 @@ public class RobotContainer {
   // Measuring from back of bumpers
   private final Limelight gridLimelight =
       new Limelight("limelight-grid", 0, OrangeMath.inchesToMeters(26),
-        0, OrangeMath.inchesToMeters(-5.25), 0, true, false);
-  
+        0, OrangeMath.inchesToMeters(-5.25), 0, true, 
+        false, Constants.gridLimeLightEnabled);
+
   // Measuring from front of bumpers
   private final Limelight substationLimelight =
       new Limelight("limelight-load", 2, OrangeMath.inchesToMeters(42.5 + 3.875),
-        0, OrangeMath.inchesToMeters(-29.75), OrangeMath.inchesToMeters(-3 - 1/4 - 3.875/2), false, false);
+        0, OrangeMath.inchesToMeters(-29.75), OrangeMath.inchesToMeters(-3 - 1/4 - 3.875/2), false, 
+        false, Constants.substationLimeLightEnabled);
 
   private final PathPlannerManager ppManager;
 
@@ -122,8 +124,11 @@ public class RobotContainer {
       arm.setDefaultCommand(new ArmMove(arm, telescope, ArmMove.position.load, false));
     }
 
-    if (Constants.limeLightsEnabled) {
+    if (Constants.gridLimeLightEnabled) {
       gridLimelight.setDefaultCommand(new AlignAssistGrid(gridLimelight));
+    }
+
+    if (Constants.substationLimeLightEnabled) {
       substationLimelight.setDefaultCommand(new AlignAssistSubstation(substationLimelight));
     }
 
