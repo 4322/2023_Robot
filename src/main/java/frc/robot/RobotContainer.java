@@ -146,15 +146,7 @@ public class RobotContainer {
             new AutoBalance(drive, false),
             new AutoDriveRotateWheels(drive, 0.25)
         )
-      );
-    
-    autoChooser.addOption("Engage Only (4, 5, 6)", 
-      new SequentialCommandGroup(
-        getScoreHigh(),
-        new AutoBalance(drive, true),
-        new AutoDriveRotateWheels(drive, 0.25)
-      )
-    ); 
+      ); 
 
     autoChooser.addOption("Engage (4, 5, 6)",
       new SequentialCommandGroup(
