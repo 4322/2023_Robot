@@ -57,11 +57,11 @@ public class LED extends SubsystemBase {
   LEDStrip rightLED;
   Solenoid power1;
   Solenoid power2;
-  private SubstationState lastSubstationState;
-  private GridState lastGridState;
+  private SubstationState lastSubstationState = SubstationState.off;
+  private GridState lastGridState = GridState.off;
   private boolean intakeStalled;
-  private GamePiece lastGamePiece;
-  private Alignment currentAlignment;
+  private GamePiece lastGamePiece = GamePiece.none;
+  private Alignment currentAlignment = Alignment.none;
   private static LED ledSubsystem;
 
   // LED strip sides are robot relative
