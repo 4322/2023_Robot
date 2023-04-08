@@ -296,12 +296,12 @@ public class Constants {
     public static final double maxPosition = 73;
     public static final double minPosition = 0;
 
-    public static final double loadPosition = 2; // TODO: proposed load position: 15
+    public static final double loadPosition = 2.5; // TODO: proposed load position: 15
     public static final double loadHighPosition = 10;
     public static final double earlyTelescopeExtendPosition = 40;
     public static final double safeTelescopeExtendPosition = 57.0;
     public static final double lowScoringPosition = 10; // ideally 6.8, but would need more kP to clear hopper
-    public static final double midScoringPosition = 70.5;
+    public static final double midScoringPosition = 70;
     public static final double highScoringPosition = 64;
     public static final double nearTargetPosition = 4;
     
