@@ -36,16 +36,12 @@ public class AlignAssistGrid extends CommandBase {
         led.setGridState(LED.GridState.aligned);
       } else if (Math.abs(targetPos.getX()) <= LimelightConstants.gridTargetCloseMeters) {
         if (horizontalOffset > 0) {
-          led.setGridState(LED.GridState.moveLeftShort);
-        } else {
-          led.setGridState(LED.GridState.moveRightShort);
-        }
-      } else {
-        if (horizontalOffset > 0) {
           led.setGridState(LED.GridState.moveLeft);
         } else {
           led.setGridState(LED.GridState.moveRight);
         }
+      } else {
+        led.setGridState(LED.GridState.off);
       }
     } else {
       led.setGridState(LED.GridState.off);

@@ -164,7 +164,8 @@ public class LED extends SubsystemBase {
       }
     } else if (!intakeStalled && (currentAlignment == Alignment.substation)) {
       Limelight.getGridInstance().activateAprilTag();  // stop the blinding light
-      if (Robot.getAllianceColor() == Alliance.Blue) {
+      boolean disableAprilTags = true;
+      if ((Robot.getAllianceColor() == Alliance.Blue) && !disableAprilTags) {
         setGamePieceColor(rightLED);
         switch (lastSubstationState) {
           case off:
@@ -186,7 +187,7 @@ public class LED extends SubsystemBase {
             leftLED.setLED(LEDColor.green, BlinkType.none);
             break;
         }
-      } else if (Robot.getAllianceColor() == Alliance.Red) {
+      } else if ((Robot.getAllianceColor() == Alliance.Red) && !disableAprilTags) {
         setGamePieceColor(leftLED);
         switch (lastSubstationState) {
           case off:

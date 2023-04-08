@@ -77,6 +77,8 @@ public class DriveManual extends CommandBase {
       LED.getInstance().setAlignment(LED.Alignment.grid);
     } else if ((autoPose == AutoPose.left) || (autoPose == AutoPose.right)) {
       LED.getInstance().setAlignment(LED.Alignment.substation);
+    } else {
+      LED.getInstance().setAlignment(LED.Alignment.none);
     }
   }
 

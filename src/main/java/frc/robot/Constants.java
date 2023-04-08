@@ -406,10 +406,10 @@ public class Constants {
     public static final double tapeTargetHeightThresholdDeg = 0;
 
     // Distance to start blinking
-    public static final double gridTargetCloseMeters = 1;
+    public static final double gridTargetCloseMeters = 0.25;
 
     // Tolerance for horizontal alignment
-    public static final double gridTargetToleranceMeters = OrangeMath.inchesToMeters(3);
+    public static final double gridTargetToleranceMeters = OrangeMath.inchesToMeters(1);  // TODO: Fix the math that is making this so small
 
     // Susbstation alignment values
     public static final double minLargeTargetArea = 1.8;  // small target is < 1.2 against substation
