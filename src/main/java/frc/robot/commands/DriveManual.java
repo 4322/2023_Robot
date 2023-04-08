@@ -42,7 +42,8 @@ public class DriveManual extends CommandBase {
 
     switch (autoPose) {
       case none:
-      targetHeadingDeg = null;
+        targetHeadingDeg = null;
+        break;
       case forward:
         targetHeadingDeg = 0.0;
         break;

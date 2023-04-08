@@ -283,6 +283,7 @@ public class LED extends SubsystemBase {
       switch (lastLEDColor) {
         case none:
           deactivateLED();
+          break;
         case yellow:
           redPort.set(true);
           bluePort.set(false);
