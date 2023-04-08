@@ -304,12 +304,12 @@ public class Constants {
     public static final double maxPosition = 73;
     public static final double minPosition = 0;
 
-    public static final double loadPosition = 2;
+    public static final double loadPosition = 2.5; // TODO: proposed load position: 15
     public static final double loadHighPosition = 10;
     public static final double earlyTelescopeExtendPosition = 40;
     public static final double safeTelescopeExtendPosition = 57.0;
     public static final double lowScoringPosition = 10; // ideally 6.8, but would need more kP to clear hopper
-    public static final double midScoringPosition = 70.5;
+    public static final double midScoringPosition = 70;
     public static final double highScoringPosition = 64;
     public static final double nearTargetPosition = 4;
     
@@ -341,7 +341,7 @@ public class Constants {
     public static final double maxPosition = 13.0;
     public static final double minPosition = 0;
 
-    public static final double loadPosition = 0;
+    public static final double loadPosition = 0; // TODO: proposed load position: 1.5
     public static final double earlyArmRetractPosition = 9;
     public static final double safeArmRetractPosition = 0.5;  // safe for overhead/hopper clearance
     public static final double lowScoringPosition = 0;

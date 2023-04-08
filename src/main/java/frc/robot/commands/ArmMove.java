@@ -1,6 +1,6 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
@@ -206,8 +206,8 @@ public class ArmMove extends CommandBase {
       done = true;
       if (autonomous) {
         return true;
-      } else if (Constants.debug && !timePrinted) {
-        DriverStation.reportWarning("Arm move time: " + timer.get(), false);
+      } else if (!timePrinted) {
+        DataLogManager.log("Arm move time: " + timer.get());
         timePrinted = true;
       }
     }

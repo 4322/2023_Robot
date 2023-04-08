@@ -1,5 +1,7 @@
 package frc.robot;
 
+import com.pathplanner.lib.PathConstraints;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
@@ -17,6 +19,7 @@ import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Telescope;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.*;
 
 public class RobotContainer {
@@ -147,15 +150,16 @@ public class RobotContainer {
             new AutoBalance(drive, false),
             new AutoDriveRotateWheels(drive, 0.25)
         )
-      );
-    
-    autoChooser.addOption("Engage Only (4, 5, 6)", 
+      ); 
+
+    autoChooser.addOption("Engage (4, 5, 6)",
       new SequentialCommandGroup(
-        getScoreHigh(),
-        new AutoBalance(drive, true),
-        new AutoDriveRotateWheels(drive, 0.25)
+          ppManager.loadAuto("DriveOverCharge", false, 
+            new PathConstraints(1.33, DriveConstants.Auto.autoMaxAccelerationMetersPerSec2)),
+          new AutoBalance(drive, false),
+          new AutoDriveRotateWheels(drive, 0.25)
       )
-    ); 
+    );
 
     autoChooser.addOption("Engage (8)",
       new SequentialCommandGroup(
