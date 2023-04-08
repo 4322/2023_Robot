@@ -79,8 +79,12 @@ class PathPlannerManager {
   }
 
   public Command loadAuto(String pathGroupName, boolean reversed) {
+    return loadAuto(pathGroupName, reversed, defaultConstraints);
+  }
+
+  public Command loadAuto(String pathGroupName, boolean reversed, PathConstraints constraints) {
     List<PathPlannerTrajectory> pathGroup =
-        PathPlanner.loadPathGroup(pathGroupName, reversed, defaultConstraints, defaultConstraints);
+        PathPlanner.loadPathGroup(pathGroupName, reversed, constraints, constraints);
 
     return builder.fullAuto(pathGroup);
   }
