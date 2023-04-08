@@ -110,6 +110,12 @@ public class LED extends SubsystemBase {
       intakeStalled = stalled;
       selectLED();
     }
+    // reset states after intake or scoring operation is complete
+    if (intakeStalled) {
+      lastSubstationState = SubstationState.off;
+    } else {
+      lastGridState = GridState.off;
+    }
   }
 
   public void setGamePiece(GamePiece gamePiece) {
@@ -128,7 +134,6 @@ public class LED extends SubsystemBase {
 
   private void selectLED() {
     if (intakeStalled && (currentAlignment == Alignment.grid) && (lastGamePiece == GamePiece.cone)) {
-      // TODO: Turn on grid LEDs
       switch (lastGridState) {
         case off:
           leftLED.setLED(LEDColor.none, BlinkType.none);
@@ -156,7 +161,6 @@ public class LED extends SubsystemBase {
           break;
       }
     } else if (!intakeStalled && (currentAlignment == Alignment.substation)) {
-      // TODO: Deactivate grid LEDs
       if (Robot.getAllianceColor() == Alliance.Blue) {
         setGamePieceColor(rightLED);
         switch (lastSubstationState) {
@@ -207,11 +211,9 @@ public class LED extends SubsystemBase {
         setGamePieceColor(rightLED);
       }
     } else if (!intakeStalled) {
-      // TODO: Deactivate grid LEDs
       setGamePieceColor(leftLED);
       setGamePieceColor(rightLED);
     } else {
-      // TODO: Deactivate grid LEDs
       leftLED.setLED(LEDColor.none, BlinkType.none);
       rightLED.setLED(LEDColor.none, BlinkType.none);
     }
