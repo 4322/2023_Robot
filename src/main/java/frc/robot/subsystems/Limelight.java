@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.LimelightConstants;
+import frc.utility.OrangeMath;
 
 public class Limelight extends SubsystemBase {
   NetworkTable table;
@@ -37,13 +38,38 @@ public class Limelight extends SubsystemBase {
   double limeHeight;
   double limeAngle;
   boolean enabled;
+  int currentPipeline = -1;
 
   // the distance from where you want to calculate from
   // should always be calculated with WPI coordinates (front is positive X)
   Translation2d offset;
 
-  // TODO: make this nicer with default params
-  public Limelight(String limelightName, int defaultPipeline, double limelightHeightMeters, double limelightAngleDegrees,
+  private static Limelight gridLimelight;
+  private static Limelight substationLimelight;
+
+  public static Limelight getSubstationInstance() {
+    if (substationLimelight == null) {
+      // Measuring from front of bumpers
+      // Limelight name must match limelight tool
+      substationLimelight = new Limelight("limelight-load", OrangeMath.inchesToMeters(42.5 + 3.875),
+      0, OrangeMath.inchesToMeters(-29.75), OrangeMath.inchesToMeters(-3 - 1/4 - 3.875/2), false, 
+      false, Constants.substationLimeLightEnabled);
+    }
+    return substationLimelight;
+  }
+
+  public static Limelight getGridInstance() {
+    if (gridLimelight == null) {
+      // Measuring from back of bumpers
+      // Limelight name must match limelight tool
+      gridLimelight = new Limelight("limelight-grid",  OrangeMath.inchesToMeters(26),
+      0, OrangeMath.inchesToMeters(-5.25), 0, true, 
+      false, Constants.gridLimeLightEnabled);
+    }
+    return gridLimelight;
+  }
+
+  public Limelight(String limelightName, double limelightHeightMeters, double limelightAngleDegrees,
       double xOffsetMeters, double yOffsetMeters, boolean facingBackward, boolean isTestSubsystem, boolean enabled) {
     name = limelightName;
     limeHeight = limelightHeightMeters;
@@ -62,7 +88,7 @@ public class Limelight extends SubsystemBase {
       ledMode = table.getEntry("ledMode");
       camMode = table.getEntry("camMode");
       pipeline = table.getEntry("pipeline");
-      switchPipeline(defaultPipeline);
+      activateCustomAprilTag();
 
       if (Constants.debug && !isTestSubsystem) {
         tab = Shuffleboard.getTab(name);
@@ -178,8 +204,7 @@ public class Limelight extends SubsystemBase {
     double distanceY = distanceX * Math.tan(Math.toRadians(xDeg));
     Translation2d toReturn = new Translation2d(distanceX, distanceY).plus(offset);
     if (toReturn.getX() < 0) {
-      DataLogManager
-          .log(name + ": Tried to calculate target position, but got a negative X distance");
+      //DataLogManager.log(name + ": Tried to calculate target position, but got a negative X distance");
       toReturn = toReturn.plus(new Translation2d(-toReturn.getX(), 0));
     }
     if (backward) {
@@ -202,13 +227,13 @@ public class Limelight extends SubsystemBase {
         if (targetHeight != -1) {
           return calcTargetPos(targetHeight, yDeg, xDeg);
         }
-        DataLogManager.log(name + ": Tried to get target pos, but pipline was invalid");
+        //DataLogManager.log(name + ": Tried to get target pos, but pipline was invalid");
         return new Translation2d(0, 0);
       }
-      DataLogManager.log(name + ": Tried to get target pos, but no target found");
+      //DataLogManager.log(name + ": Tried to get target pos, but no target found");
       return new Translation2d(0, 0);
     }
-    DataLogManager.log(name + ": Tried to get target pos, but limelight is disabled");
+    //DataLogManager.log(name + ": Tried to get target pos, but limelight is disabled");
     return new Translation2d(0, 0);
   }
 
@@ -224,13 +249,21 @@ public class Limelight extends SubsystemBase {
     }
   }
 
-  public void switchPipeline(int pipelineIdx) {
-    if (enabled) {
-      pipeline.setNumber(pipelineIdx);
-    }
+  public void activateRetroReflective() {
+    switchPipeline(0);
   }
 
-  public String getAllianceColor() {
-    return name;
+  public void activateAprilTag() {
+    switchPipeline(1);
+  }
+
+  public void activateCustomAprilTag() {
+    switchPipeline(2);
+  }
+
+  private void switchPipeline(int pipelineIdx) {
+    if (enabled && (currentPipeline != pipelineIdx)) {
+      pipeline.setNumber(pipelineIdx);
+    }
   }
 }

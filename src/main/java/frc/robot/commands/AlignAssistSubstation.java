@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Constants.LimelightConstants;
@@ -9,12 +8,11 @@ import frc.robot.subsystems.Limelight;
 
 public class AlignAssistSubstation extends CommandBase {
   private final Limelight limelight;
-  private final LED led = LED.getInstance();
-  private Translation2d targetPos;
-  private double horizontalOffset;
+  private final LED led;
 
-  public AlignAssistSubstation(Limelight substationLimelight) {
-    limelight = substationLimelight;
+  public AlignAssistSubstation() {
+    led = LED.getInstance();
+    limelight = Limelight.getSubstationInstance();
 
     addRequirements(limelight);
   }
@@ -29,18 +27,22 @@ public class AlignAssistSubstation extends CommandBase {
   @Override
   public void execute() {
     if (limelight.getTargetVisible()) {
-      targetPos = limelight.getTargetPosRobotRelative();
-      horizontalOffset = targetPos.getY();
-      if (Math.abs(targetPos.getX()) < LimelightConstants.assistedAlignStartDistanceMeters) {
-        if (Math.abs(horizontalOffset) < LimelightConstants.horizontalAlignToleranceMeters) {
-          led.setSubstationState(LED.SubstationState.aligned);
-        } else if (horizontalOffset > LimelightConstants.horizontalAlignToleranceMeters) {
-          led.setSubstationState(LED.SubstationState.moveLeft);
+      double targetArea = limelight.getTargetArea();
+      double horizontalDegToTarget = limelight.getHorizontalDegToTarget();
+      if (targetArea >= LimelightConstants.minLargeTargetArea) {
+        if (horizontalDegToTarget <= LimelightConstants.substationTargetToleranceDeg) {
+          led.setGridState(LED.GridState.aligned);
+        } else if (horizontalDegToTarget > 0) {
+          led.setGridState(LED.GridState.moveLeftShort);
         } else {
-          led.setSubstationState(LED.SubstationState.moveRight);
+          led.setGridState(LED.GridState.moveRightShort);
         }
       } else {
-        led.setSubstationState(LED.SubstationState.off);
+        if (horizontalDegToTarget > 0) {
+          led.setGridState(LED.GridState.moveLeft);
+        } else {
+          led.setGridState(LED.GridState.moveRight);
+        }
       }
     } else {
       led.setSubstationState(LED.SubstationState.off);

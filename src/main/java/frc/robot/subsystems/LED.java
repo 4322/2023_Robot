@@ -64,6 +64,13 @@ public class LED extends SubsystemBase {
   private Alignment currentAlignment = Alignment.none;
   private static LED ledSubsystem;
 
+  public static LED getInstance() {
+    if (ledSubsystem == null) {
+      ledSubsystem = new LED();
+    }
+    return ledSubsystem;
+  }
+
   // LED strip sides are robot relative
   private LED() {
     if (Constants.ledEnabled) {
@@ -75,14 +82,9 @@ public class LED extends SubsystemBase {
           Constants.LED.bPortLeft);
       rightLED = new LEDStrip(Constants.LED.pcmID, Constants.LED.rPortRight, Constants.LED.gPortRight,
           Constants.LED.bPortRight);
+      Limelight.getSubstationInstance().activateCustomAprilTag();
+      Limelight.getGridInstance().activateAprilTag();
     }
-  }
-
-  public static LED getInstance() {
-    if (ledSubsystem == null) {
-      ledSubsystem = new LED();
-    }
-    return ledSubsystem;
   }
 
   @Override
@@ -108,13 +110,6 @@ public class LED extends SubsystemBase {
   }
 
   public void setIntakeStalled(boolean nowStalled) {
-    // reset states after intake or scoring operation is complete
-    if (nowStalled) {
-      lastSubstationState = SubstationState.off;
-    } else {
-      lastGridState = GridState.off;
-    }
-
     // only update LEDs upon a change to reduce CAN bus loading
     if (intakeStalled != nowStalled) {
       intakeStalled = nowStalled;
@@ -140,6 +135,7 @@ public class LED extends SubsystemBase {
 
   private void selectLED() {
     if (intakeStalled && (currentAlignment == Alignment.grid) && (lastGamePiece == GamePiece.cone)) {
+      Limelight.getGridInstance().activateRetroReflective();
       switch (lastGridState) {
         case off:
           leftLED.setLED(LEDColor.none, BlinkType.none);
@@ -167,6 +163,7 @@ public class LED extends SubsystemBase {
           break;
       }
     } else if (!intakeStalled && (currentAlignment == Alignment.substation)) {
+      Limelight.getGridInstance().activateAprilTag();  // stop the blinding light
       if (Robot.getAllianceColor() == Alliance.Blue) {
         setGamePieceColor(rightLED);
         switch (lastSubstationState) {
@@ -217,9 +214,11 @@ public class LED extends SubsystemBase {
         setGamePieceColor(rightLED);
       }
     } else if (!intakeStalled) {
+      Limelight.getGridInstance().activateAprilTag();  // stop the blinding light
       setGamePieceColor(leftLED);
       setGamePieceColor(rightLED);
     } else {
+      Limelight.getGridInstance().activateAprilTag();  // stop the blinding light
       leftLED.setLED(LEDColor.none, BlinkType.none);
       rightLED.setLED(LEDColor.none, BlinkType.none);
     }

@@ -17,7 +17,6 @@ import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Telescope;
-import frc.utility.OrangeMath;
 import frc.robot.commands.*;
 
 public class RobotContainer {
@@ -51,20 +50,6 @@ public class RobotContainer {
   private final Claw claw = new Claw();
   private final Drive drive = new Drive();
 
-  // Note: limelight names must match limelight tool
-
-  // Measuring from back of bumpers
-  private final Limelight gridLimelight =
-      new Limelight("limelight-grid", 0, OrangeMath.inchesToMeters(26),
-        0, OrangeMath.inchesToMeters(-5.25), 0, true, 
-        false, Constants.gridLimeLightEnabled);
-
-  // Measuring from front of bumpers
-  private final Limelight substationLimelight =
-      new Limelight("limelight-load", 2, OrangeMath.inchesToMeters(42.5 + 3.875),
-        0, OrangeMath.inchesToMeters(-29.75), OrangeMath.inchesToMeters(-3 - 1/4 - 3.875/2), false, 
-        false, Constants.substationLimeLightEnabled);
-
   private final PathPlannerManager ppManager;
 
   // Arm commands
@@ -82,10 +67,6 @@ public class RobotContainer {
   private final DriveManual driveManualLeft = new DriveManual(drive, DriveManual.AutoPose.left);
   private final DriveManual driveManualRight = new DriveManual(drive, DriveManual.AutoPose.right);
   private final DriveStop driveStop = new DriveStop(drive);
-
-  //LED Commands
-  private final LoadCone loadCone = new LoadCone(gridLimelight, 0);
-  private final LoadCube loadCube = new LoadCube(gridLimelight, 1);
 
   // Auto Balance Commands
   private final SequentialCommandGroup autoBalanceForward = new SequentialCommandGroup(
@@ -125,11 +106,11 @@ public class RobotContainer {
     }
 
     if (Constants.gridLimeLightEnabled) {
-      gridLimelight.setDefaultCommand(new AlignAssistGrid(gridLimelight));
+      Limelight.getGridInstance().setDefaultCommand(new AlignAssistGrid());
     }
 
     if (Constants.substationLimeLightEnabled) {
-      substationLimelight.setDefaultCommand(new AlignAssistSubstation(substationLimelight));
+      Limelight.getSubstationInstance().setDefaultCommand(new AlignAssistSubstation());
     }
 
     ppManager = new PathPlannerManager(drive);
@@ -220,8 +201,8 @@ public class RobotContainer {
       rotateButtonFive = new JoystickButton(rotateStick, 5);
 
       driveTrigger.whileTrue(clawOuttake);
-      driveButtonThree.onTrue(loadCone);
-      driveButtonFour.onTrue(loadCube);
+      driveButtonThree.onTrue(new LoadCone());
+      driveButtonFour.onTrue(new LoadCube());
       driveButtonFive.onTrue(clawIntake);
       driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
       driveButtonNine.onTrue(autoBalanceForward);

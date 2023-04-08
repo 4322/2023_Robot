@@ -405,14 +405,15 @@ public class Constants {
     // above = high tape, below = middle tape
     public static final double tapeTargetHeightThresholdDeg = 0;
 
-    // Tolerance for when close enough, horizontally, to the April Tag
-    public static final double aprilTagHorizontalTolerance = .5;
-
-    // Distance to start assisted alignment
-    public static final double assistedAlignStartDistanceMeters = 1;
+    // Distance to start blinking
+    public static final double gridTargetCloseMeters = 1;
 
     // Tolerance for horizontal alignment
-    public static final double horizontalAlignToleranceMeters = OrangeMath.inchesToMeters(3);
+    public static final double gridTargetToleranceMeters = OrangeMath.inchesToMeters(3);
+
+    // Susbstation alignment values
+    public static final double minLargeTargetArea = 1.8;  // small target is < 1.2 against substation
+    public static final double substationTargetToleranceDeg = 5.0;
 
     // List of tape pipelines (should only be 1 for now)
     public static final List<Integer> tapePipelines = List.of(0);
