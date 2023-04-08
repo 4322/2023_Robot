@@ -112,7 +112,7 @@ public class RobotContainer {
     tab.add("Auto Mode", autoChooser)
       .withWidget(BuiltInWidgets.kSplitButtonChooser)
       .withPosition(0, 0)
-      .withSize(6, 2);
+      .withSize(9, 2);
 
     if (Constants.driveEnabled) {
       drive.setDefaultCommand(driveManualDefault);
@@ -142,12 +142,28 @@ public class RobotContainer {
     autoChooser.addOption("Preload Only", getScoreHigh());
 
     autoChooser.addOption("Mobility (1, 9)",
-        ppManager.loadAuto("ScoreMobilityOnly", false)); 
+        ppManager.loadAuto("ScoreMobilityOnly", false));
+
+    autoChooser.addOption("Engage (1)",
+        new SequentialCommandGroup(
+            ppManager.loadAuto("ScoreMobilityCharge1", false),
+            new AutoBalance(drive, false),
+            new AutoDriveRotateWheels(drive, 0.25)
+        )
+      );
 
     autoChooser.addOption("Mobility (2)",
         ppManager.loadAuto("ScoreMobilityOnly2", false));
+
+    autoChooser.addOption("Engage (2)",
+        new SequentialCommandGroup(
+            ppManager.loadAuto("ScoreMobilityCharge2", false),
+            new AutoBalance(drive, false),
+            new AutoDriveRotateWheels(drive, 0.25)
+        )
+      );
     
-    autoChooser.addOption("Engage (4, 5, 6)", 
+    autoChooser.addOption("Engage Only (4, 5, 6)", 
       new SequentialCommandGroup(
         getScoreHigh(),
         new AutoBalance(drive, true),
@@ -155,7 +171,7 @@ public class RobotContainer {
       )
     ); 
 
-    autoChooser.addOption("Engage + Mobility (8)",
+    autoChooser.addOption("Engage (8)",
       new SequentialCommandGroup(
           ppManager.loadAuto("ScoreMobilityCharge8", false),
           new AutoBalance(drive, false),
@@ -163,7 +179,7 @@ public class RobotContainer {
       )
     );
 
-    autoChooser.addOption("Engage + Mobility (9)",
+    autoChooser.addOption("Engage (9)",
       new SequentialCommandGroup(
           ppManager.loadAuto("ScoreMobilityCharge9", false),
           new AutoBalance(drive, false),
