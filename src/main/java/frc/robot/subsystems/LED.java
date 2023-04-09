@@ -115,7 +115,7 @@ public class LED extends SubsystemBase {
       intakeStalled = nowStalled;
       selectLED();
     }
- }
+  }
 
   public void setGamePiece(GamePiece gamePiece) {
     // only update LEDs upon a change to reduce CAN bus loading

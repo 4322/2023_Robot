@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -18,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Telescope;
 import frc.robot.Constants.DriveConstants;
@@ -206,8 +208,8 @@ public class RobotContainer {
       rotateButtonFive = new JoystickButton(rotateStick, 5);
 
       driveTrigger.whileTrue(clawOuttake);
-      driveButtonThree.onTrue(new LoadCone());
-      driveButtonFour.onTrue(new LoadCube());
+      driveButtonThree.onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cone)));
+      driveButtonFour.onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cube)));
       driveButtonFive.onTrue(clawIntake);
       driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
       driveButtonNine.onTrue(autoBalanceForward);
