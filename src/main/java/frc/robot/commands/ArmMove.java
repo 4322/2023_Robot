@@ -10,7 +10,7 @@ import frc.robot.subsystems.Telescope;
 public class ArmMove extends CommandBase {
 
   public enum position {
-    unknown, load, loadHigh, scoreLow, scoreMid, scoreHigh, scorePreset
+    unknown, inHopper, load, loadBounce, scoreLow, scoreMid, scoreHigh, scorePreset
   }
 
   private static position presetPos = position.scoreMid;
@@ -97,9 +97,9 @@ public class ArmMove extends CommandBase {
 
     if (!telescopeCommandedToTarget) {
       switch (targetPos) {
-        case load:
-        case loadHigh:
-          telescope.moveToPosition(Constants.Telescope.loadPosition);
+        case inHopper:
+        case loadBounce:
+          telescope.moveToPosition(Constants.Telescope.inHopperPosition);
           telescopeCommandedToTarget = true;
           break;
         case scoreLow:
@@ -114,8 +114,8 @@ public class ArmMove extends CommandBase {
           break;
         case scoreHigh:
           switch (ArmMove.lastPos) {
-            case load:
-            case loadHigh:
+            case inHopper:
+            case loadBounce:
             case scoreLow:
               if (armPosition >= Constants.ArmConstants.earlyTelescopeExtendPosition) {
                 telescope.moveToPosition(Constants.Telescope.highScoringPosition);
@@ -135,23 +135,23 @@ public class ArmMove extends CommandBase {
       if (init && !telescopeCommandedToTarget) {
         // Positively hold telescope in so it doesn't fling out as the arm moves.
         // Needed because the telescope is stopped when the previous command is interrupted.
-        telescope.moveToPosition(Constants.Telescope.loadPosition);            
+        telescope.moveToPosition(Constants.Telescope.inHopperPosition);            
       }
     }
 
     if (!armCommandedToTarget) {
       switch (targetPos) {
-        case load:
+        case inHopper:
           if ((telescopePosition <= Constants.Telescope.safeArmRetractPosition) 
               || ((lastPos == position.scoreHigh) 
                   && (telescopePosition <= Constants.Telescope.earlyArmRetractPosition))) {
-            arm.rotateToPosition(Constants.ArmConstants.loadPosition);
+            arm.rotateToPosition(Constants.ArmConstants.inHopperPosition);
             armCommandedToTarget = true;
           }
           break;
-        case loadHigh:
+        case loadBounce:
           if (telescopePosition <= Constants.Telescope.safeArmRetractPosition) {
-            arm.rotateToPosition(Constants.ArmConstants.loadHighPosition);
+            arm.rotateToPosition(Constants.ArmConstants.loadBounceUpPosition);
             armCommandedToTarget = true;
           }
           break;
