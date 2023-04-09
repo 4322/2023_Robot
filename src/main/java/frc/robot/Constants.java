@@ -408,9 +408,9 @@ public class Constants {
     // Target alignment values
     public static final double substationMinLargeTargetArea = 1.8;  // small target is < 1.2 against substation
     public static final double substationTargetToleranceDeg = 4.0;
-    public static final double gridMaxHighTargetArea = 0.3;
-    public static final double gridMidTargetToleranceDeg = 2.0;
-    public static final double gridHighTargetToleranceDeg = 4.0;
+    public static final double gridMaxHighTargetArea = 0.2;
+    public static final double gridMidTargetToleranceDeg = 1.0;
+    public static final double gridHighTargetToleranceDeg = 2.0;
 
     // List of tape pipelines (should only be 1 for now)
     public static final List<Integer> tapePipelines = List.of(0);

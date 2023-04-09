@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Constants.LimelightConstants;
@@ -28,8 +27,8 @@ public class AlignAssistGrid extends CommandBase {
       double targetArea = limelight.getTargetArea();
       double horizontalDegToTarget = limelight.getHorizontalDegToTarget();
       
-      if ((horizontalDegToTarget <= LimelightConstants.gridMidTargetToleranceDeg)
-          || ((horizontalDegToTarget <= LimelightConstants.gridHighTargetToleranceDeg)
+      if ((Math.abs(horizontalDegToTarget) <= LimelightConstants.gridMidTargetToleranceDeg)
+          || ((Math.abs(horizontalDegToTarget) <= LimelightConstants.gridHighTargetToleranceDeg)
               && (targetArea < LimelightConstants.gridMaxHighTargetArea))) {
         led.setGridState(LED.GridState.aligned);
       } else if (horizontalDegToTarget > 0) {

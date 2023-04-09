@@ -28,7 +28,7 @@ public class AlignAssistSubstation extends CommandBase {
       double horizontalDegToTarget = limelight.getHorizontalDegToTarget();
       
       if (targetArea >= LimelightConstants.substationMinLargeTargetArea) {
-        if (horizontalDegToTarget <= LimelightConstants.substationTargetToleranceDeg) {
+        if (Math.abs(horizontalDegToTarget) <= LimelightConstants.substationTargetToleranceDeg) {
           led.setSubstationState(LED.SubstationState.aligned);
         } else if (horizontalDegToTarget > 0) {
           led.setSubstationState(LED.SubstationState.moveLeftShort);
