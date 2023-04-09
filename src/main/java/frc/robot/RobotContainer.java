@@ -212,7 +212,7 @@ public class RobotContainer {
 
       // Re-establish alignment to grid when deploying the arm
       BooleanSupplier isBackwardScoringPreset = () -> ArmMove.isBackwardScoringPreset();
-      rotateTrigger.whileTrue(driveManualForward.unless(isBackwardScoringPreset));
+      rotateTrigger.whileTrue(new DriveManual(drive, 0.0).unless(isBackwardScoringPreset));
       rotateTrigger.whileTrue(new ArmMove(arm, telescope, ArmMove.position.scorePreset, false)
           .withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming));
 
