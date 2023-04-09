@@ -38,6 +38,10 @@ public class ArmMove extends CommandBase {
     return safeToOuttake;
   }
 
+  public static boolean isBackwardScoringPreset() {
+    return ArmMove.presetPos == position.scoreLow;
+  }
+
   public ArmMove(Arm arm, Telescope telescope, position invokePos, boolean autonomous) {
     this.arm = arm;
     this.telescope = telescope;
@@ -218,4 +222,5 @@ public class ArmMove extends CommandBase {
     // continue holding position in teleop until cancelled
     return false;
   }
+
 }
