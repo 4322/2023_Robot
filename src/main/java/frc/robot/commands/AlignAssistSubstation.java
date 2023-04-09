@@ -31,14 +31,14 @@ public class AlignAssistSubstation extends CommandBase {
         if (Math.abs(horizontalDegToTarget) <= LimelightConstants.substationTargetToleranceDeg) {
           led.setSubstationState(LED.SubstationState.aligned);
         } else if (horizontalDegToTarget > 0) {
-          led.setSubstationState(LED.SubstationState.moveLeftShort);
+          led.setSubstationState(LED.SubstationState.moveRight);
         } else {
-          led.setSubstationState(LED.SubstationState.moveRightShort);
+          led.setSubstationState(LED.SubstationState.moveLeft);
         }
       } else if (horizontalDegToTarget > 0) {
-        led.setSubstationState(LED.SubstationState.moveLeft);
-      } else {
         led.setSubstationState(LED.SubstationState.moveRight);
+      } else {
+        led.setSubstationState(LED.SubstationState.moveLeft);
       }
     } else {
       led.setSubstationState(LED.SubstationState.off);

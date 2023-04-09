@@ -27,14 +27,19 @@ public class AlignAssistGrid extends CommandBase {
       double targetArea = limelight.getTargetArea();
       double horizontalDegToTarget = limelight.getHorizontalDegToTarget();
       
-      if ((Math.abs(horizontalDegToTarget) <= LimelightConstants.gridMidTargetToleranceDeg)
-          || ((Math.abs(horizontalDegToTarget) <= LimelightConstants.gridHighTargetToleranceDeg)
-              && (targetArea < LimelightConstants.gridMaxHighTargetArea))) {
-        led.setGridState(LED.GridState.aligned);
-      } else if (horizontalDegToTarget > 0) {
-        led.setGridState(LED.GridState.moveLeft);
+      if (targetArea >= LimelightConstants.gridMinHighTargetArea) {
+        if ((Math.abs(horizontalDegToTarget) <= LimelightConstants.gridMidTargetToleranceDeg)
+            || ((Math.abs(horizontalDegToTarget) <= LimelightConstants.gridHighTargetToleranceDeg)
+                && (targetArea < LimelightConstants.gridMaxHighTargetArea))) {
+          led.setGridState(LED.GridState.aligned);
+        } else if (horizontalDegToTarget > 0) {
+          led.setGridState(LED.GridState.moveRight);
+        } else {
+          led.setGridState(LED.GridState.moveLeft);
+        }
       } else {
-        led.setGridState(LED.GridState.moveRight);
+        // target is too small, probably a phantom
+        led.setGridState(LED.GridState.off);
       }
     } else {
       led.setGridState(LED.GridState.off);
