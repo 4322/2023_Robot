@@ -1,5 +1,6 @@
 package frc.robot;
 
+import java.util.function.BooleanSupplier;
 import com.pathplanner.lib.PathConstraints;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -209,12 +210,18 @@ public class RobotContainer {
       driveButtonEleven.onTrue(autoBalanceBackward);
       driveButtonTwelve.onTrue(driveStop);
 
+      // Re-establish alignment to grid when deploying the arm
+      BooleanSupplier isBackwardScoringPreset = () -> ArmMove.isBackwardScoringPreset();
+      rotateTrigger.whileTrue(driveManualForward.unless(isBackwardScoringPreset));
       rotateTrigger.whileTrue(new ArmMove(arm, telescope, ArmMove.position.scorePreset, false)
           .withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming));
+
       rotateButtonThree.onTrue(driveManualForward);
       rotateButtonThree.onTrue(new SetScoringPosition(ArmMove.position.scoreMid));
+
       rotateButtonFour.onTrue(driveManualForward);
       rotateButtonFour.onTrue(new SetScoringPosition(ArmMove.position.scoreHigh));
+
       rotateButtonFive.onTrue(driveManualBackward);
       rotateButtonFive.onTrue(new SetScoringPosition(ArmMove.position.scoreLow));
     }
