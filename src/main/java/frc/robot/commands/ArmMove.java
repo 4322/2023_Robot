@@ -38,8 +38,8 @@ public class ArmMove extends CommandBase {
     return safeToOuttake;
   }
 
-  public static boolean isForwardScoringPreset() {
-    return (ArmMove.presetPos == position.scoreMid) || (ArmMove.presetPos == position.scoreHigh);
+  public static boolean isBackwardScoringPreset() {
+    return ArmMove.presetPos == position.scoreLow;
   }
 
   public ArmMove(Arm arm, Telescope telescope, position invokePos, boolean autonomous) {
