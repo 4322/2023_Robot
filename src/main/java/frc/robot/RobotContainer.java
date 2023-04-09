@@ -211,6 +211,7 @@ public class RobotContainer {
 
       rotateTrigger.whileTrue(new ArmMove(arm, telescope, ArmMove.position.scorePreset, false)
           .withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming));
+      rotateTrigger.whileTrue(driveManualForward.unless(ArmMove.isForwardScoringPreset()));
       rotateButtonThree.onTrue(driveManualForward);
       rotateButtonThree.onTrue(new SetScoringPosition(ArmMove.position.scoreMid));
       rotateButtonFour.onTrue(driveManualForward);
