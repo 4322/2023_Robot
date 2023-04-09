@@ -10,8 +10,6 @@ import frc.robot.subsystems.Limelight;
 public class AlignAssistGrid extends CommandBase {
   private final Limelight limelight;
   private final LED led;
-  private Translation2d targetPos;
-  private double horizontalOffset;
 
   public AlignAssistGrid() {
     led = LED.getInstance();
@@ -24,24 +22,20 @@ public class AlignAssistGrid extends CommandBase {
   public void initialize() {
   }
 
-  // Red: too far to the left (move right)
-  // Blue: too far to the right (move left)
-
   @Override
   public void execute() {
     if (limelight.getTargetVisible()) {
-      targetPos = limelight.getTargetPosRobotRelative();
-      horizontalOffset = targetPos.getY();
-      if (Math.abs(horizontalOffset) <= LimelightConstants.gridTargetToleranceMeters) {
+      double targetArea = limelight.getTargetArea();
+      double horizontalDegToTarget = limelight.getHorizontalDegToTarget();
+      
+      if ((horizontalDegToTarget <= LimelightConstants.gridMidTargetToleranceDeg)
+          || ((horizontalDegToTarget <= LimelightConstants.gridHighTargetToleranceDeg)
+              && (targetArea < LimelightConstants.gridMaxHighTargetArea))) {
         led.setGridState(LED.GridState.aligned);
-      } else if (Math.abs(targetPos.getX()) <= LimelightConstants.gridTargetCloseMeters) {
-        if (horizontalOffset > 0) {
-          led.setGridState(LED.GridState.moveLeft);
-        } else {
-          led.setGridState(LED.GridState.moveRight);
-        }
+      } else if (horizontalDegToTarget > 0) {
+        led.setGridState(LED.GridState.moveLeft);
       } else {
-        led.setGridState(LED.GridState.off);
+        led.setGridState(LED.GridState.moveRight);
       }
     } else {
       led.setGridState(LED.GridState.off);

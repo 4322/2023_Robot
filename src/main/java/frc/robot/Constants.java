@@ -405,15 +405,12 @@ public class Constants {
     // above = high tape, below = middle tape
     public static final double tapeTargetHeightThresholdDeg = 0;
 
-    // Distance to start blinking
-    public static final double gridTargetCloseMeters = 0.25;
-
-    // Tolerance for horizontal alignment
-    public static final double gridTargetToleranceMeters = OrangeMath.inchesToMeters(1);  // TODO: Fix the math that is making this so small
-
-    // Susbstation alignment values
-    public static final double minLargeTargetArea = 1.8;  // small target is < 1.2 against substation
-    public static final double substationTargetToleranceDeg = 5.0;
+    // Target alignment values
+    public static final double substationMinLargeTargetArea = 1.8;  // small target is < 1.2 against substation
+    public static final double substationTargetToleranceDeg = 4.0;
+    public static final double gridMaxHighTargetArea = 0.3;
+    public static final double gridMidTargetToleranceDeg = 2.0;
+    public static final double gridHighTargetToleranceDeg = 4.0;
 
     // List of tape pipelines (should only be 1 for now)
     public static final List<Integer> tapePipelines = List.of(0);

@@ -21,28 +21,24 @@ public class AlignAssistSubstation extends CommandBase {
   public void initialize() {
   }
 
-  // Red: too far to the left (move right)
-  // Blue: too far to the right (move left)
-
   @Override
   public void execute() {
     if (limelight.getTargetVisible()) {
       double targetArea = limelight.getTargetArea();
       double horizontalDegToTarget = limelight.getHorizontalDegToTarget();
-      if (targetArea >= LimelightConstants.minLargeTargetArea) {
+      
+      if (targetArea >= LimelightConstants.substationMinLargeTargetArea) {
         if (horizontalDegToTarget <= LimelightConstants.substationTargetToleranceDeg) {
-          led.setGridState(LED.GridState.aligned);
+          led.setSubstationState(LED.SubstationState.aligned);
         } else if (horizontalDegToTarget > 0) {
-          led.setGridState(LED.GridState.moveLeftShort);
+          led.setSubstationState(LED.SubstationState.moveLeftShort);
         } else {
-          led.setGridState(LED.GridState.moveRightShort);
+          led.setSubstationState(LED.SubstationState.moveRightShort);
         }
+      } else if (horizontalDegToTarget > 0) {
+        led.setSubstationState(LED.SubstationState.moveLeft);
       } else {
-        if (horizontalDegToTarget > 0) {
-          led.setGridState(LED.GridState.moveLeft);
-        } else {
-          led.setGridState(LED.GridState.moveRight);
-        }
+        led.setSubstationState(LED.SubstationState.moveRight);
       }
     } else {
       led.setSubstationState(LED.SubstationState.off);
