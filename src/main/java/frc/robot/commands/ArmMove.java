@@ -9,19 +9,20 @@ import frc.robot.subsystems.Telescope;
 
 public class ArmMove extends CommandBase {
 
-  public enum position {
-    unknown, inHopper, load, loadBounce, scoreLow, scoreMid, scoreHigh, scorePreset
+  // Use of loadHigh and loadBounce are mutually exclusive
+  public enum Position {
+    unknown, inHopper, loadHigh, loadBounce, scoreLow, scoreMid, scoreHigh, scorePreset
   }
 
-  private static position presetPos = position.scoreMid;
-  private static position lastPos = position.unknown;
+  private static Position presetPos = Position.scoreMid;
+  private static Position lastPos = Position.unknown;
   private static boolean safeToOuttake = true;
 
   private Arm arm;
   private Telescope telescope;
   private boolean autonomous;
-  private position invokePos;
-  private position targetPos;
+  private Position invokePos;
+  private Position targetPos;
   private boolean armCommandedToTarget;
   private boolean telescopeCommandedToTarget;
   private boolean armAtTarget;
@@ -30,7 +31,7 @@ public class ArmMove extends CommandBase {
   private Timer timer = new Timer();
   private boolean timePrinted;
 
-  public static void setScorePreset(position pos) {
+  public static void setScorePreset(Position pos) {
     ArmMove.presetPos = pos;
   }
 
@@ -39,10 +40,10 @@ public class ArmMove extends CommandBase {
   }
 
   public static boolean isBackwardScoringPreset() {
-    return ArmMove.presetPos == position.scoreLow;
+    return ArmMove.presetPos == Position.scoreLow;
   }
 
-  public ArmMove(Arm arm, Telescope telescope, position invokePos, boolean autonomous) {
+  public ArmMove(Arm arm, Telescope telescope, Position invokePos, boolean autonomous) {
     this.arm = arm;
     this.telescope = telescope;
     this.invokePos = invokePos;
@@ -54,7 +55,7 @@ public class ArmMove extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if (invokePos == position.scorePreset) {
+    if (invokePos == Position.scorePreset) {
       targetPos = ArmMove.presetPos;
     } else {
       targetPos = invokePos;
@@ -67,7 +68,7 @@ public class ArmMove extends CommandBase {
     timer.restart();
     timePrinted = false;
 
-    if ((targetPos == position.scoreMid) || (targetPos == position.scoreHigh)) {
+    if ((targetPos == Position.scoreMid) || (targetPos == Position.scoreHigh)) {
       safeToOuttake = false;
     } else {
       safeToOuttake = true;
@@ -78,10 +79,10 @@ public class ArmMove extends CommandBase {
 
   @Override
   public void execute() {
-    if ((invokePos == position.scorePreset) && (targetPos != ArmMove.presetPos)) {
+    if ((invokePos == Position.scorePreset) && (targetPos != ArmMove.presetPos)) {
       // target changed, restart command without interrupting to keep the trigger command running
       if (!done) {
-        ArmMove.lastPos = position.unknown;
+        ArmMove.lastPos = Position.unknown;
       }
       initialize();       
     } else {
@@ -102,6 +103,12 @@ public class ArmMove extends CommandBase {
           telescope.moveToPosition(Constants.Telescope.inHopperPosition);
           telescopeCommandedToTarget = true;
           break;
+        case loadHigh:
+          if (armAtTarget) {
+            telescope.moveToPosition(Constants.Telescope.loadHighPosition);
+            telescopeCommandedToTarget = true;  
+          }
+          break;
         case scoreLow:
           if (armAtTarget) {
             telescope.moveToPosition(Constants.Telescope.lowScoringPosition);
@@ -115,6 +122,7 @@ public class ArmMove extends CommandBase {
         case scoreHigh:
           switch (ArmMove.lastPos) {
             case inHopper:
+            case loadHigh:
             case loadBounce:
             case scoreLow:
               if (armPosition >= Constants.ArmConstants.earlyTelescopeExtendPosition) {
@@ -143,15 +151,21 @@ public class ArmMove extends CommandBase {
       switch (targetPos) {
         case inHopper:
           if ((telescopePosition <= Constants.Telescope.safeArmRetractPosition) 
-              || ((lastPos == position.scoreHigh) 
+              || ((lastPos == Position.scoreHigh) 
                   && (telescopePosition <= Constants.Telescope.earlyArmRetractPosition))) {
             arm.rotateToPosition(Constants.ArmConstants.inHopperPosition);
             armCommandedToTarget = true;
           }
           break;
+        case loadHigh:
+          if (telescopePosition <= Constants.Telescope.safeArmRetractPosition) {
+            arm.rotateToPosition(Constants.ArmConstants.loadHighPosition);
+            armCommandedToTarget = true;
+          }
+          break;
         case loadBounce:
           if (telescopePosition <= Constants.Telescope.safeArmRetractPosition) {
-            arm.rotateToPosition(Constants.ArmConstants.loadBounceUpPosition);
+            arm.rotateToPosition(Constants.ArmConstants.loadBouncePosition);
             armCommandedToTarget = true;
           }
           break;
@@ -163,7 +177,7 @@ public class ArmMove extends CommandBase {
           break;
         case scoreMid:
           if ((telescopePosition <= Constants.Telescope.safeArmRetractPosition) 
-              || ((lastPos == position.scoreHigh) 
+              || ((lastPos == Position.scoreHigh) 
                   && (telescopePosition <= Constants.Telescope.clearHighPolePosition))) {
               arm.rotateToPosition(Constants.ArmConstants.midScoringPosition);
               armCommandedToTarget = true;
@@ -171,7 +185,7 @@ public class ArmMove extends CommandBase {
           break;
         case scoreHigh:
           if ((telescopePosition <= Constants.Telescope.safeArmRetractPosition) 
-              || (lastPos == position.scoreHigh)) {
+              || (lastPos == Position.scoreHigh)) {
             arm.rotateToPosition(Constants.ArmConstants.highScoringPosition);
             armCommandedToTarget = true;
           }
@@ -191,7 +205,7 @@ public class ArmMove extends CommandBase {
       telescope.stop();
     }
     if (!done) {
-      ArmMove.lastPos = position.unknown;
+      ArmMove.lastPos = Position.unknown;
     }
   }
 

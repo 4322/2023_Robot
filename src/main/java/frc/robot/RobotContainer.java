@@ -108,7 +108,7 @@ public class RobotContainer {
     }
 
     if (Constants.armEnabled) {
-      arm.setDefaultCommand(new ArmMove(arm, telescope, ArmMove.position.inHopper, false));
+      arm.setDefaultCommand(new ArmMove(arm, telescope, ArmMove.Position.inHopper, false));
     }
 
     if (Constants.gridLimeLightEnabled) {
@@ -190,6 +190,9 @@ public class RobotContainer {
    */
 
   private void configureButtonBindings() {  
+    BooleanSupplier isIntakeStalled = () -> claw.isIntakeStalled();
+    BooleanSupplier isBackwardScoringPreset = () -> ArmMove.isBackwardScoringPreset();
+
     if (Constants.joysticksEnabled) {
       driveStick = new Joystick(0);
       rotateStick = new Joystick(1);
@@ -211,36 +214,44 @@ public class RobotContainer {
       driveButtonThree.onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cone)));
       driveButtonFour.onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cube)));
       driveButtonFive.onTrue(clawIntake);
+      if (Constants.useLoadHighPosition) {
+        driveButtonFive.onTrue(new ArmMove(arm, telescope, ArmMove.Position.loadHigh, false)
+            .unless(isIntakeStalled).until(isIntakeStalled));
+      }
       driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
       driveButtonNine.onTrue(autoBalanceForward);
       driveButtonEleven.onTrue(autoBalanceBackward);
       driveButtonTwelve.onTrue(driveStop);
 
       // Re-establish alignment to grid when deploying the arm
-      BooleanSupplier isBackwardScoringPreset = () -> ArmMove.isBackwardScoringPreset();
       rotateTrigger.whileTrue(new DriveManual(drive, DriveManual.AutoPose.forward)
           .unless(isBackwardScoringPreset));
-      rotateTrigger.whileTrue(new ArmMove(arm, telescope, ArmMove.position.scorePreset, false)
+      rotateTrigger.whileTrue(new ArmMove(arm, telescope, ArmMove.Position.scorePreset, false)
           .withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming));
 
       rotateButtonThree.onTrue(driveManualForward);
-      rotateButtonThree.onTrue(new SetScoringPosition(ArmMove.position.scoreMid));
+      rotateButtonThree.onTrue(new SetScoringPosition(ArmMove.Position.scoreMid));
 
       rotateButtonFour.onTrue(driveManualForward);
-      rotateButtonFour.onTrue(new SetScoringPosition(ArmMove.position.scoreHigh));
+      rotateButtonFour.onTrue(new SetScoringPosition(ArmMove.Position.scoreHigh));
 
       rotateButtonFive.onTrue(driveManualBackward);
-      rotateButtonFive.onTrue(new SetScoringPosition(ArmMove.position.scoreLow));
+      rotateButtonFive.onTrue(new SetScoringPosition(ArmMove.Position.scoreLow));
     }
 
     if (Constants.xboxEnabled) {
       xbox.leftTrigger().onTrue(clawIntake);
+      if (Constants.useLoadHighPosition) {
+        xbox.leftTrigger().onTrue(new ArmMove(arm, telescope, ArmMove.Position.loadHigh, false)
+            .unless(isIntakeStalled).until(isIntakeStalled));
+      } else {
+        xbox.a().whileTrue(new ArmMove(arm, telescope, ArmMove.Position.loadBounce, false));
+      }
       xbox.rightTrigger().whileTrue(clawOuttake);
       xbox.back().onTrue(armSetCoastMode);
       xbox.start().onTrue(armSetBrakeMode);
       xbox.leftBumper().onTrue(driveManualLeft);
       xbox.rightBumper().onTrue(driveManualRight);
-      xbox.a().whileTrue(new ArmMove(arm, telescope, ArmMove.position.loadBounce, false));
     }
   }
 
@@ -308,11 +319,11 @@ public class RobotContainer {
   public Command getScoreHigh() {
     return new SequentialCommandGroup(
       new ParallelRaceGroup(
-        new ArmMove(arm, telescope, ArmMove.position.scoreHigh, true), 
+        new ArmMove(arm, telescope, ArmMove.Position.scoreHigh, true), 
         new ClawIntake(claw)
       ),
       new TimedClawOuttake(claw, 0.5),
-      new ArmMove(arm, telescope, ArmMove.position.inHopper, true)
+      new ArmMove(arm, telescope, ArmMove.Position.inHopper, true)
       );
   }
 }

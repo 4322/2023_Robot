@@ -3,10 +3,10 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 public class SetScoringPosition extends InstantCommand {
-  private ArmMove.position pos;
+  private ArmMove.Position pos;
 
   // all parameters
-  public SetScoringPosition(ArmMove.position pos) {
+  public SetScoringPosition(ArmMove.Position pos) {
     this.pos = pos;
 
     // don't interrupt existing command because the trigger command won't restart

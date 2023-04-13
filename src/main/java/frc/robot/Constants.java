@@ -25,6 +25,7 @@ public class Constants {
   public static final boolean spinoutCenterEnabled = true;  // center rotate burst of power
   public static final boolean spinoutCornerEnabled = true;
   public static final boolean colorSensorEnabled = false;
+  public static final boolean useLoadHighPosition = true;
 
   public static final class Demo {
     public enum DriveMode {
@@ -305,8 +306,8 @@ public class Constants {
     public static final double minPosition = 0;
 
     public static final double inHopperPosition = 2.5;
-    public static final double loadPosition = 15;
-    public static final double loadBounceUpPosition = 15;
+    public static final double loadHighPosition = 15;
+    public static final double loadBouncePosition = 10;
     public static final double earlyTelescopeExtendPosition = 40;
     public static final double safeTelescopeExtendPosition = 57.0;
     public static final double lowScoringPosition = 10; // ideally 6.8, but would need more kP to clear hopper
@@ -343,7 +344,7 @@ public class Constants {
     public static final double minPosition = 0;
 
     public static final double inHopperPosition = 0;
-    public static final double loadPosition = 1.5;
+    public static final double loadHighPosition = 1.5;
     public static final double earlyArmRetractPosition = 9;
     public static final double safeArmRetractPosition = 0.5;  // safe for overhead/hopper clearance
     public static final double lowScoringPosition = 0;
