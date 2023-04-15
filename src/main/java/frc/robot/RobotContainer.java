@@ -198,8 +198,6 @@ public class RobotContainer {
       rotateStick = new Joystick(1);
 
       driveTrigger = new JoystickButton(driveStick, 1);
-      driveButtonThree = new JoystickButton(driveStick, 3); //cone
-      driveButtonFour = new JoystickButton(driveStick, 4); //cube
       driveButtonFive = new JoystickButton(driveStick, 5);
       driveButtonSeven = new JoystickButton(driveStick, 7);
       driveButtonNine = new JoystickButton(driveStick, 9);
@@ -211,8 +209,6 @@ public class RobotContainer {
       rotateButtonFive = new JoystickButton(rotateStick, 5);
 
       driveTrigger.whileTrue(clawOuttake);
-      driveButtonThree.onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cone)));
-      driveButtonFour.onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cube)));
       driveButtonFive.onTrue(clawIntake);
       if (Constants.useLoadHighPosition) {
         driveButtonFive.onTrue(new ArmMove(arm, telescope, ArmMove.Position.loadHigh, false)
@@ -241,17 +237,13 @@ public class RobotContainer {
 
     if (Constants.xboxEnabled) {
       xbox.leftTrigger().onTrue(clawIntake);
-      if (Constants.useLoadHighPosition) {
-        xbox.leftTrigger().onTrue(new ArmMove(arm, telescope, ArmMove.Position.loadHigh, false)
-            .unless(isIntakeStalled).until(isIntakeStalled));
-      } else {
-        xbox.a().whileTrue(new ArmMove(arm, telescope, ArmMove.Position.loadBounce, false));
-      }
-      xbox.rightTrigger().whileTrue(clawOuttake);
+      xbox.y().onTrue(new SetScoringPosition(ArmMove.Position.scoreHigh));
+      xbox.b().onTrue(new SetScoringPosition(ArmMove.Position.scoreMid));
+      xbox.a().onTrue(new SetScoringPosition(ArmMove.Position.scoreLow));
       xbox.back().onTrue(armSetCoastMode);
       xbox.start().onTrue(armSetBrakeMode);
-      xbox.leftBumper().onTrue(driveManualLeft);
-      xbox.rightBumper().onTrue(driveManualRight);
+      xbox.leftBumper().onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cube)));
+      xbox.rightBumper().onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cone)));
     }
   }
 
