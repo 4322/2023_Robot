@@ -37,6 +37,7 @@ public class RobotContainer {
   private JoystickButton driveButtonThree;
   private JoystickButton driveButtonFour;
   private JoystickButton driveButtonFive;
+  private JoystickButton driveButtonSix;
   private JoystickButton driveButtonSeven;
   private JoystickButton driveButtonNine;
   private JoystickButton driveButtonEleven;
@@ -46,6 +47,7 @@ public class RobotContainer {
   private JoystickButton rotateButtonThree;
   private JoystickButton rotateButtonFour;
   private JoystickButton rotateButtonFive;
+  private JoystickButton rotateButtonSix;
 
   private ShuffleboardTab tab;
   private SendableChooser<Command> autoChooser = new SendableChooser<Command>();
@@ -201,6 +203,7 @@ public class RobotContainer {
       driveButtonThree = new JoystickButton(driveStick, 3); //cone
       driveButtonFour = new JoystickButton(driveStick, 4); //cube
       driveButtonFive = new JoystickButton(driveStick, 5);
+      driveButtonSix = new JoystickButton(driveStick, 6);
       driveButtonSeven = new JoystickButton(driveStick, 7);
       driveButtonNine = new JoystickButton(driveStick, 9);
       driveButtonEleven = new JoystickButton(driveStick, 11);
@@ -209,15 +212,17 @@ public class RobotContainer {
       rotateButtonThree = new JoystickButton(rotateStick, 3);
       rotateButtonFour = new JoystickButton(rotateStick, 4);
       rotateButtonFive = new JoystickButton(rotateStick, 5);
+      rotateButtonSix = new JoystickButton(rotateStick, 6);
 
       driveTrigger.whileTrue(clawOuttake);
       driveButtonThree.onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cone)));
       driveButtonFour.onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cube)));
       driveButtonFive.onTrue(clawIntake);
-      if (Constants.useLoadHighPosition) {
         driveButtonFive.onTrue(new ArmMove(arm, telescope, ArmMove.Position.loadHigh, false)
             .unless(isIntakeStalled).until(isIntakeStalled));
-      }
+      driveButtonSix.onTrue(clawIntake);
+        driveButtonSix.onTrue(new ArmMove(arm, telescope, ArmMove.Position.loadDouble, false)
+            .unless(isIntakeStalled).until(isIntakeStalled));
       driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
       driveButtonNine.onTrue(autoBalanceForward);
       driveButtonEleven.onTrue(autoBalanceBackward);
@@ -237,6 +242,9 @@ public class RobotContainer {
 
       rotateButtonFive.onTrue(driveManualBackward);
       rotateButtonFive.onTrue(new SetScoringPosition(ArmMove.Position.scoreLow));
+      rotateButtonSix.onTrue(clawIntake);
+        rotateButtonSix.onTrue(new ArmMove(arm, telescope, ArmMove.Position.loadFloor, false)
+            .unless(isIntakeStalled).until(isIntakeStalled));
     }
 
     if (Constants.xboxEnabled) {
