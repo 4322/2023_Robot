@@ -11,7 +11,7 @@ public class ArmMove extends CommandBase {
 
   // Use of loadHigh and loadBounce are mutually exclusive
   public enum Position {
-    unknown, inHopper, loadHigh, loadDouble, loadFloor, loadBounce, scoreLow, scoreMid, scoreHigh, scorePreset
+    unknown, inHopper, loadSingle, loadDouble, loadFloor, loadBounce, scoreLow, scoreMid, scoreHigh, scorePreset
   }
 
   private static Position presetPos = Position.scoreMid;
@@ -103,9 +103,9 @@ public class ArmMove extends CommandBase {
           telescope.moveToPosition(Constants.Telescope.inHopperPosition);
           telescopeCommandedToTarget = true;
           break;
-        case loadHigh:
+        case loadSingle:
           if (armAtTarget) {
-            telescope.moveToPosition(Constants.Telescope.loadHighPosition);
+            telescope.moveToPosition(Constants.Telescope.loadSinglePosition);
             telescopeCommandedToTarget = true;  
           }
           break;
@@ -122,7 +122,7 @@ public class ArmMove extends CommandBase {
         case scoreHigh:
           switch (ArmMove.lastPos) {
             case inHopper:
-            case loadHigh:
+            case loadSingle:
             case loadBounce:
             case scoreLow:
               if (armPosition >= Constants.ArmConstants.earlyTelescopeExtendPosition) {
@@ -140,7 +140,7 @@ public class ArmMove extends CommandBase {
         case loadFloor:
           switch (ArmMove.lastPos) {
             case inHopper:
-            case loadHigh:
+            case loadSingle:
             case loadBounce:
             case scoreLow:
               if (armPosition >= Constants.ArmConstants.earlyTelescopeExtendPosition) {
@@ -155,8 +155,11 @@ public class ArmMove extends CommandBase {
               }
               break;
           }
+          case loadDouble:
+
         default:
           break;
+        
       }
       if (init && !telescopeCommandedToTarget) {
         // Positively hold telescope in so it doesn't fling out as the arm moves.
@@ -175,9 +178,9 @@ public class ArmMove extends CommandBase {
             armCommandedToTarget = true;
           }
           break;
-        case loadHigh:
+        case loadSingle:
           if (telescopePosition <= Constants.Telescope.safeArmRetractPosition) {
-            arm.rotateToPosition(Constants.ArmConstants.loadHighPosition);
+            arm.rotateToPosition(Constants.ArmConstants.loadSinglePosition);
             armCommandedToTarget = true;
           }
           break;

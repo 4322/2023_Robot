@@ -218,7 +218,7 @@ public class RobotContainer {
       driveButtonThree.onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cone)));
       driveButtonFour.onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cube)));
       driveButtonFive.onTrue(clawIntake);
-        driveButtonFive.onTrue(new ArmMove(arm, telescope, ArmMove.Position.loadHigh, false)
+        driveButtonFive.onTrue(new ArmMove(arm, telescope, ArmMove.Position.loadSingle, false)
             .unless(isIntakeStalled).until(isIntakeStalled));
       driveButtonSix.onTrue(clawIntake);
         driveButtonSix.onTrue(new ArmMove(arm, telescope, ArmMove.Position.loadDouble, false)
@@ -250,7 +250,7 @@ public class RobotContainer {
     if (Constants.xboxEnabled) {
       xbox.leftTrigger().onTrue(clawIntake);
       if (Constants.useLoadHighPosition) {
-        xbox.leftTrigger().onTrue(new ArmMove(arm, telescope, ArmMove.Position.loadHigh, false)
+        xbox.leftTrigger().onTrue(new ArmMove(arm, telescope, ArmMove.Position.loadSingle, false)
             .unless(isIntakeStalled).until(isIntakeStalled));
       } else {
         xbox.a().whileTrue(new ArmMove(arm, telescope, ArmMove.Position.loadBounce, false));
