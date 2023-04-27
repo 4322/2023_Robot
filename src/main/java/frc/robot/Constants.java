@@ -308,6 +308,8 @@ public class Constants {
     public static final double inHopperPosition = 2.5;
     public static final double loadSinglePosition = 15;
     public static final double loadBouncePosition = 10;
+    public static final double loadFloorPosition = 15; //needs to be changed
+    public static final double loadDoublePosition = 15;//needs to be changed
     public static final double earlyTelescopeExtendPosition = 40;
     public static final double safeTelescopeExtendPosition = 57.0;
     public static final double lowScoringPosition = 10; // ideally 6.8, but would need more kP to clear hopper
@@ -322,6 +324,7 @@ public class Constants {
 
     public static final double positionTolerance = 0.3;
     public static final double atTargetTolerance = 0.7;
+    
 
     public static final class SmartMotion {
       public static final double kP = 0.04375;

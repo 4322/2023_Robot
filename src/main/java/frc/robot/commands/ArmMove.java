@@ -9,7 +9,7 @@ import frc.robot.subsystems.Telescope;
 
 public class ArmMove extends CommandBase {
 
-  // Use of loadHigh and loadBounce are mutually exclusive
+  // Use of loadSingle and loadBounce are mutually exclusive
   public enum Position {
     unknown, inHopper, loadSingle, loadDouble, loadFloor, loadBounce, scoreLow, scoreMid, scoreHigh, scorePreset
   }
@@ -119,6 +119,10 @@ public class ArmMove extends CommandBase {
           telescope.moveToPosition(Constants.Telescope.midScoringPosition);
           telescopeCommandedToTarget = true;
           break;
+        case loadDouble:
+          telescope.moveToPosition(Constants.Telescope.loadDoublePosition);
+          telescopeCommandedToTarget = true;
+          break;
         case scoreHigh:
           switch (ArmMove.lastPos) {
             case inHopper:
@@ -144,19 +148,17 @@ public class ArmMove extends CommandBase {
             case loadBounce:
             case scoreLow:
               if (armPosition >= Constants.ArmConstants.earlyTelescopeExtendPosition) {
-                telescope.moveToPosition(Constants.Telescope.highScoringPosition);
+                telescope.moveToPosition(Constants.Telescope.loadFloorPosition);
                 telescopeCommandedToTarget = true;
               }
               break;
             default:
               if (armAtTarget) {
-                telescope.moveToPosition(Constants.Telescope.highScoringPosition);
+                telescope.moveToPosition(Constants.Telescope.loadFloorPosition);
                 telescopeCommandedToTarget = true;
               }
               break;
           }
-          case loadDouble:
-
         default:
           break;
         
@@ -204,10 +206,25 @@ public class ArmMove extends CommandBase {
               armCommandedToTarget = true;
           }
           break;
+        case loadDouble:
+          if ((telescopePosition <= Constants.Telescope.safeArmRetractPosition) 
+              || ((lastPos == Position.scoreHigh) 
+                  && (telescopePosition <= Constants.Telescope.clearHighPolePosition))) {
+              arm.rotateToPosition(Constants.ArmConstants.loadDoublePosition);
+              armCommandedToTarget = true;
+          }
+          break;
         case scoreHigh:
           if ((telescopePosition <= Constants.Telescope.safeArmRetractPosition) 
-              || (lastPos == Position.scoreHigh)) {
+              || (lastPos == Position.scoreHigh) || (lastPos == Position.loadFloor)) {
             arm.rotateToPosition(Constants.ArmConstants.highScoringPosition);
+            armCommandedToTarget = true;
+          }
+          break;
+          case loadFloor:
+          if ((telescopePosition <= Constants.Telescope.safeArmRetractPosition) 
+              || (lastPos == Position.scoreHigh) || (lastPos == Position.loadFloor)) {
+            arm.rotateToPosition(Constants.ArmConstants.loadFloorPosition);
             armCommandedToTarget = true;
           }
           break;
