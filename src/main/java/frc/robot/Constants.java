@@ -345,6 +345,8 @@ public class Constants {
 
     public static final double inHopperPosition = 0;
     public static final double loadSinglePosition = 1.5;
+    public static final double loadFloorPosition = 0; //needs to be changed
+    public static final double loadDoublePosition = 0; //needs to be changed
     public static final double earlyArmRetractPosition = 9;
     public static final double safeArmRetractPosition = 0.5;  // safe for overhead/hopper clearance
     public static final double lowScoringPosition = 0;
