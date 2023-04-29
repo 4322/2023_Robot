@@ -249,12 +249,8 @@ public class RobotContainer {
 
     if (Constants.xboxEnabled) {
       xbox.leftTrigger().onTrue(clawIntake);
-      if (Constants.useLoadHighPosition) {
-        xbox.leftTrigger().onTrue(new ArmMove(arm, telescope, ArmMove.Position.loadSingle, false)
-            .unless(isIntakeStalled).until(isIntakeStalled));
-      } else {
-        xbox.a().whileTrue(new ArmMove(arm, telescope, ArmMove.Position.loadBounce, false));
-      }
+      xbox.leftTrigger().onTrue(new ArmMove(arm, telescope, ArmMove.Position.loadSingle, false)
+          .unless(isIntakeStalled).until(isIntakeStalled));
       xbox.rightTrigger().whileTrue(clawOuttake);
       xbox.back().onTrue(armSetCoastMode);
       xbox.start().onTrue(armSetBrakeMode);

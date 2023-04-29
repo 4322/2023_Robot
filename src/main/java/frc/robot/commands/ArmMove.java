@@ -127,6 +127,8 @@ public class ArmMove extends CommandBase {
           switch (ArmMove.lastPos) {
             case inHopper:
             case loadSingle:
+            case loadDouble:
+            case loadFloor:
             case loadBounce:
             case scoreLow:
               if (armPosition >= Constants.ArmConstants.earlyTelescopeExtendPosition) {
