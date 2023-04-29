@@ -149,7 +149,9 @@ public class ArmMove extends CommandBase {
             case loadSingle:
             case loadBounce:
             case scoreLow:
-              if (armPosition >= Constants.ArmConstants.earlyTelescopeExtendPosition) {
+            // exclude scoreHigh case from this optimization due to the risk of
+            // impacting the floor while the telescope is extended too far
+            if (armPosition >= Constants.ArmConstants.earlyTelescopeExtendPosition) {
                 telescope.moveToPosition(Constants.Telescope.loadFloorPosition);
                 telescopeCommandedToTarget = true;
               }
@@ -225,7 +227,7 @@ public class ArmMove extends CommandBase {
           break;
           case loadFloor:
           if ((telescopePosition <= Constants.Telescope.safeArmRetractPosition) 
-              || (lastPos == Position.scoreHigh) || (lastPos == Position.loadFloor)) {
+              || (lastPos == Position.loadFloor)) {
             arm.rotateToPosition(Constants.ArmConstants.loadFloorPosition);
             armCommandedToTarget = true;
           }
