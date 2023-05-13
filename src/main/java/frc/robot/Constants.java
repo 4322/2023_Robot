@@ -301,13 +301,13 @@ public class Constants {
     public static final double rampRate = 0.3; // good range: 0.3 to 0.5
     public static final double logIntervalSeconds = 5.0;
   
-    public static final double maxPosition = 86;
+    public static final double maxPosition = 89;
     public static final double minPosition = 0;
 
     public static final double inHopperPosition = 2.5;
     public static final double loadSinglePosition = 15;
     public static final double loadBouncePosition = 10;
-    public static final double loadFloorPosition = 85.9; //needs to be changed
+    public static final double loadFloorPosition = 88.31; //85.9 for further out
     public static final double loadDoublePosition = 62.9; //needs final calibration
     public static final double earlyTelescopeExtendPosition = 40;
     public static final double safeTelescopeExtendPosition = 57.0;
@@ -347,7 +347,7 @@ public class Constants {
 
     public static final double inHopperPosition = 0;
     public static final double loadSinglePosition = 1.5;
-    public static final double loadFloorPosition = 8.07; 
+    public static final double loadFloorPosition = 6.57; // 8.07 for further out
     public static final double loadDoublePosition = 0; 
     public static final double earlyArmRetractPosition = 9;
     public static final double safeArmRetractPosition = 0.5;  // safe for overhead/hopper clearance
