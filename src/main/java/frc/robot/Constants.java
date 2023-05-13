@@ -128,6 +128,9 @@ public class Constants {
 
     public static final double autoChargePower = 0.5;
 
+    public static final double doubleSubstationLoadDistanceInches = 32.5;
+    public static final double doubleSubstationMinAprilTagInches = 42;
+
     public static final class Manual {
 
       public static final double joystickDriveDeadband = 0.1;
@@ -308,7 +311,7 @@ public class Constants {
     public static final double loadSinglePosition = 15;
     public static final double loadBouncePosition = 10;
     public static final double loadFloorPosition = 88.31; //85.9 for further out
-    public static final double loadDoublePosition = 62.9; //needs final calibration
+    public static final double loadDoublePosition = 66.62;  // ideal load position at 32.5 inches out
     public static final double earlyTelescopeExtendPosition = 40;
     public static final double safeTelescopeExtendPosition = 57.0;
     public static final double lowScoringPosition = 10; // ideally 6.8, but would need more kP to clear hopper
@@ -348,7 +351,7 @@ public class Constants {
     public static final double inHopperPosition = 0;
     public static final double loadSinglePosition = 1.5;
     public static final double loadFloorPosition = 6.57; // 8.07 for further out
-    public static final double loadDoublePosition = 0; 
+    public static final double loadDoublePosition = 5.6; 
     public static final double earlyArmRetractPosition = 9;
     public static final double safeArmRetractPosition = 0.5;  // safe for overhead/hopper clearance
     public static final double lowScoringPosition = 0;
