@@ -143,6 +143,7 @@ public class ArmMove extends CommandBase {
               }
               break;
           }
+          break;
         case loadFloor:
           switch (ArmMove.lastPos) {
             case inHopper:
@@ -225,7 +226,7 @@ public class ArmMove extends CommandBase {
             armCommandedToTarget = true;
           }
           break;
-          case loadFloor:
+        case loadFloor:
           if ((telescopePosition <= Constants.Telescope.safeArmRetractPosition) 
               || (lastPos == Position.loadFloor)) {
             arm.rotateToPosition(Constants.ArmConstants.loadFloorPosition);
