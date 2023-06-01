@@ -164,6 +164,7 @@ public class ArmMove extends CommandBase {
               }
               break;
           }
+          break;
         default:
           break;
         
