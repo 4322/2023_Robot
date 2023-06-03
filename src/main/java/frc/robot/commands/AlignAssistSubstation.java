@@ -25,7 +25,8 @@ public class AlignAssistSubstation extends CommandBase {
   public void execute() {
     if (limelight.getTargetVisible()) {
       double targetArea = limelight.getTargetArea();
-      double horizontalDegToTarget = limelight.getHorizontalDegToTarget();
+      double horizontalDegToTarget = limelight.getHorizontalDegToTarget()
+        + LimelightConstants.substationOffsetDeg;
       
       if (targetArea >= LimelightConstants.substationMinLargeTargetArea) {
         if (Math.abs(horizontalDegToTarget) <= LimelightConstants.substationTargetToleranceDeg) {

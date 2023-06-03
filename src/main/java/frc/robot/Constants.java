@@ -417,7 +417,8 @@ public class Constants {
 
     // Target alignment values
     public static final double substationMinLargeTargetArea = 1.8;  // small target is < 1.2 against substation
-    public static final double substationTargetToleranceDeg = 7.0;  // human player can drop game piece to the side
+    public static final double substationOffsetDeg = -10.02; // account for limelight being to the left of actual robot center
+    public static final double substationTargetToleranceDeg = 10.0;  // human player can drop game piece to the side
     public static final double gridMinHighTargetArea = 0.025;
     public static final double gridMaxHighTargetArea = 0.2;
     public static final double gridMidTargetToleranceDeg = 1.0;
