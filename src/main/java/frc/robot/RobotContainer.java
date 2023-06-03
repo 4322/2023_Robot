@@ -129,7 +129,8 @@ public class RobotContainer {
   // autos need to be reloaded after each auto test because the commands can't be reused
   private void loadAutos() {
     
-    ppManager.addEvent("scoreCone", getScoreHigh());
+    ppManager.addEvent("scoreHigh", getScoreHigh());
+    ppManager.addEvent("loadFloor", getLoadFloor());
 
     autoChooser.setDefaultOption("Do Nothing", new Nothing());
 
@@ -181,7 +182,11 @@ public class RobotContainer {
           new AutoDriveRotateWheels(drive, 0.25)
       )
     );
-
+    autoChooser.addOption("2PieceAuto (1)", 
+      new SequentialCommandGroup(
+        ppManager.loadAuto("Cracked2PieceAuto", false)
+      )
+    );  
   }
 
   /**
@@ -327,6 +332,17 @@ public class RobotContainer {
         new ClawIntake(claw)
       ),
       new TimedClawOuttake(claw, 0.5),
+      new ArmMove(arm, telescope, ArmMove.Position.inHopper, true)
+      );
+  }
+
+  //pick up gamw piece from floor
+  public Command getLoadFloor() {
+    return new SequentialCommandGroup(
+      new ParallelRaceGroup(
+        new ArmMove(arm, telescope, ArmMove.Position.loadFloor, true), 
+        new ClawIntake(claw)
+      ),
       new ArmMove(arm, telescope, ArmMove.Position.inHopper, true)
       );
   }
