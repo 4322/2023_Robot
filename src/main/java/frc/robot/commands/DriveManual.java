@@ -256,7 +256,7 @@ public class DriveManual extends CommandBase {
         // stick direction and robotAngle)
         // How to use drive stick: module closest to direction of drivestick.
         // use gyro to find orientation
-        // algorithm to determine quadrant: driveStickAngle - robotAngle (TBD)
+        // algorithm to determine quadrant: driveStickAngle - robotAngle
         // if drivestick angle 0 < x < 90 , in quadrant 1 (front left module)
         // if drivestick angle 90 < x < 180 , in quadrant 2 (back left module)
         // if drivestick angle -180 < x < -90 , in quadrant 3 (back right module)
@@ -298,7 +298,7 @@ public class DriveManual extends CommandBase {
         spinoutActivationTimer2.stop();
         spinoutActivationTimer.reset();
         spinoutActivationTimer2.reset();
-        DataLogManager.log("Unocked wheel due to rotation over 90 degrees");
+        DataLogManager.log("Unlocked wheel due to rotation over 90 degrees");
       }
       // use state machine for rotating each wheel in each direction (8 cases)
       // each module rotating CW and CCW
