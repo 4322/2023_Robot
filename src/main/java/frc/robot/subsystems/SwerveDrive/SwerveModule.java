@@ -1,6 +1,15 @@
 package frc.robot.subsystems.SwerveDrive;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.revrobotics.CANPIDController;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.EncoderType;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxLimitSwitch;
+import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.ControlType;
+import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
@@ -23,20 +32,20 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 
 public class SwerveModule extends ControlModule {
-  private WPI_TalonFX turningMotor;
+  private CANSparkMax turningMotor;
   private WPI_TalonFX driveMotor;
   private CANCoder encoder;
   private WheelPosition wheelPosition;
 
   public SwerveModule(int rotationID, int wheelID, WheelPosition pos, int encoderID) {
     super(pos);
-    turningMotor = new WPI_TalonFX(rotationID);
+    turningMotor = new CANSparkMax(rotationID, MotorType.kBrushless);
     driveMotor = new WPI_TalonFX(wheelID);
     encoder = new CANCoder(encoderID);
     wheelPosition = pos;
 
     CanBusUtil.staggerTalonStatusFrames(driveMotor);
-    CanBusUtil.staggerTalonStatusFrames(turningMotor);
+    CanBusUtil.staggerSparkMax(turningMotor);
     encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, CanBusUtil.nextSlowStatusPeriodMs(),
         Constants.controllerConfigTimeoutMs);
   }
@@ -58,7 +67,7 @@ public class SwerveModule extends ControlModule {
                                                                      // for tipping
 
     talon.configAllSettings(config);
-
+    
     talon.setNeutralMode(NeutralMode.Coast); // Allow robot to be moved prior to enabling
     boolean isRightSide = pos == WheelPosition.FRONT_RIGHT || pos == WheelPosition.BACK_RIGHT;
     talon.setInverted(!isRightSide);
@@ -81,30 +90,20 @@ public class SwerveModule extends ControlModule {
 
   }
 
-  private void configRotation(WPI_TalonFX talon) {
-
-    TalonFXConfiguration config = new TalonFXConfiguration();
-    config.slot0.kP = DriveConstants.Rotation.kP;
-    config.slot0.kD = DriveConstants.Rotation.kD;
-    config.closedloopRamp = DriveConstants.Rotation.configCLosedLoopRamp;
-    config.slot0.allowableClosedloopError = DriveConstants.Rotation.allowableClosedloopError;
-    config.nominalOutputForward = DriveConstants.Rotation.minPower;
-    config.nominalOutputReverse = -DriveConstants.Rotation.minPower;
-    config.peakOutputForward = DriveConstants.Rotation.maxPower;
-    config.peakOutputReverse = -DriveConstants.Rotation.maxPower;
-
-    talon.configAllSettings(config); // factory default is the baseline
-    talon.setNeutralMode(NeutralMode.Coast); // Allow robot to be moved prior to enabling
-    talon.setInverted(true);
-    talon.setSensorPhase(false);
-
-    talon.configVoltageCompSaturation(DriveConstants.Rotation.configVoltageCompSaturation);
-    talon.enableVoltageCompensation(DriveConstants.Rotation.enableVoltageCompensation);
-
-    talon.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(
+  private void configRotation(CANSparkMax sparkMax) {
+    SparkMaxPIDController config = sparkMax.getPIDController();
+    config.setP(DriveConstants.Rotation.kP,0);
+    config.setD(DriveConstants.Rotation.kD,0);
+    sparkMax.setClosedLoopRampRate(DriveConstants.Rotation.configCLosedLoopRamp);
+    config.setSmartMotionAllowedClosedLoopError(DriveConstants.Rotation.allowableClosedloopError,0);
+    config.setOutputRange(-DriveConstants.Rotation.minPower, DriveConstants.Rotation.maxPower);
+    sparkMax.setIdleMode(IdleMode.kCoast); // Allow robot to be moved prior to enabling
+    sparkMax.enableVoltageCompensation(DriveConstants.Rotation.configVoltageCompSaturation);
+    
+    sparkMax.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(
         DriveConstants.Rotation.statorEnabled, DriveConstants.Rotation.statorLimit,
         DriveConstants.Rotation.statorThreshold, DriveConstants.Rotation.statorTime));
-    talon.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(
+    sparkMax.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(
         DriveConstants.Rotation.supplyEnabled, DriveConstants.Rotation.supplyLimit,
         DriveConstants.Rotation.supplyThreshold, DriveConstants.Rotation.supplyTime));
 
@@ -130,11 +129,11 @@ public class SwerveModule extends ControlModule {
         / DriveConstants.Rotation.countToDegrees;
 
     ErrorCode error =
-        talon.setSelectedSensorPosition(count, 0, Constants.controllerConfigTimeoutMs);
+        sparkMax.setSelectedSensorPosition(count, 0, Constants.controllerConfigTimeoutMs);
     if (error != ErrorCode.OK) {
       DriverStation.reportError(
-          "Error " + error.value + " initializing Talon FX " + talon.getDeviceID() + " position ",
-          false);
+          "Error " + error.value + " initializing sparkMax " + sparkMax.getDeviceId() + " position ",
+          false); //FIX
     }
 
     // don't need the CANCoder any longer, so a slow frame rate is OK
@@ -144,7 +143,8 @@ public class SwerveModule extends ControlModule {
     // need rapid position feedback for steering logic
     turningMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0,
         CanBusUtil.nextFastStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
-  }
+  } 
+  
 
   public double getMagneticRotationAngle() {
     return encoder.getAbsolutePosition();
@@ -198,20 +198,19 @@ public class SwerveModule extends ControlModule {
                                                                                        // ms
 
     // Calculate the change in degrees and add that to the current position
-    turningMotor.set(ControlMode.Position,
-        (currentDeg + OrangeMath.boundDegrees(state.angle.getDegrees() - currentDeg))
-            / DriveConstants.Rotation.countToDegrees);
+    turningMotor.getPIDController().setReference((currentDeg + OrangeMath.boundDegrees(state.angle.getDegrees() - currentDeg))
+    / DriveConstants.Rotation.countToDegrees, ControlType.kPosition);
 
   }
 
   public void setCoastmode() {
     driveMotor.setNeutralMode(NeutralMode.Coast);
-    turningMotor.setNeutralMode(NeutralMode.Coast);
+    turningMotor.setIdleMode(IdleMode.kCoast);
   }
 
   public void setBrakeMode() {
     driveMotor.setNeutralMode(NeutralMode.Brake);
-    turningMotor.setNeutralMode(NeutralMode.Brake);
+    turningMotor.setIdleMode(IdleMode.kBrake);
   }
 
   public void stop() {
