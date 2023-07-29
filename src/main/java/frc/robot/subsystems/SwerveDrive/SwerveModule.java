@@ -4,12 +4,14 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.EncoderType;
+import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxLimitSwitch;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
@@ -19,8 +21,10 @@ import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
@@ -34,6 +38,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 public class SwerveModule extends ControlModule {
   private CANSparkMax turningMotor;
   private WPI_TalonFX driveMotor;
+  private WPI_TalonFX driveMotor2;
   private CANCoder encoder;
   private WheelPosition wheelPosition;
 
@@ -51,7 +56,10 @@ public class SwerveModule extends ControlModule {
   }
 
   public void init() {
+    driveMotor2.follow(driveMotor,FollowerType.PercentOutput);
+    driveMotor2.setInverted(TalonFXInvertType.OpposeMaster);
     configDrive(driveMotor, wheelPosition);
+    configDrive(driveMotor2, wheelPosition);
     configRotation(turningMotor);
   }
 
@@ -89,7 +97,7 @@ public class SwerveModule extends ControlModule {
         CanBusUtil.nextFastStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
 
   }
-
+ 
   private void configRotation(CANSparkMax sparkMax) {
     SparkMaxPIDController config = sparkMax.getPIDController();
     config.setP(DriveConstants.Rotation.kP,0);
@@ -128,9 +136,9 @@ public class SwerveModule extends ControlModule {
         - DriveConstants.Rotation.CANCoderOffsetDegrees[position.wheelNumber])
         / DriveConstants.Rotation.countToDegrees;
 
-    ErrorCode error =
-        sparkMax.setSelectedSensorPosition(count, 0, Constants.controllerConfigTimeoutMs);
-    if (error != ErrorCode.OK) {
+    REVLibError error =
+        sparkMax.getEncoder().setPosition(count);
+    if (error != REVLibError.kOk) {
       DriverStation.reportError(
           "Error " + error.value + " initializing sparkMax " + sparkMax.getDeviceId() + " position ",
           false); //FIX
@@ -143,6 +151,8 @@ public class SwerveModule extends ControlModule {
     // need rapid position feedback for steering logic
     turningMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0,
         CanBusUtil.nextFastStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+        turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, CanBusUtil.nextFastStatusPeriodMs());
+        turningMotor.setControlFramePeriodMs(0);
   } 
   
 
@@ -151,7 +161,7 @@ public class SwerveModule extends ControlModule {
   }
 
   public double getInternalRotationCount() {
-    return turningMotor.getSelectedSensorPosition();
+    return turningMotor.getEncoder().getPosition();
   }
 
   public double getInternalRotationDegrees() {
@@ -175,17 +185,17 @@ public class SwerveModule extends ControlModule {
 
   public SwerveModuleState getState() {
     return new SwerveModuleState(getVelocity() * Constants.feetToMeters, Rotation2d.fromDegrees(
-        turningMotor.getSelectedSensorPosition() * DriveConstants.Rotation.countToDegrees));
+        turningMotor.getEncoder().getPosition() * DriveConstants.Rotation.countToDegrees));
   }
 
   public SwerveModulePosition getPosition() {
     return new SwerveModulePosition(getDistance(), Rotation2d.fromDegrees(
-        turningMotor.getSelectedSensorPosition() * DriveConstants.Rotation.countToDegrees));
+        turningMotor.getEncoder().getPosition() * DriveConstants.Rotation.countToDegrees));
   }
 
   public void setDesiredState(SwerveModuleState desiredState) {
     double currentDeg =
-        turningMotor.getSelectedSensorPosition() * DriveConstants.Rotation.countToDegrees;
+        turningMotor.getEncoder().getPosition() * DriveConstants.Rotation.countToDegrees;
 
     // Optimize the reference state to avoid spinning further than 90 degrees
     SwerveModuleState state =
