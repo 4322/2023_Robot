@@ -69,7 +69,7 @@ public class Limelight extends SubsystemBase {
     return gridLimelight;
   }
 
-  public Limelight(String limelightName, double limelightHeightMeters, double limelightAngleDegrees,
+  private Limelight(String limelightName, double limelightHeightMeters, double limelightAngleDegrees,
       double xOffsetMeters, double yOffsetMeters, boolean facingBackward, boolean isTestSubsystem, boolean enabled) {
     name = limelightName;
     limeHeight = limelightHeightMeters;
