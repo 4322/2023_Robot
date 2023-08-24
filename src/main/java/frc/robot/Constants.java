@@ -216,6 +216,9 @@ public class Constants {
       public static final double supplyThreshold = 35;
       public static final double supplyTime = 0.5;
 
+      public static final int freeLimit = 40;
+      public static final int stallLimit = 5; //Change
+
       public static final double allowableClosedloopError = 0.35 / countToDegrees;
 
       // values obtained from swerve module zeroing procedure

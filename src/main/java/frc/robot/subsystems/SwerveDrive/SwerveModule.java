@@ -1,29 +1,18 @@
 package frc.robot.subsystems.SwerveDrive;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.EncoderType;
 import com.revrobotics.REVLibError;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
-import com.revrobotics.SparkMaxLimitSwitch;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
-import com.ctre.phoenix.sensors.AbsoluteSensorRange;
-import com.ctre.phoenix.sensors.CANCoder;
-import com.ctre.phoenix.sensors.CANCoderConfiguration;
-import com.ctre.phoenix.sensors.CANCoderStatusFrame;
-import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
-import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -43,14 +32,16 @@ public class SwerveModule extends ControlModule {
   private SparkMaxAbsoluteEncoder encoder;
   private WheelPosition wheelPosition;
 
-  public SwerveModule(int rotationID, int wheelID, WheelPosition pos, int encoderID) {
+  public SwerveModule(int rotationID, int wheelID, int wheelID2, WheelPosition pos, int encoderID) {
     super(pos);
     turningMotor = new CANSparkMax(rotationID, MotorType.kBrushless);
     driveMotor = new WPI_TalonFX(wheelID);
+    driveMotor2 = new WPI_TalonFX(wheelID2);
     encoder = turningMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
     wheelPosition = pos;
 
     CanBusUtil.staggerTalonStatusFrames(driveMotor);
+    CanBusUtil.staggerTalonStatusFrames(driveMotor2);
     CanBusUtil.staggerSparkMax(turningMotor);
     // encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, CanBusUtil.nextSlowStatusPeriodMs(),
     //     Constants.controllerConfigTimeoutMs);
@@ -109,12 +100,7 @@ public class SwerveModule extends ControlModule {
     sparkMax.setIdleMode(IdleMode.kCoast); // Allow robot to be moved prior to enabling
     sparkMax.enableVoltageCompensation(DriveConstants.Rotation.configVoltageCompSaturation);
     
-    sparkMax.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(
-        DriveConstants.Rotation.statorEnabled, DriveConstants.Rotation.statorLimit,
-        DriveConstants.Rotation.statorThreshold, DriveConstants.Rotation.statorTime));
-    sparkMax.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(
-        DriveConstants.Rotation.supplyEnabled, DriveConstants.Rotation.supplyLimit,
-        DriveConstants.Rotation.supplyThreshold, DriveConstants.Rotation.supplyTime));
+    sparkMax.setSmartCurrentLimit(DriveConstants.Rotation.stallLimit, DriveConstants.Rotation.freeLimit);
 
     // TODO: figure out what other configuration to do for the redux, if any
     encoder.setPositionConversionFactor(1/360);
