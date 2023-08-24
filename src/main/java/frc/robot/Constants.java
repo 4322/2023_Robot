@@ -61,13 +61,18 @@ public class Constants {
   public static final class DriveConstants {
     
     public static final int frontRightDriveID = 3;
+    public static final int frontRightDriveID2 = 0; //change
     public static final int frontRightRotationID = 5;
     public static final int rearRightDriveID = 6;
+    public static final int rearRightDriveID2 = 0; //change
     public static final int rearRightRotationID = 7;
     public static final int frontLeftDriveID = 2;
+    public static final int frontLeftDriveID2 = 0; //change
     public static final int frontLeftRotationID = 4;
     public static final int rearLeftDriveID = 8;
+    public static final int rearLeftDriveID2 = 0; //change
     public static final int rearLeftRotationID = 9;
+    
     
     public static final int frontRightEncoderID = 10;
     public static final int rearRightEncoderID = 12;
