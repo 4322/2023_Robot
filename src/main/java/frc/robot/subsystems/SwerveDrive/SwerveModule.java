@@ -43,8 +43,6 @@ public class SwerveModule extends ControlModule {
     CanBusUtil.staggerTalonStatusFrames(driveMotor);
     CanBusUtil.staggerTalonStatusFrames(driveMotor2);
     CanBusUtil.staggerSparkMax(turningMotor);
-    // encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, CanBusUtil.nextSlowStatusPeriodMs(),
-    //     Constants.controllerConfigTimeoutMs);
   }
 
   public void init() {
@@ -102,16 +100,8 @@ public class SwerveModule extends ControlModule {
     
     sparkMax.setSmartCurrentLimit(DriveConstants.Rotation.stallLimit, DriveConstants.Rotation.freeLimit);
 
-    // TODO: figure out what other configuration to do for the redux, if any
-    encoder.setPositionConversionFactor(1/360);
-
-    // The old stuff for reference:
-    // CANCoderConfiguration encoderConfig = new CANCoderConfiguration();
-    // encoderConfig.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
-    // encoderConfig.sensorDirection = false; // positive rotation is CCW
-    // encoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
-
-    // encoder.configAllSettings(encoderConfig); // factory default is the baselineW
+    // THE ENCODER WILL GIVE YOU DEGREES
+    encoder.setPositionConversionFactor(360);
 
     try {
       Thread.sleep(50); // 5 status frames to be safe
@@ -131,12 +121,11 @@ public class SwerveModule extends ControlModule {
   } 
 
   public double getInternalRotationCount() {
-    return turningMotor.getEncoder().getPosition();
+    return encoder.getPosition();
   }
 
-  // abs encoder returns rotations as native unit
   public double getInternalRotationDegrees() {
-    return OrangeMath.boundDegrees(encoder.getPosition() / 360);
+    return OrangeMath.boundDegrees(encoder.getPosition());
   }
 
   @Override
@@ -155,18 +144,16 @@ public class SwerveModule extends ControlModule {
   }
 
   public SwerveModuleState getState() {
-    return new SwerveModuleState(getVelocity() * Constants.feetToMeters, Rotation2d.fromDegrees(
-        turningMotor.getEncoder().getPosition() * DriveConstants.Rotation.countToDegrees));
+    return new SwerveModuleState(getVelocity() * Constants.feetToMeters, 
+      Rotation2d.fromDegrees(encoder.getPosition()));
   }
 
   public SwerveModulePosition getPosition() {
-    return new SwerveModulePosition(getDistance(), Rotation2d.fromDegrees(
-        turningMotor.getEncoder().getPosition() * DriveConstants.Rotation.countToDegrees));
+    return new SwerveModulePosition(getDistance(), Rotation2d.fromDegrees(encoder.getPosition()));
   }
 
   public void setDesiredState(SwerveModuleState desiredState) {
-    double currentDeg =
-        turningMotor.getEncoder().getPosition() * DriveConstants.Rotation.countToDegrees;
+    double currentDeg = encoder.getPosition();
 
     // Optimize the reference state to avoid spinning further than 90 degrees
     SwerveModuleState state =
@@ -179,8 +166,8 @@ public class SwerveModule extends ControlModule {
                                                                                        // ms
 
     // Calculate the change in degrees and add that to the current position
-    turningMotor.getPIDController().setReference((currentDeg + OrangeMath.boundDegrees(state.angle.getDegrees() - currentDeg))
-    / DriveConstants.Rotation.countToDegrees, ControlType.kPosition);
+    turningMotor.getPIDController().setReference(currentDeg + OrangeMath.boundDegrees(state.angle.getDegrees() - currentDeg), 
+      ControlType.kPosition);
 
   }
 
