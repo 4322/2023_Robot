@@ -6,6 +6,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.EncoderType;
 import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxAbsoluteEncoder;
 import com.revrobotics.SparkMaxLimitSwitch;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
@@ -39,20 +40,20 @@ public class SwerveModule extends ControlModule {
   private CANSparkMax turningMotor;
   private WPI_TalonFX driveMotor;
   private WPI_TalonFX driveMotor2;
-  private CANCoder encoder;
+  private SparkMaxAbsoluteEncoder encoder;
   private WheelPosition wheelPosition;
 
   public SwerveModule(int rotationID, int wheelID, WheelPosition pos, int encoderID) {
     super(pos);
     turningMotor = new CANSparkMax(rotationID, MotorType.kBrushless);
     driveMotor = new WPI_TalonFX(wheelID);
-    encoder = new CANCoder(encoderID);
+    encoder = turningMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
     wheelPosition = pos;
 
     CanBusUtil.staggerTalonStatusFrames(driveMotor);
     CanBusUtil.staggerSparkMax(turningMotor);
-    encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, CanBusUtil.nextSlowStatusPeriodMs(),
-        Constants.controllerConfigTimeoutMs);
+    // encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, CanBusUtil.nextSlowStatusPeriodMs(),
+    //     Constants.controllerConfigTimeoutMs);
   }
 
   public void init() {
@@ -115,57 +116,41 @@ public class SwerveModule extends ControlModule {
         DriveConstants.Rotation.supplyEnabled, DriveConstants.Rotation.supplyLimit,
         DriveConstants.Rotation.supplyThreshold, DriveConstants.Rotation.supplyTime));
 
-    CANCoderConfiguration encoderConfig = new CANCoderConfiguration();
-    encoderConfig.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
-    encoderConfig.sensorDirection = false; // positive rotation is CCW
-    encoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
+    // TODO: figure out what other configuration to do for the redux, if any
+    encoder.setPositionConversionFactor(1/360);
 
-    encoder.configAllSettings(encoderConfig); // factory default is the baseline
+    // The old stuff for reference:
+    // CANCoderConfiguration encoderConfig = new CANCoderConfiguration();
+    // encoderConfig.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
+    // encoderConfig.sensorDirection = false; // positive rotation is CCW
+    // encoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
 
-    // need fast initial reading from the CANCoder
-    encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 10,
-        Constants.controllerConfigTimeoutMs);
+    // encoder.configAllSettings(encoderConfig); // factory default is the baselineW
 
     try {
       Thread.sleep(50); // 5 status frames to be safe
     } catch (InterruptedException e) {
     }
 
-    // initialize internal Falcon encoder to absolute wheel position from CANCoder
-    double count = (encoder.getAbsolutePosition()
-        - DriveConstants.Rotation.CANCoderOffsetDegrees[position.wheelNumber])
-        / DriveConstants.Rotation.countToDegrees;
-
     REVLibError error =
-        sparkMax.getEncoder().setPosition(count);
+        encoder.setZeroOffset(DriveConstants.Rotation.CANCoderOffsetDegrees[position.wheelNumber]);
     if (error != REVLibError.kOk) {
       DriverStation.reportError(
           "Error " + error.value + " initializing sparkMax " + sparkMax.getDeviceId() + " position ",
           false); //FIX
     }
 
-    // don't need the CANCoder any longer, so a slow frame rate is OK
-    encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, CanBusUtil.nextSlowStatusPeriodMs(),
-        Constants.controllerConfigTimeoutMs);
-
     // need rapid position feedback for steering logic
-    turningMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0,
-        CanBusUtil.nextFastStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
-        turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, CanBusUtil.nextFastStatusPeriodMs());
-        turningMotor.setControlFramePeriodMs(0);
+    CanBusUtil.fastPositionSparkMax(turningMotor);
   } 
-  
-
-  public double getMagneticRotationAngle() {
-    return encoder.getAbsolutePosition();
-  }
 
   public double getInternalRotationCount() {
     return turningMotor.getEncoder().getPosition();
   }
 
+  // abs encoder returns rotations as native unit
   public double getInternalRotationDegrees() {
-    return OrangeMath.boundDegrees(getInternalRotationCount() * DriveConstants.Rotation.countToDegrees);
+    return OrangeMath.boundDegrees(encoder.getPosition() / 360);
   }
 
   @Override
