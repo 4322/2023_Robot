@@ -108,12 +108,7 @@ public class SwerveModule extends ControlModule {
     sparkMax.setIdleMode(IdleMode.kCoast); // Allow robot to be moved prior to enabling
     sparkMax.enableVoltageCompensation(DriveConstants.Rotation.configVoltageCompSaturation);
     
-    sparkMax.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(
-        DriveConstants.Rotation.statorEnabled, DriveConstants.Rotation.statorLimit,
-        DriveConstants.Rotation.statorThreshold, DriveConstants.Rotation.statorTime));
-    sparkMax.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(
-        DriveConstants.Rotation.supplyEnabled, DriveConstants.Rotation.supplyLimit,
-        DriveConstants.Rotation.supplyThreshold, DriveConstants.Rotation.supplyTime));
+    sparkMax.setSmartCurrentLimit(DriveConstants.Rotation.stallLimit, DriveConstants.Rotation.freeLimit);
 
     CANCoderConfiguration encoderConfig = new CANCoderConfiguration();
     encoderConfig.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
