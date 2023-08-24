@@ -42,14 +42,16 @@ public class SwerveModule extends ControlModule {
   private CANCoder encoder;
   private WheelPosition wheelPosition;
 
-  public SwerveModule(int rotationID, int wheelID, WheelPosition pos, int encoderID) {
+  public SwerveModule(int rotationID, int wheelID, int wheelID2, WheelPosition pos, int encoderID) {
     super(pos);
     turningMotor = new CANSparkMax(rotationID, MotorType.kBrushless);
     driveMotor = new WPI_TalonFX(wheelID);
+    driveMotor2 = new WPI_TalonFX(wheelID2);
     encoder = new CANCoder(encoderID);
     wheelPosition = pos;
 
     CanBusUtil.staggerTalonStatusFrames(driveMotor);
+    CanBusUtil.staggerTalonStatusFrames(driveMotor2);
     CanBusUtil.staggerSparkMax(turningMotor);
     encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, CanBusUtil.nextSlowStatusPeriodMs(),
         Constants.controllerConfigTimeoutMs);
