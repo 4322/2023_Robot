@@ -65,12 +65,10 @@ public class SwerveModule extends ControlModule {
     slot0config.kD = DriveConstants.Drive.kD;
     slot0config.kV = DriveConstants.Drive.kV;
 
-    talon.getConfigurator().apply(slot0config);
     slot0config.closedloopRamp = DriveConstants.Drive.configClosedLoopRamp;
     slot0config.neutralDeadband = DriveConstants.Drive.brakeModeDeadband; // delay brake mode activation
                                                                           // for tipping
-
-    talon.getConfigurator().apply(config);
+    talon.getConfigurator().apply(slot0config);
     
     talon.setNeutralMode(NeutralModeValue.Coast); // Allow robot to be moved prior to enabling
     boolean isRightSide = pos == WheelPosition.FRONT_RIGHT || pos == WheelPosition.BACK_RIGHT;
