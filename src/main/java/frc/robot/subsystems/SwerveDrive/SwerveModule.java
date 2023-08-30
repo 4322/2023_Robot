@@ -1,10 +1,12 @@
 package frc.robot.subsystems.SwerveDrive;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.Follower;
-
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -65,18 +67,23 @@ public class SwerveModule extends ControlModule {
     slot0config.kD = DriveConstants.Drive.kD;
     slot0config.kV = DriveConstants.Drive.kV;
 
-    slot0config.closedloopRamp = DriveConstants.Drive.configClosedLoopRamp;
-    slot0config.neutralDeadband = DriveConstants.Drive.brakeModeDeadband; // delay brake mode activation
-                                                                          // for tipping
-    talon.getConfigurator().apply(slot0config);
+    MotorOutputConfigs mOutputConfigs = new MotorOutputConfigs();
+    ClosedLoopRampsConfigs cLoopRampsConfigs = new ClosedLoopRampsConfigs();
+
+    mOutputConfigs.NeutralMode = NeutralModeValue.Coast; // Allow robot to be moved prior to enabling
+    mOutputConfigs.DutyCycleNeutralDeadband = DriveConstants.Drive.brakeModeDeadband;  // delay brake mode activation
+                                                                                       // for tipping
+    cLoopRampsConfigs.VoltageClosedLoopRampPeriod = DriveConstants.Drive.configClosedLoopRamp;
+    //slot0config.closedloopRamp = DriveConstants.Drive.configClosedLoopRamp;
     
-    talon.setNeutralMode(NeutralModeValue.Coast); // Allow robot to be moved prior to enabling
+    talon.getConfigurator().apply(slot0config);
+    talon.getConfigurator().apply(cLoopRampsConfigs);
+    talon.getConfigurator().apply(mOutputConfigs);
+    
     boolean isRightSide = pos == WheelPosition.FRONT_RIGHT || pos == WheelPosition.BACK_RIGHT;
     talon.setInverted(!isRightSide);
-    talon.setSensorPhase(false);
 
     talon.setControl(voltageRequest.withOutput(DriveConstants.Drive.voltageCompSaturation));
-
 
     talon.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(
         DriveConstants.Drive.statorEnabled, DriveConstants.Drive.statorLimit,
@@ -86,7 +93,6 @@ public class SwerveModule extends ControlModule {
         DriveConstants.Drive.supplyThreshold, DriveConstants.Drive.supplyTime));
 
     // need rapid velocity feedback for anti-tipping logic
-
     talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0,
         CanBusUtil.nextFastStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
 
