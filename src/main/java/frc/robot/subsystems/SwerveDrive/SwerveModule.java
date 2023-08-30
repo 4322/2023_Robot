@@ -4,6 +4,8 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.Follower;
+
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
@@ -36,6 +38,7 @@ public class SwerveModule extends ControlModule {
   private TalonFX driveMotor2;
   private SparkMaxAbsoluteEncoder encoder;
   private WheelPosition wheelPosition;
+  private VoltageOut voltageRequest = new VoltageOut(0);
 
   public SwerveModule(int rotationID, int wheelID, int wheelID2, WheelPosition pos, int encoderID) {
     super(pos);
@@ -74,8 +77,8 @@ public class SwerveModule extends ControlModule {
     talon.setInverted(!isRightSide);
     talon.setSensorPhase(false);
 
-    talon.configVoltageCompSaturation(DriveConstants.Drive.voltageCompSaturation);
-    talon.enableVoltageCompensation(DriveConstants.Drive.enableVoltageCompensation);
+    talon.setControl(voltageRequest.withOutput(DriveConstants.Drive.voltageCompSaturation));
+
 
     talon.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(
         DriveConstants.Drive.statorEnabled, DriveConstants.Drive.statorLimit,
