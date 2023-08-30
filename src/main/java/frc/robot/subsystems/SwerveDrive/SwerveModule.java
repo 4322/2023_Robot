@@ -1,6 +1,7 @@
 package frc.robot.subsystems.SwerveDrive;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVLibError;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
@@ -27,21 +28,19 @@ import edu.wpi.first.wpilibj.DriverStation;
 
 public class SwerveModule extends ControlModule {
   private CANSparkMax turningMotor;
-  private WPI_TalonFX driveMotor;
-  private WPI_TalonFX driveMotor2;
+  private TalonFX driveMotor;
+  private TalonFX driveMotor2;
   private SparkMaxAbsoluteEncoder encoder;
   private WheelPosition wheelPosition;
 
   public SwerveModule(int rotationID, int wheelID, int wheelID2, WheelPosition pos, int encoderID) {
     super(pos);
     turningMotor = new CANSparkMax(rotationID, MotorType.kBrushless);
-    driveMotor = new WPI_TalonFX(wheelID);
-    driveMotor2 = new WPI_TalonFX(wheelID2);
+    driveMotor = new TalonFX(wheelID);
+    driveMotor2 = new TalonFX(wheelID2);
     encoder = turningMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
     wheelPosition = pos;
 
-    CanBusUtil.staggerTalonStatusFrames(driveMotor);
-    CanBusUtil.staggerTalonStatusFrames(driveMotor2);
     CanBusUtil.staggerSparkMax(turningMotor);
   }
 
@@ -53,7 +52,7 @@ public class SwerveModule extends ControlModule {
     configRotation(turningMotor);
   }
 
-  private void configDrive(WPI_TalonFX talon, WheelPosition pos) {
+  private void configDrive(TalonFX talon, WheelPosition pos) {
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.slot0.kP = DriveConstants.Drive.kP;
     config.slot0.kI = DriveConstants.Drive.kI;
