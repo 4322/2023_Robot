@@ -1,7 +1,11 @@
 package frc.robot.subsystems.SwerveDrive;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVLibError;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
@@ -45,27 +49,27 @@ public class SwerveModule extends ControlModule {
   }
 
   public void init() {
-    driveMotor2.follow(driveMotor,FollowerType.PercentOutput);
-    driveMotor2.setInverted(TalonFXInvertType.OpposeMaster);
+    driveMotor2.setControl(new Follower(driveMotor.getDeviceID(), true));
     configDrive(driveMotor, wheelPosition);
     configDrive(driveMotor2, wheelPosition);
     configRotation(turningMotor);
   }
 
   private void configDrive(TalonFX talon, WheelPosition pos) {
-    TalonFXConfiguration config = new TalonFXConfiguration();
-    config.slot0.kP = DriveConstants.Drive.kP;
-    config.slot0.kI = DriveConstants.Drive.kI;
-    config.slot0.kD = DriveConstants.Drive.kD;
-    config.slot0.integralZone = DriveConstants.Drive.kIz;
-    config.slot0.kF = DriveConstants.Drive.kFF;
-    config.closedloopRamp = DriveConstants.Drive.configClosedLoopRamp;
-    config.neutralDeadband = DriveConstants.Drive.brakeModeDeadband; // delay brake mode activation
-                                                                     // for tipping
+    Slot0Configs slot0config = new Slot0Configs();
+    slot0config.kP = DriveConstants.Drive.kP;
+    slot0config.kI = DriveConstants.Drive.kI;
+    slot0config.kD = DriveConstants.Drive.kD;
+    slot0config.kV = DriveConstants.Drive.kV;
 
-    talon.configAllSettings(config);
+    talon.getConfigurator().apply(slot0config);
+    slot0config.closedloopRamp = DriveConstants.Drive.configClosedLoopRamp;
+    slot0config.neutralDeadband = DriveConstants.Drive.brakeModeDeadband; // delay brake mode activation
+                                                                          // for tipping
+
+    talon.getConfigurator().apply(config);
     
-    talon.setNeutralMode(NeutralMode.Coast); // Allow robot to be moved prior to enabling
+    talon.setNeutralMode(NeutralModeValue.Coast); // Allow robot to be moved prior to enabling
     boolean isRightSide = pos == WheelPosition.FRONT_RIGHT || pos == WheelPosition.BACK_RIGHT;
     talon.setInverted(!isRightSide);
     talon.setSensorPhase(false);

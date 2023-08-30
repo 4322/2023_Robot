@@ -262,8 +262,8 @@ public class Constants {
       public static final double kP = 0.05;
       public static final double kI = 0.0002;
       public static final double kD = 0.0;
-      public static final double kIz = 500;
-      public static final double kFF = 0.054;
+      //Need to refactor all PID K-values
+      public static final double kV = 0.12972;
       
     }
 
