@@ -14,10 +14,9 @@ public class OrangeMath {
     return diameter * Math.PI;
   }
 
-  public static double falconEncoderToMeters(double encUnits, double wheelCircumferenceMeters,
+  public static double falconRotationsToMeters(double rotUnits, double wheelCircumferenceMeters,
       double gearRatioMotorToWheel) {
-    return (encUnits * wheelCircumferenceMeters) / gearRatioMotorToWheel
-        / Constants.falconEncoderUnits;
+    return (rotUnits * wheelCircumferenceMeters) / gearRatioMotorToWheel;
   }
 
   public static double feetToMeters(double feet) {
