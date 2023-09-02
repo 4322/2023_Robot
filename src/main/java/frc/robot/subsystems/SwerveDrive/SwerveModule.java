@@ -93,8 +93,8 @@ public class SwerveModule extends ControlModule {
         DriveConstants.Drive.supplyThreshold, DriveConstants.Drive.supplyTime));
 
     // need rapid velocity feedback for anti-tipping logic
-    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0,
-        CanBusUtil.nextFastStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
+    talon.getPosition().setUpdateFrequency(CanBusUtil.nextFastStatusPeriodMs(), 
+      Constants.controllerConfigTimeoutMs); //change CanBusUtil.nextFastStatusPeriodMs() to hertz instead of ms because function requires hertz
 
   }
  
