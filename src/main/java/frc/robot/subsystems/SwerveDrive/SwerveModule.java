@@ -148,9 +148,10 @@ public class SwerveModule extends ControlModule {
   @Override
   public double getVelocity() {
     // feet per second
-    return driveMotor.getSelectedSensorVelocity(0) * 10 / DriveConstants.encoderResolution
-        / Constants.DriveConstants.Drive.gearRatio * Math.PI
-        * Constants.DriveConstants.Drive.wheelDiameterInches / 12;
+    return driveMotor.getRotorVelocity().getValue() * 10 / Constants.DriveConstants.Drive.gearRatio 
+        * Math.PI * Constants.DriveConstants.Drive.wheelDiameterInches / 12;
+
+
   }
 
   public SwerveModuleState getState() {
