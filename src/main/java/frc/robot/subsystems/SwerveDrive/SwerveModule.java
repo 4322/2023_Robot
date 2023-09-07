@@ -12,6 +12,7 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ControlModeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVLibError;
@@ -38,6 +39,7 @@ public class SwerveModule extends ControlModule {
   private SparkMaxAbsoluteEncoder encoder;
   private WheelPosition wheelPosition;
   private VoltageOut voltageRequest = new VoltageOut(0);
+  private CurrentLimitsConfigs currentLimitConfigs = new CurrentLimitsConfigs();
 
   public SwerveModule(int rotationID, int wheelID, int wheelID2, WheelPosition pos, int encoderID) {
     super(pos);
@@ -85,10 +87,11 @@ public class SwerveModule extends ControlModule {
     talon.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(
         DriveConstants.Drive.statorEnabled, DriveConstants.Drive.statorLimit,
         DriveConstants.Drive.statorThreshold, DriveConstants.Drive.statorTime));
+    CurrentLimitsConfigs yes = new CurrentLimitsConfigs();
+    yes.SupplyTimeThreshold = 0;
     talon.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(
         DriveConstants.Drive.supplyEnabled, DriveConstants.Drive.supplyLimit,
         DriveConstants.Drive.supplyThreshold, DriveConstants.Drive.supplyTime));
-
     // need rapid velocity feedback for anti-tipping logic
     talon.getPosition().setUpdateFrequency(CanBusUtil.nextFastStatusPeriodMs(), 
       Constants.controllerConfigTimeoutMs); //change CanBusUtil.nextFastStatusPeriodMs() to hertz instead of ms because function requires hertz
@@ -175,8 +178,15 @@ public class SwerveModule extends ControlModule {
     // Calculate the change in degrees and add that to the current position
     turningMotor.getPIDController().setReference(currentDeg + OrangeMath.boundDegrees(state.angle.getDegrees() - currentDeg), 
       ControlType.kPosition);
-
   }
+
+  public void setConfigStatorLimit(boolean statorEnabled, double currentLimit, 
+    double currentThreshold, double timeThreshold) {
+      currentLimitConfigs.StatorCurrentLimitEnable = statorEnabled;
+      currentLimitConfigs.StatorCurrentLimit = currentLimit;
+      currentLimitConfigs.SupplyCurrentThreshold = currentThreshold;
+      currentLimitConfigs.SupplyTimeThreshold = timeThreshold;
+    }
 
   public void setCoastmode() {
     driveMotor.setControl(new CoastOut());
