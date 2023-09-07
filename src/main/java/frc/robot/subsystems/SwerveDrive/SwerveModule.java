@@ -3,7 +3,6 @@ package frc.robot.subsystems.SwerveDrive;
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.NeutralOut;
@@ -22,7 +21,6 @@ import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.utility.OrangeMath;
@@ -84,14 +82,16 @@ public class SwerveModule extends ControlModule {
 
     talon.setControl(voltageRequest.withOutput(DriveConstants.Drive.voltageCompSaturation));
 
-    talon.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(
-        DriveConstants.Drive.statorEnabled, DriveConstants.Drive.statorLimit,
-        DriveConstants.Drive.statorThreshold, DriveConstants.Drive.statorTime));
-    CurrentLimitsConfigs yes = new CurrentLimitsConfigs();
-    yes.SupplyTimeThreshold = 0;
-    talon.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(
-        DriveConstants.Drive.supplyEnabled, DriveConstants.Drive.supplyLimit,
-        DriveConstants.Drive.supplyThreshold, DriveConstants.Drive.supplyTime));
+    // applies stator & supply current limit configs to device
+    // refer to https://pro.docs.ctr-electronics.com/en/latest/docs/api-reference/api-usage/configuration.html 
+    currentLimitConfigs.StatorCurrentLimitEnable = DriveConstants.Drive.statorEnabled;
+    currentLimitConfigs.StatorCurrentLimit = DriveConstants.Drive.statorLimit;
+    currentLimitConfigs.SupplyCurrentLimit = DriveConstants.Drive.supplyLimit;
+    currentLimitConfigs.SupplyCurrentThreshold = DriveConstants.Drive.supplyThreshold;
+    currentLimitConfigs.SupplyTimeThreshold = DriveConstants.Drive.supplyTime;
+    currentLimitConfigs.SupplyCurrentLimitEnable = DriveConstants.Drive.supplyEnabled;
+    talon.getConfigurator().apply(currentLimitConfigs);
+    
     // need rapid velocity feedback for anti-tipping logic
     talon.getPosition().setUpdateFrequency(CanBusUtil.nextFastStatusPeriodMs(), 
       Constants.controllerConfigTimeoutMs); //change CanBusUtil.nextFastStatusPeriodMs() to hertz instead of ms because function requires hertz
@@ -179,14 +179,6 @@ public class SwerveModule extends ControlModule {
     turningMotor.getPIDController().setReference(currentDeg + OrangeMath.boundDegrees(state.angle.getDegrees() - currentDeg), 
       ControlType.kPosition);
   }
-
-  public void setConfigStatorLimit(boolean statorEnabled, double currentLimit, 
-    double currentThreshold, double timeThreshold) {
-      currentLimitConfigs.StatorCurrentLimitEnable = statorEnabled;
-      currentLimitConfigs.StatorCurrentLimit = currentLimit;
-      currentLimitConfigs.SupplyCurrentThreshold = currentThreshold;
-      currentLimitConfigs.SupplyTimeThreshold = timeThreshold;
-    }
 
   public void setCoastmode() {
     driveMotor.setControl(new CoastOut());
