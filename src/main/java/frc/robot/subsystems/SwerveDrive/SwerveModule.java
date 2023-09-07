@@ -10,6 +10,7 @@ import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.ControlModeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import com.revrobotics.CANSparkMax;
@@ -166,8 +167,7 @@ public class SwerveModule extends ControlModule {
     SwerveModuleState state =
         SwerveModuleState.optimize(desiredState, Rotation2d.fromDegrees(currentDeg));
 
-    driveMotor.set(ControlMode.Velocity,
-        state.speedMetersPerSecond
+    driveMotor.set(state.speedMetersPerSecond
             / (DriveConstants.Drive.wheelDiameterInches * Constants.inchesToMeters * Math.PI)
             * DriveConstants.Drive.gearRatio * DriveConstants.encoderResolution / 10); // every 100
                                                                                        // ms
