@@ -225,7 +225,6 @@ public class Constants {
       public static final int stallLimit = 5; //Change
 
       public static final double allowableClosedloopError = 0.35 / countToDegrees;
-
       // values obtained from swerve module zeroing procedure
       // positive angles are CCW rotation from forward
       public static final double[] CANCoderOffsetDegrees;
@@ -264,6 +263,7 @@ public class Constants {
       public static final double kD = 0.0;
       //Need to refactor all PID K-values
       public static final double kV = 0.12972;
+      public static final String canivoreName = ""; //TODO: Name Canivore (https://v5.docs.ctr-electronics.com/en/stable/ch08a_BringUpCANivore.html#)
       
     }
 

@@ -5,11 +5,9 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.ControlModeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 
@@ -20,7 +18,6 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.utility.OrangeMath;
@@ -42,8 +39,8 @@ public class SwerveModule extends ControlModule {
   public SwerveModule(int rotationID, int wheelID, int wheelID2, WheelPosition pos, int encoderID) {
     super(pos);
     turningMotor = new CANSparkMax(rotationID, MotorType.kBrushless);
-    driveMotor = new TalonFX(wheelID);
-    driveMotor2 = new TalonFX(wheelID2);
+    driveMotor = new TalonFX(wheelID, Constants.DriveConstants.Drive.canivoreName);
+    driveMotor2 = new TalonFX(wheelID2, Constants.DriveConstants.Drive.canivoreName);
     encoder = turningMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
     wheelPosition = pos;
 
