@@ -52,4 +52,9 @@ public class OrangeMath {
     }
     return x;
   }
+
+  //method that converts from milliseconds to hertz, and hertz to milliseconds as the formula for hertz is hertz = 1000/ms and ms = 1000/hertz= hertz*milliseconds = 1000.
+  public static double msAndHzConverter(double time) {
+    return 1000 / time;
+  }
 }

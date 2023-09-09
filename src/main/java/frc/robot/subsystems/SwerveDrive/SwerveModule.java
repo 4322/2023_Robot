@@ -93,8 +93,8 @@ public class SwerveModule extends ControlModule {
     talon.getConfigurator().apply(currentLimitConfigs);
     
     // need rapid velocity feedback for anti-tipping logic
-    talon.getPosition().setUpdateFrequency(CanBusUtil.nextFastStatusPeriodMs(), 
-      Constants.controllerConfigTimeoutMs); //change CanBusUtil.nextFastStatusPeriodMs() to hertz instead of ms because function requires hertz
+    talon.getPosition().setUpdateFrequency(OrangeMath.msAndHzConverter(CanBusUtil.nextFastStatusPeriodMs()), 
+      Constants.controllerConfigTimeoutMs);
 
   }
  
