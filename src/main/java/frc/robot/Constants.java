@@ -257,7 +257,7 @@ public class Constants {
       public static final double supplyTime = 0.5;
 
       public static final double wheelDiameterInches = 3.95;
-      public static final double gearRatio = 425.0 / 81.0; //kept it in fractional form to not lose precision
+      public static final double gearRatio = 150.0/7.0; //kept rotation gear ratio in fractional form to not lose precision
       public static final double kP = 0.05;
       public static final double kI = 0.0002;
       public static final double kD = 0.0;
