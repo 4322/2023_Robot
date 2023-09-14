@@ -231,27 +231,21 @@ public class RobotContainer {
           .withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming));
 
       rotateButtonThree.onTrue(driveManualForward);
-      rotateButtonThree.onTrue(new SetScoringPosition(ArmMove.Position.scoreMid));
-
-      rotateButtonFour.onTrue(driveManualForward);
-      rotateButtonFour.onTrue(new SetScoringPosition(ArmMove.Position.scoreHigh));
-
+      rotateButtonFour.onTrue(driveManualLeft);
       rotateButtonFive.onTrue(driveManualBackward);
-      rotateButtonFive.onTrue(new SetScoringPosition(ArmMove.Position.scoreLow));
-      rotateButtonSix.onTrue(clawIntake);
-        rotateButtonSix.onTrue(new ArmMove(arm, telescope, ArmMove.Position.loadFloor, false)
-            .unless(isIntakeStalled).until(isIntakeStalled));
+      rotateButtonSix.onTrue(driveManualRight);
     }
 
     if (Constants.xboxEnabled) {
-      xbox.leftTrigger().onTrue(clawIntake);
-      xbox.leftTrigger().onTrue(new ArmMove(arm, telescope, ArmMove.Position.loadSingle, false)
-          .unless(isIntakeStalled).until(isIntakeStalled));
-      xbox.rightTrigger().whileTrue(clawOuttake);
+      xbox.leftTrigger().onTrue(new SetScoringPosition(ArmMove.Position.loadFloor));
+      xbox.rightTrigger().onTrue(new SetScoringPosition(ArmMove.Position.loadSingle));
       xbox.back().onTrue(armSetCoastMode);
       xbox.start().onTrue(armSetBrakeMode);
-      xbox.leftBumper().onTrue(driveManualLeft);
-      xbox.rightBumper().onTrue(driveManualRight);
+      xbox.leftBumper().onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cube)));
+      xbox.rightBumper().onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cone)));
+      xbox.y().onTrue(new SetScoringPosition(ArmMove.Position.scoreHigh));
+      xbox.b().onTrue(new SetScoringPosition(ArmMove.Position.scoreMid));
+      xbox.a().onTrue(new SetScoringPosition(ArmMove.Position.scoreLow));
     }
   }
 
