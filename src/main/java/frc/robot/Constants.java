@@ -61,16 +61,16 @@ public class Constants {
   public static final class DriveConstants {
     
     public static final int frontRightDriveID = 3;
-    public static final int frontRightDriveID2 = 0; //change
+    public static final int frontRightDriveID2 = 14; //change
     public static final int frontRightRotationID = 5;
     public static final int rearRightDriveID = 6;
-    public static final int rearRightDriveID2 = 0; //change
+    public static final int rearRightDriveID2 = 15; //change
     public static final int rearRightRotationID = 7;
     public static final int frontLeftDriveID = 2;
-    public static final int frontLeftDriveID2 = 0; //change
+    public static final int frontLeftDriveID2 = 16; //change
     public static final int frontLeftRotationID = 4;
     public static final int rearLeftDriveID = 8;
-    public static final int rearLeftDriveID2 = 0; //change
+    public static final int rearLeftDriveID2 = 17; //change
     public static final int rearLeftRotationID = 9;
     
     
@@ -263,7 +263,7 @@ public class Constants {
       public static final double kD = 0.0;
       //Need to refactor all PID K-values
       public static final double kV = 0.12972;
-      public static final String canivoreName = ""; //TODO: Name Canivore (https://v5.docs.ctr-electronics.com/en/stable/ch08a_BringUpCANivore.html#)
+      public static final String canivoreName = "Drivebase"; //TODO: Name Canivore (https://v5.docs.ctr-electronics.com/en/stable/ch08a_BringUpCANivore.html#)
       
     }
 
