@@ -122,37 +122,17 @@ public class DriveManual extends CommandBase {
 
       final double driveAngle = drive.getAngle();
 
-      // Normalize the drive inputs over deadband in polar coordinates.
-      // Process each set of inputs separately to avoid a discontinuity
-      // when the second input suddenly exceeds deadband.
+      // Normalize the drive input over deadband in polar coordinates.
       double driveMag = 0;
       if (driveRawMag > driveDeadband) {
         driveMag = (driveRawMag - driveDeadband) / (1 - driveDeadband);
         driveMag = driveMag * driveMag * driveMag; // Increase sensitivity efficiently
       }
-      // Convert back to cartesian coordinates for proper vector addition
+      // Convert back to cartesian coordinates
       double driveX = Math.cos(driveRawTheta) * driveMag;
       double driveY = Math.sin(driveRawTheta) * driveMag;
 
-      // Normalize the combined drive vector
-      if (driveX > 1) {
-        driveY /= driveX;
-        driveX = 1;
-      } else if (driveX < -1) {
-        driveY /= -driveX;
-        driveX = -1;
-      }
-      if (driveY > 1) {
-        driveX /= driveY;
-        driveY = 1;
-      } else if (driveY < -1) {
-        driveX /= -driveY;
-        driveY = -1;
-      }
-
       // Normalize the rotation inputs over deadband.
-      // Process each input separately to avoid a discontinuity
-      // when the second input suddenly exceeds deadband.
       double rotatePower = 0;
       if (rotateRaw > rotateLeftDeadband) {
         rotatePower = (rotateRaw - rotateLeftDeadband) / (1 - rotateLeftDeadband);
@@ -160,13 +140,6 @@ public class DriveManual extends CommandBase {
         rotatePower = (rotateRaw + rotateRightDeadband) / (1 - rotateRightDeadband);
       }
       rotatePower = rotatePower * rotatePower * rotatePower; // Increase sensitivity efficiently
-
-      // Cap the rotation power
-      if (rotatePower > 1) {
-        rotatePower = 1;
-      } else if (rotatePower < -1) {
-        rotatePower = -1;
-      }
 
       rotatePower = rotatePower * Manual.manualRotationScaleFromMax;
 
