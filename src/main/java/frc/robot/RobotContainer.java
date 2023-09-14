@@ -205,8 +205,6 @@ public class RobotContainer {
       rotateStick = new Joystick(1);
 
       driveTrigger = new JoystickButton(driveStick, 1);
-      driveButtonThree = new JoystickButton(driveStick, 3); //cone
-      driveButtonFour = new JoystickButton(driveStick, 4); //cube
       driveButtonFive = new JoystickButton(driveStick, 5);
       driveButtonSix = new JoystickButton(driveStick, 6);
       driveButtonSeven = new JoystickButton(driveStick, 7);
@@ -220,14 +218,7 @@ public class RobotContainer {
       rotateButtonSix = new JoystickButton(rotateStick, 6);
 
       driveTrigger.whileTrue(clawOuttake);
-      driveButtonThree.onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cone)));
-      driveButtonFour.onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cube)));
       driveButtonFive.onTrue(clawIntake);
-        driveButtonFive.onTrue(new ArmMove(arm, telescope, ArmMove.Position.loadSingle, false)
-            .unless(isIntakeStalled).until(isIntakeStalled));
-      driveButtonSix.onTrue(clawIntake);
-        driveButtonSix.onTrue(new ArmMove(arm, telescope, ArmMove.Position.loadDouble, false)
-            .unless(isIntakeStalled).until(isIntakeStalled));
       driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
       driveButtonNine.onTrue(autoBalanceForward);
       driveButtonEleven.onTrue(autoBalanceBackward);
