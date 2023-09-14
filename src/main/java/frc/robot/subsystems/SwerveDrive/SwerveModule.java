@@ -92,7 +92,6 @@ public class SwerveModule extends ControlModule {
     // need rapid velocity feedback for anti-tipping logic
     talon.getPosition().setUpdateFrequency(OrangeMath.msAndHzConverter(CanBusUtil.nextFastStatusPeriodMs()), 
       Constants.controllerConfigTimeoutMs);
-
   }
  
   private void configRotation(CANSparkMax sparkMax) {
@@ -101,11 +100,12 @@ public class SwerveModule extends ControlModule {
     config.setD(DriveConstants.Rotation.kD,0);
     sparkMax.setClosedLoopRampRate(DriveConstants.Rotation.configCLosedLoopRamp);
     config.setSmartMotionAllowedClosedLoopError(DriveConstants.Rotation.allowableClosedloopError,0);
-    config.setOutputRange(-DriveConstants.Rotation.minPower, DriveConstants.Rotation.maxPower);
+    config.setOutputRange(-DriveConstants.Rotation.minPower, DriveConstants.Rotation.maxPower); //min and max power need to be adjusted
     sparkMax.setIdleMode(IdleMode.kCoast); // Allow robot to be moved prior to enabling
-    sparkMax.enableVoltageCompensation(DriveConstants.Rotation.configVoltageCompSaturation);
-    
-    sparkMax.setSmartCurrentLimit(DriveConstants.Rotation.stallLimit, DriveConstants.Rotation.freeLimit);
+
+    //voltage control
+    sparkMax.enableVoltageCompensation(DriveConstants.Rotation.configVoltageCompSaturation); 
+    sparkMax.setSmartCurrentLimit(DriveConstants.Rotation.stallLimit, DriveConstants.Rotation.freeLimit); 
 
     // THE ENCODER WILL GIVE YOU DEGREES
     encoder.setPositionConversionFactor(360);
@@ -147,8 +147,6 @@ public class SwerveModule extends ControlModule {
     // feet per second
     return driveMotor.getRotorVelocity().getValue() * 10 / Constants.DriveConstants.Drive.gearRatio 
         * Math.PI * Constants.DriveConstants.Drive.wheelDiameterInches / 12;
-
-
   }
 
   public SwerveModuleState getState() {
@@ -169,8 +167,7 @@ public class SwerveModule extends ControlModule {
 
     driveMotor.set(state.speedMetersPerSecond
             / (DriveConstants.Drive.wheelDiameterInches * Constants.inchesToMeters * Math.PI)
-            * DriveConstants.Drive.gearRatio * DriveConstants.encoderResolution / 10); // every 100
-                                                                                       // ms
+            * DriveConstants.Drive.gearRatio * DriveConstants.encoderResolution / 10); // every 100ms
 
     // Calculate the change in degrees and add that to the current position
     turningMotor.getPIDController().setReference(currentDeg + OrangeMath.boundDegrees(state.angle.getDegrees() - currentDeg), 

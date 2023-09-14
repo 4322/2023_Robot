@@ -190,36 +190,17 @@ public class Constants {
 
     }
 
-    public static final class Rotation {
-
-      public static final double minAutoRotateSpeed = 0.0;
-      public static final double maxAutoRotateSpeed = 0.0;
-
-      public static final double movingVelocityThresholdFtPerSec = 0.2;
-
-      public static final Pose2d poseError =
-          new Pose2d(new Translation2d(0.1, 0.1), new Rotation2d(0.0174533));
-
+    public static final class Rotation { //All values need to be adjusted from talon to sparkmax
       public static final double kP = 1.2;
       public static final double kD = 6.0;
 
       public static final double configCLosedLoopRamp = 0.08;
       public static final double minPower = 0.0; // allow for tighter tolerance
-      public static final double maxPower = 0.3; // reduce gear wear and overshoot
+      public static final double maxPower = 0.3; // reduce gear wear and overshoot  (needs to be adjusted for sparkmax)
       public static final double countToDegrees = 360.0 / encoderResolution * 12 / 24 * 14 / 72;
 
       public static final double configVoltageCompSaturation = 11.5;
       public static final boolean enableVoltageCompensation = true;
-
-      public static final boolean statorEnabled = true;
-      public static final double statorLimit = 40;
-      public static final double statorThreshold = 45;
-      public static final double statorTime = 1.0;
-
-      public static final boolean supplyEnabled = true;
-      public static final double supplyLimit = 30;
-      public static final double supplyThreshold = 35;
-      public static final double supplyTime = 0.5;
 
       public static final int freeLimit = 40;
       public static final int stallLimit = 5; //Change
