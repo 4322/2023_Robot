@@ -11,7 +11,7 @@ public class ArmMove extends CommandBase {
 
   // Use of loadHigh and loadBounce are mutually exclusive
   public enum Position {
-    unknown, inHopper, loadHigh, loadBounce, scoreLow, scoreMid, scoreHigh, scorePreset
+    unknown, inHopper, loadHigh, scoreLow, scoreMid, scoreHigh, scorePreset
   }
 
   private static Position presetPos = Position.scoreMid;
@@ -99,7 +99,6 @@ public class ArmMove extends CommandBase {
     if (!telescopeCommandedToTarget) {
       switch (targetPos) {
         case inHopper:
-        case loadBounce:
           telescope.moveToPosition(Constants.Telescope.inHopperPosition);
           telescopeCommandedToTarget = true;
           break;
@@ -123,7 +122,6 @@ public class ArmMove extends CommandBase {
           switch (ArmMove.lastPos) {
             case inHopper:
             case loadHigh:
-            case loadBounce:
             case scoreLow:
               if (armPosition >= Constants.ArmConstants.earlyTelescopeExtendPosition) {
                 telescope.moveToPosition(Constants.Telescope.highScoringPosition);
@@ -160,12 +158,6 @@ public class ArmMove extends CommandBase {
         case loadHigh:
           if (telescopePosition <= Constants.Telescope.safeArmRetractPosition) {
             arm.rotateToPosition(Constants.ArmConstants.loadHighPosition);
-            armCommandedToTarget = true;
-          }
-          break;
-        case loadBounce:
-          if (telescopePosition <= Constants.Telescope.safeArmRetractPosition) {
-            arm.rotateToPosition(Constants.ArmConstants.loadBouncePosition);
             armCommandedToTarget = true;
           }
           break;
