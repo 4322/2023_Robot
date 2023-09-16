@@ -31,6 +31,6 @@ public class ClawOuttake extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return false;
+    return !ArmMove.isSafeToOuttake();
   }
 }
