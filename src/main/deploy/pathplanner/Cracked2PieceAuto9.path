@@ -47,7 +47,7 @@
           "loadFloor"
         ],
         "executionBehavior": "sequential",
-        "waitBehavior": "after",
+        "waitBehavior": "before",
         "waitTime": 1.0
       }
     },
@@ -61,7 +61,7 @@
         "y": 5.012671378726218
       },
       "nextControl": null,
-      "holonomicAngle": 180.0,
+      "holonomicAngle": 0.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
