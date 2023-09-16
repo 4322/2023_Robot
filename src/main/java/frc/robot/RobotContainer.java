@@ -150,6 +150,16 @@ public class RobotContainer {
     autoChooser.addOption("Mobility (2)",
         ppManager.loadAuto("ScoreMobilityOnly2", false));
 
+    autoChooser.addOption("Score + Pickup (1)", 
+      new SequentialCommandGroup(
+        ppManager.loadAuto("ScorePickup1", false)
+      )
+    );
+    autoChooser.addOption("Score + Pickup (9)", 
+      new SequentialCommandGroup(
+        ppManager.loadAuto("ScorePickup9", false)
+      )
+    ); 
     autoChooser.addOption("Engage (2)",
         new SequentialCommandGroup(
             ppManager.loadAuto("ScoreMobilityCharge2", false),
@@ -182,9 +192,52 @@ public class RobotContainer {
           new AutoDriveRotateWheels(drive, 0.25)
       )
     );
-    autoChooser.addOption("2PieceAuto (1)", 
+    autoChooser.addOption("2 Piece (1)", 
       new SequentialCommandGroup(
-        ppManager.loadAuto("Cracked2PieceAuto", false)
+        ppManager.loadAuto("Cracked2PieceAuto1", false)
+      )
+    );
+    autoChooser.addOption("2 Piece (9)", 
+      new SequentialCommandGroup(
+        ppManager.loadAuto("Cracked2PieceAuto9", false)
+      )
+    );  
+    autoChooser.addOption("2 Piece + Pickup (1)", 
+      new SequentialCommandGroup(
+        ppManager.loadAuto("2Pieces1Pickup1", false)
+      )
+    );  
+    autoChooser.addOption("2 Piece + Pickup (9)", 
+      new SequentialCommandGroup(
+        ppManager.loadAuto("2Pieces1Pickup9", false)
+      )
+    );
+    autoChooser.addOption("2 Piece + Engage (1)", 
+      new SequentialCommandGroup(
+        ppManager.loadAuto("2PiecesEngage1", false),
+        new AutoBalance(drive, true),
+        new AutoDriveRotateWheels(drive, 0.25)
+      )
+    );  
+    autoChooser.addOption("2 Piece + Engage (9)", 
+      new SequentialCommandGroup(
+        ppManager.loadAuto("2PiecesEngage9", false),
+        new AutoBalance(drive, true),
+        new AutoDriveRotateWheels(drive, 0.25)
+      )
+    );
+    autoChooser.addOption("2 Piece + Pickup + Engage (1)", 
+      new SequentialCommandGroup(
+        ppManager.loadAuto("2Pieces1Pickup1", false),
+        new AutoBalance(drive, true),
+        new AutoDriveRotateWheels(drive, 0.25)
+      )
+    );  
+    autoChooser.addOption("2 Piece + Pickup + Engage (9)", 
+      new SequentialCommandGroup(
+        ppManager.loadAuto("2Pieces1Pickup9", false),
+        new AutoBalance(drive, true),
+        new AutoDriveRotateWheels(drive, 0.25)
       )
     );  
   }

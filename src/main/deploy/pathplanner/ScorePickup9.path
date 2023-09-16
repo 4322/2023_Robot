@@ -33,15 +33,12 @@
         "x": 6.362008265248758,
         "y": 4.541630998239014
       },
-      "nextControl": {
-        "x": 6.461846063415004,
-        "y": 4.591549897322136
-      },
+      "nextControl": null,
       "holonomicAngle": -180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": true,
+      "isStopPoint": false,
       "stopEvent": {
         "names": [
           "loadFloor"
@@ -49,30 +46,6 @@
         "executionBehavior": "sequential",
         "waitBehavior": "before",
         "waitTime": 1.0
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 1.9114970560768199,
-        "y": 4.349672759495896
-      },
-      "prevControl": {
-        "x": 2.5544048080577375,
-        "y": 5.012671378726218
-      },
-      "nextControl": null,
-      "holonomicAngle": 0.0,
-      "isReversal": false,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": false,
-      "stopEvent": {
-        "names": [
-          "scoreHigh"
-        ],
-        "executionBehavior": "sequential",
-        "waitBehavior": "none",
-        "waitTime": 0
       }
     }
   ],
