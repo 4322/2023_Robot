@@ -6,6 +6,8 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.StaticBrake;
+import com.ctre.phoenix6.controls.VelocityDutyCycle;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -33,7 +35,6 @@ public class SwerveModule extends ControlModule {
   private TalonFX driveMotor2;
   private SparkMaxAbsoluteEncoder encoder;
   private WheelPosition wheelPosition;
-  private VoltageOut voltageRequest = new VoltageOut(0);
   private CurrentLimitsConfigs currentLimitConfigs = new CurrentLimitsConfigs();
 
   public SwerveModule(int rotationID, int wheelID, int wheelID2, WheelPosition pos, int encoderID) {
@@ -48,9 +49,9 @@ public class SwerveModule extends ControlModule {
   }
 
   public void init() {
-    driveMotor2.setControl(new Follower(driveMotor.getDeviceID(), true));
     configDrive(driveMotor, wheelPosition);
     configDrive(driveMotor2, wheelPosition);
+    driveMotor2.setControl(new Follower(driveMotor.getDeviceID(), false));
     configRotation(turningMotor);
   }
 
@@ -76,8 +77,6 @@ public class SwerveModule extends ControlModule {
     
     boolean isRightSide = pos == WheelPosition.FRONT_RIGHT || pos == WheelPosition.BACK_RIGHT;
     talon.setInverted(!isRightSide);
-
-    talon.setControl(voltageRequest.withOutput(DriveConstants.Drive.voltageCompSaturation));
 
     // applies stator & supply current limit configs to device
     // refer to https://pro.docs.ctr-electronics.com/en/latest/docs/api-reference/api-usage/configuration.html 
@@ -106,22 +105,25 @@ public class SwerveModule extends ControlModule {
     //voltage control
     sparkMax.enableVoltageCompensation(DriveConstants.Rotation.configVoltageCompSaturation); 
     sparkMax.setSmartCurrentLimit(DriveConstants.Rotation.stallLimit, DriveConstants.Rotation.freeLimit); 
-
+    encoder.setPositionConversionFactor(1);
+    sparkMax.getPIDController().setFeedbackDevice(encoder);
+    sparkMax.getPIDController().setPositionPIDWrappingEnabled(true);
+    sparkMax.getPIDController().setPositionPIDWrappingMinInput(0);
+    sparkMax.getPIDController().setPositionPIDWrappingMaxInput(360);
     // THE ENCODER WILL GIVE YOU DEGREES
-    encoder.setPositionConversionFactor(360);
 
     try {
       Thread.sleep(50); // 5 status frames to be safe
     } catch (InterruptedException e) {
     }
 
-    REVLibError error =
-        encoder.setZeroOffset(DriveConstants.Rotation.CANCoderOffsetDegrees[position.wheelNumber]);
-    if (error != REVLibError.kOk) {
-      DriverStation.reportError(
-          "Error " + error.value + " initializing sparkMax " + sparkMax.getDeviceId() + " position ",
-          false); //FIX
-    }
+    // REVLibError error =
+    //     encoder.setZeroOffset(DriveConstants.Rotation.CANCoderOffsetDegrees[position.wheelNumber]);
+    // if (error != REVLibError.kOk) {
+    //   DriverStation.reportError(
+    //       "Error " + error.value + " initializing sparkMax " + sparkMax.getDeviceId() + " position ",
+    //       false); //FIX
+    // }
 
     // need rapid position feedback for steering logic
     CanBusUtil.fastPositionSparkMax(turningMotor);
@@ -164,11 +166,9 @@ public class SwerveModule extends ControlModule {
     // Optimize the reference state to avoid spinning further than 90 degrees
     SwerveModuleState state =
         SwerveModuleState.optimize(desiredState, Rotation2d.fromDegrees(currentDeg));
-
-    driveMotor.set(state.speedMetersPerSecond
-            / (DriveConstants.Drive.wheelDiameterInches * Constants.inchesToMeters * Math.PI)
-            * DriveConstants.Drive.gearRatio * DriveConstants.encoderResolution / 10); // every 100ms
-
+    driveMotor.setControl(new VelocityVoltage(state.speedMetersPerSecond
+             / (DriveConstants.Drive.wheelDiameterInches * Constants.inchesToMeters * Math.PI)
+             * DriveConstants.Drive.gearRatio * DriveConstants.encoderResolution / 10));
     // Calculate the change in degrees and add that to the current position
     turningMotor.getPIDController().setReference(currentDeg + OrangeMath.boundDegrees(state.angle.getDegrees() - currentDeg), 
       ControlType.kPosition);
