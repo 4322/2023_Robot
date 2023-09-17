@@ -1,5 +1,7 @@
 package frc.robot;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.function.BooleanSupplier;
 import com.pathplanner.lib.PathConstraints;
 
@@ -24,6 +26,7 @@ import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Telescope;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.*;
+import frc.utility.Auto;
 
 public class RobotContainer {
   private Timer disableTimer = new Timer();
@@ -50,6 +53,8 @@ public class RobotContainer {
   private JoystickButton rotateButtonSix;
 
   private ShuffleboardTab tab;
+  private ArrayList<Auto> autoArrayList = new ArrayList<Auto>();
+  private SendableChooser<Integer> positionChooser = new SendableChooser<Integer>();
   private SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
   // The robot's subsystems and commands are defined here...
@@ -84,6 +89,7 @@ public class RobotContainer {
       new AutoBalance(drive, false),
       new AutoDriveRotateWheels(drive, 0.25));
 
+  private int selectedPosition;
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
 
   public RobotContainer() {
@@ -100,10 +106,15 @@ public class RobotContainer {
 
     tab = Shuffleboard.getTab("Auto");
     
-    tab.add("Auto Mode", autoChooser)
+    tab.add("Position", positionChooser)
       .withWidget(BuiltInWidgets.kSplitButtonChooser)
       .withPosition(0, 0)
-      .withSize(9, 2);
+      .withSize(3, 2);
+
+    tab.add("Auto", autoChooser)
+      .withWidget(BuiltInWidgets.kSplitButtonChooser)
+      .withPosition(3, 0)
+      .withSize(6, 2);
 
     if (Constants.driveEnabled) {
       drive.setDefaultCommand(driveManualDefault);
@@ -124,6 +135,16 @@ public class RobotContainer {
     ppManager = new PathPlannerManager(drive);
 
     loadAutos();
+
+    positionChooser.addOption("1", 1);
+    positionChooser.addOption("2", 2);
+    positionChooser.addOption("3", 3);
+    positionChooser.addOption("4", 4);
+    positionChooser.addOption("5", 5);
+    positionChooser.addOption("6", 6);
+    positionChooser.addOption("7", 7);
+    positionChooser.addOption("8", 8);
+    positionChooser.addOption("9", 9);
   }
 
   // autos need to be reloaded after each auto test because the commands can't be reused
@@ -132,114 +153,128 @@ public class RobotContainer {
     ppManager.addEvent("scoreHigh", getScoreHigh());
     ppManager.addEvent("loadFloor", getLoadFloor());
 
-    autoChooser.setDefaultOption("Do Nothing", new Nothing());
+    autoArrayList.add(new Auto("Do Nothing", new Nothing(), Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9)));
 
-    autoChooser.addOption("Preload Only", getScoreHigh());
+    autoArrayList.add(new Auto("Preload Only", getScoreHigh(), Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9)));
 
-    autoChooser.addOption("Mobility (1, 9)",
-        ppManager.loadAuto("ScoreMobilityOnly", false));
+    autoArrayList.add(new Auto(
+      "Mobility",
+      ppManager.loadAuto("ScoreMobilityOnly", false),
+      Arrays.asList(1, 9)
+    ));
 
-    autoChooser.addOption("Engage (1)",
-        new SequentialCommandGroup(
+    autoArrayList.add(new Auto(
+      "Mobility",
+      ppManager.loadAuto("ScoreMobilityOnly2", false),
+      Arrays.asList(2)
+    ));
+
+    autoArrayList.add(new Auto(
+      "Score + Pickup",
+      ppManager.loadAuto("ScorePickup1", false),
+      Arrays.asList(1)
+    ));
+
+    autoArrayList.add(new Auto(
+      "Score + Pickup",
+      ppManager.loadAuto("ScorePickup9", false),
+      Arrays.asList(9)
+    ));
+
+    autoArrayList.add(new Auto(
+      "Engage",
+      new SequentialCommandGroup(
             ppManager.loadAuto("ScoreMobilityCharge1", false),
             new AutoBalance(drive, false),
             new AutoDriveRotateWheels(drive, 0.25)
-        )
-      );
+      ),
+      Arrays.asList(1)
+    ));
 
-    autoChooser.addOption("Mobility (2)",
-        ppManager.loadAuto("ScoreMobilityOnly2", false));
-
-    autoChooser.addOption("Score + Pickup (1)", 
+    autoArrayList.add(new Auto(
+      "Engage",
       new SequentialCommandGroup(
-        ppManager.loadAuto("ScorePickup1", false)
-      )
-    );
-    autoChooser.addOption("Score + Pickup (9)", 
-      new SequentialCommandGroup(
-        ppManager.loadAuto("ScorePickup9", false)
-      )
-    ); 
-    autoChooser.addOption("Engage (2)",
-        new SequentialCommandGroup(
             ppManager.loadAuto("ScoreMobilityCharge2", false),
             new AutoBalance(drive, false),
             new AutoDriveRotateWheels(drive, 0.25)
-        )
-      ); 
+      ),
+      Arrays.asList(2)
+    ));
 
-    autoChooser.addOption("Engage (4, 5, 6)",
+    autoArrayList.add(new Auto(
+      "Engage",
       new SequentialCommandGroup(
           ppManager.loadAuto("DriveOverCharge", false, 
             new PathConstraints(1.33, DriveConstants.Auto.autoMaxAccelerationMetersPerSec2)),
           new AutoBalance(drive, false),
           new AutoDriveRotateWheels(drive, 0.25)
-      )
-    );
+      ),
+      Arrays.asList(4, 5, 6)
+    ));
 
-    autoChooser.addOption("Engage (8)",
+    autoArrayList.add(new Auto(
+      "Engage",
       new SequentialCommandGroup(
           ppManager.loadAuto("ScoreMobilityCharge8", false),
           new AutoBalance(drive, false),
           new AutoDriveRotateWheels(drive, 0.25)
-      )
-    );
+      ),
+      Arrays.asList(8)
+    ));
 
-    autoChooser.addOption("Engage (9)",
+    autoArrayList.add(new Auto(
+      "Engage",
       new SequentialCommandGroup(
           ppManager.loadAuto("ScoreMobilityCharge9", false),
           new AutoBalance(drive, false),
           new AutoDriveRotateWheels(drive, 0.25)
-      )
-    );
-    autoChooser.addOption("2 Piece (1)", 
-      new SequentialCommandGroup(
-        ppManager.loadAuto("Cracked2PieceAuto1", false)
-      )
-    );
-    autoChooser.addOption("2 Piece (9)", 
-      new SequentialCommandGroup(
-        ppManager.loadAuto("Cracked2PieceAuto9", false)
-      )
-    );  
-    autoChooser.addOption("2 Piece + Pickup (1)", 
-      new SequentialCommandGroup(
-        ppManager.loadAuto("2Pieces1Pickup1", false)
-      )
-    );  
-    autoChooser.addOption("2 Piece + Pickup (9)", 
-      new SequentialCommandGroup(
-        ppManager.loadAuto("2Pieces1Pickup9", false)
-      )
-    );
-    autoChooser.addOption("2 Piece + Engage (1)", 
+      ),
+      Arrays.asList(9)
+    ));
+
+    autoArrayList.add(new Auto(
+      "2 Piece",
+      ppManager.loadAuto("Cracked2PieceAuto1", false),
+      Arrays.asList(1)
+    ));
+
+    autoArrayList.add(new Auto(
+      "2 Piece",
+      ppManager.loadAuto("Cracked2PieceAuto9", false),
+      Arrays.asList(9)
+    ));
+
+    autoArrayList.add(new Auto(
+      "2 Piece + Pickup",
+      ppManager.loadAuto("2Pieces1Pickup1", false),
+      Arrays.asList(1)
+    ));
+
+    autoArrayList.add(new Auto(
+      "2 Piece + Pickup",
+      ppManager.loadAuto("2Pieces1Pickup9", false),
+      Arrays.asList(9)
+    ));
+
+    autoArrayList.add(new Auto(
+      "2 Piece + Engage",
       new SequentialCommandGroup(
         ppManager.loadAuto("2PiecesEngage1", false),
         new AutoBalance(drive, true),
         new AutoDriveRotateWheels(drive, 0.25)
-      )
-    );  
-    autoChooser.addOption("2 Piece + Engage (9)", 
+      ),
+      Arrays.asList(1)
+    ));
+
+    autoArrayList.add(new Auto(
+      "2 Piece + Engage",
       new SequentialCommandGroup(
         ppManager.loadAuto("2PiecesEngage9", false),
         new AutoBalance(drive, true),
         new AutoDriveRotateWheels(drive, 0.25)
-      )
-    );
-    autoChooser.addOption("2 Piece + Pickup + Engage (1)", 
-      new SequentialCommandGroup(
-        ppManager.loadAuto("2Pieces1Pickup1", false),
-        new AutoBalance(drive, true),
-        new AutoDriveRotateWheels(drive, 0.25)
-      )
-    );  
-    autoChooser.addOption("2 Piece + Pickup + Engage (9)", 
-      new SequentialCommandGroup(
-        ppManager.loadAuto("2Pieces1Pickup9", false),
-        new AutoBalance(drive, true),
-        new AutoDriveRotateWheels(drive, 0.25)
-      )
-    );  
+      ),
+      Arrays.asList(9)
+    ));
   }
 
   /**
@@ -325,6 +360,8 @@ public class RobotContainer {
       disableTimer.stop();
       disableTimer.reset();
     }
+
+    updateChoosers();
   }
 
   public void enableSubsystems() {
@@ -353,6 +390,10 @@ public class RobotContainer {
       return null;
     }
 
+    if (autoChooser.getSelected() == null) {
+      return new Nothing();
+    }
+
     return new SequentialCommandGroup(
       getAutoInitialize(),
       autoChooser.getSelected()
@@ -367,6 +408,20 @@ public class RobotContainer {
   }
 
   // AUTO COMMANDS
+
+  public void updateChoosers() {
+    if (positionChooser.getSelected() != null) {
+      if (positionChooser.getSelected() != selectedPosition) {
+        selectedPosition = positionChooser.getSelected();
+        autoChooser = new SendableChooser<Command>(); 
+        for (Auto auto : autoArrayList) {
+          if (auto.positions.contains(selectedPosition)) {
+            autoChooser.addOption(auto.name, auto.command);
+          }
+        }
+      }
+    }
+  }
 
   // Command that should always start off every auto
   public Command getAutoInitialize() {
