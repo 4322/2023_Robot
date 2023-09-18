@@ -109,10 +109,6 @@ public class SwerveModule extends ControlModule {
 
     // need rapid position feedback for steering control
     CanBusUtil.fastPositionSparkMax(turningMotor);
-  } 
-
-  public double getInternalRotationCount() {
-    return encoder.getPosition();
   }
 
   public double getInternalRotationDegrees() {
@@ -143,31 +139,43 @@ public class SwerveModule extends ControlModule {
   }
 
   public void setDesiredState(SwerveModuleState desiredState) {
-    double currentDeg = encoder.getPosition();
+    if (Constants.driveEnabled) {
+      if (!Constants.driveTuningMode) {
 
-    // Optimize the reference state to avoid spinning further than 90 degrees
-    SwerveModuleState state =
-        SwerveModuleState.optimize(desiredState, Rotation2d.fromDegrees(currentDeg));
-    driveMotor.setControl(new VelocityVoltage(state.speedMetersPerSecond
-             / (DriveConstants.Drive.wheelDiameterInches * Constants.inchesToMeters * Math.PI)
-             * DriveConstants.Drive.gearRatio * DriveConstants.encoderResolution / 10));
-    turningMotor.getPIDController().setReference(
-      MathUtil.inputModulus(state.angle.getDegrees(), 0, 360), 
-      ControlType.kPosition);
+        // Optimize the reference state to avoid spinning further than 90 degrees
+        SwerveModuleState state =
+            SwerveModuleState.optimize(desiredState, Rotation2d.fromDegrees(encoder.getPosition()));
+            
+        driveMotor.setControl(new VelocityVoltage(state.speedMetersPerSecond
+                / (DriveConstants.Drive.wheelDiameterInches * Constants.inchesToMeters * Math.PI)
+                * DriveConstants.Drive.gearRatio * DriveConstants.encoderResolution / 10));
+        turningMotor.getPIDController().setReference(
+          MathUtil.inputModulus(state.angle.getDegrees(), 0, 360), 
+          ControlType.kPosition);
+      }
+    }
   }
 
   public void setCoastmode() {
-    driveMotor.setControl(new CoastOut());
-    turningMotor.setIdleMode(IdleMode.kCoast);
+    if (Constants.driveEnabled) {
+      driveMotor.setControl(new CoastOut());
+      turningMotor.setIdleMode(IdleMode.kCoast);
+    }
   }
 
   public void setBrakeMode() {
-    driveMotor.setControl(new StaticBrake());
-    turningMotor.setIdleMode(IdleMode.kBrake);
+    if (Constants.driveEnabled) {
+      driveMotor.setControl(new StaticBrake());
+      turningMotor.setIdleMode(IdleMode.kBrake);
+    }
   }
 
   public void stop() {
-    driveMotor.stopMotor();
-    turningMotor.stopMotor();
+    if (Constants.driveEnabled) {
+      if (!Constants.driveTuningMode) {
+        driveMotor.stopMotor();
+        turningMotor.stopMotor();
+      }
+    }
   }
 }
