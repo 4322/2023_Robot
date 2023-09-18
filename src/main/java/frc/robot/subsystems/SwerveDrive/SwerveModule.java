@@ -96,7 +96,7 @@ public class SwerveModule extends ControlModule {
     config.setD(DriveConstants.Rotation.kD,0);
     sparkMax.setClosedLoopRampRate(DriveConstants.Rotation.configCLosedLoopRamp);
     config.setSmartMotionAllowedClosedLoopError(DriveConstants.Rotation.allowableClosedloopError,0);
-    config.setOutputRange(-DriveConstants.Rotation.minPower, DriveConstants.Rotation.maxPower); //min and max power need to be adjusted
+    config.setOutputRange(-DriveConstants.Rotation.maxPower, DriveConstants.Rotation.maxPower);
     sparkMax.setIdleMode(IdleMode.kCoast); // Allow robot to be moved prior to enabling
 
     sparkMax.enableVoltageCompensation(DriveConstants.Rotation.configVoltageCompSaturation); 
@@ -145,7 +145,7 @@ public class SwerveModule extends ControlModule {
         // Optimize the reference state to avoid spinning further than 90 degrees
         SwerveModuleState state =
             SwerveModuleState.optimize(desiredState, Rotation2d.fromDegrees(encoder.getPosition()));
-            
+
         driveMotor.setControl(new VelocityVoltage(state.speedMetersPerSecond
                 / (DriveConstants.Drive.wheelDiameterInches * Constants.inchesToMeters * Math.PI)
                 * DriveConstants.Drive.gearRatio * DriveConstants.encoderResolution / 10));

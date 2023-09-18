@@ -1,6 +1,5 @@
 package frc.robot;
 
-import frc.robot.subsystems.SwerveDrive.ControlModule.WheelPosition;
 import frc.utility.OrangeMath;
 import java.util.List;
 import java.util.Map;
@@ -194,12 +193,11 @@ public class Constants {
 
     public static final class Rotation { 
       // For tuning, graph Duty Cycle Position in the REV Hardware Client
-      public static final double kP = 1.2;
-      public static final double kD = 6.0;
+      public static final double kP = 0.03;
+      public static final double kD = 0.0;
 
       public static final double configCLosedLoopRamp = 0.08;
-      public static final double minPower = 0.0; // allow for tighter tolerance
-      public static final double maxPower = 0.3; // reduce gear wear and overshoot  (needs to be adjusted for sparkmax)
+      public static final double maxPower = 0.5; // reduce gear wear and overshoot
 
       public static final double configVoltageCompSaturation = 11.5;
       public static final boolean enableVoltageCompensation = true;
