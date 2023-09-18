@@ -198,7 +198,6 @@ public class Constants {
       public static final double configCLosedLoopRamp = 0.08;
       public static final double minPower = 0.0; // allow for tighter tolerance
       public static final double maxPower = 0.3; // reduce gear wear and overshoot  (needs to be adjusted for sparkmax)
-      public static final double countToDegrees = 360.0 / encoderResolution * 12 / 24 * 14 / 72;
 
       public static final double configVoltageCompSaturation = 11.5;
       public static final boolean enableVoltageCompensation = true;
@@ -206,17 +205,7 @@ public class Constants {
       public static final int freeLimit = 40;
       public static final int stallLimit = 5; //Change
 
-      public static final double allowableClosedloopError = 0.35 / countToDegrees;
-      // values obtained from swerve module zeroing procedure
-      // positive angles are CCW rotation from forward
-      public static final double[] CANCoderOffsetDegrees;
-      static {
-        CANCoderOffsetDegrees = new double[4];
-        CANCoderOffsetDegrees[WheelPosition.FRONT_RIGHT.wheelNumber] = 149.941;
-        CANCoderOffsetDegrees[WheelPosition.FRONT_LEFT.wheelNumber] = 2.637 - 90;
-        CANCoderOffsetDegrees[WheelPosition.BACK_RIGHT.wheelNumber] = 22.939 - 90;
-        CANCoderOffsetDegrees[WheelPosition.BACK_LEFT.wheelNumber] = -72.773;
-      }
+      public static final double allowableClosedloopError = 0.35;  // degrees
     }
 
     public static final class Drive {

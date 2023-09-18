@@ -6,15 +6,12 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.StaticBrake;
-import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.controls.VelocityVoltage;
-import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.REVLibError;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
@@ -27,7 +24,7 @@ import frc.utility.CanBusUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.math.MathUtil;
 
 public class SwerveModule extends ControlModule {
   private CANSparkMax turningMotor;
@@ -102,30 +99,15 @@ public class SwerveModule extends ControlModule {
     config.setOutputRange(-DriveConstants.Rotation.minPower, DriveConstants.Rotation.maxPower); //min and max power need to be adjusted
     sparkMax.setIdleMode(IdleMode.kCoast); // Allow robot to be moved prior to enabling
 
-    //voltage control
     sparkMax.enableVoltageCompensation(DriveConstants.Rotation.configVoltageCompSaturation); 
     sparkMax.setSmartCurrentLimit(DriveConstants.Rotation.stallLimit, DriveConstants.Rotation.freeLimit); 
-    encoder.setPositionConversionFactor(1);
+    encoder.setPositionConversionFactor(360);  // convert encoder position duty cycle to degrees
     sparkMax.getPIDController().setFeedbackDevice(encoder);
     sparkMax.getPIDController().setPositionPIDWrappingEnabled(true);
     sparkMax.getPIDController().setPositionPIDWrappingMinInput(0);
     sparkMax.getPIDController().setPositionPIDWrappingMaxInput(360);
-    // THE ENCODER WILL GIVE YOU DEGREES
 
-    try {
-      Thread.sleep(50); // 5 status frames to be safe
-    } catch (InterruptedException e) {
-    }
-
-    // REVLibError error =
-    //     encoder.setZeroOffset(DriveConstants.Rotation.CANCoderOffsetDegrees[position.wheelNumber]);
-    // if (error != REVLibError.kOk) {
-    //   DriverStation.reportError(
-    //       "Error " + error.value + " initializing sparkMax " + sparkMax.getDeviceId() + " position ",
-    //       false); //FIX
-    // }
-
-    // need rapid position feedback for steering logic
+    // need rapid position feedback for steering control
     CanBusUtil.fastPositionSparkMax(turningMotor);
   } 
 
@@ -169,8 +151,8 @@ public class SwerveModule extends ControlModule {
     driveMotor.setControl(new VelocityVoltage(state.speedMetersPerSecond
              / (DriveConstants.Drive.wheelDiameterInches * Constants.inchesToMeters * Math.PI)
              * DriveConstants.Drive.gearRatio * DriveConstants.encoderResolution / 10));
-    // Calculate the change in degrees and add that to the current position
-    turningMotor.getPIDController().setReference(currentDeg + OrangeMath.boundDegrees(state.angle.getDegrees() - currentDeg), 
+    turningMotor.getPIDController().setReference(
+      MathUtil.inputModulus(state.angle.getDegrees(), 0, 360), 
       ControlType.kPosition);
   }
 
