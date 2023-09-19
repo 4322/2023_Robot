@@ -66,14 +66,15 @@ public class SwerveModule extends ControlModule {
     mOutputConfigs.DutyCycleNeutralDeadband = DriveConstants.Drive.brakeModeDeadband;  // delay brake mode activation
                                                                                        // for tipping
     cLoopRampsConfigs.VoltageClosedLoopRampPeriod = DriveConstants.Drive.configClosedLoopRamp;
-    //slot0config.closedloopRamp = DriveConstants.Drive.configClosedLoopRamp;
     
     talon.getConfigurator().apply(slot0config);
     talon.getConfigurator().apply(cLoopRampsConfigs);
     talon.getConfigurator().apply(mOutputConfigs);
     
-    boolean isRightSide = pos == WheelPosition.FRONT_RIGHT || pos == WheelPosition.BACK_RIGHT;
-    talon.setInverted(!isRightSide);
+    // Invert the left side modules so we can zero all modules with the bevel gears facing inward.
+    // Without this code, all bevel gears would need to face left when the modules are zeroed.
+    boolean isLeftSide = (pos == WheelPosition.FRONT_LEFT) || (pos == WheelPosition.BACK_LEFT);
+    talon.setInverted(isLeftSide);
 
     // applies stator & supply current limit configs to device
     // refer to https://pro.docs.ctr-electronics.com/en/latest/docs/api-reference/api-usage/configuration.html 
