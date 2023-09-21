@@ -141,15 +141,16 @@ public class SwerveModule extends ControlModule {
 
   public void setDesiredState(SwerveModuleState desiredState) {
     if (Constants.driveEnabled) {
-      if (!Constants.driveTuningMode) {
 
-        // Optimize the reference state to avoid spinning further than 90 degrees
-        SwerveModuleState state =
-            SwerveModuleState.optimize(desiredState, Rotation2d.fromDegrees(encoder.getPosition()));
+      // Optimize the reference state to avoid spinning further than 90 degrees
+      SwerveModuleState state =
+          SwerveModuleState.optimize(desiredState, Rotation2d.fromDegrees(encoder.getPosition()));
 
-        driveMotor.setControl(new VelocityVoltage(state.speedMetersPerSecond
-                / (DriveConstants.Drive.wheelDiameterInches * Constants.inchesToMeters * Math.PI)
-                * DriveConstants.Drive.gearRatio * DriveConstants.encoderResolution / 10));
+      driveMotor.setControl(new VelocityVoltage(state.speedMetersPerSecond
+              / (DriveConstants.Drive.wheelDiameterInches * Constants.inchesToMeters * Math.PI)
+              * DriveConstants.Drive.gearRatio * DriveConstants.encoderResolution / 10));
+              
+      if (!Constants.steeringTuningMode) {
         turningMotor.getPIDController().setReference(
           MathUtil.inputModulus(state.angle.getDegrees(), 0, 360), 
           ControlType.kPosition);
@@ -173,7 +174,7 @@ public class SwerveModule extends ControlModule {
 
   public void stop() {
     if (Constants.driveEnabled) {
-      if (!Constants.driveTuningMode) {
+      if (!Constants.steeringTuningMode) {
         driveMotor.stopMotor();
         turningMotor.stopMotor();
       }

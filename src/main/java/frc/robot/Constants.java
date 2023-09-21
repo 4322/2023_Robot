@@ -42,6 +42,7 @@ public class Constants {
   // the REV library will continuously send the same command, thereby overriding
   // tuning commands from the REV Hardware CLient.
   public static final boolean driveTuningMode = false;
+  public static final boolean steeringTuningMode = false;
   public static final boolean armTuningMode = false;
   public static final boolean telescopeTuningMode = false;
   public static final boolean clawTuningMode = false;

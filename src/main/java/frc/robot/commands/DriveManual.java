@@ -126,6 +126,12 @@ public class DriveManual extends CommandBase {
       double driveMag = 0;
       if (driveRawMag > driveDeadband) {
         driveMag = (driveRawMag - driveDeadband) / (1 - driveDeadband);
+
+        if (Constants.driveTuningMode) {
+          // quantize input drive magnitude to 0, 0.25, 0.5, 0.75, 1.0 for PID tuning
+          driveMag = Math.round(driveMag * 4.0 + 0.499) / 4.0;
+        }
+
         driveMag = driveMag * driveMag * driveMag; // Increase sensitivity efficiently
       }
       // Convert back to cartesian coordinates
