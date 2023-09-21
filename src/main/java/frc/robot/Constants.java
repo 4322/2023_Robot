@@ -1,6 +1,5 @@
 package frc.robot;
 
-import frc.robot.subsystems.SwerveDrive.ControlModule.WheelPosition;
 import frc.utility.OrangeMath;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +41,7 @@ public class Constants {
   // in the application to enable it and no set() commands can be issued because
   // the REV library will continuously send the same command, thereby overriding
   // tuning commands from the REV Hardware CLient.
+  public static final boolean driveTuningMode = false;
   public static final boolean armTuningMode = false;
   public static final boolean telescopeTuningMode = false;
   public static final boolean clawTuningMode = false;
@@ -60,14 +60,20 @@ public class Constants {
 
   public static final class DriveConstants {
     
-    public static final int frontRightDriveID = 3;
-    public static final int frontRightRotationID = 5;
-    public static final int rearRightDriveID = 6;
-    public static final int rearRightRotationID = 7;
-    public static final int frontLeftDriveID = 2;
-    public static final int frontLeftRotationID = 4;
-    public static final int rearLeftDriveID = 8;
-    public static final int rearLeftRotationID = 9;
+    //1 is the side motor, 2 is the center motor
+    public static final int frontRightDriveID = 9;
+    public static final int frontRightDriveID2 = 4;
+    public static final int frontRightRotationID = 18;
+    public static final int rearRightDriveID = 2;
+    public static final int rearRightDriveID2 = 5;
+    public static final int rearRightRotationID = 19;
+    public static final int frontLeftDriveID = 8; 
+    public static final int frontLeftDriveID2 = 3;
+    public static final int frontLeftRotationID = 20;
+    public static final int rearLeftDriveID = 7;
+    public static final int rearLeftDriveID2 = 6;
+    public static final int rearLeftRotationID = 21;
+    
     
     public static final int frontRightEncoderID = 10;
     public static final int rearRightEncoderID = 12;
@@ -90,7 +96,7 @@ public class Constants {
 
     // Max speed is 200000 ticks / 1 s
 
-    public static final double maxSpeedMetersPerSecond = 10 * OrangeMath.falconEncoderToMeters(20000,
+    public static final double maxSpeedMetersPerSecond = 10 * OrangeMath.falconRotationsToMeters(20000.0/falconEncoderUnits,
         OrangeMath.inchesToMeters(OrangeMath.getCircumference(Drive.wheelDiameterInches)),
         Drive.gearRatio);
 
@@ -154,7 +160,7 @@ public class Constants {
 
       // Values for autonomous path finding
       public static final double autoMaxSpeedMetersPerSecond = 0.75 * DriveConstants.maxSpeedMetersPerSecond;
-      public static final double autoMaxAccelerationMetersPerSec2 = 0.75 * OrangeMath.falconEncoderToMeters(180000,
+      public static final double autoMaxAccelerationMetersPerSec2 = 0.75 * OrangeMath.falconRotationsToMeters(180000.0/falconEncoderUnits,
           OrangeMath.inchesToMeters(OrangeMath.getCircumference(Drive.wheelDiameterInches)),
           Drive.gearRatio);
 
@@ -185,49 +191,21 @@ public class Constants {
 
     }
 
-    public static final class Rotation {
-
-      public static final double minAutoRotateSpeed = 0.0;
-      public static final double maxAutoRotateSpeed = 0.0;
-
-      public static final double movingVelocityThresholdFtPerSec = 0.2;
-
-      public static final Pose2d poseError =
-          new Pose2d(new Translation2d(0.1, 0.1), new Rotation2d(0.0174533));
-
-      public static final double kP = 1.2;
-      public static final double kD = 6.0;
+    public static final class Rotation { 
+      // For tuning, graph Duty Cycle Position in the REV Hardware Client
+      public static final double kP = 0.03;
+      public static final double kD = 0.0;
 
       public static final double configCLosedLoopRamp = 0.08;
-      public static final double minPower = 0.0; // allow for tighter tolerance
-      public static final double maxPower = 0.3; // reduce gear wear and overshoot
-      public static final double countToDegrees = 360.0 / encoderResolution * 12 / 24 * 14 / 72;
+      public static final double maxPower = 0.5; // reduce gear wear and overshoot
 
       public static final double configVoltageCompSaturation = 11.5;
       public static final boolean enableVoltageCompensation = true;
 
-      public static final boolean statorEnabled = true;
-      public static final double statorLimit = 40;
-      public static final double statorThreshold = 45;
-      public static final double statorTime = 1.0;
+      public static final int freeLimit = 40;
+      public static final int stallLimit = 5; //Change
 
-      public static final boolean supplyEnabled = true;
-      public static final double supplyLimit = 30;
-      public static final double supplyThreshold = 35;
-      public static final double supplyTime = 0.5;
-
-      public static final double allowableClosedloopError = 0.35 / countToDegrees;
-
-      // values obtained from swerve module zeroing procedure
-      // positive angles are CCW rotation from forward
-      public static final double[] CANCoderOffsetDegrees;
-      static {
-        CANCoderOffsetDegrees = new double[4];
-        CANCoderOffsetDegrees[WheelPosition.FRONT_RIGHT.wheelNumber] = 149.941;
-        CANCoderOffsetDegrees[WheelPosition.FRONT_LEFT.wheelNumber] = 2.637 - 90;
-        CANCoderOffsetDegrees[WheelPosition.BACK_RIGHT.wheelNumber] = 22.939 - 90;
-        CANCoderOffsetDegrees[WheelPosition.BACK_LEFT.wheelNumber] = -72.773;
-      }
+      public static final double allowableClosedloopError = 0.35;  // degrees
     }
 
     public static final class Drive {
@@ -250,12 +228,13 @@ public class Constants {
       public static final double supplyTime = 0.5;
 
       public static final double wheelDiameterInches = 3.95;
-      public static final double gearRatio = 7.8;
+      public static final double gearRatio = 150.0/7.0; //kept rotation gear ratio in fractional form to not lose precision
       public static final double kP = 0.05;
       public static final double kI = 0.0002;
       public static final double kD = 0.0;
-      public static final double kIz = 500;
-      public static final double kFF = 0.054;
+      //Need to refactor all PID K-values
+      public static final double kV = 0.12972;
+      public static final String canivoreName = "Drivebase"; //TODO: Name Canivore (https://v5.docs.ctr-electronics.com/en/stable/ch08a_BringUpCANivore.html#)
       
     }
 

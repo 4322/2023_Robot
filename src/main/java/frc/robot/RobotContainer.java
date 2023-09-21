@@ -78,10 +78,10 @@ public class RobotContainer {
 
   // Auto Balance Commands
   private final SequentialCommandGroup autoBalanceForward = new SequentialCommandGroup(
-      new AutoBalance(drive, true),
+      new AutoBalance(drive, true, false),
       new AutoDriveRotateWheels(drive, 0.25));
   private final SequentialCommandGroup autoBalanceBackward = new SequentialCommandGroup(
-      new AutoBalance(drive, false),
+      new AutoBalance(drive, false, false),
       new AutoDriveRotateWheels(drive, 0.25));
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -142,7 +142,7 @@ public class RobotContainer {
     autoChooser.addOption("Engage (1)",
         new SequentialCommandGroup(
             ppManager.loadAuto("ScoreMobilityCharge1", false),
-            new AutoBalance(drive, false),
+            new AutoBalance(drive, false, true),
             new AutoDriveRotateWheels(drive, 0.25)
         )
       );
@@ -153,7 +153,7 @@ public class RobotContainer {
     autoChooser.addOption("Engage (2)",
         new SequentialCommandGroup(
             ppManager.loadAuto("ScoreMobilityCharge2", false),
-            new AutoBalance(drive, false),
+            new AutoBalance(drive, false, true),
             new AutoDriveRotateWheels(drive, 0.25)
         )
       ); 
@@ -162,7 +162,7 @@ public class RobotContainer {
       new SequentialCommandGroup(
           ppManager.loadAuto("DriveOverCharge", false, 
             new PathConstraints(1.33, DriveConstants.Auto.autoMaxAccelerationMetersPerSec2)),
-          new AutoBalance(drive, false),
+          new AutoBalance(drive, false, true),
           new AutoDriveRotateWheels(drive, 0.25)
       )
     );
@@ -170,7 +170,7 @@ public class RobotContainer {
     autoChooser.addOption("Engage (8)",
       new SequentialCommandGroup(
           ppManager.loadAuto("ScoreMobilityCharge8", false),
-          new AutoBalance(drive, false),
+          new AutoBalance(drive, false, true),
           new AutoDriveRotateWheels(drive, 0.25)
       )
     );
@@ -178,7 +178,7 @@ public class RobotContainer {
     autoChooser.addOption("Engage (9)",
       new SequentialCommandGroup(
           ppManager.loadAuto("ScoreMobilityCharge9", false),
-          new AutoBalance(drive, false),
+          new AutoBalance(drive, false, true),
           new AutoDriveRotateWheels(drive, 0.25)
       )
     );

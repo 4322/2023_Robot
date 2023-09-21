@@ -14,10 +14,9 @@ public class OrangeMath {
     return diameter * Math.PI;
   }
 
-  public static double falconEncoderToMeters(double encUnits, double wheelCircumferenceMeters,
+  public static double falconRotationsToMeters(double rotUnits, double wheelCircumferenceMeters,
       double gearRatioMotorToWheel) {
-    return (encUnits * wheelCircumferenceMeters) / gearRatioMotorToWheel
-        / Constants.falconEncoderUnits;
+    return (rotUnits * wheelCircumferenceMeters) / gearRatioMotorToWheel;
   }
 
   public static double feetToMeters(double feet) {
@@ -52,5 +51,10 @@ public class OrangeMath {
       x += 360;
     }
     return x;
+  }
+
+  //method that converts from milliseconds to hertz, and hertz to milliseconds as the formula for hertz is hertz = 1000/ms and ms = 1000/hertz= hertz*milliseconds = 1000.
+  public static double msAndHzConverter(double time) {
+    return 1000 / time;
   }
 }
