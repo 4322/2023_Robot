@@ -1,5 +1,6 @@
 package frc.robot.subsystems.SwerveDrive;
 
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -24,6 +25,7 @@ import frc.utility.CanBusUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.math.MathUtil;
 
 public class SwerveModule extends ControlModule {
@@ -169,7 +171,9 @@ public class SwerveModule extends ControlModule {
 
   public void setBrakeMode() {
     if (Constants.driveEnabled) {
-      driveMotor.setControl(new StaticBrake());
+      if (driveMotor.setControl(new StaticBrake()) != StatusCode.OK) {
+        DriverStation.reportError("Error setting drive brake mode: ", false);
+      }
       turningMotor.setIdleMode(IdleMode.kBrake);
     }
   }
