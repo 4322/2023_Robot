@@ -95,6 +95,8 @@ public class Constants {
 
     public static final double disableBreakSec = 2.0;
 
+    // top speed at full motor output is 91 rot/sec with voltage comp at 11.5 volts
+    // however, setting the max speed to 91 only allows us to reach 86 due to insufficent kV
     public static final double maxSpeedMetersPerSecond = OrangeMath.falconRotationsToMeters(91,
         OrangeMath.inchesToMeters(OrangeMath.getCircumference(Drive.wheelDiameterInches)),
         Drive.gearRatio);
@@ -156,7 +158,10 @@ public class Constants {
 
       // Values for autonomous path finding
       public static final double autoMaxSpeedMetersPerSecond = 0.75 * DriveConstants.maxSpeedMetersPerSecond;
-      public static final double autoMaxAccelerationMetersPerSec2 = 0.75 * OrangeMath.falconRotationsToMeters(42.8,
+
+      // acceleration off the line is 109 rotations per sec^2
+      // acceleration in the mid-range is 46.8 rotations per sec^2
+      public static final double autoMaxAccelerationMetersPerSec2 = 0.75 * OrangeMath.falconRotationsToMeters(73,
           OrangeMath.inchesToMeters(OrangeMath.getCircumference(Drive.wheelDiameterInches)),
           Drive.gearRatio);
 
@@ -206,7 +211,7 @@ public class Constants {
 
     public static final class Drive {
 
-      public static final double configClosedLoopRamp = 0;
+      public static final double configClosedLoopRamp = 0.08;
 
       public static final double voltageCompSaturation = 11.5;
       public static final boolean enableVoltageCompensation = true;
