@@ -233,7 +233,7 @@ public class Constants {
       public static final double kI = 0.0002;
       public static final double kD = 0.0;
       //Need to refactor all PID K-values
-      public static final double kV = 0.12972;
+      public static final double kV = 0.0124;
       public static final String canivoreName = "Drivebase"; //TODO: Name Canivore (https://v5.docs.ctr-electronics.com/en/stable/ch08a_BringUpCANivore.html#)
       
     }
