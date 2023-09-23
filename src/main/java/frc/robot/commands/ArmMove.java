@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import java.util.function.Supplier;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -17,6 +18,7 @@ public class ArmMove extends CommandBase {
   private static Position presetPos = Position.scoreMid;
   private static Position lastPos = Position.unknown;
   private static boolean safeToOuttake = true;
+  public static final Supplier<Object> positionSupplier = () -> getScorePreset();
 
   private Arm arm;
   private Telescope telescope;
@@ -33,6 +35,10 @@ public class ArmMove extends CommandBase {
 
   public static void setScorePreset(Position pos) {
     ArmMove.presetPos = pos;
+  }
+
+  private static Position getScorePreset() {
+    return ArmMove.presetPos;
   }
 
   public static boolean isSafeToOuttake() {
