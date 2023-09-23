@@ -40,6 +40,8 @@ public class SwerveModule extends ControlModule {
     driveMotor = new TalonFX(wheelID, Constants.DriveConstants.Drive.canivoreName);
     driveMotor2 = new TalonFX(wheelID2, Constants.DriveConstants.Drive.canivoreName);
     encoder = turningMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
+    encoder.setInverted(true);
+    turningMotor.setInverted(true);
     wheelPosition = pos;
 
     CanBusUtil.staggerSparkMax(turningMotor);
@@ -71,10 +73,10 @@ public class SwerveModule extends ControlModule {
     talon.getConfigurator().apply(cLoopRampsConfigs);
     talon.getConfigurator().apply(mOutputConfigs);
     
-    // Invert the right side modules so we can zero all modules with the bevel gears facing inward.
-    // Without this code, all bevel gears would need to face left when the modules are zeroed.
-    boolean isRightSide = (pos == WheelPosition.FRONT_RIGHT) || (pos == WheelPosition.BACK_RIGHT);
-    talon.setInverted(isRightSide);
+    // Invert the left side modules so we can zero all modules with the bevel gears facing outward.
+    // Without this code, all bevel gears would need to face right when the modules are zeroed.
+    boolean isLeftSide = (pos == WheelPosition.FRONT_LEFT) || (pos == WheelPosition.BACK_LEFT);
+    talon.setInverted(isLeftSide);
 
     // applies stator & supply current limit configs to device
     // refer to https://pro.docs.ctr-electronics.com/en/latest/docs/api-reference/api-usage/configuration.html 
