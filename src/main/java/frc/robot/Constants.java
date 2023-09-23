@@ -219,14 +219,13 @@ public class Constants {
       public static final double brakeModeDeadband = 0.01;
 
       public static final boolean statorEnabled = true;
-      public static final double statorLimit = 40;
-      public static final double statorThreshold = 45;
-      public static final double statorTime = 1.0;
+      public static final double statorLimit = 80;
 
+      // when supply threshold is exceeded for the time, drop the current to the limit
       public static final boolean supplyEnabled = true;
       public static final double supplyLimit = 40;
-      public static final double supplyThreshold = 45;
-      public static final double supplyTime = 0.5;
+      public static final double supplyThreshold = 60;
+      public static final double supplyTime = 2.0;
 
       public static final double wheelDiameterInches = 3.9;
       public static final double gearRatio = 38250.0/7290.0; //kept drive gear ratio in fractional form to not lose precision
