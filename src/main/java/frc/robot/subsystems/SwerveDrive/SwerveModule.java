@@ -45,7 +45,7 @@ public class SwerveModule extends ControlModule {
     driveMotor2 = new TalonFX(wheelID2, Constants.DriveConstants.Drive.canivoreName);
     encoder = turningMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
     encoder.setInverted(true);
-    mOutputConfigs = new MotorOutputConfigs();
+    
     turningMotor.setInverted(true);
     wheelPosition = pos;
 
@@ -66,7 +66,7 @@ public class SwerveModule extends ControlModule {
     slot0config.kD = DriveConstants.Drive.kD;
     slot0config.kV = DriveConstants.Drive.kV;
 
-    
+    mOutputConfigs = new MotorOutputConfigs();
     ClosedLoopRampsConfigs cLoopRampsConfigs = new ClosedLoopRampsConfigs();
 
     mOutputConfigs.NeutralMode = NeutralModeValue.Coast; // Allow robot to be moved prior to enabling
@@ -168,8 +168,8 @@ public class SwerveModule extends ControlModule {
   public void setCoastmode() {
     if (Constants.driveEnabled) {
       mOutputConfigs.NeutralMode = NeutralModeValue.Coast;
-      driveMotor.getConfigurator().apply(mOutputConfigs);
-      driveMotor2.getConfigurator().apply(mOutputConfigs);
+      driveMotor.getConfigurator().refresh(mOutputConfigs);
+      //driveMotor2.getConfigurator().apply(mOutputConfigs);
       turningMotor.setIdleMode(IdleMode.kCoast);
     }
   }
@@ -177,8 +177,8 @@ public class SwerveModule extends ControlModule {
   public void setBrakeMode() {
     if (Constants.driveEnabled) {
       mOutputConfigs.NeutralMode = NeutralModeValue.Brake;
-      driveMotor.getConfigurator().apply(mOutputConfigs);
-      driveMotor2.getConfigurator().apply(mOutputConfigs);
+      driveMotor.getConfigurator().refresh(mOutputConfigs);
+      //driveMotor2.getConfigurator().apply(mOutputConfigs);
       turningMotor.setIdleMode(IdleMode.kBrake);
     }
   }
