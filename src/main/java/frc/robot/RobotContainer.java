@@ -233,6 +233,7 @@ public class RobotContainer {
       rotateStick = new Joystick(1);
 
       driveTrigger = new JoystickButton(driveStick, 1);
+      driveButtonThree = new JoystickButton(driveStick, 3);
       driveButtonFive = new JoystickButton(driveStick, 5);
       driveButtonSix = new JoystickButton(driveStick, 6);
       driveButtonSeven = new JoystickButton(driveStick, 7);
