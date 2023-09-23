@@ -41,7 +41,7 @@ public class Constants {
   // in the application to enable it and no set() commands can be issued because
   // the REV library will continuously send the same command, thereby overriding
   // tuning commands from the REV Hardware CLient.
-  public static final boolean driveTuningMode = false;
+  public static final boolean driveTuningMode = true;
   public static final boolean steeringTuningMode = false;
   public static final boolean armTuningMode = false;
   public static final boolean telescopeTuningMode = false;
@@ -228,14 +228,13 @@ public class Constants {
       public static final double supplyThreshold = 45;
       public static final double supplyTime = 0.5;
 
-      public static final double wheelDiameterInches = 3.95;
+      public static final double wheelDiameterInches = 3.9;
       public static final double gearRatio = 38250.0/7290.0; //kept drive gear ratio in fractional form to not lose precision
       public static final double kP = 0.05;
       public static final double kI = 0.0002;
       public static final double kD = 0.0;
-      //Need to refactor all PID K-values
-      public static final double kV = 0.0124;
-      public static final String canivoreName = "Drivebase"; //TODO: Name Canivore (https://v5.docs.ctr-electronics.com/en/stable/ch08a_BringUpCANivore.html#)
+      public static final double kV = 0.11;
+      public static final String canivoreName = "Drivebase";
       
     }
 
