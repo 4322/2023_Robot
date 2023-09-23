@@ -260,7 +260,7 @@ public class RobotContainer {
       "2 Piece + Engage",
       new SequentialCommandGroup(
         ppManager.loadAuto("2PiecesEngage1", false),
-        new AutoBalance(drive, true),
+        new AutoBalance(drive, true, true),
         new AutoDriveRotateWheels(drive, 0.25)
       ),
       Arrays.asList(1)
@@ -270,7 +270,7 @@ public class RobotContainer {
       "2 Piece + Engage",
       new SequentialCommandGroup(
         ppManager.loadAuto("2PiecesEngage9", false),
-        new AutoBalance(drive, true),
+        new AutoBalance(drive, true, true),
         new AutoDriveRotateWheels(drive, 0.25)
       ),
       Arrays.asList(9)
