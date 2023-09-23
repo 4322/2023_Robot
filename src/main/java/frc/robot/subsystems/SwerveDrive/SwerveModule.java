@@ -41,6 +41,7 @@ public class SwerveModule extends ControlModule {
     driveMotor2 = new TalonFX(wheelID2, Constants.DriveConstants.Drive.canivoreName);
     encoder = turningMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
     encoder.setInverted(true);
+    turningMotor.setInverted(true);
     wheelPosition = pos;
 
     CanBusUtil.staggerSparkMax(turningMotor);
