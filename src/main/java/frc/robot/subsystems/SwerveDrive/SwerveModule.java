@@ -20,6 +20,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.Telescope.movePid;
 import frc.utility.OrangeMath;
 import frc.utility.CanBusUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -31,6 +32,7 @@ import edu.wpi.first.math.MathUtil;
 public class SwerveModule extends ControlModule {
   private CANSparkMax turningMotor;
   private TalonFX driveMotor;
+  private MotorOutputConfigs  mOutputConfigs;
   private TalonFX driveMotor2;
   private SparkMaxAbsoluteEncoder encoder;
   private WheelPosition wheelPosition;
@@ -43,6 +45,7 @@ public class SwerveModule extends ControlModule {
     driveMotor2 = new TalonFX(wheelID2, Constants.DriveConstants.Drive.canivoreName);
     encoder = turningMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
     encoder.setInverted(true);
+    mOutputConfigs = new MotorOutputConfigs();
     turningMotor.setInverted(true);
     wheelPosition = pos;
 
@@ -63,7 +66,7 @@ public class SwerveModule extends ControlModule {
     slot0config.kD = DriveConstants.Drive.kD;
     slot0config.kV = DriveConstants.Drive.kV;
 
-    MotorOutputConfigs mOutputConfigs = new MotorOutputConfigs();
+    
     ClosedLoopRampsConfigs cLoopRampsConfigs = new ClosedLoopRampsConfigs();
 
     mOutputConfigs.NeutralMode = NeutralModeValue.Coast; // Allow robot to be moved prior to enabling
@@ -152,8 +155,7 @@ public class SwerveModule extends ControlModule {
 
       driveMotor.setControl(new VelocityVoltage(state.speedMetersPerSecond
               / (DriveConstants.Drive.wheelDiameterInches * Constants.inchesToMeters * Math.PI)
-              * DriveConstants.Drive.gearRatio).withEnableFOC(true)
-              .withOverrideBrakeDurNeutral(true));  // brake mode configuration is not being honored
+              * DriveConstants.Drive.gearRatio).withEnableFOC(true));
               
       if (!Constants.steeringTuningMode) {
         turningMotor.getPIDController().setReference(
@@ -165,16 +167,18 @@ public class SwerveModule extends ControlModule {
 
   public void setCoastmode() {
     if (Constants.driveEnabled) {
-      driveMotor.setControl(new CoastOut());
+      mOutputConfigs.NeutralMode = NeutralModeValue.Coast;
+      driveMotor.getConfigurator().apply(mOutputConfigs);
+      driveMotor2.getConfigurator().apply(mOutputConfigs);
       turningMotor.setIdleMode(IdleMode.kCoast);
     }
   }
 
   public void setBrakeMode() {
     if (Constants.driveEnabled) {
-      if (driveMotor.setControl(new StaticBrake()) != StatusCode.OK) {
-        DriverStation.reportError("Error setting drive brake mode: ", false);
-      }
+      mOutputConfigs.NeutralMode = NeutralModeValue.Brake;
+      driveMotor.getConfigurator().apply(mOutputConfigs);
+      driveMotor2.getConfigurator().apply(mOutputConfigs);
       turningMotor.setIdleMode(IdleMode.kBrake);
     }
   }
