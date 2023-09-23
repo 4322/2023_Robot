@@ -237,8 +237,6 @@ public class RobotContainer {
     }
 
     if (Constants.xboxEnabled) {
-      xbox.leftTrigger().onTrue(new SetScoringPosition(ArmMove.Position.loadFloor));
-      xbox.rightTrigger().onTrue(new SetScoringPosition(ArmMove.Position.loadSingle));
       xbox.back().onTrue(armSetCoastMode);
       xbox.start().onTrue(armSetBrakeMode);
       xbox.leftBumper().onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cube)));
@@ -246,6 +244,8 @@ public class RobotContainer {
       xbox.y().onTrue(new SetScoringPosition(ArmMove.Position.scoreHigh));
       xbox.b().onTrue(new SetScoringPosition(ArmMove.Position.scoreMid));
       xbox.a().onTrue(new SetScoringPosition(ArmMove.Position.scoreLow));
+      xbox.povDown().onTrue(new SetScoringPosition(ArmMove.Position.loadFloor));
+      xbox.povUp().onTrue(new SetScoringPosition(ArmMove.Position.loadSingle));
     }
   }
 
