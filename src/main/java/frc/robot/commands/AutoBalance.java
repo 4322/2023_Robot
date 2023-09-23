@@ -21,19 +21,20 @@ public class AutoBalance extends CommandBase {
   private double startAdjustPitch;
   private double poseDeg;
   private double poseSign;
+  private boolean autonomous;
 
   public enum autoBalanceMode {
     flat, onRamp, dropping, leveling, finished, abort, adjusting;
   }
 
-  public AutoBalance(Drive driveSubsystem, boolean forward) {
+  public AutoBalance(Drive driveSubsystem, boolean forward, boolean autonomous) {
     drive = driveSubsystem;
     if (forward) {
       driveSign = 1;
     } else {
       driveSign = -1;
     }
-
+    this.autonomous = autonomous;
     addRequirements(drive);
   }
 
@@ -156,6 +157,10 @@ public class AutoBalance extends CommandBase {
 
   @Override
   public boolean isFinished() {
+    if(autonomous && (DriverStation.getMatchTime() <= 0.1))
+    {
+      return true;
+    }
     return ((currentMode == autoBalanceMode.finished) || (currentMode == autoBalanceMode.abort));
   }
 }

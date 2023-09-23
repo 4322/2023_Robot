@@ -71,16 +71,16 @@ public class Drive extends SubsystemBase {
     if (Constants.driveEnabled) {
       swerveModules[WheelPosition.FRONT_RIGHT.wheelNumber] =
           new SwerveModule(DriveConstants.frontRightRotationID, DriveConstants.frontRightDriveID,
-              WheelPosition.FRONT_RIGHT, DriveConstants.frontRightEncoderID);
+              DriveConstants.frontRightDriveID2, WheelPosition.FRONT_RIGHT, DriveConstants.frontRightEncoderID);
       swerveModules[WheelPosition.FRONT_LEFT.wheelNumber] =
           new SwerveModule(DriveConstants.frontLeftRotationID, DriveConstants.frontLeftDriveID,
-              WheelPosition.FRONT_LEFT, DriveConstants.frontLeftEncoderID);
+              DriveConstants.frontLeftDriveID2, WheelPosition.FRONT_LEFT, DriveConstants.frontLeftEncoderID);
       swerveModules[WheelPosition.BACK_RIGHT.wheelNumber] =
           new SwerveModule(DriveConstants.rearRightRotationID, DriveConstants.rearRightDriveID,
-              WheelPosition.BACK_RIGHT, DriveConstants.rearRightEncoderID);
+              DriveConstants.rearRightDriveID2, WheelPosition.BACK_RIGHT, DriveConstants.rearRightEncoderID);
       swerveModules[WheelPosition.BACK_LEFT.wheelNumber] =
           new SwerveModule(DriveConstants.rearLeftRotationID, DriveConstants.rearLeftDriveID,
-              WheelPosition.BACK_LEFT, DriveConstants.rearLeftEncoderID);
+              DriveConstants.rearLeftDriveID2, WheelPosition.BACK_LEFT, DriveConstants.rearLeftEncoderID);
     }
   }
 
