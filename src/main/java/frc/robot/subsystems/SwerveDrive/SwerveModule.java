@@ -69,9 +69,8 @@ public class SwerveModule extends ControlModule {
     
     ClosedLoopRampsConfigs cLoopRampsConfigs = new ClosedLoopRampsConfigs();
 
-    mOutputConfigs.NeutralMode = NeutralModeValue.Coast; // Allow robot to be moved prior to enabling
-    mOutputConfigs.DutyCycleNeutralDeadband = DriveConstants.Drive.brakeModeDeadband;  // delay brake mode activation
-                                                                                       // for tipping
+    mOutputConfigs.NeutralMode = NeutralModeValue.Brake; // Allow robot to be moved prior to enabling
+    mOutputConfigs.DutyCycleNeutralDeadband = DriveConstants.Drive.brakeModeDeadband;
     cLoopRampsConfigs.VoltageClosedLoopRampPeriod = DriveConstants.Drive.configClosedLoopRamp;
     
     talon.getConfigurator().apply(slot0config);
@@ -168,8 +167,9 @@ public class SwerveModule extends ControlModule {
   public void setCoastmode() {
     if (Constants.driveEnabled) {
       mOutputConfigs.NeutralMode = NeutralModeValue.Coast;
-      driveMotor.getConfigurator().apply(mOutputConfigs);
-      driveMotor2.getConfigurator().apply(mOutputConfigs);
+      // the following calls reset follower mode or something else that makes the robot uncontrollable
+      //driveMotor.getConfigurator().apply(mOutputConfigs);
+      //driveMotor2.getConfigurator().apply(mOutputConfigs);
       turningMotor.setIdleMode(IdleMode.kCoast);
     }
   }
@@ -177,8 +177,9 @@ public class SwerveModule extends ControlModule {
   public void setBrakeMode() {
     if (Constants.driveEnabled) {
       mOutputConfigs.NeutralMode = NeutralModeValue.Brake;
-      driveMotor.getConfigurator().apply(mOutputConfigs);
-      driveMotor2.getConfigurator().apply(mOutputConfigs);
+      // the following calls reset follower mode or something else that makes the robot uncontrollable
+      //driveMotor.getConfigurator().apply(mOutputConfigs);
+      //driveMotor2.getConfigurator().apply(mOutputConfigs);
       turningMotor.setIdleMode(IdleMode.kBrake);
     }
   }
