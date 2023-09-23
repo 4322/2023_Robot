@@ -150,7 +150,7 @@ public class SwerveModule extends ControlModule {
 
       driveMotor.setControl(new VelocityVoltage(state.speedMetersPerSecond
               / (DriveConstants.Drive.wheelDiameterInches * Constants.inchesToMeters * Math.PI)
-              * DriveConstants.Drive.gearRatio * DriveConstants.encoderResolution / 10));
+              * DriveConstants.Drive.gearRatio));
               
       if (!Constants.steeringTuningMode) {
         turningMotor.getPIDController().setReference(
