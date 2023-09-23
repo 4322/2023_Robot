@@ -376,11 +376,12 @@ public class Drive extends SubsystemBase {
   }
 
   public void setCoastMode() {
-    if (Constants.driveEnabled) {
+    return;
+    /**if (Constants.driveEnabled) {
       for (SwerveModule module : swerveModules) {
         module.setCoastmode();
       }
-    }
+    }**/
   }
 
   public void setBrakeMode() {
