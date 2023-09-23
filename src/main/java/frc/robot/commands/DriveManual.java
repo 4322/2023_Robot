@@ -160,15 +160,24 @@ public class DriveManual extends CommandBase {
       }
       rotatePower = rotatePower * Manual.manualRotationScaleFromMax;
 
-      if (targetHeadingDeg != null) {
-        if (rotatePower == 0) {
+      if (rotatePower == 0) {
+        if (targetHeadingDeg != null) {
           drive.driveAutoRotate(driveX, driveY, targetHeadingDeg,
               Constants.DriveConstants.Auto.rotateToleranceDegrees);
           return;
         } else {
-          // break out of auto-rotate
+          targetHeadingDeg = drive.getAngle();
+          drive.driveAutoRotate(driveX, driveY, targetHeadingDeg,
+              Constants.DriveConstants.Auto.rotateToleranceDegrees);
+          return;
+        }
+      } else {
+        targetHeadingDeg = null; // unlock auto rotate heading
+        //check if we are in a commanded auto rotate
+        if (autoPose != null) {
+          //break out of auto-rotate
           drive.drive(driveX, driveY, rotatePower);
-          done = true;
+          done = true; // restart default driveManual command
           return;
         }
       }
