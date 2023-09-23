@@ -95,9 +95,7 @@ public class Constants {
 
     public static final double disableBreakSec = 2.0;
 
-    // Max speed is 200000 ticks / 1 s
-
-    public static final double maxSpeedMetersPerSecond = 10 * OrangeMath.falconRotationsToMeters(20000.0/falconEncoderUnits,
+    public static final double maxSpeedMetersPerSecond = OrangeMath.falconRotationsToMeters(91,
         OrangeMath.inchesToMeters(OrangeMath.getCircumference(Drive.wheelDiameterInches)),
         Drive.gearRatio);
 
@@ -157,11 +155,9 @@ public class Constants {
 
     public static final class Auto {
 
-      // Max acceleration is 180000 ticks / s^2
-
       // Values for autonomous path finding
       public static final double autoMaxSpeedMetersPerSecond = 0.75 * DriveConstants.maxSpeedMetersPerSecond;
-      public static final double autoMaxAccelerationMetersPerSec2 = 0.75 * OrangeMath.falconRotationsToMeters(180000.0/falconEncoderUnits,
+      public static final double autoMaxAccelerationMetersPerSec2 = 0.75 * OrangeMath.falconRotationsToMeters(42.8,
           OrangeMath.inchesToMeters(OrangeMath.getCircumference(Drive.wheelDiameterInches)),
           Drive.gearRatio);
 
