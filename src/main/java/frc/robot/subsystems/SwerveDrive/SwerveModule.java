@@ -71,8 +71,8 @@ public class SwerveModule extends ControlModule {
     talon.getConfigurator().apply(cLoopRampsConfigs);
     talon.getConfigurator().apply(mOutputConfigs);
     
-    // Invert the left side modules so we can zero all modules with the bevel gears facing inward.
-    // Without this code, all bevel gears would need to face left when the modules are zeroed.
+    // Invert the left side modules so we can zero all modules with the bevel gears facing outward.
+    // Without this code, all bevel gears would need to face right when the modules are zeroed.
     boolean isLeftSide = (pos == WheelPosition.FRONT_LEFT) || (pos == WheelPosition.BACK_LEFT);
     talon.setInverted(isLeftSide);
 
