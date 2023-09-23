@@ -152,7 +152,8 @@ public class SwerveModule extends ControlModule {
 
       driveMotor.setControl(new VelocityVoltage(state.speedMetersPerSecond
               / (DriveConstants.Drive.wheelDiameterInches * Constants.inchesToMeters * Math.PI)
-              * DriveConstants.Drive.gearRatio));
+              * DriveConstants.Drive.gearRatio).withEnableFOC(true)
+              .withOverrideBrakeDurNeutral(true));  // brake mode configuration is not being honored
               
       if (!Constants.steeringTuningMode) {
         turningMotor.getPIDController().setReference(
