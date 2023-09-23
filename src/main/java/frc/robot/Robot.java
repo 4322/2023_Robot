@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import java.util.function.Supplier;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -192,4 +193,6 @@ public class Robot extends TimedRobot {
   public static Alliance getAllianceColor() {
     return allianceColor;
   }
+
+  public static final Supplier<Object> allianceSupplier = () -> getAllianceColor();
 }

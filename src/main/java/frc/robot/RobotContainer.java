@@ -1,11 +1,14 @@
 package frc.robot;
 
 import java.util.function.BooleanSupplier;
+import java.util.HashMap;
+import java.util.Map;
 import com.pathplanner.lib.PathConstraints;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -13,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -24,6 +28,7 @@ import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Telescope;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.*;
+import frc.robot.commands.ArmMove.Position;
 
 public class RobotContainer {
   private Timer disableTimer = new Timer();
@@ -74,6 +79,7 @@ public class RobotContainer {
   private final DriveManual driveManualBackward = new DriveManual(drive, DriveManual.AutoPose.back);
   private final DriveManual driveManualLeft = new DriveManual(drive, DriveManual.AutoPose.left);
   private final DriveManual driveManualRight = new DriveManual(drive, DriveManual.AutoPose.right);
+  private final SelectCommand driveManualSideSelector;
   private final DriveStop driveStop = new DriveStop(drive);
 
   // Auto Balance Commands
@@ -120,6 +126,16 @@ public class RobotContainer {
     if (Constants.substationLimeLightEnabled) {
       Limelight.getSubstationInstance().setDefaultCommand(new AlignAssistSubstation());
     }
+
+    HashMap<Object, Command> h = new HashMap<Object, Command>();
+
+    h.put(Alliance.Red, driveManualRight);
+    h.put(Alliance.Blue, driveManualLeft);
+
+    driveManualSideSelector = new SelectCommand(
+      h,
+      Robot.allianceSupplier
+    );
 
     ppManager = new PathPlannerManager(drive);
 
@@ -219,9 +235,9 @@ public class RobotContainer {
 
       driveTrigger.whileTrue(clawOuttake);
       driveButtonFive.onTrue(clawIntake);
+      driveButtonFive.onTrue(driveManualSideSelector);
+      driveButtonFive.onTrue()
       driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
-      driveButtonNine.onTrue(autoBalanceForward);
-      driveButtonEleven.onTrue(autoBalanceBackward);
       driveButtonTwelve.onTrue(driveStop);
 
       // Re-establish alignment to grid when deploying the arm
@@ -229,11 +245,6 @@ public class RobotContainer {
           .unless(isBackwardScoringPreset));
       rotateTrigger.whileTrue(new ArmMove(arm, telescope, ArmMove.Position.scorePreset, false)
           .withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming));
-
-      rotateButtonThree.onTrue(driveManualForward);
-      rotateButtonFour.onTrue(driveManualLeft);
-      rotateButtonFive.onTrue(driveManualBackward);
-      rotateButtonSix.onTrue(driveManualRight);
     }
 
     if (Constants.xboxEnabled) {
@@ -243,9 +254,11 @@ public class RobotContainer {
       xbox.start().onTrue(armSetBrakeMode);
       xbox.leftBumper().onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cube)));
       xbox.rightBumper().onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cone)));
-      xbox.y().onTrue(new SetScoringPosition(ArmMove.Position.scoreHigh));
-      xbox.b().onTrue(new SetScoringPosition(ArmMove.Position.scoreMid));
-      xbox.a().onTrue(new SetScoringPosition(ArmMove.Position.scoreLow));
+      xbox.x().onTrue(new SetScoringPosition(Position.loadSingle));
+      xbox.y().onTrue(new SetScoringPosition(Position.scoreHigh));
+      xbox.b().onTrue(new SetScoringPosition(Position.scoreMid));
+      xbox.a().onTrue(new SetScoringPosition(Position.scoreLow));
+      xbox.povDown().onTrue(new SetScoringPosition(Position.loadFloor));
     }
   }
 
