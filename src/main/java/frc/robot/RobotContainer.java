@@ -79,8 +79,8 @@ public class RobotContainer {
   private final DriveManual driveManualBackward = new DriveManual(drive, DriveManual.AutoPose.back);
   private final DriveManual driveManualLeft = new DriveManual(drive, DriveManual.AutoPose.left);
   private final DriveManual driveManualRight = new DriveManual(drive, DriveManual.AutoPose.right);
-  private final SelectCommand driveManualIntakeSelector;
-  private final SelectCommand driveManualScoreSelector;
+  // private final SelectCommand driveManualIntakeSelector;
+  // private final SelectCommand driveManualScoreSelector;
   private final DriveStop driveStop = new DriveStop(drive);
 
   // Auto Balance Commands
@@ -128,26 +128,26 @@ public class RobotContainer {
       Limelight.getSubstationInstance().setDefaultCommand(new AlignAssistSubstation());
     }
 
-    HashMap<Object, Command> allianceCommandMap = new HashMap<Object, Command>();
+    // HashMap<Object, Command> allianceCommandMap = new HashMap<Object, Command>();
 
-    allianceCommandMap.put(Alliance.Red, driveManualRight);
-    allianceCommandMap.put(Alliance.Blue, driveManualLeft);
+    // allianceCommandMap.put(Alliance.Red, driveManualRight);
+    // allianceCommandMap.put(Alliance.Blue, driveManualLeft);
 
-    driveManualIntakeSelector = new SelectCommand(
-      allianceCommandMap,
-      Robot.allianceSupplier
-    );
+    // driveManualIntakeSelector = new SelectCommand(
+    //   allianceCommandMap,
+    //   Robot.allianceSupplier
+    // );
 
-    HashMap<Object, Command> positionCommandMap = new HashMap<Object, Command>();
+    // HashMap<Object, Command> positionCommandMap = new HashMap<Object, Command>();
 
-    positionCommandMap.put(Position.scoreHigh, driveManualForward);
-    positionCommandMap.put(Position.scoreMid, driveManualForward);
-    positionCommandMap.put(Position.scoreLow, driveManualBackward);
+    // positionCommandMap.put(Position.scoreHigh, driveManualForward);
+    // positionCommandMap.put(Position.scoreMid, driveManualForward);
+    // positionCommandMap.put(Position.scoreLow, driveManualBackward);
 
-    driveManualScoreSelector = new SelectCommand(
-      positionCommandMap,
-      ArmMove.positionSupplier
-    );
+    // driveManualScoreSelector = new SelectCommand(
+    //   positionCommandMap,
+    //   ArmMove.positionSupplier
+    // );
 
     ppManager = new PathPlannerManager(drive);
 
@@ -248,7 +248,7 @@ public class RobotContainer {
 
       driveTrigger.whileTrue(clawOuttake);
       driveButtonThree.onTrue(clawIntake);
-      driveButtonThree.onTrue(driveManualIntakeSelector);
+      // driveButtonThree.onTrue(driveManualIntakeSelector);
       driveButtonThree.onTrue(new ArmMove(arm, telescope, ArmMove.Position.loadSingle, false)
         .unless(isIntakeStalled).until(isIntakeStalled));
       driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
@@ -259,7 +259,7 @@ public class RobotContainer {
           .unless(isBackwardScoringPreset));
       rotateTrigger.whileTrue(new ArmMove(arm, telescope, ArmMove.Position.scorePreset, false)
           .withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming));
-      rotateButtonFour.onTrue(driveManualScoreSelector);
+      // rotateButtonFour.onTrue(driveManualScoreSelector);
     }
 
     if (Constants.xboxEnabled) {
