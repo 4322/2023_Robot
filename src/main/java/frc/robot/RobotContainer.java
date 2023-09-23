@@ -240,6 +240,8 @@ public class RobotContainer {
       xbox.y().onTrue(new SetScoringPosition(ArmMove.Position.scoreHigh));
       xbox.b().onTrue(new SetScoringPosition(ArmMove.Position.scoreMid));
       xbox.a().onTrue(new SetScoringPosition(ArmMove.Position.scoreLow));
+      xbox.x().onTrue(new SetScoringPosition(ArmMove.Position.loadHigh));
+      //xbox.povDown(new SetScoringPositiob(ArmMove.Position.loadFloor));
       xbox.back().onTrue(armSetCoastMode);
       xbox.start().onTrue(armSetBrakeMode);
       xbox.leftBumper().onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cube)));
