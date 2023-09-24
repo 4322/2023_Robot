@@ -178,7 +178,7 @@ public class DriveManual extends CommandBase {
       } else {  
         //check if we are in the default drive manual
         if (autoPose == AutoPose.none) {
-          clearHeadingLock(); // unlock auto rotate heading
+          targetHeadingDeg = null; // unlock auto rotate heading
         }
         else {
           // restart default driveManual command
@@ -298,10 +298,6 @@ public class DriveManual extends CommandBase {
           break;
       }
     }
-  }
-
-  public void clearHeadingLock() {
-    targetHeadingDeg = null;
   }
 
   // Called once the command ends or is interrupted.
