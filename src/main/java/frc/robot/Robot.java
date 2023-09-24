@@ -155,7 +155,6 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     m_robotContainer.disableSubsystems();
-    DriveManual.clearHeadingLock();
   }
 
   /** This function is called periodically when disabled. */

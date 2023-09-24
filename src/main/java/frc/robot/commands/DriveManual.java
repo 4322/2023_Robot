@@ -21,7 +21,7 @@ public class DriveManual extends CommandBase {
 
   private final Drive drive;
   private final AutoPose autoPose;
-  private static Double targetHeadingDeg;
+  private Double targetHeadingDeg;
   private boolean done;
   private Timer spinoutActivationTimer = new Timer();
   private Timer spinoutActivationTimer2 = new Timer();
@@ -300,14 +300,13 @@ public class DriveManual extends CommandBase {
     }
   }
 
-  public static void clearHeadingLock() {
+  public void clearHeadingLock() {
     targetHeadingDeg = null;
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-
   }
 
   // Returns true when the command should end.

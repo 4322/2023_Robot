@@ -270,6 +270,7 @@ public class RobotContainer {
   }
 
   public void disableSubsystems() {
+    driveManualDefault.clearHeadingLock();
     arm.stop();
     telescope.stop();
     claw.changeState(Claw.ClawMode.stopped);
