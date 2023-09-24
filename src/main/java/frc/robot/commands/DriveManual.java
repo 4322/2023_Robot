@@ -173,13 +173,15 @@ public class DriveManual extends CommandBase {
               Constants.DriveConstants.Auto.rotateToleranceDegrees);
           return;
         }
-      } else {
-        targetHeadingDeg = null; // unlock auto rotate heading
-        //check if we are in a commanded auto rotate
-        if (autoPose != null) {
-          //break out of auto-rotate
+      } else {  
+        //check if we are in the default drive manual
+        if (autoPose == AutoPose.none) {
+          targetHeadingDeg = null; // unlock auto rotate heading
+        }
+        else {
+          // restart default driveManual command
           drive.drive(driveX, driveY, rotatePower);
-          done = true; // restart default driveManual command
+          done = true;
           return;
         }
       }
