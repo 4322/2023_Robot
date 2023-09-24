@@ -162,7 +162,9 @@ public class DriveManual extends CommandBase {
       }
       rotatePower = rotatePower * Manual.manualRotationScaleFromMax;
 
+      //if the rotate stick isn't being used
       if (rotatePower == 0) {
+        //if there is a set drive auto rotate
         if (targetHeadingDeg != null) {
           drive.driveAutoRotate(driveX, driveY, targetHeadingDeg,
               Constants.DriveConstants.Auto.rotateToleranceDegrees);
