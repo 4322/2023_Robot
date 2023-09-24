@@ -39,6 +39,15 @@ public class DriveManual extends CommandBase {
   public DriveManual(Drive drivesubsystem, AutoPose autoPose) {
     drive = drivesubsystem;
     this.autoPose = autoPose;
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(drive);
+  }
+
+  // Called when the command is initially scheduled.
+  @Override
+  public void initialize() {
+    drive.resetRotatePID();
+    lockedWheelState = LockedWheel.none;
 
     switch (autoPose) {
       case none:
@@ -58,21 +67,6 @@ public class DriveManual extends CommandBase {
         break;
     }
 
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(drive);
-  }
-
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-    drive.resetRotatePID();
-    lockedWheelState = LockedWheel.none;
-    spinoutActivationTimer.stop();
-    spinoutActivationTimer2.stop();
-    spinoutActivationTimer.reset();
-    spinoutActivationTimer2.reset();
-    done = false; // make command reusable
-
     if (autoPose == AutoPose.forward) {
       LED.getInstance().setAlignment(LED.Alignment.grid);
     } else if ((autoPose == AutoPose.left) || (autoPose == AutoPose.right)) {
@@ -80,7 +74,15 @@ public class DriveManual extends CommandBase {
     } else {
       LED.getInstance().setAlignment(LED.Alignment.none);
     }
+
+    //make command reusable
+    spinoutActivationTimer.stop();
+    spinoutActivationTimer2.stop();
+    spinoutActivationTimer.reset();
+    spinoutActivationTimer2.reset();
+    done = false;
   }
+  
 
   @Override
   public void execute() {
@@ -160,7 +162,9 @@ public class DriveManual extends CommandBase {
       }
       rotatePower = rotatePower * Manual.manualRotationScaleFromMax;
 
+      //if the rotate stick isn't being used
       if (rotatePower == 0) {
+        //if there is a set drive auto rotate
         if (targetHeadingDeg != null) {
           drive.driveAutoRotate(driveX, driveY, targetHeadingDeg,
               Constants.DriveConstants.Auto.rotateToleranceDegrees);
@@ -171,13 +175,15 @@ public class DriveManual extends CommandBase {
               Constants.DriveConstants.Auto.rotateToleranceDegrees);
           return;
         }
-      } else {
-        targetHeadingDeg = null; // unlock auto rotate heading
-        //check if we are in a commanded auto rotate
-        if (autoPose != null) {
-          //break out of auto-rotate
+      } else {  
+        //check if we are in the default drive manual
+        if (autoPose == AutoPose.none) {
+          targetHeadingDeg = null; // unlock auto rotate heading
+        }
+        else {
+          // restart default driveManual command
           drive.drive(driveX, driveY, rotatePower);
-          done = true; // restart default driveManual command
+          done = true;
           return;
         }
       }
