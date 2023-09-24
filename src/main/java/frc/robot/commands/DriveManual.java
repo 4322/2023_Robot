@@ -21,7 +21,7 @@ public class DriveManual extends CommandBase {
 
   private final Drive drive;
   private final AutoPose autoPose;
-  private Double targetHeadingDeg;
+  private static Double targetHeadingDeg;
   private boolean done;
   private Timer spinoutActivationTimer = new Timer();
   private Timer spinoutActivationTimer2 = new Timer();
@@ -178,7 +178,7 @@ public class DriveManual extends CommandBase {
       } else {  
         //check if we are in the default drive manual
         if (autoPose == AutoPose.none) {
-          targetHeadingDeg = null; // unlock auto rotate heading
+          clearHeadingLock(); // unlock auto rotate heading
         }
         else {
           // restart default driveManual command
@@ -298,6 +298,10 @@ public class DriveManual extends CommandBase {
           break;
       }
     }
+  }
+
+  public static void clearHeadingLock() {
+    targetHeadingDeg = null;
   }
 
   // Called once the command ends or is interrupted.
