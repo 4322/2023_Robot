@@ -25,6 +25,5 @@
       }
     },
   ],
-  "java.test.defaultConfig": "WPIlibUnitTests",
-  "git-blame.gitWebUrl": ""
+  "java.test.defaultConfig": "WPIlibUnitTests"
 }
