@@ -39,6 +39,15 @@ public class DriveManual extends CommandBase {
   public DriveManual(Drive drivesubsystem, AutoPose autoPose) {
     drive = drivesubsystem;
     this.autoPose = autoPose;
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(drive);
+  }
+
+  // Called when the command is initially scheduled.
+  @Override
+  public void initialize() {
+    drive.resetRotatePID();
+    lockedWheelState = LockedWheel.none;
 
     switch (autoPose) {
       case none:
@@ -58,21 +67,6 @@ public class DriveManual extends CommandBase {
         break;
     }
 
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(drive);
-  }
-
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-    drive.resetRotatePID();
-    lockedWheelState = LockedWheel.none;
-    spinoutActivationTimer.stop();
-    spinoutActivationTimer2.stop();
-    spinoutActivationTimer.reset();
-    spinoutActivationTimer2.reset();
-    done = false; // make command reusable
-
     if (autoPose == AutoPose.forward) {
       LED.getInstance().setAlignment(LED.Alignment.grid);
     } else if ((autoPose == AutoPose.left) || (autoPose == AutoPose.right)) {
@@ -80,21 +74,24 @@ public class DriveManual extends CommandBase {
     } else {
       LED.getInstance().setAlignment(LED.Alignment.none);
     }
+
+    //make command reusable
+    spinoutActivationTimer.stop();
+    spinoutActivationTimer2.stop();
+    spinoutActivationTimer.reset();
+    spinoutActivationTimer2.reset();
+    done = false;
   }
+  
 
   @Override
   public void execute() {
-    if (Constants.joysticksEnabled && Constants.xboxEnabled) {
+    if (Constants.joysticksEnabled) {
 
       // Joystick polarity:
       // Positive X is to the right
       // Positive Y is down
       // Positive Z is CW
-
-      // Xbox polarity:
-      // Positive X is to the right
-      // Positive Y is down
-      // (it's the same)
 
       // WPI uses a trigonometric coordinate system with the front of the robot
       // pointing toward positive X. Thus:
@@ -111,54 +108,35 @@ public class DriveManual extends CommandBase {
 
       // Cache hardware status for consistency in logic and convert
       // joystick/Xbox coordinates to WPI coordinates.
-      final double drive1RawX = -RobotContainer.driveStick.getY();
-      final double drive1RawY = -RobotContainer.driveStick.getX();
-      final double rotate1Raw = -RobotContainer.rotateStick.getZ();
-
-      final double drive2RawX = -RobotContainer.xbox.getLeftY();
-      final double drive2RawY = -RobotContainer.xbox.getLeftX();
-      final double rotate2Raw = -RobotContainer.xbox.getRightX();
+      final double driveRawX = -RobotContainer.driveStick.getY();
+      final double driveRawY = -RobotContainer.driveStick.getX();
+      final double rotateRaw = -RobotContainer.rotateStick.getZ();
 
       // Deadbands are dependent on the type of input device
-      final double drive1Deadband = Manual.joystickDriveDeadband;
-      final double rotate1LeftDeadband = Manual.joystickRotateLeftDeadband;
-      final double rotate1RightDeadband = Manual.joystickRotateRightDeadband;
-      final double drive2Deadband = Manual.xboxDriveDeadband;
-      final double rotate2LeftDeadband = Manual.xboxRotateDeadband;
-      final double rotate2RightDeadband = Manual.xboxRotateDeadband;
+      final double driveDeadband = Manual.joystickDriveDeadband;
+      final double rotateLeftDeadband = Manual.joystickRotateLeftDeadband;
+      final double rotateRightDeadband = Manual.joystickRotateRightDeadband;
 
       // Convert raw drive inputs to polar coordinates for more precise deadband
       // correction
-      final double drive1RawMag = OrangeMath.pythag(drive1RawX, drive1RawY);
-      final double drive2RawMag = OrangeMath.pythag(drive2RawX, drive2RawY);
-      final double drive1RawTheta = Math.atan2(drive1RawY, drive1RawX);
-      final double drive2RawTheta = Math.atan2(drive2RawY, drive2RawX);
+      final double driveRawMag = OrangeMath.pythag(driveRawX, driveRawY);
+      final double driveRawTheta = Math.atan2(driveRawY, driveRawX);
 
       final double driveAngle = drive.getAngle();
 
-      // Normalize the drive inputs over deadband in polar coordinates.
-      // Process each set of inputs separately to avoid a discontinuity
-      // when the second input suddenly exceeds deadband.
-      double drive1Mag = 0;
-      if (drive1RawMag > drive1Deadband) {
-        drive1Mag = (drive1RawMag - drive1Deadband) / (1 - drive1Deadband);
-        drive1Mag = drive1Mag * drive1Mag * drive1Mag; // Increase sensitivity efficiently
-      }
-      double drive2Mag = 0;
-      if (drive2RawMag > drive2Deadband) {
-        drive2Mag = (drive2RawMag - drive2Deadband) / (1 - drive2Deadband);
-        drive2Mag = drive2Mag * drive2Mag * drive2Mag; // Increase sensitivity efficiently
-      }
-      // Convert back to cartesian coordinates for proper vector addition
-      double drive1X = Math.cos(drive1RawTheta) * drive1Mag;
-      double drive1Y = Math.sin(drive1RawTheta) * drive1Mag;
-      double drive2X = Math.cos(drive2RawTheta) * drive2Mag;
-      double drive2Y = Math.sin(drive2RawTheta) * drive2Mag;
+      // Normalize the drive input over deadband in polar coordinates.
+      double driveMag = 0;
+      if (driveRawMag > driveDeadband) {
+        driveMag = (driveRawMag - driveDeadband) / (1 - driveDeadband);
 
-      // Add the drive vectors
-      double driveX = drive1X + drive2X;
-      double driveY = drive1Y + drive2Y;
-
+        if (Constants.driveTuningMode) {
+          // quantize input drive magnitude to 0, 0.25, 0.5, 0.75, 1.0 for PID tuning
+          driveMag = Math.round(driveMag * 4.0) / 4.0;
+        }
+      }
+      // Convert back to cartesian coordinates
+      double driveX = Math.cos(driveRawTheta) * driveMag;
+      double driveY = Math.sin(driveRawTheta) * driveMag;
       // Normalize the combined drive vector
       if (driveX > 1) {
         driveY /= driveX;
@@ -169,48 +147,41 @@ public class DriveManual extends CommandBase {
       }
       if (driveY > 1) {
         driveX /= driveY;
-        driveY = 1;
+        driveY = 1; 
       } else if (driveY < -1) {
         driveX /= -driveY;
         driveY = -1;
       }
 
       // Normalize the rotation inputs over deadband.
-      // Process each input separately to avoid a discontinuity
-      // when the second input suddenly exceeds deadband.
-      double rotatePower1 = 0;
-      if (rotate1Raw > rotate1LeftDeadband) {
-        rotatePower1 = (rotate1Raw - rotate1LeftDeadband) / (1 - rotate1LeftDeadband);
-      } else if (rotate1Raw < -rotate1RightDeadband) {
-        rotatePower1 = (rotate1Raw + rotate1RightDeadband) / (1 - rotate1RightDeadband);
+      double rotatePower = 0;
+      if (rotateRaw > rotateLeftDeadband) {
+        rotatePower = (rotateRaw - rotateLeftDeadband) / (1 - rotateLeftDeadband);
+      } else if (rotateRaw < -rotateRightDeadband) {
+        rotatePower = (rotateRaw + rotateRightDeadband) / (1 - rotateRightDeadband);
       }
-      rotatePower1 = rotatePower1 * rotatePower1 * rotatePower1; // Increase sensitivity efficiently
-
-      double rotatePower2 = 0;
-      if (rotate2Raw > rotate2LeftDeadband) {
-        rotatePower2 = (rotate2Raw - rotate2LeftDeadband) / (1 - rotate2LeftDeadband);
-      } else if (rotate2Raw < -rotate2RightDeadband) {
-        rotatePower2 = (rotate2Raw + rotate2RightDeadband) / (1 - rotate2RightDeadband);
-      }
-      rotatePower2 = rotatePower2 * rotatePower2 * rotatePower2; // Increase sensitivity efficiently
-
-      // Cap the combined rotation power
-      double rotatePower = rotatePower1 + rotatePower2;
-      if (rotatePower > 1) {
-        rotatePower = 1;
-      } else if (rotatePower < -1) {
-        rotatePower = -1;
-      }
-
       rotatePower = rotatePower * Manual.manualRotationScaleFromMax;
 
-      if (targetHeadingDeg != null) {
-        if (rotatePower == 0) {
+      //if the rotate stick isn't being used
+      if (rotatePower == 0) {
+        //if there is a set drive auto rotate
+        if (targetHeadingDeg != null) {
           drive.driveAutoRotate(driveX, driveY, targetHeadingDeg,
               Constants.DriveConstants.Auto.rotateToleranceDegrees);
           return;
         } else {
-          // break out of auto-rotate
+          targetHeadingDeg = drive.getAngle();
+          drive.driveAutoRotate(driveX, driveY, targetHeadingDeg,
+              Constants.DriveConstants.Auto.rotateToleranceDegrees);
+          return;
+        }
+      } else {  
+        //check if we are in the default drive manual
+        if (autoPose == AutoPose.none) {
+          targetHeadingDeg = null; // unlock auto rotate heading
+        }
+        else {
+          // restart default driveManual command
           drive.drive(driveX, driveY, rotatePower);
           done = true;
           return;
@@ -220,8 +191,7 @@ public class DriveManual extends CommandBase {
       // cache value for logic consistency
       double absAngularVelocity = Math.abs(drive.getAngularVelocity());
 
-      if ((Math.abs(rotate1Raw) >= Manual.spinoutRotateDeadBand)
-          || (Math.abs(rotate2Raw) >= Manual.spinoutRotateDeadBand)) {
+      if (Math.abs(rotateRaw) >= Manual.spinoutRotateDeadBand) {
         if (absAngularVelocity < Manual.spinoutMinAngularVelocity) {
           spinoutActivationTimer.start();
         } else {
@@ -333,7 +303,6 @@ public class DriveManual extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-
   }
 
   // Returns true when the command should end.

@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.DriveManual;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -46,7 +47,8 @@ public class Robot extends TimedRobot {
     PDHTab = Shuffleboard.getTab("PDH Currents");
 
     subsystemEnabled("Comp Mode", 0, 0, !Constants.Demo.inDemoMode && !Constants.armTuningMode
-        && !Constants.telescopeTuningMode && !Constants.clawTuningMode && !Constants.debug);
+        && !Constants.telescopeTuningMode && !Constants.clawTuningMode && !Constants.steeringTuningMode 
+        && !Constants.driveTuningMode && !Constants.debug);
     subsystemEnabled("Drivebase", 1, 0, Constants.driveEnabled);
     subsystemEnabled("Arm", 2, 0, Constants.armEnabled);
     subsystemEnabled("Arm Sensor", 3, 0, Constants.armSensorEnabled);

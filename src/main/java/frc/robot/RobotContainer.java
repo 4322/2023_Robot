@@ -78,10 +78,10 @@ public class RobotContainer {
 
   // Auto Balance Commands
   private final SequentialCommandGroup autoBalanceForward = new SequentialCommandGroup(
-      new AutoBalance(drive, true),
+      new AutoBalance(drive, true, false),
       new AutoDriveRotateWheels(drive, 0.25));
   private final SequentialCommandGroup autoBalanceBackward = new SequentialCommandGroup(
-      new AutoBalance(drive, false),
+      new AutoBalance(drive, false, false),
       new AutoDriveRotateWheels(drive, 0.25));
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -142,7 +142,7 @@ public class RobotContainer {
     autoChooser.addOption("Engage (1)",
         new SequentialCommandGroup(
             ppManager.loadAuto("ScoreMobilityCharge1", false),
-            new AutoBalance(drive, false),
+            new AutoBalance(drive, false, true),
             new AutoDriveRotateWheels(drive, 0.25)
         )
       );
@@ -153,7 +153,7 @@ public class RobotContainer {
     autoChooser.addOption("Engage (2)",
         new SequentialCommandGroup(
             ppManager.loadAuto("ScoreMobilityCharge2", false),
-            new AutoBalance(drive, false),
+            new AutoBalance(drive, false, true),
             new AutoDriveRotateWheels(drive, 0.25)
         )
       ); 
@@ -162,7 +162,7 @@ public class RobotContainer {
       new SequentialCommandGroup(
           ppManager.loadAuto("DriveOverCharge", false, 
             new PathConstraints(1.33, DriveConstants.Auto.autoMaxAccelerationMetersPerSec2)),
-          new AutoBalance(drive, false),
+          new AutoBalance(drive, false, true),
           new AutoDriveRotateWheels(drive, 0.25)
       )
     );
@@ -170,7 +170,7 @@ public class RobotContainer {
     autoChooser.addOption("Engage (8)",
       new SequentialCommandGroup(
           ppManager.loadAuto("ScoreMobilityCharge8", false),
-          new AutoBalance(drive, false),
+          new AutoBalance(drive, false, true),
           new AutoDriveRotateWheels(drive, 0.25)
       )
     );
@@ -178,7 +178,7 @@ public class RobotContainer {
     autoChooser.addOption("Engage (9)",
       new SequentialCommandGroup(
           ppManager.loadAuto("ScoreMobilityCharge9", false),
-          new AutoBalance(drive, false),
+          new AutoBalance(drive, false, true),
           new AutoDriveRotateWheels(drive, 0.25)
       )
     );
@@ -205,8 +205,6 @@ public class RobotContainer {
       rotateStick = new Joystick(1);
 
       driveTrigger = new JoystickButton(driveStick, 1);
-      driveButtonThree = new JoystickButton(driveStick, 3); //cone
-      driveButtonFour = new JoystickButton(driveStick, 4); //cube
       driveButtonFive = new JoystickButton(driveStick, 5);
       driveButtonSix = new JoystickButton(driveStick, 6);
       driveButtonSeven = new JoystickButton(driveStick, 7);
@@ -220,14 +218,7 @@ public class RobotContainer {
       rotateButtonSix = new JoystickButton(rotateStick, 6);
 
       driveTrigger.whileTrue(clawOuttake);
-      driveButtonThree.onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cone)));
-      driveButtonFour.onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cube)));
       driveButtonFive.onTrue(clawIntake);
-        driveButtonFive.onTrue(new ArmMove(arm, telescope, ArmMove.Position.loadSingle, false)
-            .unless(isIntakeStalled).until(isIntakeStalled));
-      driveButtonSix.onTrue(clawIntake);
-        driveButtonSix.onTrue(new ArmMove(arm, telescope, ArmMove.Position.loadDouble, false)
-            .unless(isIntakeStalled).until(isIntakeStalled));
       driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
       driveButtonNine.onTrue(autoBalanceForward);
       driveButtonEleven.onTrue(autoBalanceBackward);
@@ -240,27 +231,21 @@ public class RobotContainer {
           .withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming));
 
       rotateButtonThree.onTrue(driveManualForward);
-      rotateButtonThree.onTrue(new SetScoringPosition(ArmMove.Position.scoreMid));
-
-      rotateButtonFour.onTrue(driveManualForward);
-      rotateButtonFour.onTrue(new SetScoringPosition(ArmMove.Position.scoreHigh));
-
+      rotateButtonFour.onTrue(driveManualLeft);
       rotateButtonFive.onTrue(driveManualBackward);
-      rotateButtonFive.onTrue(new SetScoringPosition(ArmMove.Position.scoreLow));
-      rotateButtonSix.onTrue(clawIntake);
-        rotateButtonSix.onTrue(new ArmMove(arm, telescope, ArmMove.Position.loadFloor, false)
-            .unless(isIntakeStalled).until(isIntakeStalled));
+      rotateButtonSix.onTrue(driveManualRight);
     }
 
     if (Constants.xboxEnabled) {
-      xbox.leftTrigger().onTrue(clawIntake);
-      xbox.leftTrigger().onTrue(new ArmMove(arm, telescope, ArmMove.Position.loadSingle, false)
-          .unless(isIntakeStalled).until(isIntakeStalled));
-      xbox.rightTrigger().whileTrue(clawOuttake);
+      xbox.leftTrigger().onTrue(new SetScoringPosition(ArmMove.Position.loadFloor));
+      xbox.rightTrigger().onTrue(new SetScoringPosition(ArmMove.Position.loadSingle));
       xbox.back().onTrue(armSetCoastMode);
       xbox.start().onTrue(armSetBrakeMode);
-      xbox.leftBumper().onTrue(driveManualLeft);
-      xbox.rightBumper().onTrue(driveManualRight);
+      xbox.leftBumper().onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cube)));
+      xbox.rightBumper().onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cone)));
+      xbox.y().onTrue(new SetScoringPosition(ArmMove.Position.scoreHigh));
+      xbox.b().onTrue(new SetScoringPosition(ArmMove.Position.scoreMid));
+      xbox.a().onTrue(new SetScoringPosition(ArmMove.Position.scoreLow));
     }
   }
 

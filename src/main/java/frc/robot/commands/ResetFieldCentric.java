@@ -15,7 +15,9 @@ public class ResetFieldCentric extends InstantCommand {
     this.driveSubsystem = driveSubsystem;
     this.offset = offset;
     this.runWhenEnabled = runWhenEnabled;
-    // no need to interrupt other commands when changing drive mode
+    // Interrupt the active DriveManual command so we don't auto-rotate
+    // back to the old heading lock that is no longer valid after the reset.
+    addRequirements(driveSubsystem);  
   }
 
   // Called when the command is initially scheduled.

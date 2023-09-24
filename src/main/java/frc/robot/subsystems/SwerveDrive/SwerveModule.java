@@ -1,18 +1,22 @@
 package frc.robot.subsystems.SwerveDrive;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import com.ctre.phoenix.sensors.AbsoluteSensorRange;
-import com.ctre.phoenix.sensors.CANCoder;
-import com.ctre.phoenix.sensors.CANCoderConfiguration;
-import com.ctre.phoenix.sensors.CANCoderStatusFrame;
-import com.ctre.phoenix.sensors.SensorInitializationStrategy;
-import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
-import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
-import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-import com.ctre.phoenix.ErrorCode;
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.controls.CoastOut;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.StaticBrake;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkMaxAbsoluteEncoder;
+import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.ControlType;
+import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.utility.OrangeMath;
@@ -20,147 +24,104 @@ import frc.utility.CanBusUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.math.MathUtil;
 
 public class SwerveModule extends ControlModule {
-  private WPI_TalonFX turningMotor;
-  private WPI_TalonFX driveMotor;
-  private CANCoder encoder;
+  private CANSparkMax turningMotor;
+  private TalonFX driveMotor;
+  private MotorOutputConfigs  mOutputConfigs;
+  private TalonFX driveMotor2;
+  private SparkMaxAbsoluteEncoder encoder;
   private WheelPosition wheelPosition;
+  private CurrentLimitsConfigs currentLimitConfigs = new CurrentLimitsConfigs();
 
-  public SwerveModule(int rotationID, int wheelID, WheelPosition pos, int encoderID) {
+  public SwerveModule(int rotationID, int wheelID, int wheelID2, WheelPosition pos, int encoderID) {
     super(pos);
-    turningMotor = new WPI_TalonFX(rotationID);
-    driveMotor = new WPI_TalonFX(wheelID);
-    encoder = new CANCoder(encoderID);
+    turningMotor = new CANSparkMax(rotationID, MotorType.kBrushless);
+    driveMotor = new TalonFX(wheelID, Constants.DriveConstants.Drive.canivoreName);
+    driveMotor2 = new TalonFX(wheelID2, Constants.DriveConstants.Drive.canivoreName);
+    encoder = turningMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
+    encoder.setInverted(true);
+    mOutputConfigs = new MotorOutputConfigs();
+    turningMotor.setInverted(true);
     wheelPosition = pos;
 
-    CanBusUtil.staggerTalonStatusFrames(driveMotor);
-    CanBusUtil.staggerTalonStatusFrames(turningMotor);
-    encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, CanBusUtil.nextSlowStatusPeriodMs(),
-        Constants.controllerConfigTimeoutMs);
+    CanBusUtil.staggerSparkMax(turningMotor);
   }
 
   public void init() {
     configDrive(driveMotor, wheelPosition);
+    configDrive(driveMotor2, wheelPosition);
+    driveMotor2.setControl(new Follower(driveMotor.getDeviceID(), false));
     configRotation(turningMotor);
   }
 
-  private void configDrive(WPI_TalonFX talon, WheelPosition pos) {
-    TalonFXConfiguration config = new TalonFXConfiguration();
-    config.slot0.kP = DriveConstants.Drive.kP;
-    config.slot0.kI = DriveConstants.Drive.kI;
-    config.slot0.kD = DriveConstants.Drive.kD;
-    config.slot0.integralZone = DriveConstants.Drive.kIz;
-    config.slot0.kF = DriveConstants.Drive.kFF;
-    config.closedloopRamp = DriveConstants.Drive.configClosedLoopRamp;
-    config.neutralDeadband = DriveConstants.Drive.brakeModeDeadband; // delay brake mode activation
-                                                                     // for tipping
+  private void configDrive(TalonFX talon, WheelPosition pos) {
+    Slot0Configs slot0config = new Slot0Configs();
+    slot0config.kP = DriveConstants.Drive.kP;
+    slot0config.kI = DriveConstants.Drive.kI;
+    slot0config.kD = DriveConstants.Drive.kD;
+    slot0config.kV = DriveConstants.Drive.kV;
 
-    talon.configAllSettings(config);
+    
+    ClosedLoopRampsConfigs cLoopRampsConfigs = new ClosedLoopRampsConfigs();
 
-    talon.setNeutralMode(NeutralMode.Coast); // Allow robot to be moved prior to enabling
-    boolean isRightSide = pos == WheelPosition.FRONT_RIGHT || pos == WheelPosition.BACK_RIGHT;
-    talon.setInverted(!isRightSide);
-    talon.setSensorPhase(false);
+    mOutputConfigs.NeutralMode = NeutralModeValue.Brake; // Allow robot to be moved prior to enabling
+    mOutputConfigs.DutyCycleNeutralDeadband = DriveConstants.Drive.brakeModeDeadband;
+    cLoopRampsConfigs.VoltageClosedLoopRampPeriod = DriveConstants.Drive.configClosedLoopRamp;
+    
+    talon.getConfigurator().apply(slot0config);
+    talon.getConfigurator().apply(cLoopRampsConfigs);
+    talon.getConfigurator().apply(mOutputConfigs);
+    
+    // Invert the left side modules so we can zero all modules with the bevel gears facing outward.
+    // Without this code, all bevel gears would need to face right when the modules are zeroed.
+    boolean isLeftSide = (pos == WheelPosition.FRONT_LEFT) || (pos == WheelPosition.BACK_LEFT);
+    talon.setInverted(isLeftSide);
 
-    talon.configVoltageCompSaturation(DriveConstants.Drive.voltageCompSaturation);
-    talon.enableVoltageCompensation(DriveConstants.Drive.enableVoltageCompensation);
-
-    talon.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(
-        DriveConstants.Drive.statorEnabled, DriveConstants.Drive.statorLimit,
-        DriveConstants.Drive.statorThreshold, DriveConstants.Drive.statorTime));
-    talon.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(
-        DriveConstants.Drive.supplyEnabled, DriveConstants.Drive.supplyLimit,
-        DriveConstants.Drive.supplyThreshold, DriveConstants.Drive.supplyTime));
-
+    // applies stator & supply current limit configs to device
+    // refer to https://pro.docs.ctr-electronics.com/en/latest/docs/api-reference/api-usage/configuration.html 
+    currentLimitConfigs.StatorCurrentLimitEnable = DriveConstants.Drive.statorEnabled;
+    currentLimitConfigs.StatorCurrentLimit = DriveConstants.Drive.statorLimit;
+    currentLimitConfigs.SupplyCurrentLimit = DriveConstants.Drive.supplyLimit;
+    currentLimitConfigs.SupplyCurrentThreshold = DriveConstants.Drive.supplyThreshold;
+    currentLimitConfigs.SupplyTimeThreshold = DriveConstants.Drive.supplyTime;
+    currentLimitConfigs.SupplyCurrentLimitEnable = DriveConstants.Drive.supplyEnabled;
+    talon.getConfigurator().apply(currentLimitConfigs);
+    
     // need rapid velocity feedback for anti-tipping logic
-
-    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0,
-        CanBusUtil.nextFastStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
-
+    talon.getPosition().setUpdateFrequency(OrangeMath.msAndHzConverter(CanBusUtil.nextFastStatusPeriodMs()), 
+      Constants.controllerConfigTimeoutMs);
   }
+ 
+  private void configRotation(CANSparkMax sparkMax) {
+    SparkMaxPIDController config = sparkMax.getPIDController();
+    config.setP(DriveConstants.Rotation.kP,0);
+    config.setD(DriveConstants.Rotation.kD,0);
+    sparkMax.setClosedLoopRampRate(DriveConstants.Rotation.configCLosedLoopRamp);
+    config.setSmartMotionAllowedClosedLoopError(DriveConstants.Rotation.allowableClosedloopError,0);
+    config.setOutputRange(-DriveConstants.Rotation.maxPower, DriveConstants.Rotation.maxPower);
+    sparkMax.setIdleMode(IdleMode.kCoast); // Allow robot to be moved prior to enabling
 
-  private void configRotation(WPI_TalonFX talon) {
+    sparkMax.enableVoltageCompensation(DriveConstants.Rotation.configVoltageCompSaturation); 
+    sparkMax.setSmartCurrentLimit(DriveConstants.Rotation.stallLimit, DriveConstants.Rotation.freeLimit); 
+    encoder.setPositionConversionFactor(360);  // convert encoder position duty cycle to degrees
+    sparkMax.getPIDController().setFeedbackDevice(encoder);
+    sparkMax.getPIDController().setPositionPIDWrappingEnabled(true);
+    sparkMax.getPIDController().setPositionPIDWrappingMinInput(0);
+    sparkMax.getPIDController().setPositionPIDWrappingMaxInput(360);
 
-    TalonFXConfiguration config = new TalonFXConfiguration();
-    config.slot0.kP = DriveConstants.Rotation.kP;
-    config.slot0.kD = DriveConstants.Rotation.kD;
-    config.closedloopRamp = DriveConstants.Rotation.configCLosedLoopRamp;
-    config.slot0.allowableClosedloopError = DriveConstants.Rotation.allowableClosedloopError;
-    config.nominalOutputForward = DriveConstants.Rotation.minPower;
-    config.nominalOutputReverse = -DriveConstants.Rotation.minPower;
-    config.peakOutputForward = DriveConstants.Rotation.maxPower;
-    config.peakOutputReverse = -DriveConstants.Rotation.maxPower;
-
-    talon.configAllSettings(config); // factory default is the baseline
-    talon.setNeutralMode(NeutralMode.Coast); // Allow robot to be moved prior to enabling
-    talon.setInverted(true);
-    talon.setSensorPhase(false);
-
-    talon.configVoltageCompSaturation(DriveConstants.Rotation.configVoltageCompSaturation);
-    talon.enableVoltageCompensation(DriveConstants.Rotation.enableVoltageCompensation);
-
-    talon.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(
-        DriveConstants.Rotation.statorEnabled, DriveConstants.Rotation.statorLimit,
-        DriveConstants.Rotation.statorThreshold, DriveConstants.Rotation.statorTime));
-    talon.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(
-        DriveConstants.Rotation.supplyEnabled, DriveConstants.Rotation.supplyLimit,
-        DriveConstants.Rotation.supplyThreshold, DriveConstants.Rotation.supplyTime));
-
-    CANCoderConfiguration encoderConfig = new CANCoderConfiguration();
-    encoderConfig.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
-    encoderConfig.sensorDirection = false; // positive rotation is CCW
-    encoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
-
-    encoder.configAllSettings(encoderConfig); // factory default is the baseline
-
-    // need fast initial reading from the CANCoder
-    encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 10,
-        Constants.controllerConfigTimeoutMs);
-
-    try {
-      Thread.sleep(50); // 5 status frames to be safe
-    } catch (InterruptedException e) {
-    }
-
-    // initialize internal Falcon encoder to absolute wheel position from CANCoder
-    double count = (encoder.getAbsolutePosition()
-        - DriveConstants.Rotation.CANCoderOffsetDegrees[position.wheelNumber])
-        / DriveConstants.Rotation.countToDegrees;
-
-    ErrorCode error =
-        talon.setSelectedSensorPosition(count, 0, Constants.controllerConfigTimeoutMs);
-    if (error != ErrorCode.OK) {
-      DriverStation.reportError(
-          "Error " + error.value + " initializing Talon FX " + talon.getDeviceID() + " position ",
-          false);
-    }
-
-    // don't need the CANCoder any longer, so a slow frame rate is OK
-    encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, CanBusUtil.nextSlowStatusPeriodMs(),
-        Constants.controllerConfigTimeoutMs);
-
-    // need rapid position feedback for steering logic
-    turningMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0,
-        CanBusUtil.nextFastStatusPeriodMs(), Constants.controllerConfigTimeoutMs);
-  }
-
-  public double getMagneticRotationAngle() {
-    return encoder.getAbsolutePosition();
-  }
-
-  public double getInternalRotationCount() {
-    return turningMotor.getSelectedSensorPosition();
+    // need rapid position feedback for steering control
+    CanBusUtil.fastPositionSparkMax(turningMotor);
   }
 
   public double getInternalRotationDegrees() {
-    return OrangeMath.boundDegrees(getInternalRotationCount() * DriveConstants.Rotation.countToDegrees);
+    return OrangeMath.boundDegrees(encoder.getPosition());
   }
 
   @Override
   public double getDistance() {
-    return OrangeMath.falconEncoderToMeters(driveMotor.getSelectedSensorPosition(0),
+    return OrangeMath.falconRotationsToMeters(driveMotor.getRotorPosition().getValue(),
         OrangeMath.getCircumference(OrangeMath.inchesToMeters(DriveConstants.Drive.wheelDiameterInches)),
         DriveConstants.Drive.gearRatio);
   }
@@ -168,54 +129,64 @@ public class SwerveModule extends ControlModule {
   @Override
   public double getVelocity() {
     // feet per second
-    return driveMotor.getSelectedSensorVelocity(0) * 10 / DriveConstants.encoderResolution
-        / Constants.DriveConstants.Drive.gearRatio * Math.PI
-        * Constants.DriveConstants.Drive.wheelDiameterInches / 12;
+    return driveMotor.getRotorVelocity().getValue() * 10 / Constants.DriveConstants.Drive.gearRatio 
+        * Math.PI * Constants.DriveConstants.Drive.wheelDiameterInches / 12;
   }
 
   public SwerveModuleState getState() {
-    return new SwerveModuleState(getVelocity() * Constants.feetToMeters, Rotation2d.fromDegrees(
-        turningMotor.getSelectedSensorPosition() * DriveConstants.Rotation.countToDegrees));
+    return new SwerveModuleState(getVelocity() * Constants.feetToMeters, 
+      Rotation2d.fromDegrees(encoder.getPosition()));
   }
 
   public SwerveModulePosition getPosition() {
-    return new SwerveModulePosition(getDistance(), Rotation2d.fromDegrees(
-        turningMotor.getSelectedSensorPosition() * DriveConstants.Rotation.countToDegrees));
+    return new SwerveModulePosition(getDistance(), Rotation2d.fromDegrees(encoder.getPosition()));
   }
 
   public void setDesiredState(SwerveModuleState desiredState) {
-    double currentDeg =
-        turningMotor.getSelectedSensorPosition() * DriveConstants.Rotation.countToDegrees;
+    if (Constants.driveEnabled) {
 
-    // Optimize the reference state to avoid spinning further than 90 degrees
-    SwerveModuleState state =
-        SwerveModuleState.optimize(desiredState, Rotation2d.fromDegrees(currentDeg));
+      // Optimize the reference state to avoid spinning further than 90 degrees
+      SwerveModuleState state =
+          SwerveModuleState.optimize(desiredState, Rotation2d.fromDegrees(encoder.getPosition()));
 
-    driveMotor.set(ControlMode.Velocity,
-        state.speedMetersPerSecond
-            / (DriveConstants.Drive.wheelDiameterInches * Constants.inchesToMeters * Math.PI)
-            * DriveConstants.Drive.gearRatio * DriveConstants.encoderResolution / 10); // every 100
-                                                                                       // ms
-
-    // Calculate the change in degrees and add that to the current position
-    turningMotor.set(ControlMode.Position,
-        (currentDeg + OrangeMath.boundDegrees(state.angle.getDegrees() - currentDeg))
-            / DriveConstants.Rotation.countToDegrees);
-
+      driveMotor.setControl(new VelocityVoltage(state.speedMetersPerSecond
+              / (DriveConstants.Drive.wheelDiameterInches * Constants.inchesToMeters * Math.PI)
+              * DriveConstants.Drive.gearRatio).withEnableFOC(true));
+              
+      if (!Constants.steeringTuningMode) {
+        turningMotor.getPIDController().setReference(
+          MathUtil.inputModulus(state.angle.getDegrees(), 0, 360), 
+          ControlType.kPosition);
+      }
+    }
   }
 
   public void setCoastmode() {
-    driveMotor.setNeutralMode(NeutralMode.Coast);
-    turningMotor.setNeutralMode(NeutralMode.Coast);
+    if (Constants.driveEnabled) {
+      mOutputConfigs.NeutralMode = NeutralModeValue.Coast;
+      // the following calls reset follower mode or something else that makes the robot uncontrollable
+      //driveMotor.getConfigurator().apply(mOutputConfigs);
+      //driveMotor2.getConfigurator().apply(mOutputConfigs);
+      turningMotor.setIdleMode(IdleMode.kCoast);
+    }
   }
 
   public void setBrakeMode() {
-    driveMotor.setNeutralMode(NeutralMode.Brake);
-    turningMotor.setNeutralMode(NeutralMode.Brake);
+    if (Constants.driveEnabled) {
+      mOutputConfigs.NeutralMode = NeutralModeValue.Brake;
+      // the following calls reset follower mode or something else that makes the robot uncontrollable
+      //driveMotor.getConfigurator().apply(mOutputConfigs);
+      //driveMotor2.getConfigurator().apply(mOutputConfigs);
+      turningMotor.setIdleMode(IdleMode.kBrake);
+    }
   }
 
   public void stop() {
-    driveMotor.stopMotor();
-    turningMotor.stopMotor();
+    if (Constants.driveEnabled) {
+      if (!Constants.steeringTuningMode) {
+        driveMotor.stopMotor();
+        turningMotor.stopMotor();
+      }
+    }
   }
 }
