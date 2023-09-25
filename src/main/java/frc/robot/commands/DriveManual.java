@@ -7,6 +7,7 @@ import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.LED;
 import frc.utility.OrangeMath;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriveConstants.Manual;
 import frc.robot.RobotContainer;
@@ -29,7 +30,7 @@ public class DriveManual extends CommandBase {
   private double initialSpinoutAngle = 0;
 
   public enum AutoPose {
-    none, left, forward, right, back
+    none, usePreset
   }
   
   public enum LockedWheel {
@@ -46,41 +47,61 @@ public class DriveManual extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    drive.resetRotatePID();
-    lockedWheelState = LockedWheel.none;
 
-    switch (autoPose) {
-      case none:
-        targetHeadingDeg = null;
-        break;
-      case forward:
-        targetHeadingDeg = 0.0;
-        break;
-      case left:
-        targetHeadingDeg = 90.0;
-        break;
-      case back:
-        targetHeadingDeg = 180.0;
-        break;
-      case right:
-        targetHeadingDeg = -90.0;
-        break;
-    }
-
-    if (autoPose == AutoPose.forward) {
-      LED.getInstance().setAlignment(LED.Alignment.grid);
-    } else if ((autoPose == AutoPose.left) || (autoPose == AutoPose.right)) {
-      LED.getInstance().setAlignment(LED.Alignment.substation);
-    } else {
-      LED.getInstance().setAlignment(LED.Alignment.none);
-    }
-
-    //make command reusable
+    // make command reusable
     spinoutActivationTimer.stop();
     spinoutActivationTimer2.stop();
     spinoutActivationTimer.reset();
     spinoutActivationTimer2.reset();
+    lockedWheelState = LockedWheel.none;
     done = false;
+
+    drive.resetRotatePID();
+
+    // set auto-rotate direction, if any
+    switch (autoPose) {
+      case none:
+        targetHeadingDeg = null;
+        LED.getInstance().setAlignment(LED.Alignment.none);
+        break;
+      case usePreset:
+        switch (ArmMove.getArmPreset()) {
+          case scoreLow:
+            targetHeadingDeg = 180.0;
+            LED.getInstance().setAlignment(LED.Alignment.none);
+            break;
+          case scoreMid:
+          case scoreHigh:
+            targetHeadingDeg = 0.0;
+            LED.getInstance().setAlignment(LED.Alignment.grid);
+            break;
+          case loadSingle:
+            switch (Robot.getAllianceColor()) {
+              case Blue:
+                targetHeadingDeg = 90.0;
+                LED.getInstance().setAlignment(LED.Alignment.substation);
+                break;
+              case Red:
+                targetHeadingDeg = -90.0;
+                LED.getInstance().setAlignment(LED.Alignment.substation);
+                break;
+              default:
+                // unknown direction to single substation
+                targetHeadingDeg = null;
+                done = true;
+                LED.getInstance().setAlignment(LED.Alignment.none);
+                break;
+            }
+            break;
+          default:
+            // not an auto-rotate preset
+            targetHeadingDeg = null;
+            done = true;
+            LED.getInstance().setAlignment(LED.Alignment.none);
+            break;
+        }
+        break;
+    }
   }
   
 

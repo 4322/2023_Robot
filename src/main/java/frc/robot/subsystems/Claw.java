@@ -29,7 +29,15 @@ public class Claw extends SubsystemBase {
   private Timer stallInTimer = new Timer();
   private Timer stallOutTimer = new Timer();
   
-  public Claw() {
+  private static Claw instance = null;
+  public static Claw getInstance() {
+    if (instance == null) {
+      instance = new Claw();
+    }
+    return instance;
+  }
+
+  private Claw() {
     if (Constants.clawEnabled) {
       clawMotor = new CANSparkMax(Constants.ClawConstants.motorID, MotorType.kBrushless);
       CanBusUtil.staggerSparkMax(clawMotor);
