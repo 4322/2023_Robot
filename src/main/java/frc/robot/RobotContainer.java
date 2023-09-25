@@ -184,7 +184,6 @@ public class RobotContainer {
    */
 
   private void configureButtonBindings() {  
-    BooleanSupplier isIntakeStalled = () -> claw.isIntakeStalled();
     BooleanSupplier isNotForwardScoringPreset = () -> ArmMove.isNotForwardScoringPreset();
 
     if (Constants.joysticksEnabled) {

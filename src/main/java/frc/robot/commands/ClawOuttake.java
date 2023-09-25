@@ -5,6 +5,7 @@ import frc.robot.subsystems.Claw;
 
 public class ClawOuttake extends CommandBase {
   private Claw claw;
+  private boolean outtakeStarted;
 
   public ClawOuttake(Claw clawSubsystem) {
     claw = clawSubsystem;
@@ -13,14 +14,16 @@ public class ClawOuttake extends CommandBase {
 
   @Override
   public void initialize() {
-    if (ArmMove.isSafeToOuttake()) {
-      claw.changeState(Claw.ClawMode.outtaking);
-    }
+    outtakeStarted = false;
   }
 
   @Override
   public void execute() {
-  
+    if (!outtakeStarted && ArmMove.isSafeToOuttake()) {
+      claw.changeState(Claw.ClawMode.outtaking);
+      outtakeStarted = true;
+      ArmMove.setArmPreset(ArmMove.Position.loadSingle);
+    }
   }
 
   // Called once the command ends or is interrupted.
@@ -31,6 +34,6 @@ public class ClawOuttake extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return !ArmMove.isSafeToOuttake();
+    return false;
   }
 }

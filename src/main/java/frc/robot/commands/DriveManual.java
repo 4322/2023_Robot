@@ -183,9 +183,9 @@ public class DriveManual extends CommandBase {
       }
       rotatePower = rotatePower * Manual.manualRotationScaleFromMax;
 
-      //if the rotate stick isn't being used
+      // if the rotate stick isn't being used
       if (rotatePower == 0) {
-        //if there is a set drive auto rotate
+        // if there is a set drive auto rotate
         if (targetHeadingDeg != null) {
           drive.driveAutoRotate(driveX, driveY, targetHeadingDeg,
               Constants.DriveConstants.Auto.rotateToleranceDegrees);
@@ -197,7 +197,7 @@ public class DriveManual extends CommandBase {
           return;
         }
       } else {  
-        //check if we are in the default drive manual
+        // check if we are in the default drive manual
         if (autoPose == AutoPose.none) {
           targetHeadingDeg = null; // unlock auto rotate heading
         }
