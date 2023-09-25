@@ -80,7 +80,7 @@ public class ArmMove extends CommandBase {
   @Override
   public void initialize() {
     if (invokePos == Position.usePreset) {
-      targetPos = ArmMove.presetPos;
+      targetPos = presetPos;
     } else {
       targetPos = invokePos;
     }
@@ -92,7 +92,7 @@ public class ArmMove extends CommandBase {
     timer.restart();
     timePrinted = false;
 
-    if ((targetPos == Position.scoreMid) || (targetPos == Position.scoreHigh)) {
+    if ((presetPos == Position.scoreMid) || (presetPos == Position.scoreHigh)) {
       safeToOuttake = false;
     } else {
       safeToOuttake = true;
@@ -109,8 +109,10 @@ public class ArmMove extends CommandBase {
 
   @Override
   public void execute() {
-    if ((invokePos == Position.usePreset) && (targetPos != ArmMove.presetPos)) {
-      // target changed, restart command without interrupting to keep the trigger command running
+    if ((invokePos == Position.usePreset) && (targetPos != presetPos)
+        && ((targetPos == Position.scoreMid) || (targetPos == Position.scoreHigh))
+        && ((presetPos == Position.scoreMid) || (presetPos == Position.scoreHigh))) {
+      // pole target changed, restart command without interrupting to keep the trigger command running
       if (!done) {
         ArmMove.lastPos = Position.unknown;
       }
@@ -297,7 +299,9 @@ public class ArmMove extends CommandBase {
     }
     if (armAtTarget && telescopeAtTarget) {
       ArmMove.lastPos = targetPos;
-      safeToOuttake = true;
+      if ((targetPos == Position.scoreMid) || (targetPos == Position.scoreHigh)) {
+        safeToOuttake = true;
+      }
       done = true;
       if (autonomous) {
         return true;
@@ -306,7 +310,8 @@ public class ArmMove extends CommandBase {
         timePrinted = true;
       }
     }
-    if (!autonomous && !armAtTarget && telescopeAtTarget && armCommandedToTarget && arm.isNearTarget()) {
+    if (!autonomous && !armAtTarget && telescopeAtTarget && armCommandedToTarget && arm.isNearTarget()
+        && ((targetPos == Position.scoreMid) || (targetPos == Position.scoreHigh))) {
       safeToOuttake = true;
     }
 

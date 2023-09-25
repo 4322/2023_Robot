@@ -217,11 +217,11 @@ public class RobotContainer {
       xbox.start().onTrue(armSetBrakeMode);
       xbox.leftBumper().onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cube)));
       xbox.rightBumper().onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cone)));
-      xbox.y().onTrue(new SetArmPreset(ArmMove.Position.scoreHigh));
-      xbox.b().onTrue(new SetArmPreset(ArmMove.Position.scoreMid));
-      xbox.a().onTrue(new SetArmPreset(ArmMove.Position.scoreLow));
-      xbox.povDown().onTrue(new SetArmPreset(ArmMove.Position.loadFloor));
-      xbox.povUp().onTrue(new SetArmPreset(ArmMove.Position.loadSingle));
+      xbox.y().onTrue(new SetArmPreset(drive, ArmMove.Position.scoreHigh));
+      xbox.b().onTrue(new SetArmPreset(drive, ArmMove.Position.scoreMid));
+      xbox.a().onTrue(new SetArmPreset(drive, ArmMove.Position.scoreLow));
+      xbox.povDown().onTrue(new SetArmPreset(drive, ArmMove.Position.loadFloor));
+      xbox.povUp().onTrue(new SetArmPreset(drive, ArmMove.Position.loadSingle));
     }
   }
 
