@@ -193,16 +193,16 @@ public class LED extends SubsystemBase {
             setGamePieceColor(rightLED);
             break;
           case moveRight:
-            rightLED.setLED(LEDColor.blue, BlinkType.none);
-            break;
-          case moveRightShort:
-            rightLED.setLED(LEDColor.blue, BlinkType.fast);
-            break;
-          case moveLeft:
             rightLED.setLED(LEDColor.red, BlinkType.none);
             break;
-          case moveLeftShort:
+          case moveRightShort:
             rightLED.setLED(LEDColor.red, BlinkType.fast);
+            break;
+          case moveLeft:
+            rightLED.setLED(LEDColor.blue, BlinkType.none);
+            break;
+          case moveLeftShort:
+            rightLED.setLED(LEDColor.blue, BlinkType.fast);
             break;
           case aligned:
             rightLED.setLED(LEDColor.green, BlinkType.none);
