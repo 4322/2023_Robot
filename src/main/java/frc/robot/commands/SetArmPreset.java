@@ -22,14 +22,16 @@ public class SetArmPreset extends InstantCommand {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    ArmMove.setArmPreset(pos);
+    if (ArmMove.isInBot()) {
+      ArmMove.setArmPreset(pos);
 
-    // switch to new auto-pos, if needed
-    if (DriveManual.isScoringAutoPoseActive()
-        && (pos == ArmMove.Position.scoreLow
-         || pos == ArmMove.Position.scoreMid
-         || pos == ArmMove.Position.scoreHigh)) {
-      driveAutoPos.schedule();  // does nothing if already scheduled
+      // switch to new auto-pos, if needed
+      if (DriveManual.isScoringAutoPoseActive()
+          && (pos == ArmMove.Position.scoreLow
+          || pos == ArmMove.Position.scoreMid
+          || pos == ArmMove.Position.scoreHigh)) {
+        driveAutoPos.schedule();  // does nothing if already scheduled
+      }
     }
   }
 

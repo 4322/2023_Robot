@@ -97,7 +97,7 @@ public class RobotContainer {
     }
 
     if (Constants.armEnabled) {
-      arm.setDefaultCommand(new ArmMove(arm, telescope, ArmMove.Position.inHopper, false));
+      arm.setDefaultCommand(new ArmMove(arm, telescope, ArmMove.Position.inBot, false));
     }
 
     if (Constants.gridLimeLightEnabled) {
@@ -293,7 +293,7 @@ public class RobotContainer {
         new ClawIntake(claw)
       ),
       new TimedClawOuttake(claw, 0.5),
-      new ArmMove(arm, telescope, ArmMove.Position.inHopper, true)
+      new ArmMove(arm, telescope, ArmMove.Position.inBot, true)
       );
   }
 
@@ -304,7 +304,7 @@ public class RobotContainer {
         new ArmMove(arm, telescope, ArmMove.Position.loadFloor, true), 
         new ClawIntake(claw)
       ),
-      new ArmMove(arm, telescope, ArmMove.Position.inHopper, true)
+      new ArmMove(arm, telescope, ArmMove.Position.inBot, true)
       );
   }
 }

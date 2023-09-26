@@ -12,13 +12,14 @@ public class ArmMove extends CommandBase {
 
   // Use of loadSingle and loadBounce are mutually exclusive
   public enum Position {
-    unknown, inHopper, loadSingle, loadDouble, loadFloor, loadBounce, scoreLow, scoreMid, scoreHigh, usePreset
+    unknown, inBot, loadSingle, loadDouble, loadFloor, loadBounce, scoreLow, scoreMid, scoreHigh, usePreset
   }
 
   private static Position presetPos = Position.scoreHigh;
   private static Position lastPresetScorePos = Position.scoreHigh;
   private static Position lastPos = Position.unknown;
   private static boolean safeToOuttake = true;
+  private static boolean inBot = false;
 
   private Arm arm;
   private Telescope telescope;
@@ -33,6 +34,10 @@ public class ArmMove extends CommandBase {
   private Timer timer = new Timer();
   private boolean timePrinted;
   private final ClawIntake clawIntake = new ClawIntake(Claw.getInstance());
+
+  public static boolean isInBot() {
+    return inBot;
+  }
 
   public static void setArmPreset(Position pos) {
     ArmMove.presetPos = pos;
@@ -91,6 +96,7 @@ public class ArmMove extends CommandBase {
     done = false;
     timer.restart();
     timePrinted = false;
+    inBot = false;
 
     if ((presetPos == Position.scoreMid) || (presetPos == Position.scoreHigh)) {
       safeToOuttake = false;
@@ -130,7 +136,7 @@ public class ArmMove extends CommandBase {
 
     if (!telescopeCommandedToTarget) {
       switch (targetPos) {
-        case inHopper:
+        case inBot:
         case loadBounce:
           telescope.moveToPosition(Constants.Telescope.inHopperPosition);
           telescopeCommandedToTarget = true;
@@ -157,7 +163,7 @@ public class ArmMove extends CommandBase {
           break;
         case scoreHigh:
           switch (ArmMove.lastPos) {
-            case inHopper:
+            case inBot:
             case loadSingle:
             case loadDouble:
             case loadFloor:
@@ -178,7 +184,7 @@ public class ArmMove extends CommandBase {
           break;
         case loadFloor:
           switch (ArmMove.lastPos) {
-            case inHopper:
+            case inBot:
             case loadSingle:
             case loadBounce:
             case scoreLow:
@@ -210,7 +216,7 @@ public class ArmMove extends CommandBase {
 
     if (!armCommandedToTarget) {
       switch (targetPos) {
-        case inHopper:
+        case inBot:
           if ((telescopePosition <= Constants.Telescope.safeArmRetractPosition) 
               || (((lastPos == Position.scoreHigh) || (lastPos == Position.loadFloor))
                   && (telescopePosition <= Constants.Telescope.earlyArmRetractPosition))) {
@@ -301,7 +307,10 @@ public class ArmMove extends CommandBase {
       ArmMove.lastPos = targetPos;
       if ((targetPos == Position.scoreMid) || (targetPos == Position.scoreHigh)) {
         safeToOuttake = true;
+      } else if (targetPos == Position.inBot) {
+        inBot = true;
       }
+      
       done = true;
       if (autonomous) {
         return true;
