@@ -18,7 +18,7 @@ public class ArmMove extends CommandBase {
   private static Position presetPos = Position.scoreHigh;
   private static Position lastPresetScorePos = Position.scoreHigh;
   private static Position lastPos = Position.unknown;
-  private static boolean safeToOuttake = true;
+  private static boolean safeToOuttake = false;
   private static boolean inBot = false;
 
   private Arm arm;
@@ -40,23 +40,21 @@ public class ArmMove extends CommandBase {
   }
 
   public static void setArmPreset(Position pos) {
-    ArmMove.presetPos = pos;
 
-    switch (pos) {
-      case scoreLow:
-      case scoreMid:
-      case scoreHigh:
-        lastPresetScorePos = pos;
-        break;
-      default:
-        break;
-    }
-    
-    // update trigger lock in case driver pulls the right trigger before the left trigger
-    if ((pos == Position.scoreMid) || (pos == Position.scoreHigh)) {
+    // ignore preset spamming so we don't lock-out ejecting after arm is in position
+    if (pos != presetPos) {
+      presetPos = pos;
       safeToOuttake = false;
-    } else {
-      safeToOuttake = true;
+
+      switch (pos) {
+        case scoreLow:
+        case scoreMid:
+        case scoreHigh:
+          lastPresetScorePos = pos;
+          break;
+        default:
+          break;
+      }
     }
   }
 
@@ -98,10 +96,10 @@ public class ArmMove extends CommandBase {
     timePrinted = false;
     inBot = false;
 
-    if ((presetPos == Position.scoreMid) || (presetPos == Position.scoreHigh)) {
-      safeToOuttake = false;
-    } else {
+    if (presetPos == Position.scoreLow) {
       safeToOuttake = true;
+    } else {
+      safeToOuttake = false;
     }
 
     // start intake if needed
