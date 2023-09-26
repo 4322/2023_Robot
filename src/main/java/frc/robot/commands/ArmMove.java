@@ -15,11 +15,11 @@ public class ArmMove extends CommandBase {
     unknown, inBot, loadSingle, loadDouble, loadFloor, loadBounce, scoreLow, scoreMid, scoreHigh, usePreset
   }
 
-  private static Position presetPos = Position.scoreHigh;
+  private static Position presetPos = Position.loadSingle;
   private static Position lastPresetScorePos = Position.scoreHigh;
   private static Position lastPos = Position.unknown;
   private static boolean safeToOuttake = false;
-  private static boolean inBot = false;
+  private static boolean inBot = true;  // TODO: the first preset isn't accepted even with this
 
   private Arm arm;
   private Telescope telescope;
