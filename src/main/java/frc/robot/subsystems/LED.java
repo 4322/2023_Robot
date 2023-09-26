@@ -46,7 +46,7 @@ public class LED extends SubsystemBase {
   }
 
   private enum LEDColor {
-    yellow, purple, blue, red, green, none
+    yellow, purple, blue, red, green, cyan, white, none
   }
 
   private enum BlinkType {
@@ -142,20 +142,20 @@ public class LED extends SubsystemBase {
           rightLED.setLED(LEDColor.none, BlinkType.none);
           break;
         case moveRight:
-          leftLED.setLED(LEDColor.blue, BlinkType.none);
-          rightLED.setLED(LEDColor.blue, BlinkType.none);
+          leftLED.setLED(LEDColor.cyan, BlinkType.none);
+          rightLED.setLED(LEDColor.cyan, BlinkType.none);
           break;
         case moveRightShort:
-          leftLED.setLED(LEDColor.blue, BlinkType.fast);
-          rightLED.setLED(LEDColor.blue, BlinkType.fast);
+          leftLED.setLED(LEDColor.cyan, BlinkType.fast);
+          rightLED.setLED(LEDColor.cyan, BlinkType.fast);
           break;
         case moveLeft:
-          leftLED.setLED(LEDColor.red, BlinkType.none);
-          rightLED.setLED(LEDColor.red, BlinkType.none);
+          leftLED.setLED(LEDColor.white, BlinkType.none);
+          rightLED.setLED(LEDColor.white, BlinkType.none);
           break;
         case moveLeftShort:
-          leftLED.setLED(LEDColor.red, BlinkType.fast);
-          rightLED.setLED(LEDColor.red, BlinkType.fast);
+          leftLED.setLED(LEDColor.white, BlinkType.fast);
+          rightLED.setLED(LEDColor.white, BlinkType.fast);
           break;
         case aligned:
           leftLED.setLED(LEDColor.green, BlinkType.none);
@@ -313,6 +313,16 @@ public class LED extends SubsystemBase {
           redPort.set(false);
           greenPort.set(true);
           bluePort.set(false);
+          break;
+        case cyan:
+          redPort.set(false);
+          greenPort.set(true);
+          bluePort.set(true);
+          break;
+        case white:
+          redPort.set(true);
+          greenPort.set(true);
+          bluePort.set(true);
           break;
       }
     }
