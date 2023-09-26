@@ -20,6 +20,7 @@ public class DriveManual extends CommandBase {
    * @param subsystem The subsystem used by this command.
    */
 
+  private static boolean scoringAutoPoseActive;
   private final Drive drive;
   private final AutoPose autoPose;
   private Double targetHeadingDeg;
@@ -35,6 +36,10 @@ public class DriveManual extends CommandBase {
   
   public enum LockedWheel {
     none, center, frontLeft, backLeft, backRight, frontRight;
+  }
+
+  public static boolean isScoringAutoPoseActive() {
+    return scoringAutoPoseActive;
   }
 
   public DriveManual(Drive drivesubsystem, AutoPose autoPose) {
@@ -57,6 +62,7 @@ public class DriveManual extends CommandBase {
     done = false;
 
     drive.resetRotatePID();
+    scoringAutoPoseActive = false;
 
     // set auto-rotate direction, if any
     switch (autoPose) {
@@ -68,11 +74,13 @@ public class DriveManual extends CommandBase {
         switch (ArmMove.getArmPreset()) {
           case scoreLow:
             targetHeadingDeg = 180.0;
+            scoringAutoPoseActive = true;
             LED.getInstance().setAlignment(LED.Alignment.none);
             break;
           case scoreMid:
           case scoreHigh:
             targetHeadingDeg = 0.0;
+            scoringAutoPoseActive = true;
             LED.getInstance().setAlignment(LED.Alignment.grid);
             break;
           case loadSingle:

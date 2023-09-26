@@ -5,13 +5,16 @@ import frc.robot.subsystems.Drive;
 
 public class SetArmPreset extends InstantCommand {
   private ArmMove.Position pos;
+  private DriveManual driveAutoPos;
 
   // all parameters
   public SetArmPreset(Drive drive, ArmMove.Position pos) {
     this.pos = pos;
-
-    // interrupt existing auto-rotate command so the trigger will work when next pressed
-    addRequirements(drive);
+    if (driveAutoPos == null) {
+      // reuse a single auto-pose command so it won't restart if the operator 
+      // presses the same button twice
+      driveAutoPos = new DriveManual(drive, DriveManual.AutoPose.usePreset);
+    }
     
     // don't interrupt existing arm commands because the trigger command won't restart
   }
@@ -20,6 +23,14 @@ public class SetArmPreset extends InstantCommand {
   @Override
   public void initialize() {
     ArmMove.setArmPreset(pos);
+
+    // switch to new auto-pos, if needed
+    if (DriveManual.isScoringAutoPoseActive()
+        && (pos == ArmMove.Position.scoreLow
+         || pos == ArmMove.Position.scoreMid
+         || pos == ArmMove.Position.scoreHigh)) {
+      driveAutoPos.schedule();  // does nothing if already scheduled
+    }
   }
 
   // Called once the command ends or is interrupted.

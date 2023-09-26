@@ -315,7 +315,7 @@ public class ArmMove extends CommandBase {
       safeToOuttake = true;
     }
 
-    // end command when a game piece has been intaked
+    // end command when a game piece has been intaken
     if ((targetPos == Position.loadFloor || targetPos == Position.loadSingle)
         && Claw.getInstance().isIntakeStalled()) {
       presetPos = lastPresetScorePos;
