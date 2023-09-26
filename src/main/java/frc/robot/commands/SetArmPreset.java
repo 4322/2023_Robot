@@ -15,13 +15,13 @@ public class SetArmPreset extends InstantCommand {
       // presses the same button twice
       driveAutoPos = new DriveManual(drive, DriveManual.AutoPose.usePreset);
     }
-    
     // don't interrupt existing arm commands because the trigger command won't restart
   }
 
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+
+    // check if inside the yellow box of allowed operator actions on the state diagram
     if (ArmMove.isInBot()) {
       ArmMove.setArmPreset(pos);
 
@@ -32,6 +32,11 @@ public class SetArmPreset extends InstantCommand {
           || pos == ArmMove.Position.scoreHigh)) {
         driveAutoPos.schedule();  // does nothing if already scheduled
       }
+    // check if this is an allowed state transition outside the yellow box
+    } else if (((pos == ArmMove.Position.scoreMid) || (pos == ArmMove.Position.scoreHigh))
+               && ((ArmMove.getArmPreset() == ArmMove.Position.scoreMid) ||
+                   (ArmMove.getArmPreset() == ArmMove.Position.scoreHigh))) {
+      ArmMove.setArmPreset(pos);
     }
   }
 
