@@ -58,6 +58,11 @@ public class ArmMove extends CommandBase {
     }
   }
 
+  public static void setArmPresetToLastScorePreset() {
+    presetPos = lastPresetScorePos;
+    safeToOuttake = false;
+  }
+
   public static Position getArmPreset() {
     return ArmMove.presetPos;
   }
@@ -323,7 +328,6 @@ public class ArmMove extends CommandBase {
     // end command when a game piece has been intaken
     if ((targetPos == Position.loadFloor || targetPos == Position.loadSingle)
         && Claw.getInstance().isIntakeStalled()) {
-      presetPos = lastPresetScorePos;
       return true;
     }
 

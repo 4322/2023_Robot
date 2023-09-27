@@ -5,6 +5,7 @@ import frc.robot.subsystems.Claw;
 
 public class ClawIntake extends CommandBase {
   private Claw claw;
+  private boolean intakeStalled;
 
   public ClawIntake(Claw clawSubsystem) {
     claw = clawSubsystem;
@@ -14,11 +15,15 @@ public class ClawIntake extends CommandBase {
   @Override
   public void initialize() {
     claw.changeState(Claw.ClawMode.intaking);
+    intakeStalled = false;
   }
 
   @Override
   public void execute() {
-    
+    if (!intakeStalled && Claw.getInstance().isIntakeStalled()) {
+      ArmMove.setArmPresetToLastScorePreset();
+      intakeStalled = true;
+    }
   }
 
   // Called once the command ends or is interrupted.
