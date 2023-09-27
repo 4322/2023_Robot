@@ -71,8 +71,10 @@ public class ArmMove extends CommandBase {
     return safeToOuttake;
   }
 
-  public static boolean isNotForwardScoringPreset() {
-    return ArmMove.presetPos != Position.scoreMid && ArmMove.presetPos != Position.scoreHigh;
+  public static boolean isNotReAlignPreset() {
+    return ArmMove.presetPos != Position.scoreMid 
+        && ArmMove.presetPos != Position.scoreHigh
+        && ArmMove.presetPos != Position.loadSingle;
   }
 
   public ArmMove(Arm arm, Telescope telescope, Position invokePos, boolean autonomous) {
