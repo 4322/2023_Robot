@@ -5,15 +5,17 @@ import frc.robot.subsystems.Drive;
 
 public class SetArmPreset extends InstantCommand {
   private ArmMove.Position pos;
-  private DriveManual driveAutoPos;
+  private DriveManual driveAutoPose;
+  private DriveManual driveDefault;
 
   // all parameters
   public SetArmPreset(Drive drive, ArmMove.Position pos) {
     this.pos = pos;
-    if (driveAutoPos == null) {
-      // reuse a single auto-pose command so it won't restart if the operator 
+    if (driveAutoPose == null) {
+      // reuse auto-pose commands so they won't restart if the operator 
       // presses the same button twice
-      driveAutoPos = new DriveManual(drive, DriveManual.AutoPose.usePreset);
+      driveAutoPose = new DriveManual(drive, DriveManual.AutoPose.usePreset);
+      driveDefault = new DriveManual(drive, DriveManual.AutoPose.none);
     }
     // don't interrupt existing arm commands because the trigger command won't restart
   }
@@ -26,11 +28,15 @@ public class SetArmPreset extends InstantCommand {
       ArmMove.setArmPreset(pos);
 
       // switch to new auto-pos, if needed
-      if (DriveManual.isScoringAutoPoseActive()
+      if (DriveManual.isScoreAutoPoseActive()
           && (pos == ArmMove.Position.scoreLow
           || pos == ArmMove.Position.scoreMid
           || pos == ArmMove.Position.scoreHigh)) {
-        driveAutoPos.schedule();  // does nothing if already scheduled
+        driveAutoPose.schedule();  // does nothing if already scheduled
+      } else if (DriveManual.isLoadAutoPoseActive()) {
+        // break out of load auto pose so the next button press to
+        // activate score auto-pose will work
+        driveDefault.schedule();
       }
     // check if this is an allowed state transition outside the yellow box
     } else if (((pos == ArmMove.Position.scoreMid) || (pos == ArmMove.Position.scoreHigh))

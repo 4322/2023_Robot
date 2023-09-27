@@ -105,8 +105,8 @@ public class Claw extends SubsystemBase {
 
   private void stop() {
     clawMotor.stopMotor();
-    stallInTimer.stop(); // stop timers to help when button is quickly tapped
-    stallOutTimer.stop();
+    resetStalledIn();
+    resetStalledOut();
   }
 
   public void setCoastMode() {

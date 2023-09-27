@@ -20,7 +20,8 @@ public class DriveManual extends CommandBase {
    * @param subsystem The subsystem used by this command.
    */
 
-  private static boolean scoringAutoPoseActive;
+  private static boolean scoreAutoPoseActive;
+  private static boolean loadAutoPoseActive;
   private final Drive drive;
   private final AutoPose autoPose;
   private Double targetHeadingDeg;
@@ -38,8 +39,12 @@ public class DriveManual extends CommandBase {
     none, center, frontLeft, backLeft, backRight, frontRight;
   }
 
-  public static boolean isScoringAutoPoseActive() {
-    return scoringAutoPoseActive;
+  public static boolean isScoreAutoPoseActive() {
+    return scoreAutoPoseActive;
+  }
+
+  public static boolean isLoadAutoPoseActive() {
+    return loadAutoPoseActive;
   }
 
   public DriveManual(Drive drivesubsystem, AutoPose autoPose) {
@@ -62,7 +67,8 @@ public class DriveManual extends CommandBase {
     done = false;
 
     drive.resetRotatePID();
-    scoringAutoPoseActive = false;
+    scoreAutoPoseActive = false;
+    loadAutoPoseActive = false;
 
     // set auto-rotate direction, if any
     switch (autoPose) {
@@ -74,23 +80,25 @@ public class DriveManual extends CommandBase {
         switch (ArmMove.getArmPreset()) {
           case scoreLow:
             targetHeadingDeg = 180.0;
-            scoringAutoPoseActive = true;
+            scoreAutoPoseActive = true;
             LED.getInstance().setAlignment(LED.Alignment.none);
             break;
           case scoreMid:
           case scoreHigh:
             targetHeadingDeg = 0.0;
-            scoringAutoPoseActive = true;
+            scoreAutoPoseActive = true;
             LED.getInstance().setAlignment(LED.Alignment.grid);
             break;
           case loadSingle:
             switch (Robot.getAllianceColor()) {
               case Blue:
                 targetHeadingDeg = 90.0;
+                loadAutoPoseActive = true;
                 LED.getInstance().setAlignment(LED.Alignment.substation);
                 break;
               case Red:
                 targetHeadingDeg = -90.0;
+                loadAutoPoseActive = true;
                 LED.getInstance().setAlignment(LED.Alignment.substation);
                 break;
               default:
