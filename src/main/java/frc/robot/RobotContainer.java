@@ -40,7 +40,6 @@ public class RobotContainer {
   private JoystickButton driveButtonTwelve;
   private JoystickButton driveButtonThree;
 
-
   private JoystickButton rotateTrigger;
 
   private ShuffleboardTab tab;
@@ -59,6 +58,7 @@ public class RobotContainer {
 
   // Claw commands
   private final ClawOuttake clawOuttake = new ClawOuttake(claw);
+  private final ClawStop clawStop = new ClawStop();
 
   // Drive Commands
   private final DriveManual driveManualDefault = new DriveManual(drive, DriveManual.AutoPose.none);
@@ -223,6 +223,7 @@ public class RobotContainer {
       xbox.a().onTrue(new SetArmPreset(drive, ArmMove.Position.scoreLow));
       xbox.povDown().onTrue(new SetArmPreset(drive, ArmMove.Position.loadFloor));
       xbox.povUp().onTrue(new SetArmPreset(drive, ArmMove.Position.loadSingle));
+      xbox.povLeft().onTrue(clawStop);
     }
   }
 
