@@ -19,7 +19,7 @@ public class ArmMove extends CommandBase {
   private static Position lastPresetScorePos = Position.scoreHigh;
   private static Position lastPos = Position.unknown;
   private static boolean safeToOuttake = false;
-  private static boolean inBot = true;  // TODO: the first preset isn't accepted even with this
+  private static boolean inBot = false;
 
   private Arm arm;
   private Telescope telescope;
