@@ -60,7 +60,7 @@ public class LED extends SubsystemBase {
   private SubstationState lastSubstationState = SubstationState.off;
   private GridState lastGridState = GridState.off;
   private boolean intakeStalled;
-  private GamePiece lastGamePiece = GamePiece.none;
+  private GamePiece lastGamePiece = GamePiece.cone;
   private Alignment currentAlignment = Alignment.none;
   private static LED ledSubsystem;
 
