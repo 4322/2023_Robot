@@ -283,9 +283,7 @@ public class ArmMove extends CommandBase {
     if (!autonomous) {
       arm.stop();
       telescope.stop();
-      if (clawIntake.isScheduled() && !Claw.getInstance().isIntakeStalled()) {
-        clawIntake.cancel();
-      }
+      // leave claw running so it can go into stall mode
     }
     if (!done) {
       ArmMove.lastPos = Position.unknown;
