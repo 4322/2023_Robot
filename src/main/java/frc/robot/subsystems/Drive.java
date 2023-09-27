@@ -337,15 +337,21 @@ public class Drive extends SubsystemBase {
       // Don't use absolute heading for PID controller to avoid discontinuity at +/- 180 degrees
       double headingChangeDeg = OrangeMath.boundDegrees(targetDeg - getAngle());
       double rotPIDSpeed = rotPID.calculate(0, headingChangeDeg);
+      double maxAutoRotatePower = DriveConstants.Auto.maxAutoRotatePower;
+
+      // reduce rotation power when driving fast to not lose forward momentum
+      if (latestVelocity >= DriveConstants.Auto.slowAutoRotateFtPerSec) {
+        maxAutoRotatePower = DriveConstants.Auto.slowAutoRotatePower;
+      }
 
       if (Math.abs(headingChangeDeg) <= toleranceDeg) {
         rotPIDSpeed = 0;  // don't wiggle
       } else if (Math.abs(rotPIDSpeed) < DriveConstants.Auto.minAutoRotatePower) {
         rotPIDSpeed = Math.copySign(DriveConstants.Auto.minAutoRotatePower, rotPIDSpeed);
-      } else if (rotPIDSpeed > DriveConstants.Auto.maxAutoRotatePower) {
-        rotPIDSpeed = DriveConstants.Auto.maxAutoRotatePower;
-      } else if (rotPIDSpeed < -DriveConstants.Auto.maxAutoRotatePower) {
-        rotPIDSpeed = -DriveConstants.Auto.maxAutoRotatePower;
+      } else if (rotPIDSpeed > maxAutoRotatePower) {
+        rotPIDSpeed = maxAutoRotatePower;
+      } else if (rotPIDSpeed < -maxAutoRotatePower) {
+        rotPIDSpeed = -maxAutoRotatePower;
       }
 
       drive(driveX, driveY, rotPIDSpeed);
