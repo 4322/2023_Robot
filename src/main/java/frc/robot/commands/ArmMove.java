@@ -5,18 +5,21 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Telescope;
 
 public class ArmMove extends CommandBase {
 
   // Use of loadSingle and loadBounce are mutually exclusive
   public enum Position {
-    unknown, inHopper, loadSingle, loadDouble, loadFloor, loadBounce, scoreLow, scoreMid, scoreHigh, scorePreset
+    unknown, inBot, loadSingle, loadDouble, loadFloor, loadBounce, scoreLow, scoreMid, scoreHigh, usePreset
   }
 
-  private static Position presetPos = Position.scoreMid;
+  private static Position presetPos = Position.loadSingle;
+  private static Position lastPresetScorePos = Position.scoreHigh;
   private static Position lastPos = Position.unknown;
-  private static boolean safeToOuttake = true;
+  private static boolean safeToOuttake = false;
+  private static boolean inBot = true;  // TODO: the first preset isn't accepted even with this
 
   private Arm arm;
   private Telescope telescope;
@@ -30,17 +33,41 @@ public class ArmMove extends CommandBase {
   private boolean done;
   private Timer timer = new Timer();
   private boolean timePrinted;
+  private final ClawIntake clawIntake = new ClawIntake(Claw.getInstance());
 
-  public static void setScorePreset(Position pos) {
-    ArmMove.presetPos = pos;
+  public static boolean isInBot() {
+    return inBot;
+  }
+
+  public static void setArmPreset(Position pos) {
+
+    // ignore preset spamming so we don't lock-out ejecting after arm is in position
+    if (pos != presetPos) {
+      presetPos = pos;
+      safeToOuttake = false;
+
+      switch (pos) {
+        case scoreLow:
+        case scoreMid:
+        case scoreHigh:
+          lastPresetScorePos = pos;
+          break;
+        default:
+          break;
+      }
+    }
+  }
+
+  public static Position getArmPreset() {
+    return ArmMove.presetPos;
   }
 
   public static boolean isSafeToOuttake() {
     return safeToOuttake;
   }
 
-  public static boolean isBackwardScoringPreset() {
-    return ArmMove.presetPos == Position.scoreLow;
+  public static boolean isNotForwardScoringPreset() {
+    return ArmMove.presetPos != Position.scoreMid && ArmMove.presetPos != Position.scoreHigh;
   }
 
   public ArmMove(Arm arm, Telescope telescope, Position invokePos, boolean autonomous) {
@@ -55,8 +82,8 @@ public class ArmMove extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if (invokePos == Position.scorePreset) {
-      targetPos = ArmMove.presetPos;
+    if (invokePos == Position.usePreset) {
+      targetPos = presetPos;
     } else {
       targetPos = invokePos;
     }
@@ -67,11 +94,18 @@ public class ArmMove extends CommandBase {
     done = false;
     timer.restart();
     timePrinted = false;
+    inBot = false;
 
-    if ((targetPos == Position.scoreMid) || (targetPos == Position.scoreHigh)) {
-      safeToOuttake = false;
-    } else {
+    if (presetPos == Position.scoreLow) {
       safeToOuttake = true;
+    } else {
+      safeToOuttake = false;
+    }
+
+    // start intake if needed
+    if ((targetPos == Position.loadFloor || targetPos == Position.loadSingle) 
+        && !autonomous) {
+      clawIntake.schedule();
     }
 
     moveToTargets(true);
@@ -79,8 +113,10 @@ public class ArmMove extends CommandBase {
 
   @Override
   public void execute() {
-    if ((invokePos == Position.scorePreset) && (targetPos != ArmMove.presetPos)) {
-      // target changed, restart command without interrupting to keep the trigger command running
+    if ((invokePos == Position.usePreset) && (targetPos != presetPos)
+        && ((targetPos == Position.scoreMid) || (targetPos == Position.scoreHigh))
+        && ((presetPos == Position.scoreMid) || (presetPos == Position.scoreHigh))) {
+      // pole target changed, restart command without interrupting to keep the trigger command running
       if (!done) {
         ArmMove.lastPos = Position.unknown;
       }
@@ -98,7 +134,7 @@ public class ArmMove extends CommandBase {
 
     if (!telescopeCommandedToTarget) {
       switch (targetPos) {
-        case inHopper:
+        case inBot:
         case loadBounce:
           telescope.moveToPosition(Constants.Telescope.inHopperPosition);
           telescopeCommandedToTarget = true;
@@ -125,7 +161,7 @@ public class ArmMove extends CommandBase {
           break;
         case scoreHigh:
           switch (ArmMove.lastPos) {
-            case inHopper:
+            case inBot:
             case loadSingle:
             case loadDouble:
             case loadFloor:
@@ -146,7 +182,7 @@ public class ArmMove extends CommandBase {
           break;
         case loadFloor:
           switch (ArmMove.lastPos) {
-            case inHopper:
+            case inBot:
             case loadSingle:
             case loadBounce:
             case scoreLow:
@@ -178,7 +214,7 @@ public class ArmMove extends CommandBase {
 
     if (!armCommandedToTarget) {
       switch (targetPos) {
-        case inHopper:
+        case inBot:
           if ((telescopePosition <= Constants.Telescope.safeArmRetractPosition) 
               || (((lastPos == Position.scoreHigh) || (lastPos == Position.loadFloor))
                   && (telescopePosition <= Constants.Telescope.earlyArmRetractPosition))) {
@@ -247,6 +283,9 @@ public class ArmMove extends CommandBase {
     if (!autonomous) {
       arm.stop();
       telescope.stop();
+      if (clawIntake.isScheduled() && !Claw.getInstance().isIntakeStalled()) {
+        clawIntake.cancel();
+      }
     }
     if (!done) {
       ArmMove.lastPos = Position.unknown;
@@ -264,7 +303,12 @@ public class ArmMove extends CommandBase {
     }
     if (armAtTarget && telescopeAtTarget) {
       ArmMove.lastPos = targetPos;
-      safeToOuttake = true;
+      if ((targetPos == Position.scoreMid) || (targetPos == Position.scoreHigh)) {
+        safeToOuttake = true;
+      } else if (targetPos == Position.inBot) {
+        inBot = true;
+      }
+      
       done = true;
       if (autonomous) {
         return true;
@@ -273,8 +317,16 @@ public class ArmMove extends CommandBase {
         timePrinted = true;
       }
     }
-    if (!autonomous && !armAtTarget && telescopeAtTarget && armCommandedToTarget && arm.isNearTarget()) {
+    if (!autonomous && !armAtTarget && telescopeAtTarget && armCommandedToTarget && arm.isNearTarget()
+        && ((targetPos == Position.scoreMid) || (targetPos == Position.scoreHigh))) {
       safeToOuttake = true;
+    }
+
+    // end command when a game piece has been intaken
+    if ((targetPos == Position.loadFloor || targetPos == Position.loadSingle)
+        && Claw.getInstance().isIntakeStalled()) {
+      presetPos = lastPresetScorePos;
+      return true;
     }
 
     // continue holding position in teleop until cancelled

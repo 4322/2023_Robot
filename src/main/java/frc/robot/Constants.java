@@ -95,9 +95,9 @@ public class Constants {
 
     public static final double disableBreakSec = 2.0;
 
-    // Max speed is 200000 ticks / 1 s
-
-    public static final double maxSpeedMetersPerSecond = 10 * OrangeMath.falconRotationsToMeters(20000.0/falconEncoderUnits,
+    // top speed at full motor output is 91 rot/sec with voltage comp at 11.5 volts
+    // however, setting the max speed to 91 only allows us to reach 86 due to insufficent kV
+    public static final double maxSpeedMetersPerSecond = OrangeMath.falconRotationsToMeters(91,
         OrangeMath.inchesToMeters(OrangeMath.getCircumference(Drive.wheelDiameterInches)),
         Drive.gearRatio);
 
@@ -106,7 +106,6 @@ public class Constants {
     public static final double movingVelocityThresholdFtPerSec = 0.2;
 
     public static final double drivePolarDeadband = 0.06;
-    public static final double rotatePolarDeadband = 0.5;
     public static final double twistDeadband = 0.08;
 
     // Values for auto balance
@@ -157,11 +156,12 @@ public class Constants {
 
     public static final class Auto {
 
-      // Max acceleration is 180000 ticks / s^2
-
       // Values for autonomous path finding
       public static final double autoMaxSpeedMetersPerSecond = 0.75 * DriveConstants.maxSpeedMetersPerSecond;
-      public static final double autoMaxAccelerationMetersPerSec2 = 0.75 * OrangeMath.falconRotationsToMeters(180000.0/falconEncoderUnits,
+
+      // acceleration off the line is 109 rotations per sec^2
+      // acceleration in the mid-range is 46.8 rotations per sec^2
+      public static final double autoMaxAccelerationMetersPerSec2 = 0.75 * OrangeMath.falconRotationsToMeters(73,
           OrangeMath.inchesToMeters(OrangeMath.getCircumference(Drive.wheelDiameterInches)),
           Drive.gearRatio);
 
@@ -211,7 +211,7 @@ public class Constants {
 
     public static final class Drive {
 
-      public static final double configClosedLoopRamp = 0;
+      public static final double configClosedLoopRamp = 0.08;
 
       public static final double voltageCompSaturation = 11.5;
       public static final boolean enableVoltageCompensation = true;

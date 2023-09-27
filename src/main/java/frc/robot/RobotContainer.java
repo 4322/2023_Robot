@@ -37,10 +37,6 @@ public class RobotContainer {
   public static Joystick rotateStick;
 
   private JoystickButton driveTrigger;
-  private JoystickButton driveButtonThree;
-  private JoystickButton driveButtonFour;
-  private JoystickButton driveButtonFive;
-  private JoystickButton driveButtonSix;
   private JoystickButton driveButtonSeven;
   private JoystickButton driveButtonNine;
   private JoystickButton driveButtonEleven;
@@ -48,19 +44,15 @@ public class RobotContainer {
 
   private JoystickButton rotateTrigger;
   private JoystickButton rotateButtonThree;
-  private JoystickButton rotateButtonFour;
-  private JoystickButton rotateButtonFive;
-  private JoystickButton rotateButtonSix;
 
   private ShuffleboardTab tab;
   private ArrayList<Auto> autoArrayList = new ArrayList<Auto>();
   private SendableChooser<Integer> positionChooser = new SendableChooser<Integer>();
   private SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
-  // The robot's subsystems and commands are defined here...
   private final Arm arm = new Arm();
   private final Telescope telescope = new Telescope();
-  private final Claw claw = new Claw();
+  private final Claw claw = Claw.getInstance();
   private final Drive drive = new Drive();
 
   private final PathPlannerManager ppManager;
@@ -70,15 +62,10 @@ public class RobotContainer {
   private final ArmSetBrakeMode armSetBrakeMode = new ArmSetBrakeMode(arm, telescope);
 
   // Claw commands
-  private final ClawIntake clawIntake = new ClawIntake(claw);
   private final ClawOuttake clawOuttake = new ClawOuttake(claw);
 
   // Drive Commands
   private final DriveManual driveManualDefault = new DriveManual(drive, DriveManual.AutoPose.none);
-  private final DriveManual driveManualForward = new DriveManual(drive, DriveManual.AutoPose.forward);
-  private final DriveManual driveManualBackward = new DriveManual(drive, DriveManual.AutoPose.back);
-  private final DriveManual driveManualLeft = new DriveManual(drive, DriveManual.AutoPose.left);
-  private final DriveManual driveManualRight = new DriveManual(drive, DriveManual.AutoPose.right);
   private final DriveStop driveStop = new DriveStop(drive);
 
   // Auto Balance Commands
@@ -121,7 +108,7 @@ public class RobotContainer {
     }
 
     if (Constants.armEnabled) {
-      arm.setDefaultCommand(new ArmMove(arm, telescope, ArmMove.Position.inHopper, false));
+      arm.setDefaultCommand(new ArmMove(arm, telescope, ArmMove.Position.inBot, false));
     }
 
     if (Constants.gridLimeLightEnabled) {
@@ -285,55 +272,44 @@ public class RobotContainer {
    */
 
   private void configureButtonBindings() {  
-    BooleanSupplier isIntakeStalled = () -> claw.isIntakeStalled();
-    BooleanSupplier isBackwardScoringPreset = () -> ArmMove.isBackwardScoringPreset();
+    BooleanSupplier isNotForwardScoringPreset = () -> ArmMove.isNotForwardScoringPreset();
 
     if (Constants.joysticksEnabled) {
       driveStick = new Joystick(0);
       rotateStick = new Joystick(1);
 
       driveTrigger = new JoystickButton(driveStick, 1);
-      driveButtonFive = new JoystickButton(driveStick, 5);
-      driveButtonSix = new JoystickButton(driveStick, 6);
       driveButtonSeven = new JoystickButton(driveStick, 7);
       driveButtonNine = new JoystickButton(driveStick, 9);
       driveButtonEleven = new JoystickButton(driveStick, 11);
       driveButtonTwelve = new JoystickButton(driveStick, 12);
       rotateTrigger = new JoystickButton(rotateStick, 1);
       rotateButtonThree = new JoystickButton(rotateStick, 3);
-      rotateButtonFour = new JoystickButton(rotateStick, 4);
-      rotateButtonFive = new JoystickButton(rotateStick, 5);
-      rotateButtonSix = new JoystickButton(rotateStick, 6);
 
       driveTrigger.whileTrue(clawOuttake);
-      driveButtonFive.onTrue(clawIntake);
       driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
       driveButtonNine.onTrue(autoBalanceForward);
       driveButtonEleven.onTrue(autoBalanceBackward);
       driveButtonTwelve.onTrue(driveStop);
 
       // Re-establish alignment to grid when deploying the arm
-      rotateTrigger.whileTrue(new DriveManual(drive, DriveManual.AutoPose.forward)
-          .unless(isBackwardScoringPreset));
-      rotateTrigger.whileTrue(new ArmMove(arm, telescope, ArmMove.Position.scorePreset, false)
-          .withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming));
+      rotateTrigger.whileTrue(new DriveManual(drive, DriveManual.AutoPose.usePreset)
+          .unless(isNotForwardScoringPreset));
+      rotateTrigger.whileTrue(new ArmMove(arm, telescope, ArmMove.Position.usePreset, false));
 
-      rotateButtonThree.onTrue(driveManualForward);
-      rotateButtonFour.onTrue(driveManualLeft);
-      rotateButtonFive.onTrue(driveManualBackward);
-      rotateButtonSix.onTrue(driveManualRight);
+      rotateButtonThree.onTrue(new DriveManual(drive, DriveManual.AutoPose.usePreset));
     }
 
     if (Constants.xboxEnabled) {
-      xbox.leftTrigger().onTrue(new SetScoringPosition(ArmMove.Position.loadFloor));
-      xbox.rightTrigger().onTrue(new SetScoringPosition(ArmMove.Position.loadSingle));
       xbox.back().onTrue(armSetCoastMode);
       xbox.start().onTrue(armSetBrakeMode);
       xbox.leftBumper().onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cube)));
       xbox.rightBumper().onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cone)));
-      xbox.y().onTrue(new SetScoringPosition(ArmMove.Position.scoreHigh));
-      xbox.b().onTrue(new SetScoringPosition(ArmMove.Position.scoreMid));
-      xbox.a().onTrue(new SetScoringPosition(ArmMove.Position.scoreLow));
+      xbox.y().onTrue(new SetArmPreset(drive, ArmMove.Position.scoreHigh));
+      xbox.b().onTrue(new SetArmPreset(drive, ArmMove.Position.scoreMid));
+      xbox.a().onTrue(new SetArmPreset(drive, ArmMove.Position.scoreLow));
+      xbox.povDown().onTrue(new SetArmPreset(drive, ArmMove.Position.loadFloor));
+      xbox.povUp().onTrue(new SetArmPreset(drive, ArmMove.Position.loadSingle));
     }
   }
 
@@ -425,7 +401,7 @@ public class RobotContainer {
         new ClawIntake(claw)
       ),
       new TimedClawOuttake(claw, 0.5),
-      new ArmMove(arm, telescope, ArmMove.Position.inHopper, true)
+      new ArmMove(arm, telescope, ArmMove.Position.inBot, true)
       );
   }
 
@@ -436,7 +412,7 @@ public class RobotContainer {
         new ArmMove(arm, telescope, ArmMove.Position.loadFloor, true), 
         new ClawIntake(claw)
       ),
-      new ArmMove(arm, telescope, ArmMove.Position.inHopper, true)
+      new ArmMove(arm, telescope, ArmMove.Position.inBot, true)
       );
   }
 }

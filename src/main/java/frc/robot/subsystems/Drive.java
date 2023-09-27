@@ -98,7 +98,7 @@ public class Drive extends SubsystemBase {
 
         // wait for first gyro reading to be received
         try {
-          Thread.sleep(250);
+          Thread.sleep(1000);
         } catch (InterruptedException e) {
         }
 

@@ -7,6 +7,7 @@ import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.LED;
 import frc.utility.OrangeMath;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriveConstants.Manual;
 import frc.robot.RobotContainer;
@@ -19,6 +20,7 @@ public class DriveManual extends CommandBase {
    * @param subsystem The subsystem used by this command.
    */
 
+  private static boolean scoringAutoPoseActive;
   private final Drive drive;
   private final AutoPose autoPose;
   private Double targetHeadingDeg;
@@ -29,35 +31,20 @@ public class DriveManual extends CommandBase {
   private double initialSpinoutAngle = 0;
 
   public enum AutoPose {
-    none, left, forward, right, back
+    none, usePreset
   }
   
   public enum LockedWheel {
     none, center, frontLeft, backLeft, backRight, frontRight;
   }
 
+  public static boolean isScoringAutoPoseActive() {
+    return scoringAutoPoseActive;
+  }
+
   public DriveManual(Drive drivesubsystem, AutoPose autoPose) {
     drive = drivesubsystem;
     this.autoPose = autoPose;
-
-    switch (autoPose) {
-      case none:
-        targetHeadingDeg = null;
-        break;
-      case forward:
-        targetHeadingDeg = 0.0;
-        break;
-      case left:
-        targetHeadingDeg = 90.0;
-        break;
-      case back:
-        targetHeadingDeg = 180.0;
-        break;
-      case right:
-        targetHeadingDeg = -90.0;
-        break;
-    }
-
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drive);
   }
@@ -65,22 +52,66 @@ public class DriveManual extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    drive.resetRotatePID();
-    lockedWheelState = LockedWheel.none;
+
+    // make command reusable
     spinoutActivationTimer.stop();
     spinoutActivationTimer2.stop();
     spinoutActivationTimer.reset();
     spinoutActivationTimer2.reset();
-    done = false; // make command reusable
+    lockedWheelState = LockedWheel.none;
+    done = false;
 
-    if (autoPose == AutoPose.forward) {
-      LED.getInstance().setAlignment(LED.Alignment.grid);
-    } else if ((autoPose == AutoPose.left) || (autoPose == AutoPose.right)) {
-      LED.getInstance().setAlignment(LED.Alignment.substation);
-    } else {
-      LED.getInstance().setAlignment(LED.Alignment.none);
+    drive.resetRotatePID();
+    scoringAutoPoseActive = false;
+
+    // set auto-rotate direction, if any
+    switch (autoPose) {
+      case none:
+        targetHeadingDeg = null;
+        LED.getInstance().setAlignment(LED.Alignment.none);
+        break;
+      case usePreset:
+        switch (ArmMove.getArmPreset()) {
+          case scoreLow:
+            targetHeadingDeg = 180.0;
+            scoringAutoPoseActive = true;
+            LED.getInstance().setAlignment(LED.Alignment.none);
+            break;
+          case scoreMid:
+          case scoreHigh:
+            targetHeadingDeg = 0.0;
+            scoringAutoPoseActive = true;
+            LED.getInstance().setAlignment(LED.Alignment.grid);
+            break;
+          case loadSingle:
+            switch (Robot.getAllianceColor()) {
+              case Blue:
+                targetHeadingDeg = 90.0;
+                LED.getInstance().setAlignment(LED.Alignment.substation);
+                break;
+              case Red:
+                targetHeadingDeg = -90.0;
+                LED.getInstance().setAlignment(LED.Alignment.substation);
+                break;
+              default:
+                // unknown direction to single substation
+                targetHeadingDeg = null;
+                done = true;
+                LED.getInstance().setAlignment(LED.Alignment.none);
+                break;
+            }
+            break;
+          default:
+            // not an auto-rotate preset
+            targetHeadingDeg = null;
+            done = true;
+            LED.getInstance().setAlignment(LED.Alignment.none);
+            break;
+        }
+        break;
     }
   }
+  
 
   @Override
   public void execute() {
@@ -160,13 +191,26 @@ public class DriveManual extends CommandBase {
       }
       rotatePower = rotatePower * Manual.manualRotationScaleFromMax;
 
-      if (targetHeadingDeg != null) {
-        if (rotatePower == 0) {
+      // if the rotate stick isn't being used
+      if (rotatePower == 0) {
+        // if there is a set drive auto rotate
+        if (targetHeadingDeg != null) {
           drive.driveAutoRotate(driveX, driveY, targetHeadingDeg,
               Constants.DriveConstants.Auto.rotateToleranceDegrees);
           return;
         } else {
-          // break out of auto-rotate
+          targetHeadingDeg = drive.getAngle();
+          drive.driveAutoRotate(driveX, driveY, targetHeadingDeg,
+              Constants.DriveConstants.Auto.rotateToleranceDegrees);
+          return;
+        }
+      } else {  
+        // check if we are in the default drive manual
+        if (autoPose == AutoPose.none) {
+          targetHeadingDeg = null; // unlock auto rotate heading
+        }
+        else {
+          // restart default driveManual command
           drive.drive(driveX, driveY, rotatePower);
           done = true;
           return;
@@ -288,7 +332,6 @@ public class DriveManual extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-
   }
 
   // Returns true when the command should end.
