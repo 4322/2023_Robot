@@ -38,9 +38,10 @@ public class RobotContainer {
   private JoystickButton driveButtonNine;
   private JoystickButton driveButtonEleven;
   private JoystickButton driveButtonTwelve;
+  private JoystickButton driveButtonThree;
+
 
   private JoystickButton rotateTrigger;
-  private JoystickButton rotateButtonThree;
 
   private ShuffleboardTab tab;
   private SendableChooser<Command> autoChooser = new SendableChooser<Command>();
@@ -196,7 +197,7 @@ public class RobotContainer {
       driveButtonEleven = new JoystickButton(driveStick, 11);
       driveButtonTwelve = new JoystickButton(driveStick, 12);
       rotateTrigger = new JoystickButton(rotateStick, 1);
-      rotateButtonThree = new JoystickButton(rotateStick, 3);
+      driveButtonThree = new JoystickButton(driveStick, 3);
 
       driveTrigger.whileTrue(clawOuttake);
       driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
@@ -209,7 +210,7 @@ public class RobotContainer {
           .unless(isNotForwardScoringPreset));
       rotateTrigger.whileTrue(new ArmMove(arm, telescope, ArmMove.Position.usePreset, false));
 
-      rotateButtonThree.onTrue(new DriveManual(drive, DriveManual.AutoPose.usePreset));
+      driveButtonThree.onTrue(new DriveManual(drive, DriveManual.AutoPose.usePreset));
     }
 
     if (Constants.xboxEnabled) {
