@@ -26,10 +26,9 @@ public class ClawIntake extends CommandBase {
     }
   }
 
-  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    claw.changeState(Claw.ClawMode.stopped);
+    // don't stop the claw because power is required to retain the game piece
   }
 
   @Override
