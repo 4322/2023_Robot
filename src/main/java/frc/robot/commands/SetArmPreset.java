@@ -33,6 +33,10 @@ public class SetArmPreset extends InstantCommand {
           || pos == ArmMove.Position.scoreMid
           || pos == ArmMove.Position.scoreHigh)) {
         driveAutoPose.schedule();  // does nothing if already scheduled
+      } else if (DriveManual.isScoreAutoPoseActive()) {
+        // break out of score auto pose so the next button press to
+        // activate load auto-pose will work
+        driveDefault.schedule();
       } else if (DriveManual.isLoadAutoPoseActive()) {
         // break out of load auto pose so the next button press to
         // activate score auto-pose will work
