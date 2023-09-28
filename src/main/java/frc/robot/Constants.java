@@ -401,8 +401,8 @@ public class Constants {
     public static final double substationTargetToleranceDeg = 10.0;  // human player can drop game piece to the side
     public static final double gridMinHighTargetArea = 0.025;
     public static final double gridMaxHighTargetArea = 0.2;
-    public static final double gridMidTargetToleranceDeg = 1.0;
-    public static final double gridHighTargetToleranceDeg = 2.0;
+    public static final double gridMidTargetToleranceDeg = 1.5; //use to be 1
+    public static final double gridHighTargetToleranceDeg = 3.0; // use to be 2
 
     // List of tape pipelines (should only be 1 for now)
     public static final List<Integer> tapePipelines = List.of(0);
