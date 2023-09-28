@@ -401,8 +401,10 @@ public class Constants {
     public static final double substationTargetToleranceDeg = 17.5;  // human player can drop game piece to the side
     public static final double gridMinHighTargetArea = 0.025;
     public static final double gridMaxHighTargetArea = 0.2;
-    public static final double gridMidTargetToleranceDeg = 1.75; //use to be 1
-    public static final double gridHighTargetToleranceDeg = 3.5; // use to be 2
+    // For a given lateral alignment error, the mid target will be further off-center in the limelight image.
+    // Therefore, the mid tolerance should be about double the high tolerance.
+    public static final double gridMidTargetToleranceDeg = 2.0;
+    public static final double gridHighTargetToleranceDeg = 1.0;
 
     // List of tape pipelines (should only be 1 for now)
     public static final List<Integer> tapePipelines = List.of(0);
