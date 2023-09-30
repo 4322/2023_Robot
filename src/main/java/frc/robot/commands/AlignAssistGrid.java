@@ -28,9 +28,9 @@ public class AlignAssistGrid extends CommandBase {
       double horizontalDegToTarget = limelight.getHorizontalDegToTarget();
       
       if (targetArea >= LimelightConstants.gridMinHighTargetArea) {
-        if ((Math.abs(horizontalDegToTarget) <= LimelightConstants.gridMidTargetToleranceDeg)
-            || ((Math.abs(horizontalDegToTarget) <= LimelightConstants.gridHighTargetToleranceDeg)
-                && (targetArea < LimelightConstants.gridMaxHighTargetArea))) {
+        if ((Math.abs(horizontalDegToTarget) <= LimelightConstants.gridHighTargetToleranceDeg)
+            || ((Math.abs(horizontalDegToTarget) <= LimelightConstants.gridMidTargetToleranceDeg)
+                && (targetArea > LimelightConstants.gridMaxHighTargetArea))) {
           led.setGridState(LED.GridState.aligned);
         } else if (horizontalDegToTarget > 0) {
           led.setGridState(LED.GridState.moveRight);
