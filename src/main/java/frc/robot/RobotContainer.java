@@ -172,7 +172,12 @@ public class RobotContainer {
     );
     autoChooser.addOption("2PieceAuto (1)", 
       new SequentialCommandGroup(
-        ppManager.loadAuto("Cracked2PieceAuto", false)
+        ppManager.loadAuto("Cracked2PieceAuto1", false)
+      )
+    );  
+    autoChooser.addOption("2PieceAuto (9)", 
+      new SequentialCommandGroup(
+        ppManager.loadAuto("Cracked2PieceAuto9", false)
       )
     );  
   }
