@@ -77,7 +77,7 @@ public class RobotContainer {
       new AutoBalance(drive, false, false),
       new AutoDriveRotateWheels(drive, 0.25));
 
-  private int selectedPosition;
+  private int selectedPosition = 0;
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
 
   public RobotContainer() {
