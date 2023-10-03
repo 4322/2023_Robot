@@ -99,6 +99,7 @@ public class ArmMove extends CommandBase {
     armAtTarget = false;
     telescopeAtTarget = false;
     done = false;
+    timer.stop();
     timer.reset();
     timePrinted = false;
     inBot = false;
@@ -296,15 +297,22 @@ public class ArmMove extends CommandBase {
       ArmMove.lastPos = Position.unknown;
     }
   }
-
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     if (!armAtTarget && armCommandedToTarget && arm.isAtTarget()) {
       armAtTarget = true;
+      timer.start();
     } 
     if (!telescopeAtTarget && telescopeCommandedToTarget && telescope.isAtTarget()) {
       telescopeAtTarget = true;
+    }
+    if (!telescopeAtTarget && telescopeCommandedToTarget && timer.get() > 0.25) {
+      //telescope should be in position immediately when arm reaches positions, but timer is used to make sure
+      if (targetPos == Position.inBot || targetPos == Position.scoreMid) {
+        DriverStation.reportError("Bypassing eject lockout. Telescope Position at " + telescope.getPosition(), false);
+        telescopeAtTarget = true;
+      }
     }
     if (armAtTarget && telescopeAtTarget) {
       ArmMove.lastPos = targetPos;
@@ -317,15 +325,6 @@ public class ArmMove extends CommandBase {
       if (autonomous) {
         return true;
       }
-    }
-
-    //check if telescope position is causing safe to outtake logic to fail
-    if (((targetPos == Position.scoreMid) || (targetPos == Position.scoreHigh)) && armAtTarget) {
-      timer.start();
-      if (!safeToOuttake && timer.get() >= 1) {
-        DriverStation.reportError("Failed to pass outtake safety check. Telescope Position at " + telescope.getPosition(), false);
-      }
-      timer.stop();
     }
 
     if (!autonomous && !armAtTarget && telescopeAtTarget && armCommandedToTarget && arm.isNearTarget()
