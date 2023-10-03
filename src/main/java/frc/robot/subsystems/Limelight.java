@@ -88,6 +88,14 @@ public class Limelight extends SubsystemBase {
       camMode = table.getEntry("camMode");
       pipeline = table.getEntry("pipeline");
       activateCustomAprilTag();
+
+      if (Constants.debug) {
+        tab = Shuffleboard.getTab(name);
+        targetVisible = tab.add("Target Visible", false).withWidget(BuiltInWidgets.kBooleanBox)
+            .withPosition(0, 0).getEntry();
+        distanceToTargetX = tab.add("Target X", 0).withPosition(0, 1).getEntry();
+        distanceToTargetY = tab.add("Target Y", 0).withPosition(0, 2).getEntry();
+      }
     }
   }
 
