@@ -59,8 +59,7 @@ public class ArmMove extends CommandBase {
   }
 
   public static void setArmPresetToLastScorePreset() {
-    presetPos = lastPresetScorePos;
-    safeToOuttake = false;
+    setArmPreset(lastPresetScorePos);
   }
 
   public static Position getArmPreset() {
