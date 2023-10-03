@@ -99,7 +99,7 @@ public class ArmMove extends CommandBase {
     armAtTarget = false;
     telescopeAtTarget = false;
     done = false;
-    timer.restart();
+    timer.reset();
     timePrinted = false;
     inBot = false;
 
@@ -313,17 +313,21 @@ public class ArmMove extends CommandBase {
       } else if (targetPos == Position.inBot) {
         inBot = true;
       }
-    //check if telescope position is causing outtake check to fail
-    if ((targetPos == Position.scoreMid) || (targetPos == Position.scoreHigh)) {
-      if (armAtTarget && !safeToOuttake && timer.get() >= 2) {
-        DriverStation.reportError("Failed to pass outtake safety check. Telescope Position at " + telescope.getPosition(), false);
-      }
-    }
       done = true;
       if (autonomous) {
         return true;
       }
     }
+
+    //check if telescope position is causing safe to outtake logic to fail
+    if (((targetPos == Position.scoreMid) || (targetPos == Position.scoreHigh)) && armAtTarget) {
+      timer.start();
+      if (!safeToOuttake && timer.get() >= 1) {
+        timer.stop();
+        DriverStation.reportError("Failed to pass outtake safety check. Telescope Position at " + telescope.getPosition(), false);
+      }
+    }
+
     if (!autonomous && !armAtTarget && telescopeAtTarget && armCommandedToTarget && arm.isNearTarget()
         && ((targetPos == Position.scoreMid) || (targetPos == Position.scoreHigh))) {
       safeToOuttake = true;
