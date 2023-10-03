@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
+import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Telescope;
 
 public class ArmMove extends CommandBase {
@@ -31,7 +32,6 @@ public class ArmMove extends CommandBase {
   private boolean telescopeAtTarget;
   private boolean done;
   private Timer timer = new Timer();
-  private boolean timePrinted;
   private final ClawIntake clawIntake = new ClawIntake(Claw.getInstance());
 
   public static boolean isInBot() {
@@ -39,6 +39,7 @@ public class ArmMove extends CommandBase {
   }
 
   public static void setArmPreset(Position pos) {
+    LED.getInstance().setPresetAccepted();
 
     // ignore preset spamming so we don't lock-out ejecting after arm is in position
     if (pos != presetPos) {
@@ -99,7 +100,6 @@ public class ArmMove extends CommandBase {
     telescopeAtTarget = false;
     done = false;
     timer.restart();
-    timePrinted = false;
     inBot = false;
 
     if (presetPos == Position.scoreLow) {
