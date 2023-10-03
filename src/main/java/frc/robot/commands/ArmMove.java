@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
@@ -312,7 +313,12 @@ public class ArmMove extends CommandBase {
       } else if (targetPos == Position.inBot) {
         inBot = true;
       }
-      
+    //check if telescope position is causing outtake check to fail
+    if ((targetPos == Position.scoreMid) || (targetPos == Position.scoreHigh)) {
+      if (armAtTarget && !safeToOuttake && timer.get() >= 2) {
+        DriverStation.reportError("Failed to pass outtake safety check. Telescope Position at " + telescope.getPosition(), false);
+      }
+    }
       done = true;
       if (autonomous) {
         return true;
