@@ -323,9 +323,9 @@ public class ArmMove extends CommandBase {
     if (((targetPos == Position.scoreMid) || (targetPos == Position.scoreHigh)) && armAtTarget) {
       timer.start();
       if (!safeToOuttake && timer.get() >= 1) {
-        timer.stop();
         DriverStation.reportError("Failed to pass outtake safety check. Telescope Position at " + telescope.getPosition(), false);
       }
+      timer.stop();
     }
 
     if (!autonomous && !armAtTarget && telescopeAtTarget && armCommandedToTarget && arm.isNearTarget()
