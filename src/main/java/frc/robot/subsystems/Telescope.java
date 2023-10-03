@@ -9,7 +9,6 @@ import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -100,8 +99,6 @@ public class Telescope extends SubsystemBase {
     if (Constants.telescopeEnabled && homed && !Constants.telescopeTuningMode) {
       pidController.setReference(targetPosition, ControlType.kPosition, Constants.Telescope.movePidSlot);
       currentTarget = targetPosition;
-      DataLogManager
-          .log("Telescoping to position " + currentTarget + " from position " + getPosition());
       return true;
     }
     return false;

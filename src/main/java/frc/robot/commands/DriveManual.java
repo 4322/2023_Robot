@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drive;
@@ -295,7 +294,6 @@ public class DriveManual extends CommandBase {
             lockedWheelState = LockedWheel.frontRight;
           }
         }
-        DataLogManager.log("Locked wheel: " + lockedWheelState);
 
         // if robot rotates 90 degrees, reset rotation back to normal
       } else if ((Math.abs(initialSpinoutAngle - driveAngle) >= 90)
@@ -305,7 +303,6 @@ public class DriveManual extends CommandBase {
         spinoutActivationTimer2.stop();
         spinoutActivationTimer.reset();
         spinoutActivationTimer2.reset();
-        DataLogManager.log("Unlocked wheel due to rotation over 90 degrees");
       }
       // use state machine for rotating each wheel in each direction (8 cases)
       // each module rotating CW and CCW

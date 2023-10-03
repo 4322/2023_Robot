@@ -10,7 +10,6 @@ import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -123,8 +122,6 @@ public class Arm extends SubsystemBase {
           && (targetPosition < ArmConstants.maxPosition)) {
         pidController.setReference(targetPosition, ControlType.kPosition);
         currentTarget = targetPosition;
-        DataLogManager
-            .log("Rotating to position " + currentTarget + " from position " + getPosition());
         return true;
       }
     }
@@ -189,10 +186,6 @@ public class Arm extends SubsystemBase {
     // separate tests to avoid dead code warnings
     if (Constants.armEnabled) {
       if (Constants.debug) {
-        if (logTimer.hasElapsed(ArmConstants.logIntervalSeconds)) {
-          DataLogManager.log("Arm position: " + getPosition());
-          logTimer.reset();
-        }
         armPos.setDouble(getPosition());
       }
     }

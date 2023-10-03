@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -184,8 +183,6 @@ public class Robot extends TimedRobot {
     Alliance temp = DriverStation.getAlliance();
     if ((temp == Alliance.Red || temp == Alliance.Blue)) {
       allianceColor = temp;
-    } else {
-      DataLogManager.log("Tried to get alliance color, but was invalid");
     }
   }
 
