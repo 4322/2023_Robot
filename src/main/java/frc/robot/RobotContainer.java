@@ -141,7 +141,9 @@ public class RobotContainer {
   // autos need to be reloaded after each auto test because the commands can't be reused
   private void loadAutos() {
     
+    // Rest autoArrayList and selectedPosition
     autoArrayList.clear();
+    selectedPosition = 0;
 
     autoArrayList.add(new Auto("Do Nothing", new Nothing(), Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9)));
 
