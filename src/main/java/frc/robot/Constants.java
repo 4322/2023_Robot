@@ -273,6 +273,9 @@ public class Constants {
     public static final double stallIntakeCurrent = 16.4;  // controller setpoint, draws 2A from PDH, 15A phase
     public static final double stallOuttakeCurrent = -16.4;
 
+    //when lockout threshold is reached, unlock the outtake
+    public static final double outtakeLockoutThreshold = 0.25;
+
     public static enum ClawMode {
       ejecting, stationary, intaking
     }
