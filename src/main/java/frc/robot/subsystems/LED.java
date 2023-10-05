@@ -63,6 +63,7 @@ public class LED extends SubsystemBase {
   private GamePiece lastGamePiece = GamePiece.cone;
   private Alignment currentAlignment = Alignment.none;
   private Timer presetAckTimer = new Timer();
+  private boolean presetAckActive;
   private static LED ledSubsystem;
 
   public static LED getInstance() {
@@ -93,6 +94,7 @@ public class LED extends SubsystemBase {
     if (presetAckTimer.hasElapsed(Constants.LED.blinkFastSec)) {
       presetAckTimer.stop();
       presetAckTimer.reset();
+      presetAckActive = false;
       leftLED.activateLED();  // return to previous color
       rightLED.activateLED();  // return to previous color
     }
@@ -143,6 +145,9 @@ public class LED extends SubsystemBase {
   public void setPresetAccepted() {
     // flash the LEDs to indicate that a preset arm position has been accepted
     presetAckTimer.restart();
+    presetAckActive = true;
+    leftLED.activateLED();
+    rightLED.activateLED();
   }
 
   private void selectLED() {
@@ -298,7 +303,7 @@ public class LED extends SubsystemBase {
 
     private void activateLED() {
 
-      if (presetAckTimer.get() > 0) {
+      if (presetAckActive) {
         // flash white
         redPort.set(true);
         greenPort.set(true);
