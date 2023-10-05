@@ -27,6 +27,7 @@ import frc.robot.subsystems.Telescope;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.*;
 import frc.utility.Auto;
+import frc.utility.OrangeSendableChooser;
 
 public class RobotContainer {
   private Timer disableTimer = new Timer();
@@ -48,7 +49,7 @@ public class RobotContainer {
   private ShuffleboardTab tab;
   private ArrayList<Auto> autoArrayList = new ArrayList<Auto>();
   private SendableChooser<Integer> positionChooser = new SendableChooser<Integer>();
-  private SendableChooser<Command> autoChooser = new SendableChooser<Command>();
+  private OrangeSendableChooser<Command> autoChooser = new OrangeSendableChooser<Command>();
 
   private final Arm arm = new Arm();
   private final Telescope telescope = new Telescope();
@@ -380,7 +381,7 @@ public class RobotContainer {
     if (positionChooser.getSelected() != null) {
       if (positionChooser.getSelected() != selectedPosition) {
         selectedPosition = positionChooser.getSelected();
-        autoChooser = new SendableChooser<Command>(); 
+        autoChooser.removeAllOptions();
         for (Auto auto : autoArrayList) {
           if (auto.positions.contains(selectedPosition)) {
             autoChooser.addOption(auto.name, auto.command);
