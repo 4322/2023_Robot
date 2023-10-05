@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -91,7 +90,6 @@ public class AutoBalance extends CommandBase {
             drive.stop();
             debounceTimer.restart();
             currentMode = autoBalanceMode.dropping;
-            DataLogManager.log("maxAbsPitch: " + maxAbsPitch + ", dropAbsPitch: " + absPitch);
             if (Constants.debug) {
               DriverStation.reportWarning("maxAbsPitch: " + maxAbsPitch + ", dropAbsPitch: " + absPitch, false);
             }
@@ -148,7 +146,6 @@ public class AutoBalance extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    DataLogManager.log("Auto Balance Time: " + abortTimer.get());
     if (Constants.debug) {
       DriverStation.reportWarning("Auto Balance Time: " + abortTimer.get(), false);
     }

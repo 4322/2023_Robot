@@ -22,7 +22,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.NavX.AHRS;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -167,7 +166,6 @@ public class Drive extends SubsystemBase {
 
   public static DriveMode getDriveMode() {
     if (Constants.driveEnabled) {
-      DataLogManager.log("DriveMode is " + driveMode);
       return driveMode;
     } else {
       return null;

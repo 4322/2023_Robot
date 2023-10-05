@@ -8,7 +8,6 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -59,26 +58,10 @@ public class Claw extends SubsystemBase {
       clawMotor.burnFlash();
     }
   }
-  public static final double kP = 0.000812;
-  public static final double kF = 0.00451;
-  public static final double kMaxOutput = 0.2;
-  public static final double kMinOutput = -0.2;
-  public static final double stallIntakeCurrent = 16.4;  // controller setpoint, draws 2A from PDH, 15A phase
-  public static final double stallOuttakeCurrent = -16.4;
-
 
   public boolean changeState(ClawMode mode) {
     if (Constants.clawEnabled) {
       clawMode = mode;
-      if (clawMode == ClawMode.intaking) {
-        DataLogManager.log("Claw intaking");
-      }
-      if (clawMode == ClawMode.outtaking) {
-        DataLogManager.log("Claw outtaking");
-      }
-      if (clawMode == ClawMode.stopped) {
-        DataLogManager.log("Claw stopped");
-      }
       return true;
     } else {
       return false;

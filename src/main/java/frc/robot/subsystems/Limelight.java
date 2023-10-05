@@ -6,7 +6,6 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -90,7 +89,7 @@ public class Limelight extends SubsystemBase {
       pipeline = table.getEntry("pipeline");
       activateCustomAprilTag();
 
-      if (Constants.debug && !isTestSubsystem) {
+      if (Constants.debug) {
         tab = Shuffleboard.getTab(name);
         targetVisible = tab.add("Target Visible", false).withWidget(BuiltInWidgets.kBooleanBox)
             .withPosition(0, 0).getEntry();
@@ -209,10 +208,6 @@ public class Limelight extends SubsystemBase {
     }
     if (backward) {
       toReturn = toReturn.rotateBy(Rotation2d.fromDegrees(180));
-    }
-    if (isTestSubsystem) {
-      DataLogManager
-          .log("Calculated Position: x = " + toReturn.getX() + ". y = " + toReturn.getY());
     }
     return toReturn;
   }

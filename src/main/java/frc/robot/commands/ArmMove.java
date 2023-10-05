@@ -1,11 +1,12 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
+import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Telescope;
 
 public class ArmMove extends CommandBase {
@@ -31,8 +32,9 @@ public class ArmMove extends CommandBase {
   private boolean armAtTarget;
   private boolean telescopeAtTarget;
   private boolean done;
-  private Timer timer = new Timer();
   private boolean timePrinted;
+  //checks how long outtake has been locked for after arm has reached preset position
+  private Timer outtakeLockoutTimer = new Timer();
   private final ClawIntake clawIntake = new ClawIntake(Claw.getInstance());
 
   public static boolean isInBot() {
@@ -40,6 +42,7 @@ public class ArmMove extends CommandBase {
   }
 
   public static void setArmPreset(Position pos) {
+    LED.getInstance().setPresetAccepted();
 
     // ignore preset spamming so we don't lock-out ejecting after arm is in position
     if (pos != presetPos) {
@@ -59,8 +62,7 @@ public class ArmMove extends CommandBase {
   }
 
   public static void setArmPresetToLastScorePreset() {
-    presetPos = lastPresetScorePos;
-    safeToOuttake = false;
+    setArmPreset(lastPresetScorePos);
   }
 
   public static Position getArmPreset() {
@@ -99,7 +101,8 @@ public class ArmMove extends CommandBase {
     armAtTarget = false;
     telescopeAtTarget = false;
     done = false;
-    timer.restart();
+    outtakeLockoutTimer.stop();
+    outtakeLockoutTimer.reset();
     timePrinted = false;
     inBot = false;
 
@@ -296,15 +299,22 @@ public class ArmMove extends CommandBase {
       ArmMove.lastPos = Position.unknown;
     }
   }
-
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     if (!armAtTarget && armCommandedToTarget && arm.isAtTarget()) {
       armAtTarget = true;
+      outtakeLockoutTimer.start();
     } 
     if (!telescopeAtTarget && telescopeCommandedToTarget && telescope.isAtTarget()) {
       telescopeAtTarget = true;
+    }
+    if (!telescopeAtTarget && telescopeCommandedToTarget && outtakeLockoutTimer.get() > Constants.ClawConstants.outtakeLockoutThreshold) {
+      //telescope should be in position immediately when arm reaches positions, but timer is used to make sure
+      if (targetPos == Position.inBot || targetPos == Position.scoreMid) {
+        DriverStation.reportError("Bypassing eject lockout. Telescope Position at " + telescope.getPosition(), false);
+        telescopeAtTarget = true;
+      }
     }
     if (armAtTarget && telescopeAtTarget) {
       ArmMove.lastPos = targetPos;
@@ -313,15 +323,12 @@ public class ArmMove extends CommandBase {
       } else if (targetPos == Position.inBot) {
         inBot = true;
       }
-      
       done = true;
       if (autonomous) {
         return true;
-      } else if (!timePrinted) {
-        DataLogManager.log("Arm move time: " + timer.get());
-        timePrinted = true;
       }
     }
+
     if (!autonomous && !armAtTarget && telescopeAtTarget && armCommandedToTarget && arm.isNearTarget()
         && ((targetPos == Position.scoreMid) || (targetPos == Position.scoreHigh))) {
       safeToOuttake = true;
