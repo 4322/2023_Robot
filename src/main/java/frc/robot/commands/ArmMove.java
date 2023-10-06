@@ -114,6 +114,7 @@ public class ArmMove extends CommandBase {
     if ((targetPos == Position.loadFloor || targetPos == Position.loadSingle) 
         && !autonomous) {
       clawIntake.schedule();
+      Claw.getInstance().resetStalledIn();  // don't immediately end command if intake is already stalled
     }
 
     moveToTargets(true);

@@ -110,7 +110,7 @@ public class Claw extends SubsystemBase {
     return stalledIn;
   }
 
-  private void resetStalledIn() {
+  public void resetStalledIn() {
     stalledIn = false;
     stallInTimer.reset();
     stallInTimer.stop();
