@@ -32,7 +32,6 @@ public class ArmMove extends CommandBase {
   private boolean armAtTarget;
   private boolean telescopeAtTarget;
   private boolean done;
-  private boolean timePrinted;
   //checks how long outtake has been locked for after arm has reached preset position
   private Timer outtakeLockoutTimer = new Timer();
   private final ClawIntake clawIntake = new ClawIntake(Claw.getInstance());
@@ -103,7 +102,6 @@ public class ArmMove extends CommandBase {
     done = false;
     outtakeLockoutTimer.stop();
     outtakeLockoutTimer.reset();
-    timePrinted = false;
     inBot = false;
 
     if (presetPos == Position.scoreLow) {
@@ -116,6 +114,7 @@ public class ArmMove extends CommandBase {
     if ((targetPos == Position.loadFloor || targetPos == Position.loadSingle) 
         && !autonomous) {
       clawIntake.schedule();
+      Claw.getInstance().resetStalledIn();  // don't immediately end command if intake is already stalled
     }
 
     moveToTargets(true);

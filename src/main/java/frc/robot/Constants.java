@@ -263,7 +263,7 @@ public class Constants {
     public static final double intakePower = 0.4; // don't exceed 0.6 if you don't want to smoke the motor!
     public static final double outtakePower = -1; // capapult!
 
-    public static final double stallTime = 0.4;
+    public static final double stallTime = 0.7;
     public static final double stallRPMLimit = 1000;
 
     public static final double kP = 0.000812;

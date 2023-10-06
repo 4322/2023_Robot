@@ -62,6 +62,8 @@ public class Claw extends SubsystemBase {
   public boolean changeState(ClawMode mode) {
     if (Constants.clawEnabled) {
       clawMode = mode;
+      resetStalledIn();
+      resetStalledOut();
       return true;
     } else {
       return false;
@@ -108,7 +110,7 @@ public class Claw extends SubsystemBase {
     return stalledIn;
   }
 
-  private void resetStalledIn() {
+  public void resetStalledIn() {
     stalledIn = false;
     stallInTimer.reset();
     stallInTimer.stop();
