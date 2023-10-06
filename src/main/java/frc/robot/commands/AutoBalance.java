@@ -154,7 +154,7 @@ public class AutoBalance extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    if(autonomous && (DriverStation.getMatchTime() <= 0.1))
+    if(autonomous && (DriverStation.getMatchTime() > 0.0) && (DriverStation.getMatchTime() <= 0.1))
     {
       return true;
     }
