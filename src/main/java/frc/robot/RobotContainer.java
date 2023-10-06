@@ -163,6 +163,12 @@ public class RobotContainer {
     ));
 
     autoArrayList.add(new Auto(
+      "Mobility",
+      ppManager.loadAuto("ScoreMobilityOnly8", false),
+      Arrays.asList(8)
+    ));
+
+    autoArrayList.add(new Auto(
       "Score + Pickup",
       ppManager.loadAuto("ScorePickup1", false),
       Arrays.asList(1)
