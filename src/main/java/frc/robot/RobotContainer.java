@@ -208,7 +208,7 @@ public class RobotContainer {
     autoArrayList.add(new Auto(
       "Engage",
       new SequentialCommandGroup(
-          ppManager.loadAuto("ScoreMobilityCharge8", false),
+          //ppManager.loadAuto("ScoreMobilityCharge8", false),
           new AutoBalance(drive, false, true),
           new AutoDriveRotateWheels(drive, 0.25)
       ),
