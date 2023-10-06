@@ -172,12 +172,6 @@ public class Constants {
       public static final double slowAutoRotateFtPerSec = 3;
       public static final double maxAutoRotatePower = 0.5;
       public static final double rotateToleranceDegrees = 0.5;
-
-      public static final double autoDriveYkP = 0;
-      public static final double autoDriveYkD = 0;
-      public static final double minAutoDriveYSpeed = 0.05;
-      public static final double maxAutoDriveYSpeed = 0.5;
-
     }
 
     public static final class Tip {
@@ -242,13 +236,13 @@ public class Constants {
     public static final class Trajectory {
 
       public static final class PIDXY {
-        public static final double kP = 0.12;
+        public static final double kP = 0.1;
         public static final double kI = 0;
         public static final double kD = 0;
       }
 
       public static final class PIDR {
-        public static final double kP = 2.4;
+        public static final double kP = 2.0;
         public static final double kI = 0;
         public static final double kD = 0.01;
       }
