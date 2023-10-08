@@ -413,7 +413,7 @@ public class RobotContainer {
         new ArmMove(arm, telescope, ArmMove.Position.scoreHigh, true), 
         new ClawIntake(claw)
       ),
-      new TimedClawOuttake(claw, 0.5),
+      new TimedClawOuttake(claw, DriveConstants.clawTimedOuttake),
       new ArmMove(arm, telescope, ArmMove.Position.inBot, true)
       );
   }

@@ -120,6 +120,7 @@ public class Constants {
     public static final double chargeStationBalancedMaxDeg = 2.0;
     public static final double autoBalanceFlatTimeoutSec = 2.5;
     public static final double autoBalanceTimeoutSec = 15.0;
+    public static final double clawTimedOuttake = 0.9;
 
     public static final double autoDriveOverChargeFlatMaxDeg = 3.0;
     public static final double autoDriveOverChargeFlatSec = 0.5;
