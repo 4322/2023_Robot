@@ -21,6 +21,7 @@ public class LED extends SubsystemBase {
     moveRightShort,  // blinking red or blue
     moveLeft,  // solid red (toward drivers) or blue (away from drivers)
     moveLeftShort, // blinking red or blue
+    autoAdjusting, // red
     aligned  // green
   }
 
@@ -199,6 +200,9 @@ public class LED extends SubsystemBase {
           case moveLeftShort:
             leftLED.setLED(LEDColor.cyan, BlinkType.fast);
             break;
+          case autoAdjusting:
+            leftLED.setLED(LEDColor.red, BlinkType.none);
+            break;
           case aligned:
             leftLED.setLED(LEDColor.green, BlinkType.none);
             break;
@@ -220,6 +224,9 @@ public class LED extends SubsystemBase {
             break;
           case moveLeftShort:
             rightLED.setLED(LEDColor.white, BlinkType.fast);
+            break;
+          case autoAdjusting:
+            leftLED.setLED(LEDColor.red, BlinkType.none);
             break;
           case aligned:
             rightLED.setLED(LEDColor.green, BlinkType.none);
