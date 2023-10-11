@@ -88,7 +88,7 @@ public class DriveManual extends CommandBase {
             scoreAutoPoseActive = true;
             LED.getInstance().setAlignment(LED.Alignment.grid);
             break;
-          case loadSingle:
+          case loadSingleRetract:
             switch (Robot.getAllianceColor()) {
               case Blue:
                 targetHeadingDeg = 90.0;

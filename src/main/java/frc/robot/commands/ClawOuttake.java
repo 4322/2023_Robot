@@ -22,7 +22,7 @@ public class ClawOuttake extends CommandBase {
     if (!outtakeStarted && ArmMove.isSafeToOuttake()) {
       claw.changeState(Claw.ClawMode.outtaking);
       outtakeStarted = true;
-      ArmMove.setArmPreset(ArmMove.Position.loadSingle);
+      ArmMove.setArmPreset(ArmMove.Position.loadSingleRetract);
     }
   }
 

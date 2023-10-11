@@ -13,10 +13,10 @@ public class ArmMove extends CommandBase {
 
   // Use of loadSingle and loadBounce are mutually exclusive
   public enum Position {
-    unknown, inBot, loadSingle, loadDouble, loadFloor, loadBounce, scoreLow, scoreMid, scoreHigh, usePreset
+    unknown, inBot, loadSingleRetract, loadSingleExtend, loadFloor, scoreLow, scoreMid, scoreHigh, usePreset
   }
 
-  private static Position presetPos = Position.loadSingle;
+  private static Position presetPos = Position.loadSingleRetract;
   private static Position lastPresetScorePos = Position.scoreHigh;
   private static Position lastPos = Position.unknown;
   private static boolean safeToOuttake = false;
@@ -75,7 +75,7 @@ public class ArmMove extends CommandBase {
   public static boolean isNotReAlignPreset() {
     return ArmMove.presetPos != Position.scoreMid 
         && ArmMove.presetPos != Position.scoreHigh
-        && ArmMove.presetPos != Position.loadSingle;
+        && ArmMove.presetPos != Position.loadSingleRetract;
   }
 
   public ArmMove(Arm arm, Telescope telescope, Position invokePos, boolean autonomous) {
@@ -111,7 +111,7 @@ public class ArmMove extends CommandBase {
     }
 
     // start intake if needed
-    if ((targetPos == Position.loadFloor || targetPos == Position.loadSingle) 
+    if ((targetPos == Position.loadFloor || targetPos == Position.loadSingleRetract) 
         && !autonomous) {
       clawIntake.schedule();
       Claw.getInstance().resetStalledIn();  // don't immediately end command if intake is already stalled
@@ -148,7 +148,7 @@ public class ArmMove extends CommandBase {
           telescope.moveToPosition(Constants.Telescope.inHopperPosition);
           telescopeCommandedToTarget = true;
           break;
-        case loadSingle:
+        case loadSingleRetract:
           if (armAtTarget) {
             telescope.moveToPosition(Constants.Telescope.loadSinglePosition);
             telescopeCommandedToTarget = true;  
@@ -171,7 +171,7 @@ public class ArmMove extends CommandBase {
         case scoreHigh:
           switch (ArmMove.lastPos) {
             case inBot:
-            case loadSingle:
+            case loadSingleRetract:
             case loadDouble:
             case loadFloor:
             case loadBounce:
@@ -192,7 +192,7 @@ public class ArmMove extends CommandBase {
         case loadFloor:
           switch (ArmMove.lastPos) {
             case inBot:
-            case loadSingle:
+            case loadSingleRetract:
             case loadBounce:
             case scoreLow:
             // exclude scoreHigh case from this optimization due to the risk of
@@ -231,7 +231,7 @@ public class ArmMove extends CommandBase {
             armCommandedToTarget = true;
           }
           break;
-        case loadSingle:
+        case loadSingleRetract:
           if (telescopePosition <= Constants.Telescope.safeArmRetractPosition) {
             arm.rotateToPosition(Constants.ArmConstants.loadSinglePosition);
             armCommandedToTarget = true;
@@ -334,7 +334,7 @@ public class ArmMove extends CommandBase {
     }
 
     // end command when a game piece has been intaken
-    if ((targetPos == Position.loadFloor || targetPos == Position.loadSingle)
+    if ((targetPos == Position.loadFloor || targetPos == Position.loadSingleRetract)
         && Claw.getInstance().isIntakeStalled()) {
       return true;
     }
