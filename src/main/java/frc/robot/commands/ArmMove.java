@@ -289,11 +289,8 @@ public class ArmMove extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     // let command end in autonomous mode so we can score, but hold position
-    if (!autonomous) {
-      arm.stop();
-      telescope.stop();
-      // leave claw running so it can go into stall mode
-    }
+    // don't stop arm and telescope so that they maintain position until next command starts
+
     if (!done) {
       ArmMove.lastPos = Position.unknown;
     }
