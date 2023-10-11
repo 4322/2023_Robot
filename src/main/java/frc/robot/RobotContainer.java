@@ -43,6 +43,7 @@ public class RobotContainer {
   private JoystickButton driveButtonEleven;
   private JoystickButton driveButtonTwelve;
   private JoystickButton driveButtonThree;
+  private JoystickButton rotateButtonSix;
 
   private JoystickButton rotateTrigger;
 
@@ -297,6 +298,7 @@ public class RobotContainer {
       driveButtonTwelve = new JoystickButton(driveStick, 12);
       rotateTrigger = new JoystickButton(rotateStick, 1);
       driveButtonThree = new JoystickButton(driveStick, 3);
+      rotateButtonSix = new JoystickButton(rotateStick, 6);
 
       driveTrigger.whileTrue(clawOuttake);
       driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
