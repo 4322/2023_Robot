@@ -323,7 +323,7 @@ public class RobotContainer {
       xbox.b().onTrue(new SetArmPreset(drive, ArmMove.Position.scoreMid));
       xbox.a().onTrue(new SetArmPreset(drive, ArmMove.Position.scoreLow));
       xbox.povDown().onTrue(new SetArmPreset(drive, ArmMove.Position.loadFloor));
-      xbox.povUp().onTrue(new SetArmPreset(drive, ArmMove.Position.loadSingle));
+      xbox.povUp().onTrue(new SetArmPreset(drive, ArmMove.Position.loadSingleRetract));
       xbox.povLeft().onTrue(clawStop);
     }
   }
