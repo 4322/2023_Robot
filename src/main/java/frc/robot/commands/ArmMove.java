@@ -144,8 +144,7 @@ public class ArmMove extends CommandBase {
     if (!telescopeCommandedToTarget) {
       switch (targetPos) {
         case inBot:
-        case loadBounce:
-          telescope.moveToPosition(Constants.Telescope.inHopperPosition);
+          telescope.moveToPosition(Constants.Telescope.inBotPosition);
           telescopeCommandedToTarget = true;
           break;
         case loadSingleRetract:
@@ -164,17 +163,11 @@ public class ArmMove extends CommandBase {
           telescope.moveToPosition(Constants.Telescope.midScoringPosition);
           telescopeCommandedToTarget = true;
           break;
-        case loadDouble:
-          telescope.moveToPosition(Constants.Telescope.loadDoublePosition);
-          telescopeCommandedToTarget = true;
-          break;
         case scoreHigh:
           switch (ArmMove.lastPos) {
             case inBot:
             case loadSingleRetract:
-            case loadDouble:
             case loadFloor:
-            case loadBounce:
             case scoreLow:
               if (armPosition >= Constants.ArmConstants.earlyTelescopeExtendPosition) {
                 telescope.moveToPosition(Constants.Telescope.highScoringPosition);
@@ -193,7 +186,6 @@ public class ArmMove extends CommandBase {
           switch (ArmMove.lastPos) {
             case inBot:
             case loadSingleRetract:
-            case loadBounce:
             case scoreLow:
             // exclude scoreHigh case from this optimization due to the risk of
             // impacting the floor while the telescope is extended too far
@@ -217,7 +209,7 @@ public class ArmMove extends CommandBase {
       if (init && !telescopeCommandedToTarget) {
         // Positively hold telescope in so it doesn't fling out as the arm moves.
         // Needed because the telescope is stopped when the previous command is interrupted.
-        telescope.moveToPosition(Constants.Telescope.inHopperPosition);            
+        telescope.moveToPosition(Constants.Telescope.inBotPosition);            
       }
     }
 
@@ -237,12 +229,6 @@ public class ArmMove extends CommandBase {
             armCommandedToTarget = true;
           }
           break;
-        case loadBounce:
-          if (telescopePosition <= Constants.Telescope.safeArmRetractPosition) {
-            arm.rotateToPosition(Constants.ArmConstants.loadBouncePosition);
-            armCommandedToTarget = true;
-          }
-          break;
         case scoreLow:
           if (telescopePosition <= Constants.Telescope.safeArmRetractPosition) {
             arm.rotateToPosition(Constants.ArmConstants.lowScoringPosition);
@@ -254,14 +240,6 @@ public class ArmMove extends CommandBase {
               || ((lastPos == Position.scoreHigh) 
                   && (telescopePosition <= Constants.Telescope.clearHighPolePosition))) {
               arm.rotateToPosition(Constants.ArmConstants.midScoringPosition);
-              armCommandedToTarget = true;
-          }
-          break;
-        case loadDouble:
-          if ((telescopePosition <= Constants.Telescope.safeArmRetractPosition) 
-              || ((lastPos == Position.scoreHigh) 
-                  && (telescopePosition <= Constants.Telescope.clearHighPolePosition))) {
-              arm.rotateToPosition(Constants.ArmConstants.loadDoublePosition);
               armCommandedToTarget = true;
           }
           break;
