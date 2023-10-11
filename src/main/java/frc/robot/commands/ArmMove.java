@@ -224,13 +224,13 @@ public class ArmMove extends CommandBase {
             armCommandedToTarget = true;
           }
           break;
+        case loadSingleExtend:
         case loadSingleRetract:
           if (telescopePosition <= Constants.Telescope.safeArmRetractPosition) {
             arm.rotateToPosition(Constants.ArmConstants.loadSinglePosition);
             armCommandedToTarget = true;
           }
           break;
-        case loadSingleExtend:
         case scoreLow:
           if (telescopePosition <= Constants.Telescope.safeArmRetractPosition) {
             arm.rotateToPosition(Constants.ArmConstants.lowScoringPosition);
