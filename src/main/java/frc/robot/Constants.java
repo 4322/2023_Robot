@@ -326,7 +326,7 @@ public class Constants {
     public static final double maxPosition = 13.0;
     public static final double minPosition = 0;
 
-    public static final double inHopperPosition = 0;
+    public static final double inBotPosition = 0;
     public static final double loadSinglePosition = 1.5;
     public static final double loadFloorPosition = 6.57; // 8.07 for further out
     public static final double loadDoublePosition = 5.6; 
