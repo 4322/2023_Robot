@@ -144,10 +144,11 @@ public class ArmMove extends CommandBase {
     if (!telescopeCommandedToTarget) {
       switch (targetPos) {
         case inBot:
+        case loadSingleRetract:
           telescope.moveToPosition(Constants.Telescope.inBotPosition);
           telescopeCommandedToTarget = true;
           break;
-        case loadSingleRetract:
+        case loadSingleExtend:
           if (armAtTarget) {
             telescope.moveToPosition(Constants.Telescope.loadSinglePosition);
             telescopeCommandedToTarget = true;  
