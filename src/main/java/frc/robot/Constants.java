@@ -268,9 +268,6 @@ public class Constants {
     public static final double stallIntakeCurrent = 16.4;  // controller setpoint, draws 2A from PDH, 15A phase
     public static final double stallOuttakeCurrent = -16.4;
 
-    //when lockout threshold is reached, unlock the outtake
-    public static final double outtakeLockoutThreshold = 0.25;
-
     public static enum ClawMode {
       ejecting, stationary, intaking
     }
@@ -341,8 +338,9 @@ public class Constants {
     public static final double notMovingSec = 0.1;
     public static final double notMovingRevs = 0.1;
     public static final double homingTimeoutSec = 3;
-    public static final double positionTolerance = 0.12;
-    public static final double atTargetTolerance = 0.2;
+    public static final double positionTolerance = 0.135;
+    public static final double atTargetTolerance = 0.27;  // occasionally off by 0.238 due to backlash
+    public static final double atTargetTimeoutSec = 2.0;
 
     public static final int movePidSlot = 0;
 
