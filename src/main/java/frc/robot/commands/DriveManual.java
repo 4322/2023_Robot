@@ -2,6 +2,8 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Telescope;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.LED;
 import frc.utility.OrangeMath;
@@ -9,6 +11,7 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriveConstants.Manual;
+import frc.robot.commands.ArmMove.Position;
 import frc.robot.RobotContainer;
 
 public class DriveManual extends CommandBase {
@@ -29,6 +32,9 @@ public class DriveManual extends CommandBase {
   private Timer spinoutActivationTimer2 = new Timer();
   private LockedWheel lockedWheelState;
   private double initialSpinoutAngle = 0;
+  private boolean armAtLoadSingle = false;
+  private Arm arm = new Arm();
+  private Telescope telescope = new Telescope();
 
   public enum AutoPose {
     none, usePreset
@@ -204,6 +210,14 @@ public class DriveManual extends CommandBase {
         if (targetHeadingDeg != null) {
           drive.driveAutoRotate(driveX, driveY, targetHeadingDeg,
               Constants.DriveConstants.Auto.rotateToleranceDegrees);
+          if (loadAutoPoseActive && !armAtLoadSingle) {
+            if (driveAngle >= targetHeadingDeg - Constants.DriveConstants.Auto.rotateToleranceDegrees && 
+            driveAngle <= targetHeadingDeg + Constants.DriveConstants.Auto.rotateToleranceDegrees) {
+              new ArmMove(arm, telescope, ArmMove.Position.loadSingleRetract, false);
+              armAtLoadSingle = true;
+            }
+          }
+          
           return;
         } else {
           targetHeadingDeg = drive.getAngle();
