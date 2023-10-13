@@ -338,7 +338,7 @@ public class Constants {
     public static final double notMovingSec = 0.1;
     public static final double notMovingRevs = 0.1;
     public static final double homingTimeoutSec = 3;
-    public static final double positionTolerance = 0.135;
+    public static final double positionTolerance = 0.12;
     public static final double atTargetTolerance = 0.27;  // occasionally off by 0.238 due to backlash
     public static final double atTargetTimeoutSec = 2.0;
 
