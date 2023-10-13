@@ -11,7 +11,6 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriveConstants.Manual;
-import frc.robot.commands.ArmMove.Position;
 import frc.robot.RobotContainer;
 
 public class DriveManual extends CommandBase {
@@ -24,6 +23,7 @@ public class DriveManual extends CommandBase {
 
   private static boolean scoreAutoPoseActive;
   private static boolean loadAutoPoseActive;
+  private static boolean loadAutoAlignPending;
   private final Drive drive;
   private final AutoPose autoPose;
   private Double targetHeadingDeg;
@@ -37,7 +37,7 @@ public class DriveManual extends CommandBase {
   private Telescope telescope = new Telescope();
 
   public enum AutoPose {
-    none, usePreset
+    none, usePreset, loadSingleManual
   }
   
   public enum LockedWheel {
@@ -50,6 +50,10 @@ public class DriveManual extends CommandBase {
 
   public static boolean isLoadAutoPoseActive() {
     return loadAutoPoseActive;
+  }
+
+  public static boolean isLoadAutoAlignPending() {
+    return loadAutoAlignPending;
   }
 
   public DriveManual(Drive drivesubsystem, AutoPose autoPose) {
@@ -74,12 +78,17 @@ public class DriveManual extends CommandBase {
     drive.resetRotatePID();
     scoreAutoPoseActive = false;
     loadAutoPoseActive = false;
+    loadAutoAlignPending = false;
 
     // set auto-rotate direction, if any
     switch (autoPose) {
       case none:
         targetHeadingDeg = null;
         LED.getInstance().setAlignment(LED.Alignment.none);
+        break;
+      case loadSingleManual:
+        ArmMove.setArmPreset(ArmMove.Position.loadSingleExtend);
+        initSubstationAlignment();
         break;
       case usePreset:
         switch (ArmMove.getArmPreset()) {
@@ -95,23 +104,9 @@ public class DriveManual extends CommandBase {
             LED.getInstance().setAlignment(LED.Alignment.grid);
             break;
           case loadSingleExtend:
-            switch (Robot.getAllianceColor()) {
-              case Blue:
-                targetHeadingDeg = 90.0;
-                loadAutoPoseActive = true;
-                LED.getInstance().setAlignment(LED.Alignment.substation);
-                break;
-              case Red:
-                targetHeadingDeg = -90.0;
-                loadAutoPoseActive = true;
-                LED.getInstance().setAlignment(LED.Alignment.substation);
-                break;
-              default:
-                // unknown direction to single substation
-                targetHeadingDeg = null;
-                done = true;
-                LED.getInstance().setAlignment(LED.Alignment.none);
-                break;
+            initSubstationAlignment();
+            if (targetHeadingDeg != null) {
+              loadAutoAlignPending = true;
             }
             break;
           default:
@@ -125,6 +120,26 @@ public class DriveManual extends CommandBase {
     }
   }
   
+  private void initSubstationAlignment() {
+    switch (Robot.getAllianceColor()) {
+      case Blue:
+        targetHeadingDeg = 90.0;
+        loadAutoPoseActive = true;
+        LED.getInstance().setAlignment(LED.Alignment.substation);
+        break;
+      case Red:
+        targetHeadingDeg = -90.0;
+        loadAutoPoseActive = true;
+        LED.getInstance().setAlignment(LED.Alignment.substation);
+        break;
+      default:
+        // unknown direction to single substation
+        targetHeadingDeg = null;
+        done = true;
+        LED.getInstance().setAlignment(LED.Alignment.none);
+        break;
+    }
+  }
 
   @Override
   public void execute() {

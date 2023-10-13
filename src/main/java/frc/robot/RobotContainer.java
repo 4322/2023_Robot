@@ -286,6 +286,7 @@ public class RobotContainer {
 
   private void configureButtonBindings() {  
     BooleanSupplier isNotReAlignPreset = () -> ArmMove.isNotReAlignPreset();
+    BooleanSupplier isLoadAutoPoseActive = () -> DriveManual.isLoadAutoPoseActive();
 
     if (Constants.joysticksEnabled) {
       driveStick = new Joystick(0);
@@ -308,10 +309,11 @@ public class RobotContainer {
 
       // Re-establish alignment to grid when deploying the arm
       rotateTrigger.whileTrue(new DriveManual(drive, DriveManual.AutoPose.usePreset)
-          .unless(isNotReAlignPreset));
+          .unless(isNotReAlignPreset).unless(isLoadAutoPoseActive));
       rotateTrigger.whileTrue(new ArmMove(arm, telescope, ArmMove.Position.usePreset, false));
 
       driveButtonThree.onTrue(new DriveManual(drive, DriveManual.AutoPose.usePreset));
+      rotateButtonSix.onTrue(new DriveManual(drive, DriveManual.AutoPose.loadSingleManual));
     }
 
     if (Constants.xboxEnabled) {
