@@ -16,7 +16,7 @@ public class ArmMove extends CommandBase {
     unknown, inBot, loadSingleRetract, loadSingleExtend, loadFloor, scoreLow, scoreMid, scoreHigh, usePreset
   }
 
-  private static Position presetPos = Position.loadSingleRetract;
+  private static Position presetPos = Position.loadSingleExtend;
   private static Position lastPresetScorePos = Position.scoreHigh;
   private static Position lastPos = Position.unknown;
   private static boolean safeToOuttake = false;
@@ -75,7 +75,7 @@ public class ArmMove extends CommandBase {
   public static boolean isNotReAlignPreset() {
     return ArmMove.presetPos != Position.scoreMid 
         && ArmMove.presetPos != Position.scoreHigh
-        && ArmMove.presetPos != Position.loadSingleRetract;
+        && ArmMove.presetPos != Position.loadSingleExtend;
   }
 
   public ArmMove(Arm arm, Telescope telescope, Position invokePos, boolean autonomous) {
@@ -111,7 +111,7 @@ public class ArmMove extends CommandBase {
     }
 
     // start intake if needed
-    if ((targetPos == Position.loadFloor || targetPos == Position.loadSingleRetract) 
+    if ((targetPos == Position.loadFloor || targetPos == Position.loadSingleExtend) 
         && !autonomous) {
       clawIntake.schedule();
       Claw.getInstance().resetStalledIn();  // don't immediately end command if intake is already stalled

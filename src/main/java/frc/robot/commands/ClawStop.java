@@ -12,7 +12,7 @@ public class ClawStop extends InstantCommand {
   @Override
   public void initialize() {
     Claw.getInstance().changeState(Claw.ClawMode.stopped);
-    ArmMove.setArmPreset(ArmMove.Position.loadSingleRetract);
+    ArmMove.setArmPreset(ArmMove.Position.loadSingleExtend);
   }
 
   // Called once the command ends or is interrupted.

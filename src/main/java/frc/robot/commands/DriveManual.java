@@ -94,7 +94,7 @@ public class DriveManual extends CommandBase {
             scoreAutoPoseActive = true;
             LED.getInstance().setAlignment(LED.Alignment.grid);
             break;
-          case loadSingleRetract:
+          case loadSingleExtend:
             switch (Robot.getAllianceColor()) {
               case Blue:
                 targetHeadingDeg = 90.0;
@@ -212,12 +212,11 @@ public class DriveManual extends CommandBase {
               Constants.DriveConstants.Auto.rotateToleranceDegrees);
           if (loadAutoPoseActive && !armAtLoadSingle) {
             if (driveAngle >= targetHeadingDeg - Constants.DriveConstants.Auto.rotateToleranceDegrees && 
-            driveAngle <= targetHeadingDeg + Constants.DriveConstants.Auto.rotateToleranceDegrees) {
+                driveAngle <= targetHeadingDeg + Constants.DriveConstants.Auto.rotateToleranceDegrees) {
               new ArmMove(arm, telescope, ArmMove.Position.loadSingleRetract, false);
               armAtLoadSingle = true;
             }
           }
-          
           return;
         } else {
           targetHeadingDeg = drive.getAngle();
