@@ -140,7 +140,7 @@ public class Constants {
 
     // Values for AutoAlignSubstation (Needs tuning)
     public static final class AutoAlignSubstationConstants {
-      public static final double driveYSingleSubstationPower = .5;
+      public static final double driveYSingleSubstationPower = 0.2;
       public static final double driveXMax = 1;
       public static final double rotateSingleSubstationTolerance = 2.5;
       
@@ -423,8 +423,8 @@ public class Constants {
         .ofEntries(Map.entry(1, gridAprilTagHeight), Map.entry(2, singleSubstationAprilTagHeight));
 
     // AutoAlignSubstation
-    public static final double singleSubstationIntakeTolerance = 1.9;
-    public static final double autoAlignToleranceInches = 3.0;
-    public static final double tagSeparationInches = 6.3;
+    public static final double substationLateralToleranceMeters = OrangeMath.inchesToMeters(3.0);
+    public static final double substationFrontToleranceMeters = OrangeMath.inchesToMeters(3.0);
+    public static final double tagSeparationMeters = OrangeMath.inchesToMeters(6.3);
   }
 }

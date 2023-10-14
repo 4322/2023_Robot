@@ -73,17 +73,11 @@ public class AutoAlignSubstation extends CommandBase {
     }
   }
 
-  private double horizontalInchesToTag(double degrees, double area, double tagScaleFactor) {
-    degrees += LimelightConstants.substationOffsetDeg;
-    return 0;  // TODO!!!
-  }
-
   @Override
   public void execute() {
     led.setSubstationState(LED.SubstationState.adjusting);
-    double targetArea;
-    double horizontalInchesToTag;
-    Translation2d targetDistance;
+    double offCenterMeters;
+    Translation2d targetDistance;  // target position relative to front center of bot
 
     if (limelight.getTargetVisible()) {
       limelight.refreshOdometry();
@@ -92,59 +86,55 @@ public class AutoAlignSubstation extends CommandBase {
       LimelightHelpers.LimelightTarget_Fiducial nine = limelight.getTag(9);
       LimelightHelpers.LimelightTarget_Fiducial eight = limelight.getTag(8);
       LimelightHelpers.LimelightTarget_Fiducial seven = limelight.getTag(7);
-      targetDistance = limelight.calcTargetPos(Constants.LimelightConstants.singleSubstationAprilTagHeight, limelight.getHorizontalDegToTarget(), limelight.getVerticalDegToTarget());
 
       if (eight != null) {
-        horizontalInchesToTag = targetDistance.getX();
-        targetArea = eight.ta;
+        targetDistance = limelight.calcTargetPos(Constants.LimelightConstants.singleSubstationAprilTagHeight,
+          eight.ty, eight.tx);
+        offCenterMeters = 0;
       } else if (nine != null) {
-        horizontalInchesToTag = targetDistance.getX() +
-          Constants.LimelightConstants.tagSeparationInches;
-        targetArea = nine.ta * Constants.LimelightConstants.smallTargetScaleFactor;
+        targetDistance = limelight.calcTargetPos(Constants.LimelightConstants.singleSubstationAprilTagHeight,
+          nine.ty, nine.tx);
+        offCenterMeters = Constants.LimelightConstants.tagSeparationMeters;
       } else if (seven != null) {
-        horizontalInchesToTag = targetDistance.getX() -
-          Constants.LimelightConstants.tagSeparationInches;
-        targetArea = seven.ta * Constants.LimelightConstants.smallTargetScaleFactor;
+        targetDistance = limelight.calcTargetPos(Constants.LimelightConstants.singleSubstationAprilTagHeight,
+          seven.ty, seven.tx);
+        offCenterMeters = Constants.LimelightConstants.tagSeparationMeters;
       } else {
         // Continue driving until see a tag again
         drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
         return;
       }
+      offCenterMeters += targetDistance.getY();
 
-      driveX = autoAlignPID.calculate(horizontalInchesToTag, 0);
-      if (targetArea >= LimelightConstants.substationMinLargeTargetArea) { // check if at correct april tag
-        // Check if robot is centered and not moving
-        if (Math.abs(horizontalInchesToTag) <= LimelightConstants.autoAlignToleranceInches && !drive.isRobotMoving()) { 
-          // Too far away from substation to intake
-          if (targetArea < LimelightConstants.singleSubstationIntakeTolerance) {
-            if (Robot.getAllianceColor() == Alliance.Blue) {
-              driveY = AutoAlignSubstationConstants.driveYSingleSubstationPower;
-            } else {
-              driveY = -AutoAlignSubstationConstants.driveYSingleSubstationPower;
-            }
-            drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
-            armExtend.schedule();       
+      driveX = autoAlignPID.calculate(offCenterMeters, 0);
+      // Check if robot is centered and not moving
+      if (eight != null && Math.abs(offCenterMeters) <= LimelightConstants.substationLateralToleranceMeters && !drive.isRobotMoving()) { 
+        // Too far away from substation to intake
+        if (targetDistance.getX() > LimelightConstants.substationFrontToleranceMeters) {
+          if (Robot.getAllianceColor() == Alliance.Blue) {
+            driveY = AutoAlignSubstationConstants.driveYSingleSubstationPower;
           } else {
-            // Close enough to the single substation to intake
-            armExtend.schedule();
-            drive.stop();
+            driveY = -AutoAlignSubstationConstants.driveYSingleSubstationPower;
           }
-          if (claw.isIntakeStalling()) {
-            clawStalledTimer.start();
-            if ((clawStalledTimer.hasElapsed(ClawConstants.coneStalledDelay) && led.getGamePiece() == GamePiece.cone) ||
-                (clawStalledTimer.hasElapsed(ClawConstants.cubeStalledDelay) && led.getGamePiece() == GamePiece.cube)) {
-                  clawStalledTimer.stop();
-                  clawStalledTimer.reset();
-                  armRetract.schedule(); // clearance to drive away from substation
-                  done = true;
-            }
-          }
-        } else {
-          // Robot close to substation, but not centered
           drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
+          armExtend.schedule();       
+        } else {
+          // Close enough to the single substation to intake
+          armExtend.schedule();
+          drive.stop();
+        }
+        if (claw.isIntakeStalling()) {
+          clawStalledTimer.start();
+          if ((clawStalledTimer.hasElapsed(ClawConstants.coneStalledDelay) && led.getGamePiece() == GamePiece.cone) ||
+              (clawStalledTimer.hasElapsed(ClawConstants.cubeStalledDelay) && led.getGamePiece() == GamePiece.cube)) {
+                clawStalledTimer.stop();
+                clawStalledTimer.reset();
+                armRetract.schedule(); // clearance to drive away from substation
+                done = true;
+          }
         }
       } else {
-        // Robot is too far away from the substation
+        // Robot not centered
         drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
       }
     } else {
@@ -160,18 +150,11 @@ public class AutoAlignSubstation extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    if (done) {
-      return true;
-    }
-    return false;
+    return done;
   }
 
   @Override
   public boolean runsWhenDisabled() {
-    if (Constants.debug) {
-      return true;
-    } else {
-      return false;
-    }
+    return Constants.debug;
   }
 }

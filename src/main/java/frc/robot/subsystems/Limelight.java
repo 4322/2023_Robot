@@ -52,9 +52,11 @@ public class Limelight extends SubsystemBase {
     if (substationLimelight == null) {
       // Measuring from front of bumpers
       // Limelight name must match limelight tool
-      substationLimelight = new Limelight("limelight-load", OrangeMath.inchesToMeters(42.5 + 3.875),
-      0, OrangeMath.inchesToMeters(-29.75), OrangeMath.inchesToMeters(-3 - 1/4 - 3.875/2), false, 
-      false, Constants.substationLimeLightEnabled);
+      substationLimelight = new Limelight("limelight-load", 
+      Constants.LimelightConstants.substationLimelightHeight,
+      0, OrangeMath.inchesToMeters(-29.75), 
+      OrangeMath.inchesToMeters(-3 - 1/4 - 3.875/2), 
+      false, false, Constants.substationLimeLightEnabled);
     }
     return substationLimelight;
   }
@@ -63,9 +65,10 @@ public class Limelight extends SubsystemBase {
     if (gridLimelight == null) {
       // Measuring from back of bumpers
       // Limelight name must match limelight tool
-      gridLimelight = new Limelight("limelight-grid",  OrangeMath.inchesToMeters(26),
-      0, OrangeMath.inchesToMeters(-5.25), 0, true, 
-      false, Constants.gridLimeLightEnabled);
+      gridLimelight = new Limelight("limelight-grid",  
+      Constants.LimelightConstants.gridLimelightHeight,
+      0, OrangeMath.inchesToMeters(-5.25), 
+      0, true, false, Constants.gridLimeLightEnabled);
     }
     return gridLimelight;
   }
