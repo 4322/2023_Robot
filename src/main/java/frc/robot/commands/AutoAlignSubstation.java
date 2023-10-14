@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -82,6 +83,7 @@ public class AutoAlignSubstation extends CommandBase {
     led.setSubstationState(LED.SubstationState.adjusting);
     double targetArea;
     double horizontalInchesToTag;
+    Translation2d targetDistance;
 
     if (limelight.getTargetVisible()) {
       limelight.refreshOdometry();
@@ -90,18 +92,17 @@ public class AutoAlignSubstation extends CommandBase {
       LimelightHelpers.LimelightTarget_Fiducial nine = limelight.getTag(9);
       LimelightHelpers.LimelightTarget_Fiducial eight = limelight.getTag(8);
       LimelightHelpers.LimelightTarget_Fiducial seven = limelight.getTag(7);
+      targetDistance = limelight.calcTargetPos(Constants.LimelightConstants.singleSubstationAprilTagHeight, limelight.getHorizontalDegToTarget(), limelight.getVerticalDegToTarget());
 
       if (eight != null) {
-        horizontalInchesToTag = horizontalInchesToTag(eight.tx, eight.ta, 1.0);
+        horizontalInchesToTag = targetDistance.getX();
         targetArea = eight.ta;
       } else if (nine != null) {
-        horizontalInchesToTag = horizontalInchesToTag(nine.tx, nine.ta, 
-          Constants.LimelightConstants.smallTargetScaleFactor) +
+        horizontalInchesToTag = targetDistance.getX() +
           Constants.LimelightConstants.tagSeparationInches;
         targetArea = nine.ta * Constants.LimelightConstants.smallTargetScaleFactor;
       } else if (seven != null) {
-        horizontalInchesToTag = horizontalInchesToTag(seven.tx, seven.ta, 
-          Constants.LimelightConstants.smallTargetScaleFactor) -
+        horizontalInchesToTag = targetDistance.getX() -
           Constants.LimelightConstants.tagSeparationInches;
         targetArea = seven.ta * Constants.LimelightConstants.smallTargetScaleFactor;
       } else {
