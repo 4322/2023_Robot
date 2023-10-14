@@ -26,8 +26,8 @@ public class AutoAlignSubstation extends CommandBase {
   private final LED led;
   private final Drive drive;
   private final Claw claw;
-  private final Arm arm = new Arm();
-  private final Telescope telescope = new Telescope();
+  private final Arm arm = Arm.getInstance();
+  private final Telescope telescope = Telescope.getInstance();
   private PIDController autoAlignPID;
 
   private Timer clawStalledTimer;
