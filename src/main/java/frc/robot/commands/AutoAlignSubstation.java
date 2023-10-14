@@ -9,6 +9,7 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.Constants.ClawConstants;
 import frc.robot.Constants.LimelightConstants;
+import frc.robot.Constants.DriveConstants.Auto;
 import frc.robot.Constants.DriveConstants.AutoAlignSubstationConstants;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
@@ -30,7 +31,15 @@ public class AutoAlignSubstation extends CommandBase {
   private PIDController autoAlignPID;
 
   private Timer clawStalledTimer;
-  private final ClawIntake clawIntake = new ClawIntake(Claw.getInstance());
+  private final ArmMove armExtend = new ArmMove(arm, telescope, ArmMove.Position.loadSingleExtend, false);
+  private final ArmMove armRetract = new ArmMove(arm, telescope, ArmMove.Position.loadSingleRetract, false);
+
+  private double driveX = AutoAlignSubstationConstants.driveXMax;
+  private double driveY = 0.0;
+
+  private Double targetHeadingDeg = null;
+
+  private boolean done;
 
   public AutoAlignSubstation(Drive driveSubsystem) {
     led = LED.getInstance();
@@ -48,6 +57,21 @@ public class AutoAlignSubstation extends CommandBase {
   public void initialize() {
     clawStalledTimer.stop();
     clawStalledTimer.reset();
+    done = false;
+
+    switch (Robot.getAllianceColor()) {
+      case Blue:
+        targetHeadingDeg = 90.0;
+        break;
+      case Red:
+        targetHeadingDeg = -90.0;
+        break;
+      default:
+        // unknown direction to single substation
+        targetHeadingDeg = null;
+        done = true;
+        break;
+    }
   }
 
   @Override
@@ -58,19 +82,19 @@ public class AutoAlignSubstation extends CommandBase {
         + LimelightConstants.substationOffsetDeg;
 
     if (limelight.getTargetVisible()) {
-      double driveSpeed = autoAlignPID.calculate(limelight.getHorizontalDistToTarget(), 0);
+      driveX = autoAlignPID.calculate(limelight.getHorizontalDistToTarget(), 0);
       if (targetArea >= LimelightConstants.substationMinLargeTargetArea) { // check if at correct april tag
         if (Math.abs(horizontalDegToTarget) <= LimelightConstants.substationTargetToleranceDeg) { 
           if (limelight.getTargetArea() < LimelightConstants.singleSubstationIntakeTolerance) {
             // Check if robot is moving to make sure robot isn't overshooting
-            if (drive.isRobotMoving() == false) {
+            if (drive.isRobotMoving()) {
               if (Robot.getAllianceColor() == Alliance.Blue) {
-                drive.drive(0, -AutoAlignSubstationConstants.driveYSingleSubstationPower, 0);
+                driveY = -AutoAlignSubstationConstants.driveYSingleSubstationPower;
               } else {
-                drive.drive(0, AutoAlignSubstationConstants.driveYSingleSubstationPower, 0);
+                driveY = AutoAlignSubstationConstants.driveYSingleSubstationPower;
               }
-              new ArmMove(arm, telescope, ArmMove.Position.loadSingleExtend, false);
-              clawIntake.schedule();        
+              drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
+              armExtend.schedule();       
             }
           }
           // Close enough to the single substation to intake
@@ -83,22 +107,22 @@ public class AutoAlignSubstation extends CommandBase {
                 (clawStalledTimer.hasElapsed(ClawConstants.cubeStalledDelay) && led.getGamePiece() == GamePiece.cube)) {
                   clawStalledTimer.stop();
                   clawStalledTimer.reset();
-                  new ArmMove(arm, telescope, ArmMove.Position.inBot, false);
-                  return;
+                  armRetract.schedule();
+                  done = true;
             }
           }
         } else if (horizontalDegToTarget > 0) {
-          drive.drive(-driveSpeed, 0, 0);
+          drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
         } else {
-          drive.drive(driveSpeed, 0, 0);
+          drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
         }
       } else if (horizontalDegToTarget > 0) {
-        drive.drive(-driveSpeed, 0, 0);
+        drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
       } else {
-        drive.drive(driveSpeed, 0, 0);
+        drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
       }
     } else {
-      drive.drive(-AutoAlignSubstationConstants.driveXMax, 0, 0);
+      drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
     }
   }
 
@@ -109,6 +133,9 @@ public class AutoAlignSubstation extends CommandBase {
 
   @Override
   public boolean isFinished() {
+    if (done) {
+      return true;
+    }
     return false;
   }
 
