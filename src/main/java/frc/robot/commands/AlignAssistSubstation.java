@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Constants.LimelightConstants;
+import frc.robot.Constants.DriveConstants.Drive;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Limelight;
 
@@ -23,7 +24,10 @@ public class AlignAssistSubstation extends CommandBase {
 
   @Override
   public void execute() {
-    if (limelight.getTargetVisible()) {
+    if (limelight.getTargetVisible() && DriveManual.isLoadAutoAlignPending()) {
+      new AutoAlignSubstation();
+    } 
+    else if (limelight.getTargetVisible()) {
       double targetArea = limelight.getTargetArea();
       double horizontalDegToTarget = limelight.getHorizontalDegToTarget()
         + LimelightConstants.substationOffsetDeg;
@@ -41,7 +45,8 @@ public class AlignAssistSubstation extends CommandBase {
       } else {
         led.setSubstationState(LED.SubstationState.moveLeft);
       }
-    } else {
+    } 
+    else {
       led.setSubstationState(LED.SubstationState.off);
     }
   }
