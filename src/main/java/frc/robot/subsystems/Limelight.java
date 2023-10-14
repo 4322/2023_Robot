@@ -267,6 +267,7 @@ public class Limelight extends SubsystemBase {
   private void switchPipeline(int pipelineIdx) {
     if (enabled && (currentPipeline != pipelineIdx)) {
       pipeline.setNumber(pipelineIdx);
+      currentPipeline = pipelineIdx;
     }
   }
 }
