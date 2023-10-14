@@ -84,7 +84,9 @@ public class DriveManual extends CommandBase {
     switch (autoPose) {
       case none:
         targetHeadingDeg = null;
-        LED.getInstance().setAlignment(LED.Alignment.none);
+        if (!ArmMove.isAtLoadSingleRetract()) {
+          LED.getInstance().setAlignment(LED.Alignment.none);
+        }
         break;
       case loadSingleManual:
         ArmMove.setArmPreset(ArmMove.Position.loadSingleExtend);
