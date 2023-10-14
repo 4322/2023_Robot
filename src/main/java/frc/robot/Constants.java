@@ -139,9 +139,15 @@ public class Constants {
     public static final double doubleSubstationMinAprilTagInches = 42;
 
     // Values for AutoAlignSubstation (Needs tuning)
-    public static final double driveXSingleSubstationPower = .5;
-    public static final double driveYSingleSubstationPower = .5;
-    public static final double rotateSingleSubstationTolerance = 2.5;
+    public static final class AutoAlignSubstationConstants {
+      public static final double driveYSingleSubstationPower = .5;
+      public static final double driveXMax = 1;
+      public static final double rotateSingleSubstationTolerance = 2.5;
+      
+      public static final double kP = 0;
+      public static final double kD = 0;
+    }
+   
 
     public static final class Manual {
 

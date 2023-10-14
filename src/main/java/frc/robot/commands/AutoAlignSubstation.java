@@ -1,11 +1,12 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ClawConstants;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.LimelightConstants;
+import frc.robot.Constants.DriveConstants.AutoAlignSubstationConstants;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
@@ -23,15 +24,21 @@ public class AutoAlignSubstation extends CommandBase {
   private final Claw claw;
   private final Arm arm = new Arm();
   private final Telescope telescope = new Telescope();
+  private PIDController autoAlignPID;
 
   private Timer clawStalledTimer;
   private final ClawIntake clawIntake = new ClawIntake(Claw.getInstance());
+
+
 
   public AutoAlignSubstation(Drive driveSubsystem) {
     led = LED.getInstance();
     limelight = Limelight.getSubstationInstance();
     drive = driveSubsystem;
     claw = Claw.getInstance();
+
+    autoAlignPID.setP(AutoAlignSubstationConstants.kP);
+    autoAlignPID.setD(AutoAlignSubstationConstants.kD);
 
     addRequirements(limelight, drive);
   }
@@ -44,21 +51,26 @@ public class AutoAlignSubstation extends CommandBase {
 
   @Override
   public void execute() {
-    if (limelight.getTargetVisible()) {
-      led.setSubstationState(LED.SubstationState.adjusting);
+    led.setSubstationState(LED.SubstationState.adjusting);
       double targetArea = limelight.getTargetArea();
       double horizontalDegToTarget = limelight.getHorizontalDegToTarget()
         + LimelightConstants.substationOffsetDeg;
-      
+
+    if (limelight.getTargetVisible()) {
+      double driveSpeed = autoAlignPID.calculate(limelight.getHorizontalDistToTarget(), 0);
       if (targetArea >= LimelightConstants.substationMinLargeTargetArea) { // check if at correct april tag
         if (Math.abs(horizontalDegToTarget) <= LimelightConstants.substationTargetToleranceDeg) { 
           if (limelight.getTargetArea() < LimelightConstants.singleSubstationIntakeTolerance) {
-            drive.drive(0, DriveConstants.driveYSingleSubstationPower, 0);
+            // Check if robot is moving to make sure robot isn't overshooting
+            if (drive.isRobotMoving() == false) {
+              drive.drive(0, AutoAlignSubstationConstants.driveYSingleSubstationPower, 0);
+              new ArmMove(arm, telescope, ArmMove.Position.loadSingleExtend, false);
+              clawIntake.schedule();
+            }
           }
           // Close enough to the single substation to intake
           if (limelight.getTargetArea() >= LimelightConstants.singleSubstationIntakeTolerance) {
-            new ArmMove(arm, telescope, ArmMove.Position.loadSingleExtend, false);
-            clawIntake.schedule();
+            drive.stop();
           }
           if (claw.isIntakeStalling()) {
             clawStalledTimer.start();
@@ -71,17 +83,17 @@ public class AutoAlignSubstation extends CommandBase {
             }
           }
         } else if (horizontalDegToTarget > 0) {
-          drive.drive(-DriveConstants.driveXSingleSubstationPower, 0, 0);
+          drive.drive(-driveSpeed, 0, 0);
         } else {
-          drive.drive(DriveConstants.driveXSingleSubstationPower, 0, 0);
+          drive.drive(driveSpeed, 0, 0);
         }
       } else if (horizontalDegToTarget > 0) {
-        drive.drive(-DriveConstants.driveXSingleSubstationPower, 0, 0);
+        drive.drive(-driveSpeed, 0, 0);
       } else {
-        drive.drive(DriveConstants.driveXSingleSubstationPower, 0, 0);
+        drive.drive(driveSpeed, 0, 0);
       }
     } else {
-      led.setSubstationState(LED.SubstationState.off);
+      drive.drive(-AutoAlignSubstationConstants.driveXMax, 0, 0);
     }
   }
 
