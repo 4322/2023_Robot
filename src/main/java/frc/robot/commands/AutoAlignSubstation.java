@@ -98,7 +98,8 @@ public class AutoAlignSubstation extends CommandBase {
             }
           }
           // Close enough to the single substation to intake
-          if (limelight.getTargetArea() >= LimelightConstants.singleSubstationIntakeTolerance) {
+          else {
+            armExtend.schedule();
             drive.stop();
           }
           if (claw.isIntakeStalling()) {
