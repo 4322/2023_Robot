@@ -141,7 +141,6 @@ public class Constants {
     // Values for AutoAlignSubstation (Needs tuning)
     public static final double driveXSingleSubstationPower = .5;
     public static final double driveYSingleSubstationPower = .5;
-    public static final double rotateSingleSubstationDegree = 270;
     public static final double rotateSingleSubstationTolerance = 2.5;
 
     public static final class Manual {

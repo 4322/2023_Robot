@@ -6,10 +6,12 @@ import frc.robot.Constants;
 import frc.robot.Constants.ClawConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.LimelightConstants;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.Telescope;
 import frc.robot.subsystems.LED.GamePiece;
 
 // TODO: Copied from AlignAssistSubstation.java as a starting point. Needs lots of work!
@@ -18,8 +20,12 @@ public class AutoAlignSubstation extends CommandBase {
   private final Limelight limelight;
   private final LED led;
   private final Drive drive;
-  private Claw claw;
+  private final Claw claw;
+  private final Arm arm = new Arm();
+  private final Telescope telescope = new Telescope();
+
   private Timer clawStalledTimer;
+  private final ClawIntake clawIntake = new ClawIntake(Claw.getInstance());
 
   public AutoAlignSubstation(Drive driveSubsystem) {
     led = LED.getInstance();
@@ -39,18 +45,20 @@ public class AutoAlignSubstation extends CommandBase {
   @Override
   public void execute() {
     if (limelight.getTargetVisible()) {
+      led.setSubstationState(LED.SubstationState.adjusting);
       double targetArea = limelight.getTargetArea();
       double horizontalDegToTarget = limelight.getHorizontalDegToTarget()
         + LimelightConstants.substationOffsetDeg;
       
       if (targetArea >= LimelightConstants.substationMinLargeTargetArea) { // check if at correct april tag
-        if (Math.abs(horizontalDegToTarget) <= LimelightConstants.substationTargetToleranceDeg) {
-          led.setSubstationState(LED.SubstationState.adjusting); 
+        if (Math.abs(horizontalDegToTarget) <= LimelightConstants.substationTargetToleranceDeg) { 
           if (limelight.getTargetArea() < LimelightConstants.singleSubstationIntakeTolerance) {
             drive.drive(0, DriveConstants.driveYSingleSubstationPower, 0);
           }
+          // Close enough to the single substation to intake
           if (limelight.getTargetArea() >= LimelightConstants.singleSubstationIntakeTolerance) {
-            new ClawIntake(claw);
+            new ArmMove(arm, telescope, ArmMove.Position.loadSingleExtend, false);
+            clawIntake.schedule();
           }
           if (claw.isIntakeStalling()) {
             clawStalledTimer.start();
@@ -58,21 +66,18 @@ public class AutoAlignSubstation extends CommandBase {
                 (clawStalledTimer.hasElapsed(ClawConstants.cubeStalledDelay) && led.getGamePiece() == GamePiece.cube)) {
                   clawStalledTimer.stop();
                   clawStalledTimer.reset();
-                  new DriveManual(drive, null);
+                  new ArmMove(arm, telescope, ArmMove.Position.inBot, false);
+                  return;
             }
           }
         } else if (horizontalDegToTarget > 0) {
-          led.setSubstationState(LED.SubstationState.adjusting);
           drive.drive(-DriveConstants.driveXSingleSubstationPower, 0, 0);
         } else {
-          led.setSubstationState(LED.SubstationState.adjusting);
           drive.drive(DriveConstants.driveXSingleSubstationPower, 0, 0);
         }
       } else if (horizontalDegToTarget > 0) {
-        led.setSubstationState(LED.SubstationState.adjusting);
         drive.drive(-DriveConstants.driveXSingleSubstationPower, 0, 0);
       } else {
-        led.setSubstationState(LED.SubstationState.adjusting);
         drive.drive(DriveConstants.driveXSingleSubstationPower, 0, 0);
       }
     } else {
