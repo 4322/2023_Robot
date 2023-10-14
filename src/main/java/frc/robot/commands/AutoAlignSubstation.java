@@ -1,9 +1,12 @@
 package frc.robot.commands;
 
+import edu.wpi.first.hal.AllianceStationID;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.Constants.ClawConstants;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.DriveConstants.AutoAlignSubstationConstants;
@@ -28,8 +31,6 @@ public class AutoAlignSubstation extends CommandBase {
 
   private Timer clawStalledTimer;
   private final ClawIntake clawIntake = new ClawIntake(Claw.getInstance());
-
-
 
   public AutoAlignSubstation(Drive driveSubsystem) {
     led = LED.getInstance();
@@ -63,9 +64,13 @@ public class AutoAlignSubstation extends CommandBase {
           if (limelight.getTargetArea() < LimelightConstants.singleSubstationIntakeTolerance) {
             // Check if robot is moving to make sure robot isn't overshooting
             if (drive.isRobotMoving() == false) {
-              drive.drive(0, AutoAlignSubstationConstants.driveYSingleSubstationPower, 0);
+              if (Robot.getAllianceColor() == Alliance.Blue) {
+                drive.drive(0, -AutoAlignSubstationConstants.driveYSingleSubstationPower, 0);
+              } else {
+                drive.drive(0, AutoAlignSubstationConstants.driveYSingleSubstationPower, 0);
+              }
               new ArmMove(arm, telescope, ArmMove.Position.loadSingleExtend, false);
-              clawIntake.schedule();
+              clawIntake.schedule();        
             }
           }
           // Close enough to the single substation to intake
