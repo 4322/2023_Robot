@@ -52,8 +52,8 @@ public class RobotContainer {
   private SendableChooser<Integer> positionChooser = new SendableChooser<Integer>();
   private OrangeSendableChooser<Command> autoChooser = new OrangeSendableChooser<Command>();
 
-  private final Arm arm = new Arm();
-  private final Telescope telescope = new Telescope();
+  private final Arm arm = Arm.getInstance();
+  private final Telescope telescope = Telescope.getInstance();
   private final Claw claw = Claw.getInstance();
   private final Drive drive = new Drive();
 

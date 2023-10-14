@@ -31,7 +31,16 @@ public class Arm extends SubsystemBase {
   private GenericEntry armPos;
   private boolean homed = false;
 
-  public Arm() {
+  private static Arm armSubsystem;
+
+  public static Arm getInstance() {
+    if (armSubsystem == null) {
+      armSubsystem = new Arm();
+    }
+    return armSubsystem;
+  }
+
+  private Arm() {
     if (Constants.armEnabled) {
       leftMotor = new CANSparkMax(Constants.ArmConstants.leftMotorID, MotorType.kBrushless);
       rightMotor = new CANSparkMax(Constants.ArmConstants.rightMotorID, MotorType.kBrushless);
