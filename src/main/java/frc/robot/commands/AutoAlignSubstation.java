@@ -89,9 +89,9 @@ public class AutoAlignSubstation extends CommandBase {
             // Check if robot is moving to make sure robot isn't overshooting
             if (drive.isRobotMoving()) {
               if (Robot.getAllianceColor() == Alliance.Blue) {
-                driveY = -AutoAlignSubstationConstants.driveYSingleSubstationPower;
-              } else {
                 driveY = AutoAlignSubstationConstants.driveYSingleSubstationPower;
+              } else {
+                driveY = -AutoAlignSubstationConstants.driveYSingleSubstationPower;
               }
               drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
               armExtend.schedule();       
@@ -107,21 +107,20 @@ public class AutoAlignSubstation extends CommandBase {
                 (clawStalledTimer.hasElapsed(ClawConstants.cubeStalledDelay) && led.getGamePiece() == GamePiece.cube)) {
                   clawStalledTimer.stop();
                   clawStalledTimer.reset();
-                  armRetract.schedule();
+                  armRetract.schedule(); // clearance to drive away from substation
                   done = true;
             }
           }
-        } else if (horizontalDegToTarget > 0) {
-          drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
         } else {
+          // Robot close to substation, but not centered
           drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
         }
-      } else if (horizontalDegToTarget > 0) {
-        drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
       } else {
+        // Robot is too far away from the substation
         drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
       }
     } else {
+      // Continue driving until see target again
       drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
     }
   }
