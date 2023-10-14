@@ -27,8 +27,8 @@ public class AutoAlignSubstation extends CommandBase {
   private final LED led;
   private final Drive drive;
   private final Claw claw;
-  private final Arm arm = new Arm();
-  private final Telescope telescope = new Telescope();
+  private final Arm arm = Arm.getInstance();
+  private final Telescope telescope = Telescope.getInstance();
   private PIDController autoAlignPID;
 
   private Timer clawStalledTimer;
@@ -115,21 +115,19 @@ public class AutoAlignSubstation extends CommandBase {
 
       driveX = autoAlignPID.calculate(horizontalInchesToTag, 0);
       if (targetArea >= LimelightConstants.substationMinLargeTargetArea) { // check if at correct april tag
-        if (Math.abs(horizontalInchesToTag) <= LimelightConstants.autoAlignToleranceInches) { 
+        // Check if robot is centered and not moving
+        if (Math.abs(horizontalInchesToTag) <= LimelightConstants.autoAlignToleranceInches && !drive.isRobotMoving()) { 
+          // Too far away from substation to intake
           if (targetArea < LimelightConstants.singleSubstationIntakeTolerance) {
-            // Check if robot is moving to make sure robot isn't overshooting
-            if (drive.isRobotMoving()) {
-              if (Robot.getAllianceColor() == Alliance.Blue) {
-                driveY = AutoAlignSubstationConstants.driveYSingleSubstationPower;
-              } else {
-                driveY = -AutoAlignSubstationConstants.driveYSingleSubstationPower;
-              }
-              drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
-              armExtend.schedule();       
+            if (Robot.getAllianceColor() == Alliance.Blue) {
+              driveY = AutoAlignSubstationConstants.driveYSingleSubstationPower;
+            } else {
+              driveY = -AutoAlignSubstationConstants.driveYSingleSubstationPower;
             }
-          }
-          // Close enough to the single substation to intake
-          else {
+            drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
+            armExtend.schedule();       
+          } else {
+            // Close enough to the single substation to intake
             armExtend.schedule();
             drive.stop();
           }

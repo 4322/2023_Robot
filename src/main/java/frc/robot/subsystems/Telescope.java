@@ -27,7 +27,16 @@ public class Telescope extends SubsystemBase {
   private GenericEntry posTab;
   private boolean homed = false;
 
-  public Telescope() {
+  private static Telescope telescopeSubsystem;
+
+  public static Telescope getInstance() {
+    if (telescopeSubsystem == null) {
+      telescopeSubsystem = new Telescope();
+    }
+    return telescopeSubsystem;
+  }
+
+  private Telescope() {
     if (Constants.telescopeEnabled) {
       motor = new CANSparkMax(Constants.Telescope.motorID, MotorType.kBrushless);
       CanBusUtil.staggerSparkMax(motor);
