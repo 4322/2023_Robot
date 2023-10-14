@@ -119,7 +119,7 @@ public class RobotContainer {
     }
 
     if (Constants.substationLimeLightEnabled) {
-      Limelight.getSubstationInstance().setDefaultCommand(new AlignAssistSubstation());
+      Limelight.getSubstationInstance().setDefaultCommand(new AlignAssistSubstation(drive));
     }
 
     ppManager = new PathPlannerManager(drive);
