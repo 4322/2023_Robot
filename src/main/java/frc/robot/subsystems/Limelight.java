@@ -232,6 +232,14 @@ public class Limelight extends SubsystemBase {
     return new Translation2d(0, 0);
   }
 
+  public double getHorizontalDistToTarget() {
+    double distanceX = (getTargetHeight(currentPipeline, getHorizontalDegToTarget()) - limeHeight) / 
+                        Math.tan(Math.toRadians(getHorizontalDegToTarget() + limeAngle));
+    double distanceY = distanceX * Math.tan(Math.toRadians(getVerticalDegToTarget()));
+
+    return distanceY;
+  }
+
   public void enableLed() {
     if (enabled) {
       setLed(LedMode.On);
