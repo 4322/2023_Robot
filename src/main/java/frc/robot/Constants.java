@@ -386,7 +386,8 @@ public class Constants {
 
   public static final class LimelightConstants {
     public static final double limelightAngle = 0;
-    public static final double limelightHeight = OrangeMath.inchesToMeters(26.125);
+    public static final double gridLimelightHeight = OrangeMath.inchesToMeters(26.125);
+    public static final double substationLimelightHeight = OrangeMath.inchesToMeters(46.3);
 
     // Tape heights are 1 inch higher than described in manual to account for
     // height to center of tape
@@ -397,7 +398,7 @@ public class Constants {
     // for height to center of tag
     public static final double gridAprilTagHeight = OrangeMath.inchesToMeters(18.25);
     public static final double doubleSubstationAprilTagHeight = OrangeMath.inchesToMeters(27.375);
-    public static final double singleSubstationAprilTagHeight = OrangeMath.inchesToMeters(52.75); // TODO: temp value
+    public static final double singleSubstationAprilTagHeight = OrangeMath.inchesToMeters(55.0); // TODO: adjust for field
 
     // Threshold for limelight tape target height
     // above = high tape, below = middle tape
@@ -425,6 +426,5 @@ public class Constants {
     public static final double singleSubstationIntakeTolerance = 1.9;
     public static final double autoAlignToleranceInches = 3.0;
     public static final double tagSeparationInches = 6.3;
-    public static final double smallTargetScaleFactor = 2.0;
   }
 }

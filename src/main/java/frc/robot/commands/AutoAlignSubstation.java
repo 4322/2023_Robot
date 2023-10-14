@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import edu.wpi.first.hal.AllianceStationID;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -19,8 +18,6 @@ import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Telescope;
 import frc.robot.subsystems.LED.GamePiece;
-
-// TODO: Copied from AlignAssistSubstation.java as a starting point. Needs lots of work!
 
 public class AutoAlignSubstation extends CommandBase {
   private final Limelight limelight;
