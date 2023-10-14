@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.LimelightHelpers;
 import frc.robot.Constants.LimelightConstants;
 import frc.utility.OrangeMath;
 
@@ -38,6 +39,7 @@ public class Limelight extends SubsystemBase {
   double limeAngle;
   boolean enabled;
   int currentPipeline = -1;
+  LimelightHelpers.LimelightResults llresults;
 
   // the distance from where you want to calculate from
   // should always be calculated with WPI coordinates (front is positive X)
@@ -112,6 +114,20 @@ public class Limelight extends SubsystemBase {
         }
       }
     }
+  }
+
+  public void refreshOdometry() {
+    // parse limelight json output, takes 2.5ms
+    llresults = LimelightHelpers.getLatestResults(name);
+  }
+
+  public LimelightHelpers.LimelightTarget_Fiducial getTag(double fID) {
+    for (int i = 0; i < llresults.targetingResults.targets_Fiducials.length; i++) {
+      if (llresults.targetingResults.targets_Fiducials[i].fiducialID == fID) {
+        return llresults.targetingResults.targets_Fiducials[i];
+      }
+    }
+    return null;  // tag ID not found
   }
 
   public double getHorizontalDegToTarget() {

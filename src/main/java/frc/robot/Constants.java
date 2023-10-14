@@ -423,5 +423,8 @@ public class Constants {
 
     // AutoAlignSubstation
     public static final double singleSubstationIntakeTolerance = 1.9;
+    public static final double autoAlignToleranceInches = 3.0;
+    public static final double tagSeparationInches = 6.3;
+    public static final double smallTargetScaleFactor = 2.0;
   }
 }

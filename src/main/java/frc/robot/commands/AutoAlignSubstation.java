@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
+import frc.robot.LimelightHelpers;
 import frc.robot.Robot;
 import frc.robot.Constants.ClawConstants;
 import frc.robot.Constants.LimelightConstants;
@@ -74,18 +75,48 @@ public class AutoAlignSubstation extends CommandBase {
     }
   }
 
+  private double horizontalInchesToTag(double degrees, double area, double tagScaleFactor) {
+    degrees += LimelightConstants.substationOffsetDeg;
+    return 0;  // TODO!!!
+  }
+
   @Override
   public void execute() {
     led.setSubstationState(LED.SubstationState.adjusting);
-      double targetArea = limelight.getTargetArea();
-      double horizontalDegToTarget = limelight.getHorizontalDegToTarget()
-        + LimelightConstants.substationOffsetDeg;
+    double targetArea;
+    double horizontalInchesToTag;
 
     if (limelight.getTargetVisible()) {
-      driveX = autoAlignPID.calculate(limelight.getHorizontalDistToTarget(), 0);
+      limelight.refreshOdometry();
+      // Use raw tag data instead of limelight calculated pose due to possible ambiguity when
+      // we only see one tag because the limelight doesn't know that we are rotated to the substation.
+      LimelightHelpers.LimelightTarget_Fiducial nine = limelight.getTag(9);
+      LimelightHelpers.LimelightTarget_Fiducial eight = limelight.getTag(8);
+      LimelightHelpers.LimelightTarget_Fiducial seven = limelight.getTag(7);
+
+      if (eight != null) {
+        horizontalInchesToTag = horizontalInchesToTag(eight.tx, eight.ta, 1.0);
+        targetArea = eight.ta;
+      } else if (nine != null) {
+        horizontalInchesToTag = horizontalInchesToTag(nine.tx, nine.ta, 
+          Constants.LimelightConstants.smallTargetScaleFactor) +
+          Constants.LimelightConstants.tagSeparationInches;
+        targetArea = nine.ta * Constants.LimelightConstants.smallTargetScaleFactor;
+      } else if (seven != null) {
+        horizontalInchesToTag = horizontalInchesToTag(seven.tx, seven.ta, 
+          Constants.LimelightConstants.smallTargetScaleFactor) -
+          Constants.LimelightConstants.tagSeparationInches;
+        targetArea = seven.ta * Constants.LimelightConstants.smallTargetScaleFactor;
+      } else {
+        // Continue driving until see a tag again
+        drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
+        return;
+      }
+
+      driveX = autoAlignPID.calculate(horizontalInchesToTag, 0);
       if (targetArea >= LimelightConstants.substationMinLargeTargetArea) { // check if at correct april tag
-        if (Math.abs(horizontalDegToTarget) <= LimelightConstants.substationTargetToleranceDeg) { 
-          if (limelight.getTargetArea() < LimelightConstants.singleSubstationIntakeTolerance) {
+        if (Math.abs(horizontalInchesToTag) <= LimelightConstants.autoAlignToleranceInches) { 
+          if (targetArea < LimelightConstants.singleSubstationIntakeTolerance) {
             // Check if robot is moving to make sure robot isn't overshooting
             if (drive.isRobotMoving()) {
               if (Robot.getAllianceColor() == Alliance.Blue) {
@@ -121,7 +152,7 @@ public class AutoAlignSubstation extends CommandBase {
         drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
       }
     } else {
-      // Continue driving until see target again
+      // Continue driving until see a tag again
       drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
     }
   }
