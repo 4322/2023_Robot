@@ -11,13 +11,15 @@ public class AlignAssistSubstation extends CommandBase {
   private final Limelight limelight;
   private final LED led;
   private final Drive drive;
+  private AutoAlignSubstation autoAlignSubstation;
 
   public AlignAssistSubstation(Drive driveSubsystem) {
     led = LED.getInstance();
     limelight = Limelight.getSubstationInstance();
     drive = driveSubsystem;
+    autoAlignSubstation = new AutoAlignSubstation(drive);
 
-    addRequirements(limelight, drive);
+    addRequirements(limelight);
   }
 
   @Override
@@ -26,28 +28,31 @@ public class AlignAssistSubstation extends CommandBase {
 
   @Override
   public void execute() {
-    if (limelight.getTargetVisible() && DriveManual.isLoadAutoAlignPending()) {
-      new AutoAlignSubstation(drive);  
-    } 
-    else if (limelight.getTargetVisible()) {
-      double targetArea = limelight.getTargetArea();
-      double horizontalDegToTarget = limelight.getHorizontalDegToTarget()
-        + LimelightConstants.substationOffsetDeg;
-      
-      if (targetArea >= LimelightConstants.substationMinLargeTargetArea) {
-        if (Math.abs(horizontalDegToTarget) <= LimelightConstants.substationTargetToleranceDeg) {
-          led.setSubstationState(LED.SubstationState.aligned);
+    if (limelight.getTargetVisible()) {
+      if (DriveManual.isLoadAutoAlignPending()) {
+        autoAlignSubstation.schedule();
+      }
+      else {
+        double targetArea = limelight.getTargetArea();
+        double horizontalDegToTarget = limelight.getHorizontalDegToTarget()
+          + LimelightConstants.substationOffsetDeg;
+        
+        if (targetArea >= LimelightConstants.substationMinLargeTargetArea) {
+          if (Math.abs(horizontalDegToTarget) <= LimelightConstants.substationTargetToleranceDeg) {
+            led.setSubstationState(LED.SubstationState.aligned);
+          } else if (horizontalDegToTarget > 0) {
+            led.setSubstationState(LED.SubstationState.moveRight);
+          } else {
+            led.setSubstationState(LED.SubstationState.moveLeft);
+          }
         } else if (horizontalDegToTarget > 0) {
           led.setSubstationState(LED.SubstationState.moveRight);
-        } else {
+        } 
+        else {
           led.setSubstationState(LED.SubstationState.moveLeft);
         }
-      } else if (horizontalDegToTarget > 0) {
-        led.setSubstationState(LED.SubstationState.moveRight);
-      } else {
-        led.setSubstationState(LED.SubstationState.moveLeft);
-      }
-    } 
+      } 
+    }  
     else {
       led.setSubstationState(LED.SubstationState.off);
     }

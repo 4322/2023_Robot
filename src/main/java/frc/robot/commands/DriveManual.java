@@ -33,8 +33,10 @@ public class DriveManual extends CommandBase {
   private LockedWheel lockedWheelState;
   private double initialSpinoutAngle = 0;
   private boolean armAtLoadSingle = false;
-  private Arm arm = new Arm();
-  private Telescope telescope = new Telescope();
+
+  private Arm arm = Arm.getInstance();
+  private Telescope telescope = Telescope.getInstance();
+  private ArmMove armMoveToSubstation;
 
   public enum AutoPose {
     none, usePreset, usePresetNoArmMove, loadSingleManual
@@ -59,6 +61,8 @@ public class DriveManual extends CommandBase {
   public DriveManual(Drive drivesubsystem, AutoPose autoPose) {
     drive = drivesubsystem;
     this.autoPose = autoPose;
+    armMoveToSubstation = new ArmMove(arm, telescope, ArmMove.Position.loadSingleRetract, false);
+
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drive);
   }
@@ -229,7 +233,7 @@ public class DriveManual extends CommandBase {
           if (loadAutoPoseActive && !armAtLoadSingle && (autoPose != AutoPose.usePresetNoArmMove)) {
             if (driveAngle >= targetHeadingDeg - Constants.DriveConstants.Auto.rotateToleranceDegrees && 
                 driveAngle <= targetHeadingDeg + Constants.DriveConstants.Auto.rotateToleranceDegrees) {
-              new ArmMove(arm, telescope, ArmMove.Position.loadSingleRetract, false);
+              armMoveToSubstation.schedule();
               armAtLoadSingle = true;
             }
           }
