@@ -37,7 +37,7 @@ public class DriveManual extends CommandBase {
   private Telescope telescope = new Telescope();
 
   public enum AutoPose {
-    none, usePreset, loadSingleManual
+    none, usePreset, usePresetNoArmMove, loadSingleManual
   }
   
   public enum LockedWheel {
@@ -91,6 +91,7 @@ public class DriveManual extends CommandBase {
         initSubstationAlignment();
         break;
       case usePreset:
+      case usePresetNoArmMove:
         switch (ArmMove.getArmPreset()) {
           case scoreLow:
             targetHeadingDeg = 180.0;
@@ -225,7 +226,7 @@ public class DriveManual extends CommandBase {
         if (targetHeadingDeg != null) {
           drive.driveAutoRotate(driveX, driveY, targetHeadingDeg,
               Constants.DriveConstants.Auto.rotateToleranceDegrees);
-          if (loadAutoPoseActive && !armAtLoadSingle) {
+          if (loadAutoPoseActive && !armAtLoadSingle && (autoPose != AutoPose.usePresetNoArmMove)) {
             if (driveAngle >= targetHeadingDeg - Constants.DriveConstants.Auto.rotateToleranceDegrees && 
                 driveAngle <= targetHeadingDeg + Constants.DriveConstants.Auto.rotateToleranceDegrees) {
               new ArmMove(arm, telescope, ArmMove.Position.loadSingleRetract, false);
