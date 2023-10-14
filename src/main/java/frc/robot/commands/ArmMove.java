@@ -20,7 +20,6 @@ public class ArmMove extends CommandBase {
   private static Position lastPresetScorePos = Position.scoreHigh;
   private static Position lastPos = Position.unknown;
   private static boolean safeToOuttake = false;
-  private static boolean inBot = false;
 
   private Arm arm;
   private Telescope telescope;
@@ -37,7 +36,11 @@ public class ArmMove extends CommandBase {
   private final ClawIntake clawIntake = new ClawIntake(Claw.getInstance());
 
   public static boolean isInBot() {
-    return inBot;
+    return lastPos == Position.inBot;
+  }
+
+  public static boolean isAtLoadSingleRetract() {
+    return lastPos == Position.loadSingleRetract;
   }
 
   public static void setArmPreset(Position pos) {
@@ -102,7 +105,6 @@ public class ArmMove extends CommandBase {
     done = false;
     telescopeAtTargetTimer.stop();
     telescopeAtTargetTimer.reset();
-    inBot = false;
 
     if (presetPos == Position.scoreLow) {
       safeToOuttake = true;
@@ -294,8 +296,6 @@ public class ArmMove extends CommandBase {
       ArmMove.lastPos = targetPos;
       if ((targetPos == Position.scoreMid) || (targetPos == Position.scoreHigh)) {
         safeToOuttake = true;
-      } else if (targetPos == Position.inBot) {
-        inBot = true;
       }
       done = true;
       if (autonomous) {

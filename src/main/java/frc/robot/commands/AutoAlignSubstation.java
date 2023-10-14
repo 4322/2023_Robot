@@ -1,15 +1,22 @@
 package frc.robot.commands;
 
+import edu.wpi.first.hal.AllianceStationID;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.Constants.ClawConstants;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.LimelightConstants;
+import frc.robot.Constants.DriveConstants.Auto;
+import frc.robot.Constants.DriveConstants.AutoAlignSubstationConstants;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.Telescope;
 import frc.robot.subsystems.LED.GamePiece;
 
 // TODO: Copied from AlignAssistSubstation.java as a starting point. Needs lots of work!
@@ -18,14 +25,30 @@ public class AutoAlignSubstation extends CommandBase {
   private final Limelight limelight;
   private final LED led;
   private final Drive drive;
-  private Claw claw;
+  private final Claw claw;
+  private final Arm arm = new Arm();
+  private final Telescope telescope = new Telescope();
+  private PIDController autoAlignPID;
+
   private Timer clawStalledTimer;
+  private final ArmMove armExtend = new ArmMove(arm, telescope, ArmMove.Position.loadSingleExtend, false);
+  private final ArmMove armRetract = new ArmMove(arm, telescope, ArmMove.Position.loadSingleRetract, false);
+
+  private double driveX = AutoAlignSubstationConstants.driveXMax;
+  private double driveY = 0.0;
+
+  private Double targetHeadingDeg = null;
+
+  private boolean done;
 
   public AutoAlignSubstation(Drive driveSubsystem) {
     led = LED.getInstance();
     limelight = Limelight.getSubstationInstance();
     drive = driveSubsystem;
     claw = Claw.getInstance();
+
+    autoAlignPID.setP(AutoAlignSubstationConstants.kP);
+    autoAlignPID.setD(AutoAlignSubstationConstants.kD);
 
     addRequirements(limelight, drive);
   }
@@ -34,23 +57,48 @@ public class AutoAlignSubstation extends CommandBase {
   public void initialize() {
     clawStalledTimer.stop();
     clawStalledTimer.reset();
+    done = false;
+
+    switch (Robot.getAllianceColor()) {
+      case Blue:
+        targetHeadingDeg = 90.0;
+        break;
+      case Red:
+        targetHeadingDeg = -90.0;
+        break;
+      default:
+        // unknown direction to single substation
+        targetHeadingDeg = null;
+        done = true;
+        break;
+    }
   }
 
   @Override
   public void execute() {
-    if (limelight.getTargetVisible()) {
+    led.setSubstationState(LED.SubstationState.adjusting);
       double targetArea = limelight.getTargetArea();
       double horizontalDegToTarget = limelight.getHorizontalDegToTarget()
         + LimelightConstants.substationOffsetDeg;
-      
+
+    if (limelight.getTargetVisible()) {
+      driveX = autoAlignPID.calculate(limelight.getHorizontalDistToTarget(), 0);
       if (targetArea >= LimelightConstants.substationMinLargeTargetArea) { // check if at correct april tag
-        if (Math.abs(horizontalDegToTarget) <= LimelightConstants.substationTargetToleranceDeg) {
-          led.setSubstationState(LED.SubstationState.adjusting); 
-          if (limelight.getTargetArea() < LimelightConstants.singleSubstationIntakeTolerance) {
-            drive.drive(0, DriveConstants.driveYSingleSubstationPower, 0);
-          }
-          if (limelight.getTargetArea() >= LimelightConstants.singleSubstationIntakeTolerance) {
-            new ClawIntake(claw);
+        // Check if robot is centered and not moving
+        if (Math.abs(horizontalDegToTarget) <= LimelightConstants.substationTargetToleranceDeg && !drive.isRobotMoving()) { 
+          // Too far away from substation to intake
+          if (targetArea < LimelightConstants.singleSubstationIntakeTolerance) {
+            if (Robot.getAllianceColor() == Alliance.Blue) {
+              driveY = AutoAlignSubstationConstants.driveYSingleSubstationPower;
+            } else {
+              driveY = -AutoAlignSubstationConstants.driveYSingleSubstationPower;
+            }
+            drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
+            armExtend.schedule();       
+          } else {
+            // Close enough to the single substation to intake
+            armExtend.schedule();
+            drive.stop();
           }
           if (claw.isIntakeStalling()) {
             clawStalledTimer.start();
@@ -58,25 +106,21 @@ public class AutoAlignSubstation extends CommandBase {
                 (clawStalledTimer.hasElapsed(ClawConstants.cubeStalledDelay) && led.getGamePiece() == GamePiece.cube)) {
                   clawStalledTimer.stop();
                   clawStalledTimer.reset();
-                  new DriveManual(drive, null);
+                  armRetract.schedule(); // clearance to drive away from substation
+                  done = true;
             }
           }
-        } else if (horizontalDegToTarget > 0) {
-          led.setSubstationState(LED.SubstationState.adjusting);
-          drive.drive(-DriveConstants.driveXSingleSubstationPower, 0, 0);
         } else {
-          led.setSubstationState(LED.SubstationState.adjusting);
-          drive.drive(DriveConstants.driveXSingleSubstationPower, 0, 0);
+          // Robot close to substation, but not centered
+          drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
         }
-      } else if (horizontalDegToTarget > 0) {
-        led.setSubstationState(LED.SubstationState.adjusting);
-        drive.drive(-DriveConstants.driveXSingleSubstationPower, 0, 0);
       } else {
-        led.setSubstationState(LED.SubstationState.adjusting);
-        drive.drive(DriveConstants.driveXSingleSubstationPower, 0, 0);
+        // Robot is too far away from the substation
+        drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
       }
     } else {
-      led.setSubstationState(LED.SubstationState.off);
+      // Continue driving until see target again
+      drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
     }
   }
 
@@ -87,6 +131,9 @@ public class AutoAlignSubstation extends CommandBase {
 
   @Override
   public boolean isFinished() {
+    if (done) {
+      return true;
+    }
     return false;
   }
 
