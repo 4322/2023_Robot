@@ -23,7 +23,7 @@ public class Claw extends SubsystemBase {
 
   private ClawMode clawMode = ClawMode.stopped;
 
-  private boolean isStalling;
+  private boolean stallingIn;
   private boolean stalledIn;
   private boolean stalledOut;
   private Timer stallInTimer = new Timer();
@@ -109,7 +109,7 @@ public class Claw extends SubsystemBase {
 
   //detect start of game piece being received
   public boolean isIntakeStalling() {
-    return isStalling;
+    return stallingIn;
   }
 
   public boolean isIntakeStalled() {
@@ -118,6 +118,7 @@ public class Claw extends SubsystemBase {
 
   public void resetStalledIn() {
     stalledIn = false;
+    stallingIn = false;
     stallInTimer.reset();
     stallInTimer.stop();
   }
@@ -139,10 +140,10 @@ public class Claw extends SubsystemBase {
           resetStalledIn();
           resetStalledOut();
         } else if ((clawMode == ClawMode.intaking) && (signedRPM < ClawConstants.stallRPMLimit)) {
+          stallingIn = true;
           if (stallInTimer.hasElapsed(ClawConstants.stallTime)) {
             stalledIn = true;
           } else if (signedRPM >= 0) { // In case we switch from intaking immediately to outtaking
-            isStalling = true;
             stallInTimer.start();
           }
         } else if ((clawMode == ClawMode.outtaking) && (signedRPM > -ClawConstants.stallRPMLimit)) {
