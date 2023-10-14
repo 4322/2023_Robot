@@ -84,21 +84,19 @@ public class AutoAlignSubstation extends CommandBase {
     if (limelight.getTargetVisible()) {
       driveX = autoAlignPID.calculate(limelight.getHorizontalDistToTarget(), 0);
       if (targetArea >= LimelightConstants.substationMinLargeTargetArea) { // check if at correct april tag
-        if (Math.abs(horizontalDegToTarget) <= LimelightConstants.substationTargetToleranceDeg) { 
-          if (limelight.getTargetArea() < LimelightConstants.singleSubstationIntakeTolerance) {
-            // Check if robot is moving to make sure robot isn't overshooting
-            if (drive.isRobotMoving()) {
-              if (Robot.getAllianceColor() == Alliance.Blue) {
-                driveY = AutoAlignSubstationConstants.driveYSingleSubstationPower;
-              } else {
-                driveY = -AutoAlignSubstationConstants.driveYSingleSubstationPower;
-              }
-              drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
-              armExtend.schedule();       
+        // Check if robot is centered and not moving
+        if (Math.abs(horizontalDegToTarget) <= LimelightConstants.substationTargetToleranceDeg && !drive.isRobotMoving()) { 
+          // Too far away from substation to intake
+          if (targetArea < LimelightConstants.singleSubstationIntakeTolerance) {
+            if (Robot.getAllianceColor() == Alliance.Blue) {
+              driveY = AutoAlignSubstationConstants.driveYSingleSubstationPower;
+            } else {
+              driveY = -AutoAlignSubstationConstants.driveYSingleSubstationPower;
             }
-          }
-          // Close enough to the single substation to intake
-          else {
+            drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
+            armExtend.schedule();       
+          } else {
+            // Close enough to the single substation to intake
             armExtend.schedule();
             drive.stop();
           }
