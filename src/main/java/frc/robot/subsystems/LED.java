@@ -135,6 +135,10 @@ public class LED extends SubsystemBase {
     }
   }
 
+  public GamePiece getGamePiece() {
+    return lastGamePiece;
+  }
+
   public void setAlignment(Alignment alignment) {
     // only update LEDs upon a change to reduce CAN bus loading
     if (currentAlignment != alignment) {

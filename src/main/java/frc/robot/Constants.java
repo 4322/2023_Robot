@@ -138,6 +138,12 @@ public class Constants {
     public static final double doubleSubstationLoadDistanceInches = 32.5;
     public static final double doubleSubstationMinAprilTagInches = 42;
 
+    // Values for AutoAlignSubstation (Needs tuning)
+    public static final double driveXSingleSubstationPower = .5;
+    public static final double driveYSingleSubstationPower = .5;
+    public static final double rotateSingleSubstationDegree = 270;
+    public static final double rotateSingleSubstationTolerance = 2.5;
+
     public static final class Manual {
 
       public static final double joystickDriveDeadband = 0.1;
@@ -267,6 +273,10 @@ public class Constants {
     public static final double kMinOutput = -0.2;
     public static final double stallIntakeCurrent = 16.4;  // controller setpoint, draws 2A from PDH, 15A phase
     public static final double stallOuttakeCurrent = -16.4;
+
+    // AutoAlignSubstation Constants
+    public static final double coneStalledDelay = 0.1;
+    public static final double cubeStalledDelay = 0.25;
 
     public static enum ClawMode {
       ejecting, stationary, intaking
@@ -405,5 +415,8 @@ public class Constants {
     // Map of pipelines and tag heights
     public static final Map<Integer, Double> tagPipelinesHeights = Map
         .ofEntries(Map.entry(1, gridAprilTagHeight), Map.entry(2, singleSubstationAprilTagHeight));
+
+    // AutoAlignSubstation
+    public static final double singleSubstationIntakeTolerance = 1.9;
   }
 }
