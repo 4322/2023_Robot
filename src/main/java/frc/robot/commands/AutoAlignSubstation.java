@@ -27,9 +27,10 @@ public class AutoAlignSubstation extends CommandBase {
   private final Claw claw;
   private final Arm arm = Arm.getInstance();
   private final Telescope telescope = Telescope.getInstance();
-  private PIDController autoAlignPID;
+  private PIDController autoAlignPID = new PIDController(AutoAlignSubstationConstants.kP, 0, 
+    AutoAlignSubstationConstants.kD);
 
-  private Timer clawStalledTimer;
+  private Timer clawStalledTimer = new Timer();
   private final ArmMove armExtend = new ArmMove(arm, telescope, ArmMove.Position.loadSingleExtend, false);
   private final ArmMove armRetract = new ArmMove(arm, telescope, ArmMove.Position.loadSingleRetract, false);
 
@@ -45,9 +46,6 @@ public class AutoAlignSubstation extends CommandBase {
     limelight = Limelight.getSubstationInstance();
     drive = driveSubsystem;
     claw = Claw.getInstance();
-
-    autoAlignPID.setP(AutoAlignSubstationConstants.kP);
-    autoAlignPID.setD(AutoAlignSubstationConstants.kD);
 
     addRequirements(limelight, drive);
   }

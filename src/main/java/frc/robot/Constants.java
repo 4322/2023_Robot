@@ -179,7 +179,7 @@ public class Constants {
 
       public static final double autoRotkP = 0.008;
       public static final double autoRotkD = 0.0004;
-      public static final double minAutoRotatePower = 0.01;
+      public static final double minAutoRotatePower = 0.03;
       public static final double slowAutoRotatePower = 0.32;
       public static final double slowAutoRotateFtPerSec = 3;
       public static final double maxAutoRotatePower = 0.5;
