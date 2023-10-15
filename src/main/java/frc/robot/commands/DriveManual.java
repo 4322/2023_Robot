@@ -97,16 +97,16 @@ public class DriveManual extends CommandBase {
         initSubstationAlignment();
         break;
       case usePreset:
-        driveAutoRotate(true);
+        autoRotateSetTarget(true);
         break;
       case usePresetNoArmMove:
-        driveAutoRotate(false);
+        autoRotateSetTarget(false);
         break;
     }
   }
 
   // autoAlignMode is set to true when we want to invoke autoAlignment
-  private void driveAutoRotate(boolean autoAlignMode) {
+  private void autoRotateSetTarget(boolean autoAlignMode) {
     switch (ArmMove.getArmPreset()) {
       case scoreLow:
         targetHeadingDeg = 180.0;
