@@ -119,7 +119,7 @@ public class AutoAlignSubstation extends CommandBase {
       }
 
       driveX = autoAlignPID.calculate(offCenterMeters, 0);
-      if (Robot.getAllianceColor() == Alliance.Blue) {
+      if (Robot.getAllianceColor() == Alliance.Red) {
         driveX = -driveX;
       }
 
