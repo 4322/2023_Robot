@@ -239,7 +239,7 @@ public class DriveManual extends CommandBase {
         if (targetHeadingDeg != null) {
           drive.driveAutoRotate(driveX, driveY, targetHeadingDeg,
               Constants.DriveConstants.Auto.rotateToleranceDegrees);
-          if (loadAutoPoseActive && !armAtLoadSingle && (autoPose == AutoPose.usePreset)) {
+          if (loadAutoPoseActive && !armAtLoadSingle && ((autoPose == AutoPose.usePreset)|| (autoPose == AutoPose.loadSingleManual))) {
             if (driveAngle >= targetHeadingDeg - Constants.AutoAlignSubstationConstants.rotateToleranceDegrees && 
                 driveAngle <= targetHeadingDeg + Constants.AutoAlignSubstationConstants.rotateToleranceDegrees) {
               armLoadSingleRetract.schedule();
