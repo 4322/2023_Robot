@@ -252,12 +252,12 @@ public class Constants {
 
   // Values for AutoAlignSubstation
   public static final class AutoAlignSubstationConstants {
-    public static final double approachPower = 0; //0.2;
-    public static final double initialDriveX = 0; //1;
+    public static final double approachPower = 0.2;
+    public static final double initialDriveX = 0.25;  // 1.0
     public static final double rotateToleranceDegrees = 2.5;
     public static final double substationLateralToleranceMeters = OrangeMath.inchesToMeters(3.0);
     // Distance from face of AprilTag to front of frame perimeter
-    public static final double substationFrontToleranceMeters = OrangeMath.inchesToMeters(16.0);
+    public static final double substationFrontToleranceMeters = 0.14;
     // Distance between centers of 9/8 and 8/7 AprilTags
     public static final double tagSeparationMeters = OrangeMath.inchesToMeters(6.3);
     

@@ -95,22 +95,22 @@ public class AutoAlignSubstation extends CommandBase {
 
       if (eight != null) {
         targetDistance = limelight.calcTargetPos(Constants.LimelightConstants.singleSubstationAprilTagHeight,
-            eight.ty, -eight.tx);
+            eight.ty, eight.tx);
         offCenterMeters = 0;
       } else if (nine != null) {
         targetDistance = limelight.calcTargetPos(Constants.LimelightConstants.singleSubstationAprilTagHeight,
-            nine.ty, -nine.tx);
-        offCenterMeters = AutoAlignSubstationConstants.tagSeparationMeters;
+            nine.ty, nine.tx);
+        offCenterMeters = -AutoAlignSubstationConstants.tagSeparationMeters;
       } else if (seven != null) {
         targetDistance = limelight.calcTargetPos(Constants.LimelightConstants.singleSubstationAprilTagHeight,
-            seven.ty, -seven.tx);
-        offCenterMeters = -AutoAlignSubstationConstants.tagSeparationMeters;
+            seven.ty, seven.tx);
+        offCenterMeters = AutoAlignSubstationConstants.tagSeparationMeters;
       } else {
         // Continue driving until we see a tag again
         drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
         return;
       }
-      offCenterMeters += targetDistance.getY();
+      offCenterMeters -= targetDistance.getY();
 
       if (Constants.debug) {
         // as these don't update except for here, there is no need to run it periodically
