@@ -95,15 +95,15 @@ public class AutoAlignSubstation extends CommandBase {
 
       if (eight != null) {
         targetDistance = limelight.calcTargetPos(Constants.LimelightConstants.singleSubstationAprilTagHeight,
-            eight.ty, eight.tx);
+            -eight.ty, -eight.tx);
         offCenterMeters = 0;
       } else if (nine != null) {
         targetDistance = limelight.calcTargetPos(Constants.LimelightConstants.singleSubstationAprilTagHeight,
-            nine.ty, nine.tx);
+            -nine.ty, -nine.tx);
         offCenterMeters = AutoAlignSubstationConstants.tagSeparationMeters;
       } else if (seven != null) {
         targetDistance = limelight.calcTargetPos(Constants.LimelightConstants.singleSubstationAprilTagHeight,
-            seven.ty, seven.tx);
+            -seven.ty, -seven.tx);
         offCenterMeters = -AutoAlignSubstationConstants.tagSeparationMeters;
       } else {
         // Continue driving until we see a tag again
