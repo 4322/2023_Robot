@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -18,6 +19,8 @@ import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Telescope;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.subsystems.LED.GamePiece;
 
 public class AutoAlignSubstation extends CommandBase {
@@ -27,8 +30,8 @@ public class AutoAlignSubstation extends CommandBase {
   private final Claw claw;
   private final Arm arm = Arm.getInstance();
   private final Telescope telescope = Telescope.getInstance();
-  private PIDController autoAlignPID = new PIDController(AutoAlignSubstationConstants.kP, 0, 
-    AutoAlignSubstationConstants.kD);
+  private PIDController autoAlignPID = new PIDController(AutoAlignSubstationConstants.kP, 0,
+      AutoAlignSubstationConstants.kD);
 
   private Timer clawStalledTimer = new Timer();
   private final ArmMove armExtend = new ArmMove(arm, telescope, ArmMove.Position.loadSingleExtend, false);
@@ -38,7 +41,9 @@ public class AutoAlignSubstation extends CommandBase {
   private double driveY = 0.0;
 
   private Double targetHeadingDeg = null;
-
+  private ShuffleboardTab tab;
+  private GenericEntry targetDistanceX;
+  private GenericEntry targetDistanceY;
   private boolean done;
 
   public AutoAlignSubstation(Drive driveSubsystem) {
@@ -46,7 +51,11 @@ public class AutoAlignSubstation extends CommandBase {
     limelight = Limelight.getSubstationInstance();
     drive = driveSubsystem;
     claw = Claw.getInstance();
-
+    if (Constants.debug) {
+      tab = Shuffleboard.getTab("SubstationAlign");
+      targetDistanceX = tab.add("Distance to Target (X)", 0).withPosition(0, 0).getEntry();
+      targetDistanceY = tab.add("Distance to Target (Y)", 0).withPosition(1, 0).getEntry();
+    }
     addRequirements(limelight, drive);
   }
 
@@ -75,38 +84,44 @@ public class AutoAlignSubstation extends CommandBase {
   public void execute() {
     led.setSubstationState(LED.SubstationState.adjusting);
     double offCenterMeters;
-    Translation2d targetDistance;  // target position relative to front center of bot
+    Translation2d targetDistance; // target position relative to front center of bot
 
     if (limelight.getTargetVisible()) {
       limelight.refreshOdometry();
-      // Use raw tag data instead of limelight calculated pose due to possible ambiguity when
-      // we only see one tag because the limelight doesn't know that we are rotated to the substation.
+      // Use raw tag data instead of limelight calculated pose due to possible
+      // ambiguity when
+      // we only see one tag because the limelight doesn't know that we are rotated to
+      // the substation.
       LimelightHelpers.LimelightTarget_Fiducial nine = limelight.getTag(9);
       LimelightHelpers.LimelightTarget_Fiducial eight = limelight.getTag(8);
       LimelightHelpers.LimelightTarget_Fiducial seven = limelight.getTag(7);
 
       if (eight != null) {
         targetDistance = limelight.calcTargetPos(Constants.LimelightConstants.singleSubstationAprilTagHeight,
-          eight.ty, eight.tx);
+            eight.ty, eight.tx);
         offCenterMeters = 0;
       } else if (nine != null) {
         targetDistance = limelight.calcTargetPos(Constants.LimelightConstants.singleSubstationAprilTagHeight,
-          nine.ty, nine.tx);
+            nine.ty, nine.tx);
         offCenterMeters = Constants.LimelightConstants.tagSeparationMeters;
       } else if (seven != null) {
         targetDistance = limelight.calcTargetPos(Constants.LimelightConstants.singleSubstationAprilTagHeight,
-          seven.ty, seven.tx);
+            seven.ty, seven.tx);
         offCenterMeters = -Constants.LimelightConstants.tagSeparationMeters;
       } else {
         // Continue driving until see a tag again
         drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
         return;
       }
+      targetDistanceX.setDouble(targetDistance.getX()); // as these don't update except for here, there is no need to
+                                                        // run it periodically
+      targetDistanceY.setDouble(targetDistance.getY());
       offCenterMeters += targetDistance.getY();
 
       driveX = autoAlignPID.calculate(offCenterMeters, 0);
       // Check if robot is centered and not moving
-      if (eight != null && Math.abs(offCenterMeters) <= LimelightConstants.substationLateralToleranceMeters && !drive.isRobotMoving()) { 
+      if (eight != null && Math.abs(offCenterMeters) <= LimelightConstants.substationLateralToleranceMeters
+          && !drive.isRobotMoving()) {
         // Too far away from substation to intake
         if (targetDistance.getX() > LimelightConstants.substationFrontToleranceMeters) {
           if (Robot.getAllianceColor() == Alliance.Blue) {
@@ -115,7 +130,7 @@ public class AutoAlignSubstation extends CommandBase {
             driveY = -AutoAlignSubstationConstants.driveYSingleSubstationPower;
           }
           drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
-          armExtend.schedule();       
+          armExtend.schedule();
         } else {
           // Close enough to the single substation to intake
           armExtend.schedule();
@@ -125,10 +140,10 @@ public class AutoAlignSubstation extends CommandBase {
           clawStalledTimer.start();
           if ((clawStalledTimer.hasElapsed(ClawConstants.coneStalledDelay) && led.getGamePiece() == GamePiece.cone) ||
               (clawStalledTimer.hasElapsed(ClawConstants.cubeStalledDelay) && led.getGamePiece() == GamePiece.cube)) {
-                clawStalledTimer.stop();
-                clawStalledTimer.reset();
-                armRetract.schedule(); // clearance to drive away from substation
-                done = true;
+            clawStalledTimer.stop();
+            clawStalledTimer.reset();
+            armRetract.schedule(); // clearance to drive away from substation
+            done = true;
           }
         }
       } else {
