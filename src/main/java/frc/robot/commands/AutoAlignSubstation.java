@@ -137,6 +137,7 @@ public class AutoAlignSubstation extends CommandBase {
           armExtend.schedule();
         } else {
           // Close enough to the single substation to intake
+          driveY = 0;
           armExtend.schedule();
           drive.stop();
         }
