@@ -119,6 +119,10 @@ public class AutoAlignSubstation extends CommandBase {
       }
 
       driveX = autoAlignPID.calculate(offCenterMeters, 0);
+      if (Robot.getAllianceColor() == Alliance.Blue) {
+        driveX = -driveX;
+      }
+
       // Check if robot is centered and not moving
       if (eight != null && Math.abs(offCenterMeters) <= 
           AutoAlignSubstationConstants.substationLateralToleranceMeters && !drive.isRobotMoving()) {
