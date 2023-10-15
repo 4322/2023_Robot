@@ -424,7 +424,9 @@ public class Constants {
 
     // AutoAlignSubstation
     public static final double substationLateralToleranceMeters = OrangeMath.inchesToMeters(3.0);
-    public static final double substationFrontToleranceMeters = OrangeMath.inchesToMeters(3.0);
+    // Distance from face of AprilTag to front of frame perimeter
+    public static final double substationFrontToleranceMeters = OrangeMath.inchesToMeters(16.0);
+    // Distance between centers of 9/8 and 8/7 AprilTags
     public static final double tagSeparationMeters = OrangeMath.inchesToMeters(6.3);
   }
 }
