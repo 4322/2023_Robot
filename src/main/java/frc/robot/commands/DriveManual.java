@@ -240,8 +240,8 @@ public class DriveManual extends CommandBase {
           drive.driveAutoRotate(driveX, driveY, targetHeadingDeg,
               Constants.DriveConstants.Auto.rotateToleranceDegrees);
           if (loadAutoPoseActive && !armAtLoadSingle && (autoPose != AutoPose.usePresetNoArmMove)) {
-            if (driveAngle >= targetHeadingDeg - Constants.DriveConstants.Auto.rotateToleranceDegrees * 2 && 
-                driveAngle <= targetHeadingDeg + Constants.DriveConstants.Auto.rotateToleranceDegrees * 2) {
+            if (driveAngle >= targetHeadingDeg - Constants.AutoAlignSubstationConstants.rotateToleranceDegrees && 
+                driveAngle <= targetHeadingDeg + Constants.AutoAlignSubstationConstants.rotateToleranceDegrees) {
               armLoadSingleRetract.schedule();
               armAtLoadSingle = true;
             }

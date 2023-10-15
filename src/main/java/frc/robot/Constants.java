@@ -138,17 +138,6 @@ public class Constants {
     public static final double doubleSubstationLoadDistanceInches = 32.5;
     public static final double doubleSubstationMinAprilTagInches = 42;
 
-    // Values for AutoAlignSubstation (Needs tuning)
-    public static final class AutoAlignSubstationConstants {
-      public static final double driveYSingleSubstationPower = 0.2;
-      public static final double initialDriveX = 1;
-      public static final double rotateSingleSubstationTolerance = 2.5;
-      
-      public static final double kP = 0;
-      public static final double kD = 0;
-    }
-   
-
     public static final class Manual {
 
       public static final double joystickDriveDeadband = 0.1;
@@ -258,8 +247,22 @@ public class Constants {
         public static final double kI = 0;
         public static final double kD = 0.01;
       }
-      
     }
+  }
+
+  // Values for AutoAlignSubstation
+  public static final class AutoAlignSubstationConstants {
+    public static final double approachPower = 0; //0.2;
+    public static final double initialDriveX = 0; //1;
+    public static final double rotateToleranceDegrees = 2.5;
+    public static final double substationLateralToleranceMeters = OrangeMath.inchesToMeters(3.0);
+    // Distance from face of AprilTag to front of frame perimeter
+    public static final double substationFrontToleranceMeters = OrangeMath.inchesToMeters(16.0);
+    // Distance between centers of 9/8 and 8/7 AprilTags
+    public static final double tagSeparationMeters = OrangeMath.inchesToMeters(6.3);
+    
+    public static final double kP = 0;
+    public static final double kD = 0;
   }
 
   public static final class ClawConstants {// all temp values
@@ -421,12 +424,5 @@ public class Constants {
     // Map of pipelines and tag heights
     public static final Map<Integer, Double> tagPipelinesHeights = Map
         .ofEntries(Map.entry(1, gridAprilTagHeight), Map.entry(2, singleSubstationAprilTagHeight));
-
-    // AutoAlignSubstation
-    public static final double substationLateralToleranceMeters = OrangeMath.inchesToMeters(3.0);
-    // Distance from face of AprilTag to front of frame perimeter
-    public static final double substationFrontToleranceMeters = OrangeMath.inchesToMeters(16.0);
-    // Distance between centers of 9/8 and 8/7 AprilTags
-    public static final double tagSeparationMeters = OrangeMath.inchesToMeters(6.3);
   }
 }

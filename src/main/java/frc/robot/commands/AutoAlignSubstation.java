@@ -10,9 +10,8 @@ import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.Robot;
 import frc.robot.Constants.ClawConstants;
-import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.DriveConstants.Auto;
-import frc.robot.Constants.DriveConstants.AutoAlignSubstationConstants;
+import frc.robot.Constants.AutoAlignSubstationConstants;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
@@ -101,11 +100,11 @@ public class AutoAlignSubstation extends CommandBase {
       } else if (nine != null) {
         targetDistance = limelight.calcTargetPos(Constants.LimelightConstants.singleSubstationAprilTagHeight,
             nine.ty, nine.tx);
-        offCenterMeters = Constants.LimelightConstants.tagSeparationMeters;
+        offCenterMeters = AutoAlignSubstationConstants.tagSeparationMeters;
       } else if (seven != null) {
         targetDistance = limelight.calcTargetPos(Constants.LimelightConstants.singleSubstationAprilTagHeight,
             seven.ty, seven.tx);
-        offCenterMeters = -Constants.LimelightConstants.tagSeparationMeters;
+        offCenterMeters = -AutoAlignSubstationConstants.tagSeparationMeters;
       } else {
         // Continue driving until we see a tag again
         drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
@@ -121,14 +120,14 @@ public class AutoAlignSubstation extends CommandBase {
 
       driveX = autoAlignPID.calculate(offCenterMeters, 0);
       // Check if robot is centered and not moving
-      if (eight != null && Math.abs(offCenterMeters) <= LimelightConstants.substationLateralToleranceMeters
-          && !drive.isRobotMoving()) {
+      if (eight != null && Math.abs(offCenterMeters) <= 
+          AutoAlignSubstationConstants.substationLateralToleranceMeters && !drive.isRobotMoving()) {
         // Too far away from substation to intake
-        if (targetDistance.getX() > LimelightConstants.substationFrontToleranceMeters) {
+        if (targetDistance.getX() > AutoAlignSubstationConstants.substationFrontToleranceMeters) {
           if (Robot.getAllianceColor() == Alliance.Blue) {
-            driveY = AutoAlignSubstationConstants.driveYSingleSubstationPower;
+            driveY = AutoAlignSubstationConstants.approachPower;
           } else {
-            driveY = -AutoAlignSubstationConstants.driveYSingleSubstationPower;
+            driveY = -AutoAlignSubstationConstants.approachPower;
           }
           drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
           armExtend.schedule();
@@ -139,8 +138,10 @@ public class AutoAlignSubstation extends CommandBase {
         }
         if (claw.isIntakeStalling()) {
           clawStalledTimer.start();
-          if ((clawStalledTimer.hasElapsed(ClawConstants.coneStalledDelay) && led.getGamePiece() == GamePiece.cone) ||
-              (clawStalledTimer.hasElapsed(ClawConstants.cubeStalledDelay) && led.getGamePiece() == GamePiece.cube)) {
+          if ((clawStalledTimer.hasElapsed(ClawConstants.coneStalledDelay) && 
+              led.getGamePiece() == GamePiece.cone) ||
+              (clawStalledTimer.hasElapsed(ClawConstants.cubeStalledDelay) && 
+              led.getGamePiece() == GamePiece.cube)) {
             clawStalledTimer.stop();
             clawStalledTimer.reset();
             armRetract.schedule(); // clearance to drive away from substation
