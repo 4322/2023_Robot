@@ -46,8 +46,8 @@ public class AutoAlignSubstation extends CommandBase {
     drive = driveSubsystem;
     if (Constants.debug) {
       tab = Shuffleboard.getTab("SubstationAlign");
-      lateralDistanceMeters = tab.add("Lateral distance to substation (m)", 0).withPosition(0, 0).withSize(3, 1).getEntry();
-      frontDistanceMeters = tab.add("Front distance to substation (m)", 0).withPosition(0, 1).withSize(3, 1).getEntry();
+      lateralDistanceMeters = tab.add("Lateral distance to substation (m)", 0).withPosition(0, 0).getEntry();
+      frontDistanceMeters = tab.add("Front distance to substation (m)", 0).withPosition(1, 0).getEntry();
     }
     addRequirements(limelight, drive);
   }
@@ -95,21 +95,24 @@ public class AutoAlignSubstation extends CommandBase {
 
       if (eight != null) {
         targetDistance = limelight.calcTargetPos(Constants.LimelightConstants.singleSubstationAprilTagHeight,
-            -eight.ty, -eight.tx);
+            eight.ty, eight.tx);
         offCenterMeters = 0;
       } else if (nine != null) {
         targetDistance = limelight.calcTargetPos(Constants.LimelightConstants.singleSubstationAprilTagHeight,
-            -nine.ty, -nine.tx);
+            nine.ty, nine.tx);
         offCenterMeters = AutoAlignSubstationConstants.tagSeparationMeters;
       } else if (seven != null) {
         targetDistance = limelight.calcTargetPos(Constants.LimelightConstants.singleSubstationAprilTagHeight,
-            -seven.ty, -seven.tx);
+            seven.ty, seven.tx);
         offCenterMeters = -AutoAlignSubstationConstants.tagSeparationMeters;
       } else {
         // Continue driving until we see a tag again
         drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
         return;
       }
+      // The limelight calculates the robot position relative to the AprilTag.
+      // We want to know where the substation is relative to the robot, so invert the translation.
+      targetDistance = new Translation2d(0, 0).minus(targetDistance);
       offCenterMeters += targetDistance.getY();
 
       if (Constants.debug) {
