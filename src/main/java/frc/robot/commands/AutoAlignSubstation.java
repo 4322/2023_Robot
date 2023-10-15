@@ -24,33 +24,27 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.subsystems.LED.GamePiece;
 
 public class AutoAlignSubstation extends CommandBase {
-  private final Limelight limelight;
-  private final LED led;
+  private final Limelight limelight = Limelight.getSubstationInstance();
+  private final LED led = LED.getInstance();
   private final Drive drive;
-  private final Claw claw;
+  private final Claw claw = Claw.getInstance();
   private final Arm arm = Arm.getInstance();
   private final Telescope telescope = Telescope.getInstance();
-  private PIDController autoAlignPID = new PIDController(AutoAlignSubstationConstants.kP, 0,
-      AutoAlignSubstationConstants.kD);
-
-  private Timer clawStalledTimer = new Timer();
   private final ArmMove armExtend = new ArmMove(arm, telescope, ArmMove.Position.loadSingleExtend, false);
   private final ArmMove armRetract = new ArmMove(arm, telescope, ArmMove.Position.loadSingleRetract, false);
-
-  private double driveX = AutoAlignSubstationConstants.driveXMax;
-  private double driveY = 0.0;
-
-  private Double targetHeadingDeg = null;
+  private final PIDController autoAlignPID = new PIDController(AutoAlignSubstationConstants.kP, 0,
+      AutoAlignSubstationConstants.kD);
+  private final Timer clawStalledTimer = new Timer();
+  private double driveX;
+  private double driveY;
+  private Double targetHeadingDeg;
   private ShuffleboardTab tab;
   private GenericEntry targetDistanceX;
   private GenericEntry targetDistanceY;
   private boolean done;
 
   public AutoAlignSubstation(Drive driveSubsystem) {
-    led = LED.getInstance();
-    limelight = Limelight.getSubstationInstance();
     drive = driveSubsystem;
-    claw = Claw.getInstance();
     if (Constants.debug) {
       tab = Shuffleboard.getTab("SubstationAlign");
       targetDistanceX = tab.add("Distance to Target (X)", 0).withPosition(0, 0).getEntry();
@@ -63,6 +57,10 @@ public class AutoAlignSubstation extends CommandBase {
   public void initialize() {
     clawStalledTimer.stop();
     clawStalledTimer.reset();
+    autoAlignPID.reset();
+    driveX = AutoAlignSubstationConstants.initialDriveX;
+    driveY = 0.0;
+    targetHeadingDeg = null;
     done = false;
 
     switch (Robot.getAllianceColor()) {
