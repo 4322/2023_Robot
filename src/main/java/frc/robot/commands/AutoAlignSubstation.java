@@ -39,16 +39,16 @@ public class AutoAlignSubstation extends CommandBase {
   private double driveY;
   private Double targetHeadingDeg;
   private ShuffleboardTab tab;
-  private GenericEntry targetDistanceX;
-  private GenericEntry targetDistanceY;
+  private GenericEntry lateralDistanceMeters;
+  private GenericEntry frontDistanceMeters;
   private boolean done;
 
   public AutoAlignSubstation(Drive driveSubsystem) {
     drive = driveSubsystem;
     if (Constants.debug) {
       tab = Shuffleboard.getTab("SubstationAlign");
-      targetDistanceX = tab.add("Distance to Target (X)", 0).withPosition(0, 0).getEntry();
-      targetDistanceY = tab.add("Distance to Target (Y)", 0).withPosition(1, 0).getEntry();
+      lateralDistanceMeters = tab.add("Lateral distance to substation (m)", 0).withPosition(0, 0).getEntry();
+      frontDistanceMeters = tab.add("Front distance to substation (m)", 0).withPosition(1, 0).getEntry();
     }
     addRequirements(limelight, drive);
   }
@@ -107,14 +107,17 @@ public class AutoAlignSubstation extends CommandBase {
             seven.ty, seven.tx);
         offCenterMeters = -Constants.LimelightConstants.tagSeparationMeters;
       } else {
-        // Continue driving until see a tag again
+        // Continue driving until we see a tag again
         drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
         return;
       }
-      targetDistanceX.setDouble(targetDistance.getX()); // as these don't update except for here, there is no need to
-                                                        // run it periodically
-      targetDistanceY.setDouble(targetDistance.getY());
       offCenterMeters += targetDistance.getY();
+
+      if (Constants.debug) {
+        // as these don't update except for here, there is no need to run it periodically
+        frontDistanceMeters.setDouble(targetDistance.getX()); 
+        lateralDistanceMeters.setDouble(offCenterMeters);
+      }
 
       driveX = autoAlignPID.calculate(offCenterMeters, 0);
       // Check if robot is centered and not moving
@@ -149,7 +152,7 @@ public class AutoAlignSubstation extends CommandBase {
         drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
       }
     } else {
-      // Continue driving until see a tag again
+      // Continue driving until we see a tag again
       drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
     }
   }
