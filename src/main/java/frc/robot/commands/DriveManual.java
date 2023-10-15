@@ -97,32 +97,39 @@ public class DriveManual extends CommandBase {
         initSubstationAlignment();
         break;
       case usePreset:
+        driveAutoRotate(true);
+        break;
       case usePresetNoArmMove:
-        switch (ArmMove.getArmPreset()) {
-          case scoreLow:
-            targetHeadingDeg = 180.0;
-            scoreAutoPoseActive = true;
-            LED.getInstance().setAlignment(LED.Alignment.none);
-            break;
-          case scoreMid:
-          case scoreHigh:
-            targetHeadingDeg = 0.0;
-            scoreAutoPoseActive = true;
-            LED.getInstance().setAlignment(LED.Alignment.grid);
-            break;
-          case loadSingleExtend:
-            initSubstationAlignment();
-            if (targetHeadingDeg != null) {
-              loadAutoAlignPending = true;
-            }
-            break;
-          default:
-            // not an auto-rotate preset
-            targetHeadingDeg = null;
-            done = true;
-            LED.getInstance().setAlignment(LED.Alignment.none);
-            break;
+        driveAutoRotate(false);
+        break;
+    }
+  }
+
+  // autoAlignMode is set to true when we want to invoke autoAlignment
+  private void driveAutoRotate(boolean autoAlignMode) {
+    switch (ArmMove.getArmPreset()) {
+      case scoreLow:
+        targetHeadingDeg = 180.0;
+        scoreAutoPoseActive = true;
+        LED.getInstance().setAlignment(LED.Alignment.none);
+        break;
+      case scoreMid:
+      case scoreHigh:
+        targetHeadingDeg = 0.0;
+        scoreAutoPoseActive = true;
+        LED.getInstance().setAlignment(LED.Alignment.grid);
+        break;
+      case loadSingleExtend:
+        initSubstationAlignment();
+        if (targetHeadingDeg != null) {
+          loadAutoAlignPending = autoAlignMode;
         }
+        break;
+      default:
+        // not an auto-rotate preset
+        targetHeadingDeg = null;
+        done = true;
+        LED.getInstance().setAlignment(LED.Alignment.none);
         break;
     }
   }
