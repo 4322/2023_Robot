@@ -96,7 +96,7 @@ public class AutoAlignSubstation extends CommandBase {
       } else if (seven != null) {
         targetDistance = limelight.calcTargetPos(Constants.LimelightConstants.singleSubstationAprilTagHeight,
           seven.ty, seven.tx);
-        offCenterMeters = Constants.LimelightConstants.tagSeparationMeters;
+        offCenterMeters = -Constants.LimelightConstants.tagSeparationMeters;
       } else {
         // Continue driving until see a tag again
         drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
