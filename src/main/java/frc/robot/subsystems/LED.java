@@ -230,7 +230,7 @@ public class LED extends SubsystemBase {
             rightLED.setLED(LEDColor.white, BlinkType.fast);
             break;
           case adjusting:
-            leftLED.setLED(LEDColor.red, BlinkType.none);
+            rightLED.setLED(LEDColor.red, BlinkType.none);
             break;
           case aligned:
             rightLED.setLED(LEDColor.green, BlinkType.none);
