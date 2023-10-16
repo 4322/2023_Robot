@@ -111,7 +111,7 @@ public class Constants {
 
     // Values for auto balance
     public static final double autoBalanceFlatPower = 0.3;
-    public static final double autoBalanceRampPower = 0.15;
+    public static final double autoBalanceRampPower = 0.2;
     public static final double autoBalanceAdjustmentPower = 0.035;
     public static final double chargeStationTiltedMinDeg = 10.0;
     public static final double chargeStationDroppingDeg = 1.5;

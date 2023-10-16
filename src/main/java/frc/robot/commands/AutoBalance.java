@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.LED;
 import frc.utility.OrangeMath;
 
 public class AutoBalance extends CommandBase {
@@ -112,6 +113,7 @@ public class AutoBalance extends CommandBase {
           if (debounceTimer.hasElapsed(Constants.DriveConstants.levelingSec)) {
             if (absPitch <= Constants.DriveConstants.chargeStationBalancedMaxDeg) {
               currentMode = autoBalanceMode.finished;
+              LED.getInstance().setPresetAccepted();
             } else {
               startAdjustPitch = pitch;
               currentMode = autoBalanceMode.adjusting;
