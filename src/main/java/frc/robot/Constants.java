@@ -314,7 +314,7 @@ public class Constants {
     public static final double homingPower = -0.3;
     public static final double homingNotMovingSec = 0.1;
     public static final double homingNotMovingRevs = 0.5;
-    public static final double homingTimeoutSec = 3;
+    public static final double homingTimeoutSec = 6;  // home when flipped over
 
     public static final double positionTolerance = 0.3;
     public static final double atTargetTolerance = 0.7;
