@@ -43,8 +43,7 @@ public class ArmHoming extends CommandBase{
     }
     if (homeTimer.hasElapsed(Constants.ArmConstants.homingNotMovingSec)) {
       double currentPos = arm.getPosition();
-      if ((lastPos - currentPos < Constants.ArmConstants.homingNotMovingRevs) ||
-          arm.getArmSensorPressed()) {
+      if (lastPos - currentPos < Constants.ArmConstants.homingNotMovingRevs) {
         arm.setPosition(0);
         arm.setHomed();
       } else {
@@ -59,7 +58,6 @@ public class ArmHoming extends CommandBase{
   public void end(boolean interrupted) {
     arm.stop();
     arm.setHomed();
-    arm.setLimitSwitch(true);
   }
 
   // Returns true when the command should end.
