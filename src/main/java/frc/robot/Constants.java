@@ -142,8 +142,8 @@ public class Constants {
     public static final class Manual {
 
       public static final double joystickDriveDeadband = 0.1;
-      public static final double joystickRotateLeftDeadband = 0.4;  // both joysticks have a huge left twist deadzone
-      public static final double joystickRotateRightDeadband = 0.2;
+      public static final double joystickRotateLeftDeadband = 0.3;
+      public static final double joystickRotateRightDeadband = 0.3;
 
       public static final double xboxDriveDeadband = 0.1;
       public static final double xboxRotateDeadband = 0.2;
@@ -301,7 +301,7 @@ public class Constants {
     public static final double maxPosition = 89;
     public static final double minPosition = 0;
 
-    public static final double inHopperPosition = 2.5;
+    public static final double inHopperPosition = 3.0;
     public static final double loadSinglePosition = 15;
     public static final double loadFloorPosition = 88.31; //85.9 for further out
     public static final double earlyTelescopeExtendPosition = 40;
