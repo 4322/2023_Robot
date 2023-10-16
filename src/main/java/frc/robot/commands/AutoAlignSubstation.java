@@ -41,6 +41,7 @@ public class AutoAlignSubstation extends CommandBase {
   private GenericEntry lateralDistanceMeters;
   private GenericEntry frontDistanceMeters;
   private boolean approachStarted;
+  private boolean intakeWasToSpeed;
   private boolean done;
 
   public AutoAlignSubstation(Drive driveSubsystem) {
@@ -61,6 +62,7 @@ public class AutoAlignSubstation extends CommandBase {
     driveY = 0.0;
     targetHeadingDeg = null;
     approachStarted = false;
+    intakeWasToSpeed = false;
     done = false;
 
     switch (Robot.getAllianceColor()) {
@@ -152,8 +154,12 @@ public class AutoAlignSubstation extends CommandBase {
       // Continue driving until we see a tag again
       drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
     }
+
     // check the intake here in case we lose sight of the 8 tag due to reflections
-    if (claw.isIntakeStalling()) {
+    if (!intakeWasToSpeed && claw.isIntakeUpToSpeed()) {
+      intakeWasToSpeed = true;
+    }
+    if (intakeWasToSpeed && claw.isIntakeStalling()) {
       clawStalledTimer.start();
       if ((clawStalledTimer.hasElapsed(ClawConstants.coneStalledDelay) && 
           led.getGamePiece() == GamePiece.cone) ||
