@@ -40,6 +40,7 @@ public class AutoAlignSubstation extends CommandBase {
   private ShuffleboardTab tab;
   private GenericEntry lateralDistanceMeters;
   private GenericEntry frontDistanceMeters;
+  private boolean approachStarted;
   private boolean done;
 
   public AutoAlignSubstation(Drive driveSubsystem) {
@@ -59,6 +60,7 @@ public class AutoAlignSubstation extends CommandBase {
     driveX = AutoAlignSubstationConstants.initialDriveX;
     driveY = 0.0;
     targetHeadingDeg = null;
+    approachStarted = false;
     done = false;
 
     switch (Robot.getAllianceColor()) {
@@ -122,9 +124,11 @@ public class AutoAlignSubstation extends CommandBase {
         driveX = -driveX;
       }
 
-      // Check if robot is centered and not moving
+      // Check if robot is centered and not moving fast laterally
       if (eight != null && Math.abs(offCenterMeters) <= 
-          AutoAlignSubstationConstants.substationLateralToleranceMeters && !drive.isRobotMoving()) {
+          AutoAlignSubstationConstants.substationLateralToleranceMeters && 
+          (approachStarted || !drive.isRobotMovingFast())) {
+        approachStarted = true;  // don't consider approach as movement
         // Too far away from substation to intake
         if (targetDistance.getX() > AutoAlignSubstationConstants.substationFrontToleranceMeters) {
           if (Robot.getAllianceColor() == Alliance.Blue) {
@@ -140,18 +144,6 @@ public class AutoAlignSubstation extends CommandBase {
           armExtend.schedule();
           drive.stop();
         }
-        if (claw.isIntakeStalling()) {
-          clawStalledTimer.start();
-          if ((clawStalledTimer.hasElapsed(ClawConstants.coneStalledDelay) && 
-              led.getGamePiece() == GamePiece.cone) ||
-              (clawStalledTimer.hasElapsed(ClawConstants.cubeStalledDelay) && 
-              led.getGamePiece() == GamePiece.cube)) {
-            clawStalledTimer.stop();
-            clawStalledTimer.reset();
-            armRetract.schedule(); // clearance to drive away from substation
-            done = true;
-          }
-        }
       } else {
         // Robot not centered
         drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
@@ -160,6 +152,19 @@ public class AutoAlignSubstation extends CommandBase {
       // Continue driving until we see a tag again
       drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
     }
+    // check the intake here in case we lose sight of the 8 tag due to reflections
+    if (claw.isIntakeStalling()) {
+      clawStalledTimer.start();
+      if ((clawStalledTimer.hasElapsed(ClawConstants.coneStalledDelay) && 
+          led.getGamePiece() == GamePiece.cone) ||
+          (clawStalledTimer.hasElapsed(ClawConstants.cubeStalledDelay) && 
+          led.getGamePiece() == GamePiece.cube)) {
+        clawStalledTimer.stop();
+        clawStalledTimer.reset();
+        armRetract.schedule(); // clearance to drive away from substation
+        done = true;
+      }
+    }  
   }
 
   // Called once the command ends or is interrupted.

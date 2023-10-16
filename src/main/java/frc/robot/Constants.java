@@ -103,7 +103,8 @@ public class Constants {
 
     public static final double maxRotationSpeedRadSecond = 12.2718;  // physical limit of the bot
 
-    public static final double movingVelocityThresholdFtPerSec = 0.2;
+    public static final double stoppedVelocityThresholdFtPerSec = 0.2;
+    public static final double movingVelocityThresholdFtPerSec = 0.5;
 
     public static final double drivePolarDeadband = 0.06;
     public static final double twistDeadband = 0.08;

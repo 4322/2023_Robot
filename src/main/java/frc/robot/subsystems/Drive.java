@@ -93,14 +93,14 @@ public class Drive extends SubsystemBase {
 
       if (Constants.gyroEnabled) {
         gyro = new AHRS(SPI.Port.kMXP, (byte) 66);
-        odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2d(), getModulePostitions());
 
         // wait for first gyro reading to be received
         try {
-          Thread.sleep(1000);
+          Thread.sleep(2000);
         } catch (InterruptedException e) {
         }
 
+        odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2d(), getModulePostitions());
         resetFieldCentric(0);
       } 
 
@@ -241,6 +241,14 @@ public class Drive extends SubsystemBase {
 
   // rotation isn't considered to be movement
   public boolean isRobotMoving() {
+    if (Constants.driveEnabled) {
+      return latestVelocity >= DriveConstants.stoppedVelocityThresholdFtPerSec;
+    } else {
+      return false;
+    }
+  }
+
+  public boolean isRobotMovingFast() {
     if (Constants.driveEnabled) {
       return latestVelocity >= DriveConstants.movingVelocityThresholdFtPerSec;
     } else {
