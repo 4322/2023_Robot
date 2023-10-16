@@ -254,7 +254,7 @@ public class Constants {
   // Values for AutoAlignSubstation
   public static final class AutoAlignSubstationConstants {
     public static final double approachPower = 0.2;
-    public static final double initialDriveX = 0.25;  // 1.0
+    public static final double initialDriveX = -0.35;  // get back to target after flying past it
     public static final double rotateToleranceDegrees = 2.5;
     public static final double substationLateralToleranceMeters = OrangeMath.inchesToMeters(3.0);
     // Distance from face of AprilTag to front of frame perimeter
