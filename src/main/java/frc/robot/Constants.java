@@ -46,6 +46,12 @@ public class Constants {
   public static final boolean telescopeTuningMode = false;
   public static final boolean clawTuningMode = false;
 
+  // For identifying failing Falcon output shaft
+  public enum DriveDegradedMode {
+    normal, sideMotorsOnly, centerMotorsOnly
+  }
+  public static final DriveDegradedMode driveDegradedMode = DriveDegradedMode.normal;
+
   public static final int falconEncoderUnits = 2048;
   public static final double inchesToMeters = 0.0254;
   public static final double feetToMeters = inchesToMeters * 12;

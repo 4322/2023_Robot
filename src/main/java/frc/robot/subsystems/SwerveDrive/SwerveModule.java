@@ -48,13 +48,15 @@ public class SwerveModule extends ControlModule {
   }
 
   public void init() {
-    configDrive(driveMotor, wheelPosition);
-    configDrive(driveMotor2, wheelPosition);
-    driveMotor2.setControl(new Follower(driveMotor.getDeviceID(), false));
+    configDrive(driveMotor, wheelPosition, (Constants.driveDegradedMode == Constants.DriveDegradedMode.centerMotorsOnly));
+    configDrive(driveMotor2, wheelPosition, (Constants.driveDegradedMode == Constants.DriveDegradedMode.sideMotorsOnly));
+    if (Constants.driveDegradedMode == Constants.DriveDegradedMode.normal) {
+      driveMotor2.setControl(new Follower(driveMotor.getDeviceID(), false));
+    }
     configRotation(turningMotor);
   }
 
-  private void configDrive(TalonFX talon, WheelPosition pos) {
+  private void configDrive(TalonFX talon, WheelPosition pos, boolean coastOnly) {
     Slot0Configs slot0config = new Slot0Configs();
     slot0config.kP = DriveConstants.Drive.kP;
     slot0config.kI = DriveConstants.Drive.kI;
@@ -64,7 +66,13 @@ public class SwerveModule extends ControlModule {
     
     ClosedLoopRampsConfigs cLoopRampsConfigs = new ClosedLoopRampsConfigs();
 
-    mOutputConfigs.NeutralMode = NeutralModeValue.Brake; // Allow robot to be moved prior to enabling
+    if (coastOnly) {
+      // for identifying failed Falcon outout shafts
+      mOutputConfigs.NeutralMode = NeutralModeValue.Coast;
+    } else {
+      // we would like to start in coast mode, but we can't switch from coast to brake, so just use brake always
+      mOutputConfigs.NeutralMode = NeutralModeValue.Brake;
+    }
     mOutputConfigs.DutyCycleNeutralDeadband = DriveConstants.Drive.brakeModeDeadband;
     cLoopRampsConfigs.VoltageClosedLoopRampPeriod = DriveConstants.Drive.configClosedLoopRamp;
     
@@ -147,9 +155,15 @@ public class SwerveModule extends ControlModule {
       SwerveModuleState state =
           SwerveModuleState.optimize(desiredState, Rotation2d.fromDegrees(encoder.getPosition()));
 
-      driveMotor.setControl(new VelocityVoltage(state.speedMetersPerSecond
-              / (DriveConstants.Drive.wheelDiameterInches * Constants.inchesToMeters * Math.PI)
-              * DriveConstants.Drive.gearRatio).withEnableFOC(true));
+      VelocityVoltage driveControl = new VelocityVoltage(state.speedMetersPerSecond
+        / (DriveConstants.Drive.wheelDiameterInches * Constants.inchesToMeters * Math.PI)
+        * DriveConstants.Drive.gearRatio).withEnableFOC(true);
+
+      if (Constants.driveDegradedMode == Constants.DriveDegradedMode.centerMotorsOnly) {
+        driveMotor2.setControl(driveControl);
+      } else {
+        driveMotor.setControl(driveControl);
+      }
               
       if (!Constants.steeringTuningMode) {
         turningMotor.getPIDController().setReference(

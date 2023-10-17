@@ -46,7 +46,7 @@ public class Robot extends TimedRobot {
 
     subsystemEnabled("Comp Mode", 0, 0, !Constants.Demo.inDemoMode && !Constants.armTuningMode
         && !Constants.telescopeTuningMode && !Constants.clawTuningMode && !Constants.steeringTuningMode 
-        && !Constants.driveTuningMode && !Constants.debug);
+        && !Constants.driveTuningMode && (Constants.driveDegradedMode == Constants.DriveDegradedMode.normal) && !Constants.debug);
     subsystemEnabled("Drivebase", 1, 0, Constants.driveEnabled);
     subsystemEnabled("Arm", 2, 0, Constants.armEnabled);
     subsystemEnabled("Arm Sensor", 3, 0, Constants.armSensorEnabled);
