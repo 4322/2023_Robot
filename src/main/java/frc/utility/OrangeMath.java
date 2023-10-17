@@ -1,7 +1,5 @@
 package frc.utility;
 
-import frc.robot.Constants;
-
 public class OrangeMath {
 
   public static boolean equalToTwoDecimal(double num1, double num2) {
