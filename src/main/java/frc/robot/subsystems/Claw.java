@@ -26,7 +26,7 @@ public class Claw extends SubsystemBase {
   private boolean stallingIn;
   private boolean stalledIn;
   private boolean stalledOut;
-  private boolean upToSpeed;
+  private double signedRPM;
   private Timer stallInTimer = new Timer();
   private Timer stallOutTimer = new Timer();
   
@@ -118,7 +118,11 @@ public class Claw extends SubsystemBase {
   }
 
   public boolean isIntakeUpToSpeed() {
-    return upToSpeed;
+    return signedRPM > ClawConstants.stallRPMLimit;
+  }
+
+  public boolean isOuttakeUpToSpeed() {
+    return signedRPM < -ClawConstants.stallRPMLimit;
   }
 
   public void resetStalledIn() {
@@ -138,14 +142,12 @@ public class Claw extends SubsystemBase {
   public void periodic() {
     if (Constants.clawEnabled) {
       if (!Constants.clawTuningMode) {
-        double signedRPM = clawMotor.getEncoder().getVelocity();
+        signedRPM = clawMotor.getEncoder().getVelocity();
         double absRPM = Math.abs(signedRPM);
 
-        upToSpeed = false;
         if (absRPM > ClawConstants.stallRPMLimit) {
           resetStalledIn();
           resetStalledOut();
-          upToSpeed = true;
         } else if ((clawMode == ClawMode.intaking) && (signedRPM < ClawConstants.stallRPMLimit)) {
           stallingIn = true;
           if (stallInTimer.hasElapsed(ClawConstants.stallTime)) {

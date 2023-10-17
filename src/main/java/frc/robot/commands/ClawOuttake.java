@@ -22,6 +22,9 @@ public class ClawOuttake extends CommandBase {
     if (!outtakeStarted && ArmMove.isSafeToOuttake()) {
       claw.changeState(Claw.ClawMode.outtaking);
       outtakeStarted = true;
+    }
+    // don't change preset if outtake jams
+    if (claw.isOuttakeUpToSpeed()) {
       ArmMove.setArmPreset(ArmMove.Position.loadSingleExtend);
     }
   }
