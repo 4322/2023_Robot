@@ -58,7 +58,6 @@ public class Robot extends TimedRobot {
     subsystemEnabled("Substation Limeight", 2, 1, Constants.substationLimeLightEnabled);
     subsystemEnabled("Grid Limeight", 3, 1, Constants.gridLimeLightEnabled);
     subsystemEnabled("XBOX Controller", 4, 1, Constants.xboxEnabled);
-    subsystemEnabled("Color Sensor", 5, 1, Constants.colorSensorEnabled);
 
     leftArmCurrent = PDHTab.add("Left Arm Current", 0).getEntry();
     rightArmCurrent = PDHTab.add("Right Arm Current", 0).getEntry();
