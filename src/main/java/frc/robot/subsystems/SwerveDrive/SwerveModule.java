@@ -48,10 +48,23 @@ public class SwerveModule extends ControlModule {
   }
 
   public void init() {
-    configDrive(driveMotor, wheelPosition, (Constants.driveDegradedMode == Constants.DriveDegradedMode.centerMotorsOnly));
-    configDrive(driveMotor2, wheelPosition, (Constants.driveDegradedMode == Constants.DriveDegradedMode.sideMotorsOnly));
-    if (Constants.driveDegradedMode == Constants.DriveDegradedMode.normal) {
-      driveMotor2.setControl(new Follower(driveMotor.getDeviceID(), false));
+    switch (Constants.driveDegradedMode) {
+      case normal:
+        configDrive(driveMotor, wheelPosition, false);
+        configDrive(driveMotor2, wheelPosition, false);
+        driveMotor2.setControl(new Follower(driveMotor.getDeviceID(), false));
+        break;
+      case sideMotorsOnly:
+        configDrive(driveMotor, wheelPosition, false);
+        configDrive(driveMotor2, wheelPosition, true);
+        break;
+      case centerMotorsOnly:
+        TalonFX driveTemp = driveMotor;
+        driveMotor = driveMotor2;
+        driveMotor2 = driveTemp;
+        configDrive(driveMotor, wheelPosition, false);
+        configDrive(driveMotor2, wheelPosition, true);
+        break;
     }
     configRotation(turningMotor);
   }
@@ -62,7 +75,6 @@ public class SwerveModule extends ControlModule {
     slot0config.kI = DriveConstants.Drive.kI;
     slot0config.kD = DriveConstants.Drive.kD;
     slot0config.kV = DriveConstants.Drive.kV;
-
     
     ClosedLoopRampsConfigs cLoopRampsConfigs = new ClosedLoopRampsConfigs();
 
@@ -155,15 +167,9 @@ public class SwerveModule extends ControlModule {
       SwerveModuleState state =
           SwerveModuleState.optimize(desiredState, Rotation2d.fromDegrees(encoder.getPosition()));
 
-      VelocityVoltage driveControl = new VelocityVoltage(state.speedMetersPerSecond
+      driveMotor.setControl(new VelocityVoltage(state.speedMetersPerSecond
         / (DriveConstants.Drive.wheelDiameterInches * Constants.inchesToMeters * Math.PI)
-        * DriveConstants.Drive.gearRatio).withEnableFOC(true);
-
-      if (Constants.driveDegradedMode == Constants.DriveDegradedMode.centerMotorsOnly) {
-        driveMotor2.setControl(driveControl);
-      } else {
-        driveMotor.setControl(driveControl);
-      }
+        * DriveConstants.Drive.gearRatio).withEnableFOC(true));
               
       if (!Constants.steeringTuningMode) {
         turningMotor.getPIDController().setReference(

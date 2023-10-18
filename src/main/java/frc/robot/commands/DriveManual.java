@@ -247,18 +247,19 @@ public class DriveManual extends CommandBase {
             }
           }
           return;
-        } else {
+        } else if (Constants.driveDegradedMode == Constants.DriveDegradedMode.normal) {
+          // set pseudo auto rotate heading
           targetHeadingDeg = drive.getAngle();
           drive.driveAutoRotate(driveX, driveY, targetHeadingDeg,
               Constants.DriveConstants.Auto.rotateToleranceDegrees);
           return;
         }
       } else {  
+        // rotate joystick is active
         // check if we are in the default drive manual
         if (autoPose == AutoPose.none) {
           targetHeadingDeg = null; // unlock auto rotate heading
-        }
-        else {
+        } else {
           // restart default driveManual command
           drive.drive(driveX, driveY, rotatePower);
           done = true;
