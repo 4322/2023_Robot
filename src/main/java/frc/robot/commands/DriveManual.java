@@ -31,8 +31,8 @@ public class DriveManual extends CommandBase {
   private Timer spinoutActivationTimer = new Timer();
   private Timer spinoutActivationTimer2 = new Timer();
   private LockedWheel lockedWheelState;
-  private double initialSpinoutAngle = 0;
-  private boolean armAtLoadSingle = false;
+  private double initialSpinoutAngle;
+  private boolean armAtLoadSingle;
 
   private Arm arm = Arm.getInstance();
   private Telescope telescope = Telescope.getInstance();
@@ -83,6 +83,7 @@ public class DriveManual extends CommandBase {
     scoreAutoPoseActive = false;
     loadAutoPoseActive = false;
     loadAutoAlignPending = false;
+    armAtLoadSingle = false;
 
     // set auto-rotate direction, if any
     switch (autoPose) {
