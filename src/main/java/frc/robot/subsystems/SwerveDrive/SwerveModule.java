@@ -66,6 +66,12 @@ public class SwerveModule extends ControlModule {
         configDrive(driveMotor2, wheelPosition, true);
         break;
     }
+    // need rapid position/velocity feedback for control logic
+    driveMotor.getPosition().setUpdateFrequency(OrangeMath.msAndHzConverter(CanBusUtil.nextFastStatusPeriodMs()), 
+      Constants.controllerConfigTimeoutMs);
+    driveMotor.getVelocity().setUpdateFrequency(OrangeMath.msAndHzConverter(CanBusUtil.nextFastStatusPeriodMs()), 
+      Constants.controllerConfigTimeoutMs);
+
     configRotation(turningMotor);
   }
 
@@ -106,10 +112,6 @@ public class SwerveModule extends ControlModule {
     currentLimitConfigs.SupplyTimeThreshold = DriveConstants.Drive.supplyTime;
     currentLimitConfigs.SupplyCurrentLimitEnable = DriveConstants.Drive.supplyEnabled;
     talon.getConfigurator().apply(currentLimitConfigs);
-    
-    // need rapid velocity feedback for anti-tipping logic
-    talon.getPosition().setUpdateFrequency(OrangeMath.msAndHzConverter(CanBusUtil.nextFastStatusPeriodMs()), 
-      Constants.controllerConfigTimeoutMs);
   }
  
   private void configRotation(CANSparkMax sparkMax) {
@@ -139,7 +141,7 @@ public class SwerveModule extends ControlModule {
 
   @Override
   public double getDistance() {
-    return OrangeMath.falconRotationsToMeters(driveMotor.getRotorPosition().refresh().getValue(),
+    return OrangeMath.falconRotationsToMeters(driveMotor.getRotorPosition().getValue(),
         OrangeMath.getCircumference(OrangeMath.inchesToMeters(DriveConstants.Drive.wheelDiameterInches)),
         DriveConstants.Drive.gearRatio);
   }
@@ -147,7 +149,7 @@ public class SwerveModule extends ControlModule {
   @Override
   public double getVelocity() {
     // feet per second
-    return driveMotor.getRotorVelocity().refresh().getValue() / Constants.DriveConstants.Drive.gearRatio 
+    return driveMotor.getRotorVelocity().getValue() / Constants.DriveConstants.Drive.gearRatio 
         * Math.PI * Constants.DriveConstants.Drive.wheelDiameterInches / 12;
   }
 
