@@ -292,6 +292,11 @@ public class Drive extends SubsystemBase {
       }
       latestVelocity = velocityXY.getNorm() / 4;
       latestAcceleration = accelerationXY.getNorm() / 4;
+
+      // velocity/acc averaging above isn't working - quick kludge to get something working
+      latestVelocity = Math.abs(swerveModules[0].getVelocity());
+      latestAcceleration = Math.abs(swerveModules[0].getAcceleration());
+
       velocityHistory
           .removeIf(n -> (n.getTime() < clock - DriveConstants.Tip.velocityHistorySeconds));
       velocityHistory.add(new SnapshotTranslation2D(velocityXY, clock));
