@@ -74,13 +74,11 @@ public class AutoBalance extends CommandBase {
         case flat:
           if (absPitch < Constants.DriveConstants.chargeStationTiltedMinDeg) {
             // need to keep making the drive call to maintain heading
-            drive.driveAutoRotate(driveSign * Constants.DriveConstants.autoBalanceFlatPower, 0, poseDeg,
-                Constants.DriveConstants.Auto.rotateToleranceDegrees);
+            drive.driveAutoRotate(driveSign * Constants.DriveConstants.autoBalanceFlatPower, 0, poseDeg);
           } else {
             currentMode = autoBalanceMode.onRamp;
             rampTimer.start();
-            drive.driveAutoRotate(driveSign * Constants.DriveConstants.autoBalanceRampPower, 0, poseDeg,
-            Constants.DriveConstants.Auto.rotateToleranceDegrees);
+            drive.driveAutoRotate(driveSign * Constants.DriveConstants.autoBalanceRampPower, 0, poseDeg);
           }
           break;
         case onRamp:
@@ -96,8 +94,7 @@ public class AutoBalance extends CommandBase {
             }
           } else {
             // need to keep making the drive call to maintain heading
-            drive.driveAutoRotate(driveSign * Constants.DriveConstants.autoBalanceRampPower, 0, poseDeg,
-                Constants.DriveConstants.Auto.rotateToleranceDegrees);
+            drive.driveAutoRotate(driveSign * Constants.DriveConstants.autoBalanceRampPower, 0, poseDeg);
           }
           break;
         case dropping:
@@ -133,8 +130,7 @@ public class AutoBalance extends CommandBase {
             // need to keep making the drive call to maintain heading
             drive.driveAutoRotate(
                 poseSign * Math.copySign(Constants.DriveConstants.autoBalanceAdjustmentPower, pitch), 0,
-                poseDeg,
-                Constants.DriveConstants.Auto.rotateToleranceDegrees);
+                poseDeg);
           }
           break;
         case finished:

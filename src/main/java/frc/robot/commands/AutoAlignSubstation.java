@@ -110,7 +110,7 @@ public class AutoAlignSubstation extends CommandBase {
         offCenterMeters = AutoAlignSubstationConstants.tagSeparationMeters;
       } else {
         // Continue driving until we see a tag again
-        drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
+        drive.driveAutoRotate(driveX, driveY, targetHeadingDeg);
         return;
       }
       offCenterMeters -= targetDistance.getY();
@@ -138,7 +138,7 @@ public class AutoAlignSubstation extends CommandBase {
           } else {
             driveY = -AutoAlignSubstationConstants.approachPower;
           }
-          drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
+          drive.driveAutoRotate(driveX, driveY, targetHeadingDeg);
           armExtend.schedule();
         } else {
           // Close enough to the single substation to intake
@@ -148,11 +148,11 @@ public class AutoAlignSubstation extends CommandBase {
         }
       } else {
         // Robot not centered
-        drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
+        drive.driveAutoRotate(driveX, driveY, targetHeadingDeg);
       }
     } else {
       // Continue driving until we see a tag again
-      drive.driveAutoRotate(driveX, driveY, targetHeadingDeg, Auto.rotateToleranceDegrees);
+      drive.driveAutoRotate(driveX, driveY, targetHeadingDeg);
     }
 
     // check the intake here in case we lose sight of the 8 tag due to reflections

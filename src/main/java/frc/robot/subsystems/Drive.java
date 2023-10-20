@@ -332,7 +332,7 @@ public class Drive extends SubsystemBase {
 
   // Rotate the robot to a specific heading while driving.
   // Must be invoked periodically to reach the desired heading.
-  public void driveAutoRotate(double driveX, double driveY, double targetDeg, double toleranceDeg) {
+  public void driveAutoRotate(double driveX, double driveY, double targetDeg) {
     if (Constants.driveEnabled) {
  
       if (Constants.debug) {
@@ -343,17 +343,30 @@ public class Drive extends SubsystemBase {
       // Don't use absolute heading for PID controller to avoid discontinuity at +/- 180 degrees
       double headingChangeDeg = OrangeMath.boundDegrees(targetDeg - getAngle());
       double rotPIDSpeed = rotPID.calculate(0, headingChangeDeg);
-      double maxAutoRotatePower = DriveConstants.Auto.maxAutoRotatePower;
+      double maxAutoRotatePower;
+      double minAutoRotatePower;
+      double toleranceDeg;
 
       // reduce rotation power when driving fast to not lose forward momentum
       if (latestVelocity >= DriveConstants.Auto.slowAutoRotateFtPerSec) {
         maxAutoRotatePower = DriveConstants.Auto.slowAutoRotatePower;
+      } else {
+        maxAutoRotatePower = DriveConstants.Auto.maxAutoRotatePower;
+      }
+      // no need to maintain exact heading when driving to reduce wobble
+      if (isRobotMoving()) {
+        minAutoRotatePower = DriveConstants.Auto.minAutoRotateMovingPower;
+        toleranceDeg = Constants.DriveConstants.Auto.rotateMovingToleranceDegrees;
+      } else {
+        // greater percision when lining up for something
+        minAutoRotatePower = DriveConstants.Auto.minAutoRotateStoppedPower;
+        toleranceDeg = Constants.DriveConstants.Auto.rotateStoppedToleranceDegrees;
       }
 
       if (Math.abs(headingChangeDeg) <= toleranceDeg) {
         rotPIDSpeed = 0;  // don't wiggle
-      } else if (Math.abs(rotPIDSpeed) < DriveConstants.Auto.minAutoRotatePower) {
-        rotPIDSpeed = Math.copySign(DriveConstants.Auto.minAutoRotatePower, rotPIDSpeed);
+      } else if (Math.abs(rotPIDSpeed) < minAutoRotatePower) {
+        rotPIDSpeed = Math.copySign(minAutoRotatePower, rotPIDSpeed);
       } else if (rotPIDSpeed > maxAutoRotatePower) {
         rotPIDSpeed = maxAutoRotatePower;
       } else if (rotPIDSpeed < -maxAutoRotatePower) {

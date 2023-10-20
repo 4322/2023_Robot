@@ -139,7 +139,7 @@ public class SwerveModule extends ControlModule {
 
   @Override
   public double getDistance() {
-    return OrangeMath.falconRotationsToMeters(driveMotor.getRotorPosition().getValue(),
+    return OrangeMath.falconRotationsToMeters(driveMotor.getRotorPosition().refresh().getValue(),
         OrangeMath.getCircumference(OrangeMath.inchesToMeters(DriveConstants.Drive.wheelDiameterInches)),
         DriveConstants.Drive.gearRatio);
   }
@@ -147,7 +147,7 @@ public class SwerveModule extends ControlModule {
   @Override
   public double getVelocity() {
     // feet per second
-    return driveMotor.getRotorVelocity().getValue() * 10 / Constants.DriveConstants.Drive.gearRatio 
+    return driveMotor.getRotorVelocity().refresh().getValue() / Constants.DriveConstants.Drive.gearRatio 
         * Math.PI * Constants.DriveConstants.Drive.wheelDiameterInches / 12;
   }
 

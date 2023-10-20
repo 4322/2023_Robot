@@ -174,11 +174,13 @@ public class Constants {
 
       public static final double autoRotkP = 0.008;
       public static final double autoRotkD = 0.0004;
-      public static final double minAutoRotatePower = 0.03;
+      public static final double minAutoRotateStoppedPower = 0.03;
+      public static final double minAutoRotateMovingPower = 0.01;
+      public static final double rotateStoppedToleranceDegrees = 0.5;
+      public static final double rotateMovingToleranceDegrees = 1.5;
+      public static final double maxAutoRotatePower = 0.5;
       public static final double slowAutoRotatePower = 0.32;
       public static final double slowAutoRotateFtPerSec = 3;
-      public static final double maxAutoRotatePower = 0.5;
-      public static final double rotateToleranceDegrees = 0.5;
     }
 
     public static final class Tip {

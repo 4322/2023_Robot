@@ -238,8 +238,7 @@ public class DriveManual extends CommandBase {
       if (rotatePower == 0) {
         // if there is a set drive auto rotate
         if (targetHeadingDeg != null) {
-          drive.driveAutoRotate(driveX, driveY, targetHeadingDeg,
-              Constants.DriveConstants.Auto.rotateToleranceDegrees);
+          drive.driveAutoRotate(driveX, driveY, targetHeadingDeg);
           if (loadAutoPoseActive && !armAtLoadSingle && ((autoPose == AutoPose.usePreset)|| (autoPose == AutoPose.loadSingleManual))) {
             if (driveAngle >= targetHeadingDeg - Constants.AutoAlignSubstationConstants.rotateToleranceDegrees && 
                 driveAngle <= targetHeadingDeg + Constants.AutoAlignSubstationConstants.rotateToleranceDegrees) {
@@ -251,8 +250,7 @@ public class DriveManual extends CommandBase {
         } else if (Constants.driveDegradedMode == Constants.DriveDegradedMode.normal) {
           // set pseudo auto rotate heading
           targetHeadingDeg = drive.getAngle();
-          drive.driveAutoRotate(driveX, driveY, targetHeadingDeg,
-              Constants.DriveConstants.Auto.rotateToleranceDegrees);
+          drive.driveAutoRotate(driveX, driveY, targetHeadingDeg);
           return;
         }
       } else {  
