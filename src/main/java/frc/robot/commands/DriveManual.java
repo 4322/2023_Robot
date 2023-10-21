@@ -98,7 +98,7 @@ public class DriveManual extends CommandBase {
         initSubstationAlignment();
         break;
       case usePreset:
-        autoRotateSetTarget(true);
+        autoRotateSetTarget(false);
         break;
       case usePresetNoArmMove:
         autoRotateSetTarget(false);
