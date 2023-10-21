@@ -43,6 +43,7 @@ public class RobotContainer {
   private JoystickButton driveButtonEleven;
   private JoystickButton driveButtonTwelve;
   private JoystickButton driveButtonThree;
+  private JoystickButton rotateButtonThree;
   private JoystickButton rotateButtonFour;
 
   private JoystickButton rotateTrigger;
@@ -298,6 +299,7 @@ public class RobotContainer {
       driveButtonTwelve = new JoystickButton(driveStick, 12);
       rotateTrigger = new JoystickButton(rotateStick, 1);
       driveButtonThree = new JoystickButton(driveStick, 3);
+      rotateButtonThree = new JoystickButton(rotateStick, 3);
       rotateButtonFour = new JoystickButton(rotateStick, 4);
 
       driveTrigger.whileTrue(clawOuttake);
@@ -306,13 +308,12 @@ public class RobotContainer {
       driveButtonEleven.onTrue(autoBalanceBackward);
       driveButtonTwelve.onTrue(driveStop);
 
-      // Re-establish alignment to grid when deploying the arm
-      rotateTrigger.whileTrue(new DriveManual(drive, DriveManual.AutoPose.usePresetNoArmMove)
-          .unless(isNotReAlignPreset));
       rotateTrigger.whileTrue(new ArmMove(arm, telescope, ArmMove.Position.usePreset, false));
 
       driveButtonThree.onTrue(new DriveManual(drive, DriveManual.AutoPose.usePreset));
-      rotateButtonFour.onTrue(new DriveManual(drive, DriveManual.AutoPose.loadSingleManual));
+      rotateButtonFour.onTrue(new ArmMove(arm, telescope, ArmMove.Position.loadSingleRetract, false));
+      rotateButtonFour.onTrue(Commands.runOnce(() -> { LED.getInstance().setAlignment(LED.Alignment.substation); }));
+      rotateButtonThree.onTrue(Commands.runOnce(() -> { LED.getInstance().setAlignment(LED.Alignment.grid); }));
     }
 
     if (Constants.xboxEnabled) {
