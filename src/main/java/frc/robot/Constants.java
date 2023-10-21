@@ -224,7 +224,7 @@ public class Constants {
       public static final double brakeModeDeadband = 0.01;
 
       public static final boolean statorEnabled = true;
-      public static final double statorLimit = 80;
+      public static final double statorLimit = 60;
 
       // when supply threshold is exceeded for the time, drop the current to the limit
       public static final boolean supplyEnabled = true;
