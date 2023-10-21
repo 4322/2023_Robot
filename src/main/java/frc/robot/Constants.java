@@ -178,8 +178,8 @@ public class Constants {
       public static final double minAutoRotateMovingPower = 0.01;
       public static final double rotateStoppedToleranceDegrees = 0.5;
       public static final double rotateMovingToleranceDegrees = 1.5;
-      public static final double maxAutoRotatePower = 0.5;
-      public static final double slowAutoRotatePower = 0.32;
+      public static final double maxAutoRotatePower = 0.25;
+      public static final double slowAutoRotatePower = 0.25;
       public static final double slowAutoRotateFtPerSec = 3;
     }
 
