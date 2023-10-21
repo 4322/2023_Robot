@@ -115,7 +115,7 @@ public class Constants {
     public static final double twistDeadband = 0.08;
 
     // Values for auto balance
-    public static final double autoBalanceFlatPower = 0.3;
+    public static final double autoBalanceFlatPower = 0.27;
     public static final double autoBalanceRampPower = 0.2;
     public static final double autoBalanceAdjustmentPower = 0.055;
     public static final double chargeStationTiltedMinDeg = 10.0;
