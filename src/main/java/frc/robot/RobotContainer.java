@@ -43,7 +43,7 @@ public class RobotContainer {
   private JoystickButton driveButtonEleven;
   private JoystickButton driveButtonTwelve;
   private JoystickButton driveButtonThree;
-  private JoystickButton rotateButtonSix;
+  private JoystickButton rotateButtonFour;
 
   private JoystickButton rotateTrigger;
 
@@ -298,7 +298,7 @@ public class RobotContainer {
       driveButtonTwelve = new JoystickButton(driveStick, 12);
       rotateTrigger = new JoystickButton(rotateStick, 1);
       driveButtonThree = new JoystickButton(driveStick, 3);
-      rotateButtonSix = new JoystickButton(rotateStick, 6);
+      rotateButtonFour = new JoystickButton(rotateStick, 4);
 
       driveTrigger.whileTrue(clawOuttake);
       driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
@@ -312,7 +312,7 @@ public class RobotContainer {
       rotateTrigger.whileTrue(new ArmMove(arm, telescope, ArmMove.Position.usePreset, false));
 
       driveButtonThree.onTrue(new DriveManual(drive, DriveManual.AutoPose.usePreset));
-      rotateButtonSix.onTrue(new DriveManual(drive, DriveManual.AutoPose.loadSingleManual));
+      rotateButtonFour.onTrue(new DriveManual(drive, DriveManual.AutoPose.loadSingleManual));
     }
 
     if (Constants.xboxEnabled) {
