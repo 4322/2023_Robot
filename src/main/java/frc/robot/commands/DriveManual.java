@@ -248,7 +248,10 @@ public class DriveManual extends CommandBase {
           }
           return;
         } else if (Constants.driveDegradedMode == Constants.DriveDegradedMode.normal) {
-          drive.driveAutoRotate(driveX, driveY, targetHeadingDeg);
+          if(targetHeadingDeg != null)
+            {
+              drive.driveAutoRotate(driveX, driveY, targetHeadingDeg);
+            }
           return;
         }
       } else {  
