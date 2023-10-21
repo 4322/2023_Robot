@@ -183,7 +183,7 @@ public class RobotContainer {
     ));
 
     autoArrayList.add(new Auto(
-      "Engage",
+      "Mobility + Engage",
       new SequentialCommandGroup(
             ppManager.loadAuto("ScoreMobilityCharge1", false),
             new AutoBalance(drive, false, true),
@@ -193,7 +193,7 @@ public class RobotContainer {
     ));
 
     autoArrayList.add(new Auto(
-      "Engage",
+      "Mobility + Engage",
       new SequentialCommandGroup(
             ppManager.loadAuto("ScoreMobilityCharge2", false),
             new AutoBalance(drive, false, true),
@@ -203,7 +203,7 @@ public class RobotContainer {
     ));
 
     autoArrayList.add(new Auto(
-      "Engage",
+      "Mobility + Engage",
       new SequentialCommandGroup(
           ppManager.loadAuto("DriveOverCharge", false, 
             new PathConstraints(1.33, DriveConstants.Auto.autoMaxAccelerationMetersPerSec2)),
@@ -214,7 +214,7 @@ public class RobotContainer {
     ));
 
     autoArrayList.add(new Auto(
-      "Engage",
+      "Mobility + Engage",
       new SequentialCommandGroup(
           ppManager.loadAuto("ScoreMobilityCharge8", false),
           new AutoBalance(drive, false, true),
@@ -224,13 +224,22 @@ public class RobotContainer {
     ));
 
     autoArrayList.add(new Auto(
-      "Engage",
+      "Mobility + Engage",
       new SequentialCommandGroup(
           ppManager.loadAuto("ScoreMobilityCharge9", false),
           new AutoBalance(drive, false, true),
           new AutoDriveRotateWheels(drive, 0.25)
       ),
       Arrays.asList(9)
+    ));
+
+    autoArrayList.add(new Auto(
+      "Engage", 
+      new SequentialCommandGroup(
+        new AutoBalance(drive, true, true),
+        new AutoDriveRotateWheels(drive, 0.25)
+      ),
+      Arrays.asList(4, 5, 6)
     ));
 
     autoArrayList.add(new Auto(
