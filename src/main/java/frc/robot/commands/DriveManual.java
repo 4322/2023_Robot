@@ -248,8 +248,6 @@ public class DriveManual extends CommandBase {
           }
           return;
         } else if (Constants.driveDegradedMode == Constants.DriveDegradedMode.normal) {
-          // set pseudo auto rotate heading
-          targetHeadingDeg = drive.getAngle();
           drive.driveAutoRotate(driveX, driveY, targetHeadingDeg);
           return;
         }
