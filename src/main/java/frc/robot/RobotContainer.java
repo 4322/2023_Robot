@@ -317,9 +317,6 @@ public class RobotContainer {
         LED.getInstance().setAlignment(LED.Alignment.grid);
       }));
       xbox.a().onTrue(new SetArmPreset(drive, ArmMove.Position.scoreLow));
-      xbox.a().onTrue(Commands.runOnce(() -> {
-        LED.getInstance().setAlignment(LED.Alignment.grid);
-      }));
       xbox.povDown().onTrue(new SetArmPreset(drive, ArmMove.Position.loadFloor));
       xbox.povUp().onTrue(new SequentialCommandGroup(
           new SetArmPreset(drive, ArmMove.Position.loadSingleExtend),
