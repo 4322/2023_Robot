@@ -43,7 +43,6 @@ public class RobotContainer {
   private JoystickButton driveButtonEleven;
   private JoystickButton driveButtonTwelve;
   private JoystickButton driveButtonThree;
-  private JoystickButton rotateButtonThree;
   private JoystickButton rotateButtonFour;
 
   private JoystickButton rotateTrigger;
@@ -81,13 +80,17 @@ public class RobotContainer {
       new AutoDriveRotateWheels(drive, 0.25));
 
   private int selectedPosition = 0;
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+
+  /**
+   * The container for the robot. Contains subsystems, OI devices, and commands.
+   */
 
   public RobotContainer() {
 
-    // Initialize subsystems that use CAN after all of them have been constructed because the
+    // Initialize subsystems that use CAN after all of them have been constructed
+    // because the
     // constructors lower CAN bus utilization to make configuration reliable.
-    drive.init();  // must be first to initialize the CANcoders
+    drive.init(); // must be first to initialize the CANcoders
     arm.init();
     telescope.init();
     claw.init();
@@ -96,16 +99,16 @@ public class RobotContainer {
     configureButtonBindings();
 
     tab = Shuffleboard.getTab("Auto");
-    
+
     tab.add("Position", positionChooser)
-      .withWidget(BuiltInWidgets.kSplitButtonChooser)
-      .withPosition(0, 0)
-      .withSize(3, 2);
+        .withWidget(BuiltInWidgets.kSplitButtonChooser)
+        .withPosition(0, 0)
+        .withSize(3, 2);
 
     tab.add("Auto", autoChooser)
-      .withWidget(BuiltInWidgets.kSplitButtonChooser)
-      .withPosition(3, 0)
-      .withSize(6, 2);
+        .withWidget(BuiltInWidgets.kSplitButtonChooser)
+        .withPosition(3, 0)
+        .withSize(6, 2);
 
     if (Constants.driveEnabled) {
       drive.setDefaultCommand(driveManualDefault);
@@ -141,9 +144,10 @@ public class RobotContainer {
     positionChooser.addOption("9", 9);
   }
 
-  // autos need to be reloaded after each auto test because the commands can't be reused
+  // autos need to be reloaded after each auto test because the commands can't be
+  // reused
   private void loadAutos() {
-    
+
     // Rest autoArrayList and selectedPosition
     autoArrayList.clear();
     selectedPosition = 0;
@@ -153,148 +157,125 @@ public class RobotContainer {
     autoArrayList.add(new Auto("Preload Only", getScoreHigh(), Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9)));
 
     autoArrayList.add(new Auto(
-      "Mobility",
-      ppManager.loadAuto("ScoreMobilityOnly", false),
-      Arrays.asList(1, 9)
-    ));
+        "Mobility",
+        ppManager.loadAuto("ScoreMobilityOnly", false),
+        Arrays.asList(1, 9)));
 
     autoArrayList.add(new Auto(
-      "Mobility",
-      ppManager.loadAuto("ScoreMobilityOnly2", false),
-      Arrays.asList(2)
-    ));
+        "Mobility",
+        ppManager.loadAuto("ScoreMobilityOnly2", false),
+        Arrays.asList(2)));
 
     autoArrayList.add(new Auto(
-      "Mobility",
-      ppManager.loadAuto("ScoreMobilityOnly8", false),
-      Arrays.asList(8)
-    ));
+        "Mobility",
+        ppManager.loadAuto("ScoreMobilityOnly8", false),
+        Arrays.asList(8)));
 
     autoArrayList.add(new Auto(
-      "Score + Pickup",
-      ppManager.loadAuto("ScorePickup1", false),
-      Arrays.asList(1)
-    ));
+        "Score + Pickup",
+        ppManager.loadAuto("ScorePickup1", false),
+        Arrays.asList(1)));
 
     autoArrayList.add(new Auto(
-      "Score + Pickup",
-      ppManager.loadAuto("ScorePickup9", false),
-      Arrays.asList(9)
-    ));
+        "Score + Pickup",
+        ppManager.loadAuto("ScorePickup9", false),
+        Arrays.asList(9)));
 
     autoArrayList.add(new Auto(
-      "Mobility + Engage",
-      new SequentialCommandGroup(
+        "Mobility + Engage",
+        new SequentialCommandGroup(
             ppManager.loadAuto("ScoreMobilityCharge1", false),
             new AutoBalance(drive, false, true),
-            new AutoDriveRotateWheels(drive, 0.25)
-      ),
-      Arrays.asList(1)
-    ));
+            new AutoDriveRotateWheels(drive, 0.25)),
+        Arrays.asList(1)));
 
     autoArrayList.add(new Auto(
-      "Mobility + Engage",
-      new SequentialCommandGroup(
+        "Mobility + Engage",
+        new SequentialCommandGroup(
             ppManager.loadAuto("ScoreMobilityCharge2", false),
             new AutoBalance(drive, false, true),
-            new AutoDriveRotateWheels(drive, 0.25)
-      ),
-      Arrays.asList(2)
-    ));
+            new AutoDriveRotateWheels(drive, 0.25)),
+        Arrays.asList(2)));
 
     autoArrayList.add(new Auto(
-      "Mobility + Engage",
-      new SequentialCommandGroup(
-          ppManager.loadAuto("DriveOverCharge", false, 
-            new PathConstraints(1.33, DriveConstants.Auto.autoMaxAccelerationMetersPerSec2)),
-          new AutoBalance(drive, false, true),
-          new AutoDriveRotateWheels(drive, 0.25)
-      ),
-      Arrays.asList(4, 5, 6)
-    ));
+        "Mobility + Engage",
+        new SequentialCommandGroup(
+            ppManager.loadAuto("DriveOverCharge", false,
+                new PathConstraints(1.33, DriveConstants.Auto.autoMaxAccelerationMetersPerSec2)),
+            new AutoBalance(drive, false, true),
+            new AutoDriveRotateWheels(drive, 0.25)),
+        Arrays.asList(4, 5, 6)));
 
     autoArrayList.add(new Auto(
-      "Mobility + Engage",
-      new SequentialCommandGroup(
-          ppManager.loadAuto("ScoreMobilityCharge8", false),
-          new AutoBalance(drive, false, true),
-          new AutoDriveRotateWheels(drive, 0.25)
-      ),
-      Arrays.asList(8)
-    ));
+        "Mobility + Engage",
+        new SequentialCommandGroup(
+            ppManager.loadAuto("ScoreMobilityCharge8", false),
+            new AutoBalance(drive, false, true),
+            new AutoDriveRotateWheels(drive, 0.25)),
+        Arrays.asList(8)));
 
     autoArrayList.add(new Auto(
-      "Mobility + Engage",
-      new SequentialCommandGroup(
-          ppManager.loadAuto("ScoreMobilityCharge9", false),
-          new AutoBalance(drive, false, true),
-          new AutoDriveRotateWheels(drive, 0.25)
-      ),
-      Arrays.asList(9)
-    ));
+        "Mobility + Engage",
+        new SequentialCommandGroup(
+            ppManager.loadAuto("ScoreMobilityCharge9", false),
+            new AutoBalance(drive, false, true),
+            new AutoDriveRotateWheels(drive, 0.25)),
+        Arrays.asList(9)));
 
     autoArrayList.add(new Auto(
-      "Engage", 
-      new SequentialCommandGroup(
-        new AutoBalance(drive, true, true),
-        new AutoDriveRotateWheels(drive, 0.25)
-      ),
-      Arrays.asList(4, 5, 6)
-    ));
+        "Engage",
+        new SequentialCommandGroup(
+            new AutoBalance(drive, true, true),
+            new AutoDriveRotateWheels(drive, 0.25)),
+        Arrays.asList(4, 5, 6)));
 
     autoArrayList.add(new Auto(
-      "2 Piece",
-      ppManager.loadAuto("Cracked2PieceAuto1", false),
-      Arrays.asList(1)
-    ));
+        "2 Piece",
+        ppManager.loadAuto("Cracked2PieceAuto1", false),
+        Arrays.asList(1)));
 
     autoArrayList.add(new Auto(
-      "2 Piece",
-      ppManager.loadAuto("Cracked2PieceAuto9", false),
-      Arrays.asList(9)
-    ));
+        "2 Piece",
+        ppManager.loadAuto("Cracked2PieceAuto9", false),
+        Arrays.asList(9)));
 
     autoArrayList.add(new Auto(
-      "2 Piece + Pickup",
-      ppManager.loadAuto("2Pieces1Pickup1", false),
-      Arrays.asList(1)
-    ));
+        "2 Piece + Pickup",
+        ppManager.loadAuto("2Pieces1Pickup1", false),
+        Arrays.asList(1)));
 
     autoArrayList.add(new Auto(
-      "2 Piece + Pickup",
-      ppManager.loadAuto("2Pieces1Pickup9", false),
-      Arrays.asList(9)
-    ));
+        "2 Piece + Pickup",
+        ppManager.loadAuto("2Pieces1Pickup9", false),
+        Arrays.asList(9)));
 
     autoArrayList.add(new Auto(
-      "2 Piece + Engage",
-      new SequentialCommandGroup(
-        ppManager.loadAuto("2PiecesEngage1", false),
-        new AutoBalance(drive, true, true),
-        new AutoDriveRotateWheels(drive, 0.25)
-      ),
-      Arrays.asList(1)
-    ));
+        "2 Piece + Engage",
+        new SequentialCommandGroup(
+            ppManager.loadAuto("2PiecesEngage1", false),
+            new AutoBalance(drive, true, true),
+            new AutoDriveRotateWheels(drive, 0.25)),
+        Arrays.asList(1)));
 
     autoArrayList.add(new Auto(
-      "2 Piece + Engage",
-      new SequentialCommandGroup(
-        ppManager.loadAuto("2PiecesEngage9", false),
-        new AutoBalance(drive, true, true),
-        new AutoDriveRotateWheels(drive, 0.25)
-      ),
-      Arrays.asList(9)
-    ));
+        "2 Piece + Engage",
+        new SequentialCommandGroup(
+            ppManager.loadAuto("2PiecesEngage9", false),
+            new AutoBalance(drive, true, true),
+            new AutoDriveRotateWheels(drive, 0.25)),
+        Arrays.asList(9)));
   }
 
   /**
-   * Use this method to define your button->command mappings. Buttons can be created by
+   * Use this method to define your button->command mappings. Buttons can be
+   * created by
    * instantiating a {@link GenericHID} or one of its subclasses
-   * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a
+   * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then
+   * passing it to a
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
 
-  private void configureButtonBindings() {  
+  private void configureButtonBindings() {
     BooleanSupplier isNotReAlignPreset = () -> ArmMove.isNotReAlignPreset();
 
     if (Constants.joysticksEnabled) {
@@ -308,7 +289,6 @@ public class RobotContainer {
       driveButtonTwelve = new JoystickButton(driveStick, 12);
       rotateTrigger = new JoystickButton(rotateStick, 1);
       driveButtonThree = new JoystickButton(driveStick, 3);
-      rotateButtonThree = new JoystickButton(rotateStick, 3);
       rotateButtonFour = new JoystickButton(rotateStick, 4);
 
       driveTrigger.whileTrue(clawOuttake);
@@ -321,8 +301,6 @@ public class RobotContainer {
 
       driveButtonThree.onTrue(new DriveManual(drive, DriveManual.AutoPose.usePreset));
       rotateButtonFour.onTrue(new ArmMove(arm, telescope, ArmMove.Position.loadSingleRetract, false));
-      rotateButtonFour.onTrue(Commands.runOnce(() -> { LED.getInstance().setAlignment(LED.Alignment.substation); }));
-      rotateButtonThree.onTrue(Commands.runOnce(() -> { LED.getInstance().setAlignment(LED.Alignment.grid); }));
     }
 
     if (Constants.xboxEnabled) {
@@ -331,10 +309,24 @@ public class RobotContainer {
       xbox.leftBumper().onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cube)));
       xbox.rightBumper().onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cone)));
       xbox.y().onTrue(new SetArmPreset(drive, ArmMove.Position.scoreHigh));
+      xbox.y().onTrue(Commands.runOnce(() -> {
+        LED.getInstance().setAlignment(LED.Alignment.grid);
+      }));
       xbox.b().onTrue(new SetArmPreset(drive, ArmMove.Position.scoreMid));
+      xbox.b().onTrue(Commands.runOnce(() -> {
+        LED.getInstance().setAlignment(LED.Alignment.grid);
+      }));
       xbox.a().onTrue(new SetArmPreset(drive, ArmMove.Position.scoreLow));
+      xbox.a().onTrue(Commands.runOnce(() -> {
+        LED.getInstance().setAlignment(LED.Alignment.grid);
+      }));
       xbox.povDown().onTrue(new SetArmPreset(drive, ArmMove.Position.loadFloor));
-      xbox.povUp().onTrue(new SetArmPreset(drive, ArmMove.Position.loadSingleExtend));
+      xbox.povUp().onTrue(new SequentialCommandGroup(
+          new SetArmPreset(drive, ArmMove.Position.loadSingleExtend),
+          new ArmMove(arm, telescope, ArmMove.Position.loadSingleRetract, false)));
+      xbox.povUp().onTrue(Commands.runOnce(() -> {
+        LED.getInstance().setAlignment(LED.Alignment.substation);
+      }));
       xbox.povLeft().onTrue(clawStop);
     }
   }
@@ -366,7 +358,7 @@ public class RobotContainer {
     telescope.stop();
     claw.changeState(Claw.ClawMode.stopped);
     claw.setCoastMode();
-    driveStop.schedule();  // interrupt all drive commands
+    driveStop.schedule(); // interrupt all drive commands
     disableTimer.reset();
     disableTimer.start();
     loadAutos();
@@ -382,16 +374,14 @@ public class RobotContainer {
     }
 
     return new SequentialCommandGroup(
-      getAutoInitialize(),
-      autoChooser.getSelected()
-    );
+        getAutoInitialize(),
+        autoChooser.getSelected());
   }
 
   public void homeArm() {
     new SequentialCommandGroup(
-      new TelescopeHoming(telescope),
-      new ArmHoming(arm)
-    ).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming).schedule();
+        new TelescopeHoming(telescope),
+        new ArmHoming(arm)).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming).schedule();
   }
 
   // AUTO COMMANDS
@@ -413,32 +403,27 @@ public class RobotContainer {
   // Command that should always start off every auto
   public Command getAutoInitialize() {
     return new SequentialCommandGroup(
-      new ResetFieldCentric(drive, 0, true),
-      new TelescopeHoming(telescope),
-      new ArmHoming(arm) 
-    );
+        new ResetFieldCentric(drive, 0, true),
+        new TelescopeHoming(telescope),
+        new ArmHoming(arm));
   }
 
   // Score a game piece high
   public Command getScoreHigh() {
     return new SequentialCommandGroup(
-      new ParallelRaceGroup(
-        new ArmMove(arm, telescope, ArmMove.Position.scoreHigh, true), 
-        new ClawIntake(claw)
-      ),
-      new TimedClawOuttake(claw, DriveConstants.clawTimedOuttake),
-      new ArmMove(arm, telescope, ArmMove.Position.inBot, true)
-      );
+        new ParallelRaceGroup(
+            new ArmMove(arm, telescope, ArmMove.Position.scoreHigh, true),
+            new ClawIntake(claw)),
+        new TimedClawOuttake(claw, DriveConstants.clawTimedOuttake),
+        new ArmMove(arm, telescope, ArmMove.Position.inBot, true));
   }
 
-  //pick up gamw piece from floor
+  // pick up gamw piece from floor
   public Command getLoadFloor() {
     return new SequentialCommandGroup(
-      new ParallelRaceGroup(
-        new ArmMove(arm, telescope, ArmMove.Position.loadFloor, true), 
-        new ClawIntake(claw)
-      ),
-      new ArmMove(arm, telescope, ArmMove.Position.inBot, true)
-      );
+        new ParallelRaceGroup(
+            new ArmMove(arm, telescope, ArmMove.Position.loadFloor, true),
+            new ClawIntake(claw)),
+        new ArmMove(arm, telescope, ArmMove.Position.inBot, true));
   }
 }
