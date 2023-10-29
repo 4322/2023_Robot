@@ -57,6 +57,7 @@ public class Limelight extends SubsystemBase {
       0, OrangeMath.inchesToMeters(-29.75), 
       OrangeMath.inchesToMeters(-3 - 1/4 - 3.875/2), 
       false, false, Constants.substationLimeLightEnabled);
+      substationLimelight.refreshOdometry();  // prime JsonFactory to avoid long initial delay
     }
     return substationLimelight;
   }

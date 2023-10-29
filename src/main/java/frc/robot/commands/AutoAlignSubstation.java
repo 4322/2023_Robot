@@ -10,7 +10,6 @@ import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.Robot;
 import frc.robot.Constants.ClawConstants;
-import frc.robot.Constants.DriveConstants.Auto;
 import frc.robot.Constants.AutoAlignSubstationConstants;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
