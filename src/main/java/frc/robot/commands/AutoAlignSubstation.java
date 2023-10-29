@@ -132,7 +132,7 @@ public class AutoAlignSubstation extends CommandBase {
           (approachStarted || !drive.isRobotMovingFast())) {
         approachStarted = true;  // don't consider approach as movement
         // Too far away from substation to intake
-        if (targetDistance.getX() > AutoAlignSubstationConstants.substationFrontToleranceMeters) {
+        if (targetDistance.getX() > AutoAlignSubstationConstants.substationFrontMeters) {
           if (Robot.getAllianceColor() == Alliance.Blue) {
             driveY = AutoAlignSubstationConstants.approachPower;
           } else {

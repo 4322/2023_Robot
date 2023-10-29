@@ -222,10 +222,6 @@ public class Limelight extends SubsystemBase {
     double distanceX = (targetHeight - limeHeight) / Math.tan(Math.toRadians(yDeg + limeAngle));
     double distanceY = distanceX * Math.tan(Math.toRadians(xDeg));
     Translation2d toReturn = new Translation2d(distanceX, distanceY).plus(offset);
-    if (toReturn.getX() < 0) {
-      //DataLogManager.log(name + ": Tried to calculate target position, but got a negative X distance");
-      toReturn = toReturn.plus(new Translation2d(-toReturn.getX(), 0));
-    }
     if (backward) {
       toReturn = toReturn.rotateBy(Rotation2d.fromDegrees(180));
     }
