@@ -336,7 +336,7 @@ public class RobotContainer {
       xbox.povDown().onTrue(new SetArmPreset(drive, ArmMove.Position.loadFloor));
       xbox.povUp().onTrue(new SetArmPreset(drive, ArmMove.Position.loadSingleExtend));
       xbox.povLeft().onTrue(clawStop);
-      xbox.povRight().onTrue(clawOuttakeForce);
+      xbox.povRight().whileTrue(clawOuttakeForce);
     }
   }
 
