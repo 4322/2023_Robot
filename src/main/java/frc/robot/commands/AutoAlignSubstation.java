@@ -48,7 +48,8 @@ public class AutoAlignSubstation extends CommandBase {
     if (Constants.debug) {
       tab = Shuffleboard.getTab("SubstationAlign");
       lateralDistanceMeters = tab.add("Lateral distance to substation (m)", 0).withPosition(0, 0).withSize(3, 1).getEntry();
-      frontDistanceMeters = tab.add("Front distance to substation (m)", 0).withPosition(0, 1).withSize(3, 1).getEntry();    }
+      frontDistanceMeters = tab.add("Front distance to substation (m)", 0).withPosition(0, 1).withSize(3, 1).getEntry();    
+    }
     addRequirements(limelight, drive);
   }
 
