@@ -29,7 +29,7 @@ public class AlignAssistSubstation extends CommandBase {
   @Override
   public void execute() {
     if (limelight.getTargetVisible()) {
-      if (DriveManual.isLoadAutoAlignPending()) {
+      if (DriveManual.isLoadAutoAlignReady()) {
         autoAlignSubstation.schedule();
       }
       else {

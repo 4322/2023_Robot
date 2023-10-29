@@ -24,6 +24,7 @@ public class DriveManual extends CommandBase {
   private static boolean scoreAutoPoseActive;
   private static boolean loadAutoPoseActive;
   private static boolean loadAutoAlignPending;
+  private static boolean armAtLoadSingle;
   private final Drive drive;
   private final AutoPose autoPose;
   private Double targetHeadingDeg;
@@ -32,7 +33,6 @@ public class DriveManual extends CommandBase {
   private Timer spinoutActivationTimer2 = new Timer();
   private LockedWheel lockedWheelState;
   private double initialSpinoutAngle;
-  private boolean armAtLoadSingle;
 
   private Arm arm = Arm.getInstance();
   private Telescope telescope = Telescope.getInstance();
@@ -54,8 +54,8 @@ public class DriveManual extends CommandBase {
     return loadAutoPoseActive;
   }
 
-  public static boolean isLoadAutoAlignPending() {
-    return loadAutoAlignPending;
+  public static boolean isLoadAutoAlignReady() {
+    return loadAutoAlignPending && armAtLoadSingle;
   }
 
   public DriveManual(Drive drivesubsystem, AutoPose autoPose) {
