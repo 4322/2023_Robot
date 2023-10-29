@@ -265,7 +265,7 @@ public class Constants {
     public static final double rotateToleranceDegrees = 3.0;
     public static final double substationLateralToleranceMeters = OrangeMath.inchesToMeters(3.0);
     // Distance from face of AprilTag to front of frame perimeter
-    public static final double substationFrontMeters = -0.01;  // calculation is a bit off
+    public static final double substationFrontMeters = -0.04;  // calculation is a bit off
     // Distance between centers of 9/8 and 8/7 AprilTags
     public static final double tagSeparationMeters = OrangeMath.inchesToMeters(6.3);
     
