@@ -6,9 +6,11 @@ import frc.robot.subsystems.Claw;
 public class ClawOuttake extends CommandBase {
   private Claw claw;
   private boolean outtakeStarted;
+  private boolean force;
 
-  public ClawOuttake(Claw clawSubsystem) {
-    claw = clawSubsystem;
+  public ClawOuttake(boolean force) {
+    claw = Claw.getInstance();
+    this.force = force;
     addRequirements(claw);
   }
 
@@ -19,7 +21,7 @@ public class ClawOuttake extends CommandBase {
 
   @Override
   public void execute() {
-    if (!outtakeStarted && ArmMove.isSafeToOuttake()) {
+    if (!outtakeStarted && (ArmMove.isSafeToOuttake() || force)) {
       claw.changeState(Claw.ClawMode.outtaking);
       outtakeStarted = true;
     }

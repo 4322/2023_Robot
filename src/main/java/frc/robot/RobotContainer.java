@@ -64,7 +64,8 @@ public class RobotContainer {
   private final ArmSetBrakeMode armSetBrakeMode = new ArmSetBrakeMode(arm, telescope);
 
   // Claw commands
-  private final ClawOuttake clawOuttake = new ClawOuttake(claw);
+  private final ClawOuttake clawOuttake = new ClawOuttake(false);
+  private final ClawOuttake clawOuttakeForce = new ClawOuttake(true);
   private final ClawStop clawStop = new ClawStop();
 
   // Drive Commands
@@ -335,6 +336,7 @@ public class RobotContainer {
       xbox.povDown().onTrue(new SetArmPreset(drive, ArmMove.Position.loadFloor));
       xbox.povUp().onTrue(new SetArmPreset(drive, ArmMove.Position.loadSingleExtend));
       xbox.povLeft().onTrue(clawStop);
+      xbox.povRight().onTrue(clawOuttakeForce);
     }
   }
 
