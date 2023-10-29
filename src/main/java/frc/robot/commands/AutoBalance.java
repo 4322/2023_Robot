@@ -48,7 +48,7 @@ public class AutoBalance extends CommandBase {
     rampTimer.stop();
 
     // align to charge station by rotating the least amount
-    if (Math.abs(OrangeMath.boundDegrees(drive.getAngle())) <= 90) {
+    if (Math.abs(drive.getAngle()) <= 90) {
       poseDeg = 0;
       poseSign = 1;
     } else {

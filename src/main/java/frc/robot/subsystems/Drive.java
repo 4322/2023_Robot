@@ -187,7 +187,7 @@ public class Drive extends SubsystemBase {
   // get the yaw angle
   public double getAngle() { 
     if (gyro != null && gyro.isConnected() && !gyro.isCalibrating() && Constants.gyroEnabled) {
-        return -gyro.getAngle();
+        return OrangeMath.boundDegrees(-gyro.getAngle());
     } else {
       return 0;
     }
