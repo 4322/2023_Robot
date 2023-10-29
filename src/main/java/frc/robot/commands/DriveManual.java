@@ -58,6 +58,11 @@ public class DriveManual extends CommandBase {
     return loadAutoAlignPending && armAtLoadSingle;
   }
 
+  // prevent AutoAlignSubstation command from immediately restarting once complete
+  public static void loadAutoAlignDone() {
+    loadAutoAlignPending = false;
+  }
+
   public DriveManual(Drive drivesubsystem, AutoPose autoPose) {
     drive = drivesubsystem;
     this.autoPose = autoPose;
