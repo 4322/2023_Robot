@@ -104,6 +104,13 @@ public class Telescope extends SubsystemBase {
     return (Math.abs(getPosition() - currentTarget) <= Constants.Telescope.atTargetTolerance);
   }
 
+  public boolean isAtStuckTarget() {
+    if (!Constants.telescopeEnabled || currentTarget == null) {
+      return true;
+    }
+    return (Math.abs(getPosition() - currentTarget) <= Constants.Telescope.atTargetStuckTolerance);
+  }
+
   public boolean moveToPosition(double targetPosition) {
     if (Constants.telescopeEnabled && homed && !Constants.telescopeTuningMode) {
       pidController.setReference(targetPosition, ControlType.kPosition, Constants.Telescope.movePidSlot);

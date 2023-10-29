@@ -32,7 +32,7 @@ public class ArmMove extends CommandBase {
   private boolean telescopeAtTarget;
   private boolean done;
   //checks how long outtake has been locked for after arm has reached preset position
-  private Timer telescopeAtTargetTimer = new Timer();
+  private Timer telescopeStuckTimer = new Timer();
   private final ClawIntake clawIntake = new ClawIntake(Claw.getInstance());
 
   public static boolean isInBot() {
@@ -103,8 +103,8 @@ public class ArmMove extends CommandBase {
     armAtTarget = false;
     telescopeAtTarget = false;
     done = false;
-    telescopeAtTargetTimer.stop();
-    telescopeAtTargetTimer.reset();
+    telescopeStuckTimer.stop();
+    telescopeStuckTimer.reset();
 
     if (presetPos == Position.scoreLow) {
       safeToOuttake = true;
@@ -282,15 +282,18 @@ public class ArmMove extends CommandBase {
   public boolean isFinished() {
     if (!armAtTarget && armCommandedToTarget && arm.isAtTarget()) {
       armAtTarget = true;
-      telescopeAtTargetTimer.start();
     } 
-    if (!telescopeAtTarget && telescopeCommandedToTarget && telescope.isAtTarget()) {
-      telescopeAtTarget = true;
-    }
-    if (!telescopeAtTarget && telescopeCommandedToTarget && telescopeAtTargetTimer.get() > Constants.Telescope.atTargetTimeoutSec) {
-      DriverStation.reportError("Telescope move to " + targetPos.name() +  
-        " timed out at position: " + telescope.getPosition(), false);
-      telescopeAtTarget = true;
+    if (!telescopeAtTarget && telescopeCommandedToTarget) {
+      if (telescope.isAtTarget()) {
+        telescopeAtTarget = true;
+      } else if (telescope.isAtStuckTarget()) {
+        telescopeStuckTimer.start();
+        if (telescopeStuckTimer.get() > Constants.Telescope.atTargetStuckSec) {
+          DriverStation.reportError("Telescope move to " + targetPos.name() +  
+            " timed out at position: " + telescope.getPosition(), false);
+          telescopeAtTarget = true;
+        }
+      }
     }
     if (armAtTarget && telescopeAtTarget) {
       ArmMove.lastPos = targetPos;
