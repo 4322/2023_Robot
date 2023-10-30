@@ -122,7 +122,7 @@ public class Claw extends SubsystemBase {
   }
 
   public boolean isOuttakeUpToSpeed() {
-    return signedRPM < -ClawConstants.stallRPMLimit;
+    return signedRPM < ClawConstants.minEjectRPM;
   }
 
   public void resetStalledIn() {

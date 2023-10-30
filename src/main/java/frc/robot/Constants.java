@@ -283,6 +283,7 @@ public class Constants {
 
     public static final double stallTime = 0.7;
     public static final double stallRPMLimit = 1000;
+    public static final double minEjectRPM = -100;
 
     public static final double kP = 0.000812;
     public static final double kF = 0.00451;
