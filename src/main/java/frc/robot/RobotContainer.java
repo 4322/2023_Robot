@@ -26,6 +26,7 @@ import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Telescope;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.*;
+import frc.robot.commands.DriveManual.AutoPose;
 import frc.utility.Auto;
 import frc.utility.OrangeSendableChooser;
 
@@ -154,8 +155,29 @@ public class RobotContainer {
 
     autoArrayList.add(new Auto(
       "Mobility",
-      ppManager.loadAuto("ScoreMobilityOnly", false),
-      Arrays.asList(1, 9)
+      new SequentialCommandGroup(
+            ppManager.loadAuto("ScoreMobilityPreRotate1", false),
+            new DriveManual(drive, AutoPose.loadSingleManual)
+      ),
+      Arrays.asList(1)
+    ));
+
+    autoArrayList.add(new Auto(
+      "Mobility",
+      new SequentialCommandGroup(
+            ppManager.loadAuto("ScoreMobilityPreRotate9", false),
+            new DriveManual(drive, AutoPose.loadSingleManual)
+      ),
+      Arrays.asList(9)
+    ));
+
+    autoArrayList.add(new Auto(
+      "MobilityNotCracked",
+      new SequentialCommandGroup(
+            ppManager.loadAuto("ScoreMobilityOnlyNotCracked", false),
+            new DriveManual(drive, AutoPose.loadSingleManual)
+      ),
+      Arrays.asList(1,9)
     ));
 
     autoArrayList.add(new Auto(
