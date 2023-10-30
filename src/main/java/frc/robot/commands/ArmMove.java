@@ -33,7 +33,7 @@ public class ArmMove extends CommandBase {
   private boolean done;
   //checks how long outtake has been locked for after arm has reached preset position
   private Timer telescopeStuckTimer = new Timer();
-  private final ClawIntake clawIntake = new ClawIntake(Claw.getInstance());
+  private ClawIntake clawIntake;
 
   public static boolean isInBot() {
     return lastPos == Position.inBot;
@@ -105,6 +105,7 @@ public class ArmMove extends CommandBase {
     done = false;
     telescopeStuckTimer.stop();
     telescopeStuckTimer.reset();
+    clawIntake = new ClawIntake(Claw.getInstance());  // force intake to restart for every arm movement
 
     if (presetPos == Position.scoreLow) {
       safeToOuttake = true;
