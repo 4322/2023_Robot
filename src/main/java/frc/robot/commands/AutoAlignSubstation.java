@@ -109,8 +109,9 @@ public class AutoAlignSubstation extends CommandBase {
             seven.ty, seven.tx);
         offCenterMeters = AutoAlignSubstationConstants.tagSeparationMeters;
       } else {
-        // Continue driving until we see a tag again
-        drive.driveAutoRotate(driveX, driveY, targetHeadingDeg);
+        // seeing an unknown tag - go back to searching
+        done = true;
+        (new DriveManual(drive, DriveManual.AutoPose.usePreset)).schedule();
         return;
       }
       offCenterMeters -= targetDistance.getY();
@@ -151,8 +152,10 @@ public class AutoAlignSubstation extends CommandBase {
         drive.driveAutoRotate(driveX, driveY, targetHeadingDeg);
       }
     } else {
-      // Continue driving until we see a tag again
-      drive.driveAutoRotate(driveX, driveY, targetHeadingDeg);
+      // lost the tag, go back to manual drive to search for a tag agin
+      done = true;
+      (new DriveManual(drive, DriveManual.AutoPose.usePreset)).schedule();
+      return;
     }
 
     // check the intake here in case we lose sight of the 8 tag due to reflections
