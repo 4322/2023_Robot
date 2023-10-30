@@ -67,7 +67,6 @@ public class RobotContainer {
   // Claw commands
   private final ClawOuttake clawOuttake = new ClawOuttake(false);
   private final ClawOuttake clawOuttakeForce = new ClawOuttake(true);
-  private final ClawStop clawStop = new ClawStop();
 
   // Drive Commands
   private final DriveManual driveManualDefault = new DriveManual(drive, DriveManual.AutoPose.none);
@@ -357,8 +356,7 @@ public class RobotContainer {
       xbox.a().onTrue(new SetArmPreset(drive, ArmMove.Position.scoreLow));
       xbox.povDown().onTrue(new SetArmPreset(drive, ArmMove.Position.loadFloor));
       xbox.povUp().onTrue(new SetArmPreset(drive, ArmMove.Position.loadSingleExtend));
-      xbox.povLeft().onTrue(clawStop);
-      xbox.povRight().whileTrue(clawOuttakeForce);
+      xbox.povLeft().whileTrue(clawOuttakeForce);
     }
   }
 
