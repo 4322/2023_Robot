@@ -2,6 +2,7 @@ package frc.robot.subsystems.SwerveDrive;
 
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -82,7 +83,8 @@ public class SwerveModule extends ControlModule {
     slot0config.kD = DriveConstants.Drive.kD;
     slot0config.kV = DriveConstants.Drive.kV;
     
-    ClosedLoopRampsConfigs cLoopRampsConfigs = new ClosedLoopRampsConfigs();
+    ClosedLoopRampsConfigs closedLoopConfig = new ClosedLoopRampsConfigs();
+    OpenLoopRampsConfigs openLoopConfig = new OpenLoopRampsConfigs();
 
     if (coastOnly) {
       // for identifying failed Falcon outout shafts
@@ -92,10 +94,12 @@ public class SwerveModule extends ControlModule {
       mOutputConfigs.NeutralMode = NeutralModeValue.Brake;
     }
     mOutputConfigs.DutyCycleNeutralDeadband = DriveConstants.Drive.brakeModeDeadband;
-    cLoopRampsConfigs.VoltageClosedLoopRampPeriod = DriveConstants.Drive.configClosedLoopRamp;
+    closedLoopConfig.VoltageClosedLoopRampPeriod = DriveConstants.Drive.closedLoopRampSec;
+    openLoopConfig.VoltageOpenLoopRampPeriod = DriveConstants.Drive.openLoopRampSec;
     
     talon.getConfigurator().apply(slot0config);
-    talon.getConfigurator().apply(cLoopRampsConfigs);
+    talon.getConfigurator().apply(closedLoopConfig);
+    talon.getConfigurator().apply(openLoopConfig);
     talon.getConfigurator().apply(mOutputConfigs);
     
     // Invert the left side modules so we can zero all modules with the bevel gears facing outward.
