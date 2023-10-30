@@ -127,6 +127,13 @@ public class AutoAlignSubstation extends CommandBase {
         driveX = -driveX;
       }
 
+      if (Math.abs(driveX) > AutoAlignSubstationConstants.maxDriveX) {
+        driveX = Math.copySign(AutoAlignSubstationConstants.maxDriveX, driveX);
+      } else if ((Math.abs(driveX) < AutoAlignSubstationConstants.minDriveX)
+                  && (Math.abs(offCenterMeters) > AutoAlignSubstationConstants.substationLateralToleranceMeters)) {
+        driveX = Math.copySign(AutoAlignSubstationConstants.minDriveX, driveX);
+      }
+
       // Check if robot is centered and not moving fast laterally
       if (eight != null && Math.abs(offCenterMeters) <= 
           AutoAlignSubstationConstants.substationLateralToleranceMeters && 

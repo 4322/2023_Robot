@@ -216,8 +216,7 @@ public class Constants {
 
     public static final class Drive {
 
-      public static final double closedLoopRampSec = 0.08;
-      public static final double openLoopRampSec = 0.25;
+      public static final double closedLoopRampSec = 0.25;
 
       public static final double voltageCompSaturation = 11.5;
       public static final boolean enableVoltageCompensation = true;
@@ -261,7 +260,9 @@ public class Constants {
 
   // Values for AutoAlignSubstation
   public static final class AutoAlignSubstationConstants {
-    public static final double approachPower = 0.2;
+    public static final double approachPower = 0.30;
+    public static final double minDriveX = 0.055;
+    public static final double maxDriveX = 0.5;
     public static final double initialDriveX = -0.25;  // get back to target after flying past it
     public static final double rotateToleranceDegrees = 3.0;
     public static final double substationLateralToleranceMeters = OrangeMath.inchesToMeters(3.0);
@@ -270,8 +271,8 @@ public class Constants {
     // Distance between centers of 9/8 and 8/7 AprilTags
     public static final double tagSeparationMeters = OrangeMath.inchesToMeters(6.3);
     
-    public static final double kP = 0.7;
-    public static final double kD = 0;
+    public static final double kP = 1.2;
+    public static final double kD = 0.035;
   }
 
   public static final class ClawConstants {// all temp values
