@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Claw;
+import frc.robot.subsystems.LED;
 
 public class ClawOuttake extends CommandBase {
   private Claw claw;
@@ -24,8 +25,11 @@ public class ClawOuttake extends CommandBase {
     if (!outtakeStarted && (ArmMove.isSafeToOuttake() || force)) {
       claw.changeState(Claw.ClawMode.outtaking);
       outtakeStarted = true;
+      if (LED.getInstance().getLastGamePiece() == LED.GamePiece.cube) {
+        ArmMove.setArmPreset(ArmMove.Position.loadSingleExtend);
+      }
     }
-    // don't change preset if outtake jams
+    // don't change preset if outtake jams on a cone
     if (claw.isOuttakeUpToSpeed()) {
       ArmMove.setArmPreset(ArmMove.Position.loadSingleExtend);
     }

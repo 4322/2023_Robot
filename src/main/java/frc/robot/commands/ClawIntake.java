@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Claw;
+import frc.robot.subsystems.LED;
 
 public class ClawIntake extends CommandBase {
   private Claw claw;
@@ -23,6 +24,7 @@ public class ClawIntake extends CommandBase {
     if (!intakeStalled && Claw.getInstance().isIntakeStalled()) {
       ArmMove.setArmPresetToLastScorePreset();
       intakeStalled = true;
+      LED.getInstance().setLastGamePiece();
     }
   }
 

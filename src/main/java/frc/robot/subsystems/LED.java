@@ -61,7 +61,8 @@ public class LED extends SubsystemBase {
   private SubstationState lastSubstationState = SubstationState.off;
   private GridState lastGridState = GridState.off;
   private boolean intakeStalled;
-  private GamePiece lastGamePiece = GamePiece.cone;
+  private GamePiece nextGamePiece = GamePiece.cone;
+  private GamePiece lastGamePiece = GamePiece.none;
   private Alignment currentAlignment = Alignment.none;
   private Timer presetAckTimer = new Timer();
   private boolean presetAckActive;
@@ -129,14 +130,22 @@ public class LED extends SubsystemBase {
 
   public void setGamePiece(GamePiece gamePiece) {
     // only update LEDs upon a change to reduce CAN bus loading
-    if (lastGamePiece != gamePiece) {
-      lastGamePiece = gamePiece;
+    if (nextGamePiece != gamePiece) {
+      nextGamePiece = gamePiece;
       selectLED();
     }
   }
 
-  public GamePiece getGamePiece() {
+  public GamePiece getNextGamePiece() {
+    return nextGamePiece;
+  }
+
+  public GamePiece getLastGamePiece() {
     return lastGamePiece;
+  }
+
+  public void setLastGamePiece() {
+    lastGamePiece = nextGamePiece;
   }
 
   public void setAlignment(Alignment alignment) {
@@ -156,7 +165,7 @@ public class LED extends SubsystemBase {
   }
 
   private void selectLED() {
-    if (intakeStalled && (currentAlignment == Alignment.grid) && (lastGamePiece == GamePiece.cone)) {
+    if (intakeStalled && (currentAlignment == Alignment.grid) && (nextGamePiece == GamePiece.cone)) {
       Limelight.getGridInstance().activateRetroReflective();
       switch (lastGridState) {
         case off:
@@ -253,7 +262,7 @@ public class LED extends SubsystemBase {
   }
 
   private void setGamePieceColor(LEDStrip led) {
-    switch (lastGamePiece) {
+    switch (nextGamePiece) {
       case cone:
         led.setLED(LEDColor.yellow, BlinkType.none);
         break;

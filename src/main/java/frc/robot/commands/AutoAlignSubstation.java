@@ -165,9 +165,9 @@ public class AutoAlignSubstation extends CommandBase {
     if (intakeWasToSpeed && claw.isIntakeStalling()) {
       clawStalledTimer.start();
       if ((clawStalledTimer.hasElapsed(ClawConstants.coneStalledDelay) && 
-          led.getGamePiece() == GamePiece.cone) ||
+          led.getNextGamePiece() == GamePiece.cone) ||
           (clawStalledTimer.hasElapsed(ClawConstants.cubeStalledDelay) && 
-          led.getGamePiece() == GamePiece.cube)) {
+          led.getNextGamePiece() == GamePiece.cube)) {
         clawStalledTimer.stop();
         clawStalledTimer.reset();
         armRetract.schedule(); // clearance to drive away from substation
