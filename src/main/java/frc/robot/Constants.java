@@ -217,7 +217,7 @@ public class Constants {
     public static final class Drive {
 
       public static final double closedLoopRampSec = 0.08;
-      public static final double openLoopRampSec = 0.12;
+      public static final double openLoopRampSec = 0.25;
 
       public static final double voltageCompSaturation = 11.5;
       public static final boolean enableVoltageCompensation = true;
