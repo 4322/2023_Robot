@@ -130,15 +130,15 @@ public class Limelight extends SubsystemBase {
       nextPos++;  // don't get stuck in a loop if there is no tx
       if ((nextPos = json.indexOf(',', nextPos)) != -1) {
         LimelightHelpers.LimelightTarget_Fiducial fiducial = new LimelightHelpers.LimelightTarget_Fiducial();
-        fiducial.fiducialID = Double.valueOf(json.substring(startIndex, nextPos - 1));
+        fiducial.fiducialID = Double.valueOf(json.substring(startIndex, nextPos));
         if ((nextPos = json.indexOf("\"tx\": ", nextPos)) != -1) {
           startIndex = nextPos + 6;
           if ((nextPos = json.indexOf(',', nextPos)) != -1) {
-            fiducial.tx = Double.parseDouble(json.substring(startIndex, nextPos - 1));
+            fiducial.tx = Double.parseDouble(json.substring(startIndex, nextPos));
             if ((nextPos = json.indexOf("\"ty\": ", nextPos)) != -1) {
               startIndex = nextPos + 6;
               if ((nextPos = json.indexOf(',', nextPos)) != -1) {
-                fiducial.ty = Double.parseDouble(json.substring(startIndex, nextPos - 1));
+                fiducial.ty = Double.parseDouble(json.substring(startIndex, nextPos));
                 llFiducialMap.put(fiducial.fiducialID, fiducial);
               }
             }
