@@ -264,7 +264,7 @@ public class Constants {
     public static final double approachPower = 0.30;
     public static final double minDriveX = 0.055;
     public static final double maxDriveX = 0.5;
-    public static final double initialDriveX = -0.25;  // get back to target after flying past it
+    public static final double initialDriveX = -0.1;  // get back to target after flying past it
     public static final double rotateToleranceDegrees = 3.0;
     public static final double substationLateralToleranceMeters = OrangeMath.inchesToMeters(3.0);
     // Distance from face of AprilTag to front of frame perimeter
@@ -274,6 +274,7 @@ public class Constants {
     
     public static final double kP = 1.2;
     public static final double kD = 0.035;
+    public static final double continueLostTargetSeconds = 0.075;
   }
 
   public static final class ClawConstants {// all temp values

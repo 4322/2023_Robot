@@ -33,6 +33,7 @@ public class AutoAlignSubstation extends CommandBase {
   private final PIDController autoAlignPID = new PIDController(AutoAlignSubstationConstants.kP, 0,
       AutoAlignSubstationConstants.kD);
   private final Timer clawStalledTimer = new Timer();
+  private final Timer continueLostTargetTimer = new Timer();
   private double driveX;
   private double driveY;
   private Double targetHeadingDeg;
@@ -41,6 +42,7 @@ public class AutoAlignSubstation extends CommandBase {
   private GenericEntry frontDistanceMeters;
   private boolean approachStarted;
   private boolean intakeWasToSpeed;
+  private boolean lostTarget;
   private boolean done;
 
   public AutoAlignSubstation(Drive driveSubsystem) {
@@ -57,12 +59,15 @@ public class AutoAlignSubstation extends CommandBase {
   public void initialize() {
     clawStalledTimer.stop();
     clawStalledTimer.reset();
+    continueLostTargetTimer.stop();
+    continueLostTargetTimer.reset();
     autoAlignPID.reset();
     driveX = AutoAlignSubstationConstants.initialDriveX;
     driveY = 0.0;
     targetHeadingDeg = null;
     approachStarted = false;
     intakeWasToSpeed = false;
+    lostTarget = false;
     done = false;
 
     switch (Robot.getAllianceColor()) {
@@ -87,6 +92,13 @@ public class AutoAlignSubstation extends CommandBase {
     Translation2d targetDistance; // target position relative to front center of bot
 
     if (limelight.getTargetVisible()) {
+
+      if (lostTarget) {
+        lostTarget = false;
+        continueLostTargetTimer.stop();
+        continueLostTargetTimer.reset();
+      }
+
       limelight.refreshOdometry();
       // Use raw tag data instead of limelight calculated pose due to possible
       // ambiguity when
@@ -158,11 +170,16 @@ public class AutoAlignSubstation extends CommandBase {
         // Robot not centered
         drive.driveAutoRotate(driveX, driveY, targetHeadingDeg);
       }
-    } else {
+    } else if (continueLostTargetTimer.hasElapsed(AutoAlignSubstationConstants.continueLostTargetSeconds)) {
       // lost the tag, go back to manual drive to search for a tag agin
       done = true;
       (new DriveManual(drive, DriveManual.AutoPose.usePreset)).schedule();
       return;
+    } else {
+      if (!lostTarget) {
+        lostTarget = true;
+        continueLostTargetTimer.start();
+      }
     }
 
     // check the intake here in case we lose sight of the 8 tag due to reflections
