@@ -127,16 +127,16 @@ public class Limelight extends SubsystemBase {
     int nextPos = 0;
     while ((nextPos = json.indexOf("\"fID\": ", nextPos)) != -1) {
       int startIndex = nextPos;
-      if ((nextPos = json.indexOf(",", nextPos)) != -1) {
+      if ((nextPos = json.indexOf(',', nextPos)) != -1) {
         LimelightHelpers.LimelightTarget_Fiducial fiducial = new LimelightHelpers.LimelightTarget_Fiducial();
         fiducial.fiducialID = Double.valueOf(json.substring(startIndex, nextPos - 1));
         if ((nextPos = json.indexOf("\"tx\": ", nextPos)) != -1) {
           startIndex = nextPos;
-          if ((nextPos = json.indexOf(",", nextPos)) != -1) {
+          if ((nextPos = json.indexOf(',', nextPos)) != -1) {
             fiducial.tx = Double.parseDouble(json.substring(startIndex, nextPos - 1));
             if ((nextPos = json.indexOf("\"ty\": ", nextPos)) != -1) {
               startIndex = nextPos;
-              if ((nextPos = json.indexOf(",", nextPos)) != -1) {
+              if ((nextPos = json.indexOf(',', nextPos)) != -1) {
                 fiducial.ty = Double.parseDouble(json.substring(startIndex, nextPos - 1));
                 llFiducialMap.put(fiducial.fiducialID, fiducial);
               }
