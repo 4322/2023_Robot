@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.HashMap;
+import java.util.Map;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.GenericEntry;
@@ -39,7 +41,7 @@ public class Limelight extends SubsystemBase {
   double limeAngle;
   boolean enabled;
   int currentPipeline = -1;
-  LimelightHelpers.LimelightResults llresults;
+  Map<Double, LimelightHelpers.LimelightTarget_Fiducial> llFiducialMap = new HashMap<Double, LimelightHelpers.LimelightTarget_Fiducial>();
 
   // the distance from where you want to calculate from
   // should always be calculated with WPI coordinates (front is positive X)
@@ -57,7 +59,6 @@ public class Limelight extends SubsystemBase {
       0, OrangeMath.inchesToMeters(-29.75), 
       OrangeMath.inchesToMeters(-3 - 1/4 - 3.875/2), 
       false, false, Constants.substationLimeLightEnabled);
-      substationLimelight.refreshOdometry();  // prime JsonFactory to avoid long initial delay
     }
     return substationLimelight;
   }
@@ -121,17 +122,33 @@ public class Limelight extends SubsystemBase {
   }
 
   public void refreshOdometry() {
-    // parse limelight json output, takes 2.5ms
-    llresults = LimelightHelpers.getLatestResults(name);
+    String json = LimelightHelpers.getJSONDump(name);
+    llFiducialMap.clear();
+    int nextPos = 0;
+    while ((nextPos = json.indexOf("\"fID\": ", nextPos)) != -1) {
+      int startIndex = nextPos;
+      if ((nextPos = json.indexOf(",", nextPos)) != -1) {
+        LimelightHelpers.LimelightTarget_Fiducial fiducial = new LimelightHelpers.LimelightTarget_Fiducial();
+        fiducial.fiducialID = Double.valueOf(json.substring(startIndex, nextPos - 1));
+        if ((nextPos = json.indexOf("\"tx\": ", nextPos)) != -1) {
+          startIndex = nextPos;
+          if ((nextPos = json.indexOf(",", nextPos)) != -1) {
+            fiducial.tx = Double.parseDouble(json.substring(startIndex, nextPos - 1));
+            if ((nextPos = json.indexOf("\"ty\": ", nextPos)) != -1) {
+              startIndex = nextPos;
+              if ((nextPos = json.indexOf(",", nextPos)) != -1) {
+                fiducial.ty = Double.parseDouble(json.substring(startIndex, nextPos - 1));
+                llFiducialMap.put(fiducial.fiducialID, fiducial);
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   public LimelightHelpers.LimelightTarget_Fiducial getTag(double fID) {
-    for (int i = 0; i < llresults.targetingResults.targets_Fiducials.length; i++) {
-      if (llresults.targetingResults.targets_Fiducials[i].fiducialID == fID) {
-        return llresults.targetingResults.targets_Fiducials[i];
-      }
-    }
-    return null;  // tag ID not found
+    return llFiducialMap.get(fID);
   }
 
   public double getHorizontalDegToTarget() {
