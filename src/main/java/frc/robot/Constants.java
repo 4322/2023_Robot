@@ -147,8 +147,8 @@ public class Constants {
     public static final class Manual {
 
       public static final double joystickDriveDeadband = 0.1;
-      public static final double joystickRotateLeftDeadband = 0.42;  // don't go below 0.2
-      public static final double joystickRotateRightDeadband = 0.27;  // don't go below 0.2
+      public static final double joystickRotateLeftDeadband = 0.52;  // don't go below 0.2
+      public static final double joystickRotateRightDeadband = 0.35;  // don't go below 0.2
 
       public static final double xboxDriveDeadband = 0.1;
       public static final double xboxRotateDeadband = 0.2;
