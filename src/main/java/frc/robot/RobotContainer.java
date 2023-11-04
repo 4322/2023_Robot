@@ -257,6 +257,7 @@ public class RobotContainer {
     autoArrayList.add(new Auto(
       "Engage", 
       new SequentialCommandGroup(
+        getScoreHigh(),
         new AutoBalance(drive, true, true),
         new AutoDriveRotateWheels(drive, 0.25)
       ),
