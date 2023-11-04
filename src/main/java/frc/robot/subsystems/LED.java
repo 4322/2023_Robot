@@ -65,7 +65,9 @@ public class LED extends SubsystemBase {
   private GamePiece lastGamePiece = GamePiece.none;
   private Alignment currentAlignment = Alignment.none;
   private Timer presetAckTimer = new Timer();
+  private Timer autoAckTimer = new Timer();
   private boolean presetAckActive;
+  private boolean autoAckActive;
   private static LED ledSubsystem;
 
   public static LED getInstance() {
@@ -97,6 +99,12 @@ public class LED extends SubsystemBase {
       presetAckTimer.stop();
       presetAckTimer.reset();
       presetAckActive = false;
+      leftLED.activateLED();  // return to previous color
+      rightLED.activateLED();  // return to previous color
+    } else if (autoAckTimer.hasElapsed(Constants.LED.blinkFastSec)) {
+      autoAckTimer.stop();
+      autoAckTimer.reset();
+      autoAckActive = false;
       leftLED.activateLED();  // return to previous color
       rightLED.activateLED();  // return to previous color
     }
@@ -160,6 +168,14 @@ public class LED extends SubsystemBase {
     // flash the LEDs to indicate that a preset arm position has been accepted
     presetAckTimer.restart();
     presetAckActive = true;
+    leftLED.activateLED();
+    rightLED.activateLED();
+  }
+
+  public void setAutoAccepted() {
+    // flash the LEDs to indicate that a auto alignment has been accepted
+    autoAckTimer.restart();
+    autoAckActive = true;
     leftLED.activateLED();
     rightLED.activateLED();
   }
@@ -327,6 +343,12 @@ public class LED extends SubsystemBase {
         // flash white
         redPort.set(true);
         greenPort.set(true);
+        bluePort.set(true);
+        return;
+      } else if (autoAckActive) {
+        // flash blue
+        redPort.set(false);
+        greenPort.set(false);
         bluePort.set(true);
         return;
       }

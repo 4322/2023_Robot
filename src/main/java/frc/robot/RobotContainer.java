@@ -342,7 +342,7 @@ public class RobotContainer {
           .unless(isNotReAlignPreset));
       rotateTrigger.whileTrue(new ArmMove(arm, telescope, ArmMove.Position.usePreset, false));
 
-      driveButtonThree.onTrue(new DriveManual(drive, DriveManual.AutoPose.usePreset));
+      driveButtonThree.onTrue(new DriveManual(drive, DriveManual.AutoPose.usePresetAuto));
       rotateButtonFour.onTrue(new DriveManual(drive, DriveManual.AutoPose.usePresetManual));
     }
 
