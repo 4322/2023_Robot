@@ -39,7 +39,7 @@ public class DriveManual extends CommandBase {
   private ArmMove armLoadSingleRetract;
 
   public enum AutoPose {
-    none, usePreset, usePresetManual, usePresetNoArmMove, loadSingleManual
+    none, usePreset, usePresetAuto, usePresetManual, usePresetNoArmMove, loadSingleManual
   }
   
   public enum LockedWheel {
@@ -102,6 +102,11 @@ public class DriveManual extends CommandBase {
         ArmMove.setArmPreset(ArmMove.Position.loadSingleExtend);
         initSubstationAlignment();
         break;
+      case usePresetAuto:
+        if (ArmMove.getArmPreset() == ArmMove.Position.loadSingleExtend) {
+          LED.getInstance().setAutoAccepted();
+        }
+        // fall through
       case usePreset:
         autoRotateSetTarget(true);
         break;
@@ -245,7 +250,8 @@ public class DriveManual extends CommandBase {
         // if there is a set drive auto rotate
         if (targetHeadingDeg != null) {
           drive.driveAutoRotate(driveX, driveY, targetHeadingDeg);
-          if (loadAutoPoseActive && !armAtLoadSingle && ((autoPose == AutoPose.usePreset)|| (autoPose == AutoPose.usePresetManual))) {
+          if (loadAutoPoseActive && !armAtLoadSingle && ((autoPose == AutoPose.usePreset)
+              || (autoPose == AutoPose.usePresetAuto) || (autoPose == AutoPose.usePresetManual))) {
             if (driveAngle >= targetHeadingDeg - Constants.AutoAlignSubstationConstants.rotateToleranceDegrees && 
                 driveAngle <= targetHeadingDeg + Constants.AutoAlignSubstationConstants.rotateToleranceDegrees) {
               armLoadSingleRetract.schedule();
