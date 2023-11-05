@@ -272,7 +272,7 @@ public class Constants {
     // Distance between centers of 9/8 and 8/7 AprilTags
     public static final double tagSeparationMeters = OrangeMath.inchesToMeters(6.3);
     
-    public static final double kP = 1.2;
+    public static final double kP = 0.9;
     public static final double kD = 0.035;
     public static final double continueLostTargetSeconds = 0.075;
   }
