@@ -13,9 +13,11 @@ public class TelescopeHoming extends CommandBase{
   private final Timer timeout = new Timer();
   private final Timer homeTimer = new Timer();
   private double lastPos;
+  private boolean force;
 
-  public TelescopeHoming(Telescope telescope) {
+  public TelescopeHoming(Telescope telescope, boolean force) {
     this.telescope = telescope;
+    this.force = force;
 
     addRequirements(telescope);
   }
@@ -23,7 +25,7 @@ public class TelescopeHoming extends CommandBase{
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if (telescope.isHomed()) {
+    if (!force && telescope.isHomed()) {
       return;
     }
     timeout.restart();

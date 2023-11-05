@@ -358,6 +358,8 @@ public class RobotContainer {
       xbox.povDown().onTrue(new SetArmPreset(drive, ArmMove.Position.loadFloor));
       xbox.povUp().onTrue(new SetArmPreset(drive, ArmMove.Position.loadSingleExtend));
       xbox.povLeft().whileTrue(clawOuttakeForce);
+      xbox.povRight().onTrue(new TelescopeHoming(telescope, true)
+        .withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming));
     }
   }
 
@@ -411,7 +413,7 @@ public class RobotContainer {
 
   public void homeArm() {
     new SequentialCommandGroup(
-      new TelescopeHoming(telescope),
+      new TelescopeHoming(telescope, false),
       new ArmHoming(arm)
     ).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming).schedule();
   }
@@ -436,7 +438,7 @@ public class RobotContainer {
   public Command getAutoInitialize() {
     return new SequentialCommandGroup(
       new ResetFieldCentric(drive, 0, true),
-      new TelescopeHoming(telescope),
+      new TelescopeHoming(telescope, false),
       new ArmHoming(arm) 
     );
   }
