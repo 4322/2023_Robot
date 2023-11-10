@@ -34,7 +34,10 @@ public class RobotContainer {
   private Timer disableTimer = new Timer();
 
   // Define controllers
-  public static CommandXboxController xbox = new CommandXboxController(2);
+    //operator = 1
+    //driver  = 2
+  public static CommandXboxController xbox1 = new CommandXboxController(2);
+  public static CommandXboxController xbox2 = new CommandXboxController(3);
   public static Joystick driveStick;
   public static Joystick rotateStick;
 
@@ -348,17 +351,17 @@ public class RobotContainer {
     }
 
     if (Constants.xboxEnabled) {
-      xbox.back().onTrue(armSetCoastMode);
-      xbox.start().onTrue(armSetBrakeMode);
-      xbox.leftBumper().onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cube)));
-      xbox.rightBumper().onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cone)));
-      xbox.y().onTrue(new SetArmPreset(drive, ArmMove.Position.scoreHigh));
-      xbox.b().onTrue(new SetArmPreset(drive, ArmMove.Position.scoreMid));
-      xbox.a().onTrue(new SetArmPreset(drive, ArmMove.Position.scoreLow));
-      xbox.povDown().onTrue(new SetArmPreset(drive, ArmMove.Position.loadFloor));
-      xbox.povUp().onTrue(new SetArmPreset(drive, ArmMove.Position.loadSingleExtend));
-      xbox.povLeft().whileTrue(clawOuttakeForce);
-      xbox.povRight().onTrue(new TelescopeHoming(telescope, true)
+      xbox1.back().onTrue(armSetCoastMode);
+      xbox1.start().onTrue(armSetBrakeMode);
+      xbox1.leftBumper().onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cube)));
+      xbox1.rightBumper().onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cone)));
+      xbox1.y().onTrue(new SetArmPreset(drive, ArmMove.Position.scoreHigh));
+      xbox1.b().onTrue(new SetArmPreset(drive, ArmMove.Position.scoreMid));
+      xbox1.a().onTrue(new SetArmPreset(drive, ArmMove.Position.scoreLow));
+      xbox1.povDown().onTrue(new SetArmPreset(drive, ArmMove.Position.loadFloor));
+      xbox1.povUp().onTrue(new SetArmPreset(drive, ArmMove.Position.loadSingleExtend));
+      xbox1.povLeft().whileTrue(clawOuttakeForce);
+      xbox1.povRight().onTrue(new TelescopeHoming(telescope, true)
         .withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming));
     }
   }
