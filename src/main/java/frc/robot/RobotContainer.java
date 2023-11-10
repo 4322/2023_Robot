@@ -61,15 +61,6 @@ public class RobotContainer {
   private final DriveManual driveManualDefault = new DriveManual(drive, DriveManual.AutoPose.none);
   private final DriveStop driveStop = new DriveStop(drive);
 
-  // Auto Balance Commands
-
-  private final SequentialCommandGroup autoBalanceForward = new SequentialCommandGroup(
-      new AutoBalance(drive, true, false),
-      new AutoDriveRotateWheels(drive, 0.25));
-  private final SequentialCommandGroup autoBalanceBackward = new SequentialCommandGroup(
-      new AutoBalance(drive, false, false),
-      new AutoDriveRotateWheels(drive, 0.25));
-
   private int selectedPosition = 0;
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
 
