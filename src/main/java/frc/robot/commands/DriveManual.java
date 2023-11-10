@@ -169,7 +169,7 @@ public class DriveManual extends CommandBase {
 
   @Override
   public void execute() {
-    if (Constants.joysticksEnabled) {
+    if (Constants.xboxEnabled) {
 
       // Joystick polarity:
       // Positive X is to the right
@@ -191,14 +191,14 @@ public class DriveManual extends CommandBase {
 
       // Cache hardware status for consistency in logic and convert
       // joystick/Xbox coordinates to WPI coordinates.
-      final double driveRawX = -RobotContainer.driveStick.getY();
-      final double driveRawY = -RobotContainer.driveStick.getX();
-      final double rotateRaw = -RobotContainer.rotateStick.getZ();
+      final double driveRawX = -RobotContainer.xbox2.getLeftY();
+      final double driveRawY = -RobotContainer.xbox2.getLeftX();
+      final double rotateRaw = -RobotContainer.xbox2.getRightX();
 
       // Deadbands are dependent on the type of input device
-      final double driveDeadband = Manual.joystickDriveDeadband;
-      final double rotateLeftDeadband = Manual.joystickRotateLeftDeadband;
-      final double rotateRightDeadband = Manual.joystickRotateRightDeadband;
+      final double driveDeadband = Manual.xboxDriveDeadband;
+      final double rotateLeftDeadband = Manual.xboxRotateDeadband;
+      final double rotateRightDeadband = Manual.xboxRotateDeadband;
 
       // Convert raw drive inputs to polar coordinates for more precise deadband
       // correction
