@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.function.BooleanSupplier;
 import com.pathplanner.lib.PathConstraints;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -17,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
@@ -38,18 +36,6 @@ public class RobotContainer {
     //driver  = 2
   public static CommandXboxController xbox1 = new CommandXboxController(2);
   public static CommandXboxController xbox2 = new CommandXboxController(3);
-  public static Joystick driveStick;
-  public static Joystick rotateStick;
-
-  private JoystickButton driveTrigger;
-  private JoystickButton driveButtonSeven;
-  private JoystickButton driveButtonNine;
-  private JoystickButton driveButtonEleven;
-  private JoystickButton driveButtonTwelve;
-  private JoystickButton driveButtonThree;
-  private JoystickButton rotateButtonFour;
-
-  private JoystickButton rotateTrigger;
 
   private ShuffleboardTab tab;
   private ArrayList<Auto> autoArrayList = new ArrayList<Auto>();
@@ -76,6 +62,7 @@ public class RobotContainer {
   private final DriveStop driveStop = new DriveStop(drive);
 
   // Auto Balance Commands
+
   private final SequentialCommandGroup autoBalanceForward = new SequentialCommandGroup(
       new AutoBalance(drive, true, false),
       new AutoDriveRotateWheels(drive, 0.25));
@@ -322,35 +309,8 @@ public class RobotContainer {
   private void configureButtonBindings() {  
     BooleanSupplier isNotReAlignPreset = () -> ArmMove.isNotReAlignPreset();
 
-    if (Constants.joysticksEnabled) {
-      driveStick = new Joystick(0);
-      rotateStick = new Joystick(1);
-
-      driveTrigger = new JoystickButton(driveStick, 1);
-      driveButtonSeven = new JoystickButton(driveStick, 7);
-      driveButtonNine = new JoystickButton(driveStick, 9);
-      driveButtonEleven = new JoystickButton(driveStick, 11);
-      driveButtonTwelve = new JoystickButton(driveStick, 12);
-      rotateTrigger = new JoystickButton(rotateStick, 1);
-      driveButtonThree = new JoystickButton(driveStick, 3);
-      rotateButtonFour = new JoystickButton(rotateStick, 4);
-
-      driveTrigger.whileTrue(clawOuttake);
-      driveButtonSeven.onTrue(new ResetFieldCentric(drive, 0, true));
-      driveButtonNine.onTrue(autoBalanceForward);
-      driveButtonEleven.onTrue(autoBalanceBackward);
-      driveButtonTwelve.onTrue(driveStop);
-
-      // Re-establish alignment to grid when deploying the arm
-      rotateTrigger.whileTrue(new DriveManual(drive, DriveManual.AutoPose.usePresetNoArmMove)
-          .unless(isNotReAlignPreset));
-      rotateTrigger.whileTrue(new ArmMove(arm, telescope, ArmMove.Position.usePreset, false));
-
-      driveButtonThree.onTrue(new DriveManual(drive, DriveManual.AutoPose.usePresetAuto));
-      rotateButtonFour.onTrue(new DriveManual(drive, DriveManual.AutoPose.usePresetManual));
-    }
-
     if (Constants.xboxEnabled) {
+      //operator controls
       xbox1.back().onTrue(armSetCoastMode);
       xbox1.start().onTrue(armSetBrakeMode);
       xbox1.leftBumper().onTrue(Commands.runOnce(() -> LED.getInstance().setGamePiece(LED.GamePiece.cube)));
@@ -363,6 +323,14 @@ public class RobotContainer {
       xbox1.povLeft().whileTrue(clawOuttakeForce);
       xbox1.povRight().onTrue(new TelescopeHoming(telescope, true)
         .withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming));
+
+      //driver controls
+      xbox2.leftTrigger().whileTrue(new DriveManual(drive, DriveManual.AutoPose.usePresetNoArmMove)
+      .unless(isNotReAlignPreset));
+      xbox2.leftTrigger().whileTrue(new ArmMove(arm, telescope, ArmMove.Position.usePreset, false));
+      xbox2.rightTrigger().whileTrue(clawOuttake);
+      xbox2.rightBumper().onTrue(new DriveManual(drive, DriveManual.AutoPose.usePresetManual));
+      xbox2.povUp().onTrue(new ResetFieldCentric(drive, 0, true));
     }
   }
 
