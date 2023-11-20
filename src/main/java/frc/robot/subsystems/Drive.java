@@ -12,7 +12,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.SwerveDrive.SwerveModule;
-import frc.robot.subsystems.SwerveDrive.ControlModule.WheelPosition;
+import frc.robot.subsystems.SwerveDrive.SwerveModule.WheelPosition;
 import frc.utility.OrangeMath;
 import frc.utility.SnapshotTranslation2D;
 import edu.wpi.first.math.controller.PIDController;

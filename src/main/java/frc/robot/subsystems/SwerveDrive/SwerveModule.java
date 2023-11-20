@@ -25,7 +25,9 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.MathUtil;
 
-public class SwerveModule extends ControlModule {
+import edu.wpi.first.wpilibj.Timer;
+
+public class SwerveModule {
   private CANSparkMax turningMotor;
   private TalonFX driveMotor;
   private MotorOutputConfigs  mOutputConfigs;
@@ -34,8 +36,11 @@ public class SwerveModule extends ControlModule {
   private WheelPosition wheelPosition;
   private CurrentLimitsConfigs currentLimitConfigs = new CurrentLimitsConfigs();
 
+  private double previousRate = 0;
+  private double previousTime = 0;
+  private double filteredAccel = 0;
+
   public SwerveModule(int rotationID, int wheelID, int wheelID2, WheelPosition pos, int encoderID) {
-    super(pos);
     turningMotor = new CANSparkMax(rotationID, MotorType.kBrushless);
     driveMotor = new TalonFX(wheelID, Constants.DriveConstants.Drive.canivoreName);
     driveMotor2 = new TalonFX(wheelID2, Constants.DriveConstants.Drive.canivoreName);
@@ -143,18 +148,36 @@ public class SwerveModule extends ControlModule {
     return OrangeMath.boundDegrees(encoder.getPosition());
   }
 
-  @Override
   public double getDistance() {
     return OrangeMath.falconRotationsToMeters(driveMotor.getPosition().getValue(),
         OrangeMath.getCircumference(OrangeMath.inchesToMeters(DriveConstants.Drive.wheelDiameterInches)),
         DriveConstants.Drive.gearRatio);
   }
 
-  @Override
   public double getVelocity() {
     // feet per second
     return driveMotor.getVelocity().getValue() / Constants.DriveConstants.Drive.gearRatio 
         * Math.PI * Constants.DriveConstants.Drive.wheelDiameterInches / 12;
+  }
+
+  public double snapshotAcceleration() {
+
+    double currentRate = this.getVelocity();
+    double currentTime = Timer.getFPGATimestamp();
+
+    double acceleration = (currentRate - previousRate) / (currentTime - previousTime);
+
+    previousRate = currentRate;
+    previousTime = currentTime;
+
+    filteredAccel = acceleration * 0.5 + filteredAccel * 0.5; // dampens random spikes due to the
+                                                              // fact that we are deriving this
+                                                              // value
+    return filteredAccel;
+  }
+
+  public double getAcceleration() {
+    return filteredAccel; // feet per sec per sec
   }
 
   public SwerveModuleState getState() {
@@ -211,6 +234,18 @@ public class SwerveModule extends ControlModule {
         driveMotor.stopMotor();
         turningMotor.stopMotor();
       }
+    }
+  }
+
+  public enum WheelPosition {
+    // construction of SwerveDriveKinematics is dependent on this enum
+
+    FRONT_RIGHT(0), FRONT_LEFT(1), BACK_LEFT(2), BACK_RIGHT(3);
+
+    public int wheelNumber;
+
+    WheelPosition(int id) {
+      wheelNumber = id;
     }
   }
 }
