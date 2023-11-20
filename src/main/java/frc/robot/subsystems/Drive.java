@@ -287,7 +287,7 @@ public class Drive extends SubsystemBase {
         double wheelAngleDegrees = currentAngle[i];
         velocityXY = velocityXY.plus(new Translation2d(swerveModules[i].getVelocity(),
             Rotation2d.fromDegrees(wheelAngleDegrees)));
-        accelerationXY = accelerationXY.plus(new Translation2d(swerveModules[i].getAcceleration(),
+        accelerationXY = accelerationXY.plus(new Translation2d(swerveModules[i].snapshotAcceleration(),
             Rotation2d.fromDegrees(wheelAngleDegrees)));
       }
       latestVelocity = velocityXY.getNorm() / 4;

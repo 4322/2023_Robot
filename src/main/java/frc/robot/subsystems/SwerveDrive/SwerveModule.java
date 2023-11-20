@@ -176,10 +176,6 @@ public class SwerveModule {
     return filteredAccel;
   }
 
-  public double getAcceleration() {
-    return filteredAccel; // feet per sec per sec
-  }
-
   public SwerveModuleState getState() {
     return new SwerveModuleState(getVelocity() * Constants.feetToMeters, 
       Rotation2d.fromDegrees(encoder.getPosition()));
