@@ -136,7 +136,7 @@ public class SwerveModule extends ControlModule {
     sparkMax.getPIDController().setPositionPIDWrappingMaxInput(360);
 
     // need rapid position feedback for steering control
-    CanBusUtil.fastPositionSparkMax(turningMotor);
+    CanBusUtil.fastPositionSparkMaxAbs(turningMotor);
   }
 
   public double getInternalRotationDegrees() {
