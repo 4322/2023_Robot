@@ -191,9 +191,19 @@ public class DriveManual extends CommandBase {
 
       // Cache hardware status for consistency in logic and convert
       // joystick/Xbox coordinates to WPI coordinates.
-      final double driveRawX = -RobotContainer.xbox2.getLeftY();
-      final double driveRawY = -RobotContainer.xbox2.getLeftX();
-      final double rotateRaw = -RobotContainer.xbox2.getRightX();
+      final double driveRawX;
+      final double driveRawY;
+      final double rotateRaw;
+
+      if (Constants.switchDriverSticks) {
+        driveRawX = -RobotContainer.xbox2.getRightY();
+        driveRawY = -RobotContainer.xbox2.getRightX();
+        rotateRaw = -RobotContainer.xbox2.getLeftX();
+      } else {
+        driveRawX = -RobotContainer.xbox2.getLeftY();
+        driveRawY = -RobotContainer.xbox2.getLeftX();
+        rotateRaw = -RobotContainer.xbox2.getRightX();
+      }
 
       // Deadbands are dependent on the type of input device
       final double driveDeadband = Manual.xboxDriveDeadband;
