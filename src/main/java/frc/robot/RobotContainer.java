@@ -316,8 +316,6 @@ public class RobotContainer {
         .withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming));
 
       //driver controls
-      xbox2.leftTrigger().whileTrue(new DriveManual(drive, DriveManual.AutoPose.usePresetNoArmMove)
-      .unless(isNotReAlignPreset));
       xbox2.leftTrigger().whileTrue(new ArmMove(arm, telescope, ArmMove.Position.usePreset, false));
       xbox2.rightTrigger().whileTrue(clawOuttake);
       xbox2.rightBumper().onTrue(new DriveManual(drive, DriveManual.AutoPose.usePresetManual));
