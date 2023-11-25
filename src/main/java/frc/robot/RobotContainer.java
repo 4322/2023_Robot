@@ -338,9 +338,6 @@ public class RobotContainer {
       driveButtonEleven.onTrue(autoBalanceBackward);
       driveButtonTwelve.onTrue(driveStop);
 
-      // Re-establish alignment to grid when deploying the arm
-      rotateTrigger.whileTrue(new DriveManual(drive, DriveManual.AutoPose.usePresetNoArmMove)
-          .unless(isNotReAlignPreset));
       rotateTrigger.whileTrue(new ArmMove(arm, telescope, ArmMove.Position.usePreset, false));
 
       driveButtonThree.onTrue(new DriveManual(drive, DriveManual.AutoPose.usePresetAuto));
