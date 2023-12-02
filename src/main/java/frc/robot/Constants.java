@@ -23,6 +23,8 @@ public class Constants {
   public static final boolean ledEnabled = true;
   public static final boolean spinoutCenterEnabled = true;  // center rotate burst of power
   public static final boolean spinoutCornerEnabled = true;
+  public static final boolean psuedoAutoRotateEnabled = false;
+  public static final int driveInputScaling = 2;
 
   public static final class Demo {
     public enum DriveMode {
@@ -152,7 +154,8 @@ public class Constants {
 
       public static final double xboxDriveDeadband = 0.1;
       public static final double xboxRotateDeadband = 0.2;
-      public static final double manualRotationScaleFromMax = 0.32;
+      public static final double maxManualRotation = 0.37;
+      public static final double inhibitPseudoAutoRotateAngularVelocty = 0.05;
       
       public static final double spinoutRotateDeadBand = 0.9;
       public static final double spinoutMinAngularVelocity = 0.5; // looks like radians per second but we don't know
