@@ -250,16 +250,9 @@ public class DriveManual extends CommandBase {
         // if there is a set drive auto rotate
         if (targetHeadingDeg != null) {
           drive.driveAutoRotate(driveX, driveY, targetHeadingDeg);
-          if (loadAutoPoseActive && !armAtLoadSingle && ((autoPose == AutoPose.usePreset)
-              || (autoPose == AutoPose.usePresetAuto) || (autoPose == AutoPose.usePresetManual))) {
-            if (driveAngle >= targetHeadingDeg - Constants.AutoAlignSubstationConstants.rotateToleranceDegrees && 
-                driveAngle <= targetHeadingDeg + Constants.AutoAlignSubstationConstants.rotateToleranceDegrees) {
-              armLoadSingleRetract.schedule();
-              armAtLoadSingle = true;
-            }
-          }
           return;
-        } else if (Constants.driveDegradedMode == Constants.DriveDegradedMode.normal) {
+        } else if (drive.isPseudoAutoRotateEnabled() && 
+            Math.abs(drive.getAngularVelocity()) < Manual.inhibitPseudoAutoRotateAngularVelocty) {
           // set pseudo auto rotate heading
           targetHeadingDeg = driveAngle;
           drive.driveAutoRotate(driveX, driveY, targetHeadingDeg);

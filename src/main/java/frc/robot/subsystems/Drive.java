@@ -64,6 +64,7 @@ public class Drive extends SubsystemBase {
   private GenericEntry odometryY;
   private GenericEntry odometryDegrees;
   private GenericEntry angularVel;
+  private GenericEntry psuedoAutoRotateCheckbox;
 
   public Drive() {
     runTime.start();
@@ -459,5 +460,14 @@ public class Drive extends SubsystemBase {
     } else {
       return null;
     }
+  }
+
+  public boolean isPseudoAutoRotateEnabled() {
+    if (Constants.driveEnabled) {
+      if (Constants.debug) {
+        return psuedoAutoRotateCheckbox.getBoolean(Constants.psuedoAutoRotateEnabled);
+      }
+    }
+    return Constants.psuedoAutoRotateEnabled;
   }
 }
